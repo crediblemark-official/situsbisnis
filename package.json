@@ -20,7 +20,7 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
     "test:unit": "vitest run --exclude tests/e2e",
-    "test:architecture": "depcruise src/lib/modules",
+    "test:architecture": "depcruise modules",
     "test:e2e": "playwright test",
     "db:studio": "prisma studio",
     "db:push": "prisma db push",

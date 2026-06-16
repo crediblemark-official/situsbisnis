@@ -10,6 +10,7 @@
     "moduleResolution": "bundler",
     "paths": {
       "@/*": ["./src/*"],
+      "@/lib/modules/*": ["./modules/*"],
       "@crediblemark/build": ["./node_modules/@crediblemark/build"],
       "@tiptap/core": ["./node_modules/@tiptap/core"]
     }
