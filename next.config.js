@@ -16,6 +16,14 @@ const nextConfig = {
     // Aktifkan optimasi — sharp sudah terinstall di package.json
     unoptimized: false,
     formats: ['image/avif', 'image/webp'],
+    localPatterns: [
+      {
+        pathname: '/api/media/**',
+      },
+      {
+        pathname: '/assets/**',
+      },
+    ],
     remotePatterns: [
       {
         protocol: "http",
