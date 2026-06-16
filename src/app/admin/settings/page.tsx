@@ -1,12 +1,12 @@
 import React from "react";
 import SettingsForm from "./SettingsForm";
-import { BillingClient } from "@/modules/billing";
+import { FinancialClient } from "@/modules/financial";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminSettingsPage() {
     // We assume the site with subdomain 'admin' is the platform's control site
-    const { adminSite, plans, platformSettings } = await BillingClient.getAdminSettingsContext();
+    const { adminSite, plans, platformSettings } = await FinancialClient.getAdminSettingsContext();
 
     const data = {
         siteName: adminSite?.siteSettings?.siteName || adminSite?.name || "My Platform",

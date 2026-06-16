@@ -1,5 +1,5 @@
 import { getApiContext, apiResponse, apiError } from "@/lib/api/utils";
-import { ContentClient } from "@/modules/content";
+import { MediaClient } from "@/modules/media";
 
 export const dynamic = 'force-dynamic';
 
@@ -17,7 +17,7 @@ export async function GET(req: Request) {
         const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
         const limit = Math.max(1, Math.min(100, parseInt(searchParams.get("limit") || "50")));
 
-        const result = await ContentClient.getMediaList(siteId, folderId, page, limit);
+        const result = await MediaClient.getMediaList(siteId, folderId, page, limit);
         return apiResponse(result);
     } catch (error) {
         console.error("GET Media Error:", error);
@@ -41,7 +41,7 @@ export async function POST(req: Request) {
         if (!file) return apiError("File required", 400);
 
         try {
-            const mediaItem = await ContentClient.uploadMedia(siteId, file, folderId);
+            const mediaItem = await MediaClient.uploadMedia(siteId, file, folderId);
             return apiResponse(mediaItem);
         } catch (serviceError: any) {
             const msg = serviceError?.message || "";

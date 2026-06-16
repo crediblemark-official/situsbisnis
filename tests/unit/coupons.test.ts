@@ -5,7 +5,7 @@ import { POST as updateTransaction } from '@/app/api/admin/transactions/update/r
 import { db } from '@/lib/core/db';
 import { getServerSession } from 'next-auth';
 import { IdentityClient } from '@/modules/auth';
-import { TenantClient } from '@/modules/tenant';
+import { SiteClient } from '@/modules/site';
 
 vi.mock('@/lib/core/db', () => ({
   db: {
@@ -75,10 +75,10 @@ vi.mock('@/modules/shared/core/event-bus', () => ({
     }),
     request: vi.fn(async (channel, data) => {
       if (channel === 'request.tenant.verifyUserSiteAccess') {
-        return TenantClient.verifyUserSiteAccess(data.userId, data.siteId);
+        return SiteClient.verifyUserSiteAccess(data.userId, data.siteId);
       }
       if (channel === 'request.tenant.getSiteInfo') {
-        return TenantClient.getSiteInfo(data.siteId);
+        return SiteClient.getSiteInfo(data.siteId);
       }
       if (channel === 'request.auth.getSiteOwner') {
         return IdentityClient.getSiteOwner(data.siteId);
@@ -102,8 +102,8 @@ vi.mock('@/modules/auth', () => ({
   }
 }));
 
-vi.mock('@/modules/tenant', () => ({
-  TenantClient: {
+vi.mock('@/modules/site', () => ({
+  SiteClient: {
     verifyUserSiteAccess: vi.fn(),
     getSiteInfo: vi.fn(),
     getSiteContact: vi.fn(),
@@ -245,7 +245,7 @@ describe('Coupon Discount System API Routes', () => {
         customDomain: null,
       } as any);
 
-      vi.mocked(TenantClient.verifyUserSiteAccess).mockResolvedValue(true);
+      vi.mocked(SiteClient.verifyUserSiteAccess).mockResolvedValue(true);
       vi.mocked(IdentityClient.getSiteOwner).mockResolvedValue({
         id: 'user-1',
         name: 'Budi',

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { BillingClient } from '@/modules/billing';
+import { SubscriptionClient } from '@/modules/subscription';
 
 // Mock dependencies
 vi.mock('@/lib/core/db', () => ({
@@ -10,10 +10,15 @@ vi.mock('@/lib/core/db', () => ({
   },
 }));
 
-vi.mock('@/modules/content', () => ({
-  ContentClient: {
+vi.mock('@/modules/post', () => ({
+  PostClient: {
     countPosts: vi.fn(),
     countTestimonials: vi.fn(),
+  }
+}));
+
+vi.mock('@/modules/media', () => ({
+  MediaClient: {
     getMediaSize: vi.fn(),
   }
 }));
@@ -28,16 +33,16 @@ vi.mock('@/modules/shared/core/event-bus', () => ({
   eventBus: {
     request: vi.fn(async (channel, data) => {
       if (channel === 'request.content.countPosts') {
-        return ContentClient.countPosts(data.siteId);
+        return PostClient.countPosts(data.siteId);
       }
       if (channel === 'request.catalog.countProducts') {
         return CatalogClient.countProducts(data.siteId);
       }
       if (channel === 'request.content.countTestimonials') {
-        return ContentClient.countTestimonials(data.siteId);
+        return PostClient.countTestimonials(data.siteId);
       }
       if (channel === 'request.content.getMediaSize') {
-        return ContentClient.getMediaSize(data.siteId);
+        return MediaClient.getMediaSize(data.siteId);
       }
       return 0;
     }),
@@ -49,7 +54,8 @@ vi.mock('@/modules/shared/core/event-bus', () => ({
 }));
 
 import { db } from '@/lib/core/db';
-import { ContentClient } from '@/modules/content';
+import { PostClient } from '@/modules/post';
+import { MediaClient } from '@/modules/media';
 import { CatalogClient } from '@/modules/catalog';
 
 describe('lib/subscription-limits.ts', () => {
@@ -61,7 +67,7 @@ describe('lib/subscription-limits.ts', () => {
     it('should return not allowed when no subscription', async () => {
       vi.mocked(db.subscription.findFirst).mockResolvedValue(null);
       
-      const result = await BillingClient.checkSiteLimit('site-1', 'maxPosts');
+      const result = await SubscriptionClient.checkSiteLimit('site-1', 'maxPosts');
       
       expect(result).toEqual({ allowed: false, message: expect.stringContaining('subscription') });
     });
@@ -71,7 +77,7 @@ describe('lib/subscription-limits.ts', () => {
         plan: { name: 'Pro', maxPosts: -1, features: { hasBlog: true } }
       } as any);
       
-      const result = await BillingClient.checkSiteLimit('site-1', 'maxPosts');
+      const result = await SubscriptionClient.checkSiteLimit('site-1', 'maxPosts');
       
       expect(result).toEqual({ allowed: true });
     });
@@ -81,9 +87,9 @@ describe('lib/subscription-limits.ts', () => {
         plan: { name: 'Basic', maxPosts: 10, features: { hasBlog: true } }
       } as any);
       
-      vi.mocked(ContentClient.countPosts).mockResolvedValue(5);
+      vi.mocked(PostClient.countPosts).mockResolvedValue(5);
       
-      const result = await BillingClient.checkSiteLimit('site-1', 'maxPosts');
+      const result = await SubscriptionClient.checkSiteLimit('site-1', 'maxPosts');
       
       expect(result).toEqual({ allowed: true });
     });
@@ -93,9 +99,9 @@ describe('lib/subscription-limits.ts', () => {
         plan: { name: 'Basic', maxPosts: 10, features: { hasBlog: true } }
       } as any);
       
-      vi.mocked(ContentClient.countPosts).mockResolvedValue(10);
+      vi.mocked(PostClient.countPosts).mockResolvedValue(10);
       
-      const result = await BillingClient.checkSiteLimit('site-1', 'maxPosts');
+      const result = await SubscriptionClient.checkSiteLimit('site-1', 'maxPosts');
       
       expect(result.allowed).toBe(false);
       expect(result.message).toContain('10');
@@ -109,7 +115,7 @@ describe('lib/subscription-limits.ts', () => {
       
       vi.mocked(CatalogClient.countProducts).mockResolvedValue(6);
       
-      const result = await BillingClient.checkSiteLimit('site-1', 'maxProducts');
+      const result = await SubscriptionClient.checkSiteLimit('site-1', 'maxProducts');
       
       expect(result.allowed).toBe(false);
     });

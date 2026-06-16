@@ -1,4 +1,4 @@
-import { getPortfolios } from "@/modules/content/services/content-display.service";
+import { getPortfolios } from "@/modules/page/ui/content-display";
 import { LayoutGrid } from "lucide-react";
 import { Metadata } from "next";
 import PortfolioList from "./portfolio-list";

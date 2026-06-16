@@ -27,10 +27,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@/lib/modules/billing/client': path.resolve(__dirname, './src/modules/billing'),
-      '@/lib/modules/billing/types': path.resolve(__dirname, './src/modules/billing'),
       '@/lib/modules/catalog/client': path.resolve(__dirname, './src/modules/catalog'),
-      '@/lib/modules/content/client': path.resolve(__dirname, './src/modules/content'),
       '@/lib/modules/order/client': path.resolve(__dirname, './src/modules/order'),
       '@/lib/modules/tenant/client': path.resolve(__dirname, './src/modules/tenant'),
       '@/lib/modules/identity/client': path.resolve(__dirname, './src/modules/auth'),

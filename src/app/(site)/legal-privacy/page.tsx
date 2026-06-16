@@ -1,8 +1,8 @@
 import React from "react";
 import nextDynamic from "next/dynamic";
 import { Metadata } from "next";
-import { getPage } from "@/modules/content/services/content-display.service";
-import { getSiteSettings } from "@/modules/tenant/services/site-settings.service";
+import { getPage } from "@/modules/page/ui/content-display";
+import { getSiteSettings } from "@/modules/site/ui/site-settings";
 import { Shield, Lock, Eye, CheckCircle } from "lucide-react";
 import TiptapRenderer from "@/components/editor/TiptapRenderer";
 import { generateAutoExcerpt } from "@/lib/editor/render";

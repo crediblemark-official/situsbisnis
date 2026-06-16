@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { BillingClient } from "@/modules/billing";
+import { FinancialClient } from "@/modules/financial";
 import { NextResponse } from "next/server";
 
 export async function PATCH(
@@ -16,7 +16,7 @@ export async function PATCH(
         const { id: couponId } = await params;
         const body = await req.json();
 
-        const updatedCoupon = await BillingClient.updateCoupon(couponId, body);
+        const updatedCoupon = await FinancialClient.updateCoupon(couponId, body);
         return NextResponse.json(updatedCoupon);
     } catch (error: any) {
         console.error("[ADMIN_COUPON_PATCH]", error);
@@ -45,7 +45,7 @@ export async function DELETE(
 
         const { id: couponId } = await params;
 
-        await BillingClient.deleteCoupon(couponId);
+        await FinancialClient.deleteCoupon(couponId);
         return NextResponse.json({ success: true });
     } catch (error: any) {
         console.error("[ADMIN_COUPON_DELETE]", error);

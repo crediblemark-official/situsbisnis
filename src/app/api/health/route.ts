@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { createLogger } from "@/lib/core/logger";
-import { TenantClient } from "@/modules/tenant";
-import { BillingClient } from "@/modules/billing";
+import { SiteClient } from "@/modules/site";
+import { SubscriptionClient } from "@/modules/subscription";
 
 const healthLogger = createLogger("health");
 
 async function checkDatabase(): Promise<boolean> {
   try {
-    return await TenantClient.pingDatabase();
+    return await SiteClient.pingDatabase();
   } catch (error) {
     healthLogger.error({ error }, "Database health check failed");
     return false;
@@ -16,7 +16,7 @@ async function checkDatabase(): Promise<boolean> {
 
 async function checkStorage(): Promise<boolean> {
   try {
-    const settings = await BillingClient.getPlatformSettings();
+    const settings = await SubscriptionClient.getPlatformSettings();
 
     const hasR2Config = !!(
       settings &&

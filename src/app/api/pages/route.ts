@@ -1,4 +1,4 @@
-import { ContentClient } from "@/modules/content";
+import { PageClient } from "@/modules/page";
 import { getApiContext, apiResponse, apiError } from "@/lib/api/utils";
 
 export async function GET() {
@@ -6,7 +6,7 @@ export async function GET() {
     if (error) return apiError(error, status);
 
     try {
-        const pages = await ContentClient.getPages(siteId);
+        const pages = await PageClient.getPages(siteId);
         return apiResponse(pages);
     } catch (error) {
         console.error("Error fetching pages:", error);
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
         if (!path) return apiError("Missing path", 400);
 
         try {
-            await ContentClient.savePage(siteId, body);
+            await PageClient.savePage(siteId, body);
             return apiResponse({ success: true });
         } catch (err: any) {
             const message = err.message;

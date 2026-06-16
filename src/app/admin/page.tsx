@@ -4,7 +4,7 @@ import { Users, Globe, CreditCard, TrendingUp, Activity, ArrowUpRight, Clock } f
 import { PageHeader } from "@/components/ui/PageHeader";
 import Link from "next/link";
 import { THead, TBody, TR, TH, TD } from "@/components/ui/Table";
-import { BillingClient } from "@/modules/billing";
+import { SubscriptionClient } from "@/modules/subscription";
 
 
 async function getStats() {
@@ -190,7 +190,7 @@ export default async function AdminDashboardPage() {
     }));
 
     const recentSiteIds = recentSites.map(site => site.id);
-    const activePlans = await BillingClient.getActivePlanNamesForSites(recentSiteIds);
+    const activePlans = await SubscriptionClient.getActivePlanNamesForSites(recentSiteIds);
 
     const statCards = [
         { label: "Total Pengguna", value: stats.totalUsers, icon: <Users className="text-blue-500" />, trend: "+12%" },

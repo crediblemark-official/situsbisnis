@@ -1,5 +1,5 @@
 import { getApiContext, apiResponse, apiError } from "@/lib/api/utils";
-import { ContentClient } from "@/modules/content";
+import { PostClient } from "@/modules/post";
 
 /**
  * GET /api/search
@@ -15,7 +15,7 @@ export async function GET(req: Request) {
     if (!q) return apiResponse([]);
 
     try {
-        const results = await ContentClient.searchAll(siteId, q);
+        const results = await PostClient.searchAll(siteId, q);
         return apiResponse(results);
     } catch (error) {
         console.error("Search API Error:", error);

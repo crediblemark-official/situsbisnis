@@ -5,7 +5,7 @@ import { getSiteId } from "@/lib/domains/tenant";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Pagination } from "@/components/ui/Pagination";
-import { TenantClient } from "@/modules/tenant";
+import { SiteClient } from "@/modules/site";
 
 import InboxActions from "./InboxActions";
 
@@ -23,8 +23,8 @@ export default async function InboxPage({
     const skip = (currentPage - 1) * pageSize;
 
     const [messages, total] = await Promise.all([
-        TenantClient.getContactSubmissions(siteId || "", { skip, take: pageSize }),
-        TenantClient.countContactSubmissions(siteId || "")
+        SiteClient.getContactSubmissions(siteId || "", { skip, take: pageSize }),
+        SiteClient.countContactSubmissions(siteId || "")
     ]);
 
     const totalPages = Math.ceil(total / pageSize);

@@ -1,5 +1,5 @@
 import { getApiContext, apiResponse, apiError } from "@/lib/api/utils";
-import { exportBackupData, importBackupData } from "@/modules/tenant/services/backup.service";
+import { InfrastructureClient } from "@/modules/infrastructure";
 
 /**
  * GET /api/admin/backup
@@ -10,7 +10,7 @@ export async function GET() {
         const { error, status } = await getApiContext(["admin"], { requireSite: false });
         if (error) return apiError(error, status);
 
-        const backupData = await exportBackupData();
+        const backupData = await InfrastructureClient.exportBackupData();
         const dateStr = new Date().toISOString().split('T')[0];
         const timeStr = new Date().toTimeString().split(' ')[0].replace(/:/g, '-');
         const filename = `backup-situsbisnis-${dateStr}_${timeStr}.json`;
@@ -46,7 +46,7 @@ export async function POST(req: Request) {
         const body = await req.json();
         
         // Execute the restore
-        const result = await importBackupData(body, currentAdminId);
+        const result = await InfrastructureClient.importBackupData(body, currentAdminId);
         
         if (!result.success) {
             return apiError(result.message, 500);

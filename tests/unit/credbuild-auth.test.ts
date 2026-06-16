@@ -3,7 +3,7 @@ import Page from '@/app/credbuild/[...credbuildPath]/page';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 import { getSiteId, getTenant } from '@/lib/domains/tenant';
-import { getPage } from '@/modules/content/services/content-display.service';
+import { getPage } from '@/modules/page/ui/content-display';
 import { headers } from 'next/headers';
 
 vi.mock('next-auth', () => ({
@@ -19,7 +19,7 @@ vi.mock('@/lib/domains/tenant', () => ({
   getTenant: vi.fn(),
 }));
 
-vi.mock('@/modules/content/services/content-display.service', () => ({
+vi.mock('@/modules/page/ui/content-display', () => ({
   getPage: vi.fn(),
 }));
 

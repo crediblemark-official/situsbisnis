@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { BillingClient } from "@/modules/billing";
+import { FinancialClient } from "@/modules/financial";
 import { NextResponse } from "next/server";
 
 export async function GET(_req: Request) {
@@ -10,7 +10,7 @@ export async function GET(_req: Request) {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        const coupons = await BillingClient.getAllCoupons();
+        const coupons = await FinancialClient.getAllCoupons();
         return NextResponse.json(coupons);
     } catch (error) {
         console.error("[ADMIN_COUPONS_GET]", error);
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
             return new NextResponse("Missing data", { status: 400 });
         }
 
-        const coupon = await BillingClient.createCoupon(body);
+        const coupon = await FinancialClient.createCoupon(body);
         return NextResponse.json(coupon);
     } catch (error: any) {
         console.error("[ADMIN_COUPONS_POST]", error);

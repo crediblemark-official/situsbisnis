@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { BillingClient } from "@/modules/billing";
+import { PaymentClient } from "@/modules/payment";
 
 export async function POST(req: Request) {
     try {
@@ -14,7 +14,7 @@ export async function POST(req: Request) {
             body = Object.fromEntries(params.entries());
         }
 
-        await BillingClient.processDuitkuWebhook(body);
+        await PaymentClient.processDuitkuWebhook(body);
 
         // Duitku expects a raw text "OK" response to acknowledge webhook delivery
         return new NextResponse("OK", {

@@ -1,14 +1,14 @@
 import { getSiteId } from "@/lib/domains/tenant";
 import { apiResponse, apiError } from "@/lib/api/utils";
-import { TenantClient } from "@/modules/tenant";
+import { SiteClient } from "@/modules/site";
 
 export async function GET() {
     try {
         const siteId = await getSiteId();
         if (!siteId) return apiResponse({ totalViews: 0, todayViews: 0 });
 
-        // Panggil TenantClient untuk mendapatkan dan mencatat jumlah views secara asinkron/sinkron
-        const stats = await TenantClient.getOrIncrementViews(siteId);
+        // Panggil SiteClient untuk mendapatkan dan mencatat jumlah views secara asinkron/sinkron
+        const stats = await SiteClient.getOrIncrementViews(siteId);
 
         return apiResponse(stats);
     } catch (error) {

@@ -1,6 +1,6 @@
 import { getApiContext, apiResponse, apiError, validateBody } from "@/lib/api/utils";
 import { getPaymentSettings } from "@/lib/settings/payment";
-import { TenantClient } from "@/modules/tenant";
+import { SiteClient } from "@/modules/site";
 import { z } from "zod";
 
 const paymentSchema = z.object({
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
         const { data, error: vError, details, status: vStatus } = await validateBody(req, paymentSchema);
         if (vError) return apiError(vError, vStatus, details);
 
-        await TenantClient.savePaymentSettings(siteId, data);
+        await SiteClient.savePaymentSettings(siteId, data);
 
         return apiResponse({ success: true });
     } catch (error) {

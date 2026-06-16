@@ -1,4 +1,4 @@
-import { ContentClient } from "@/modules/content";
+import { PageClient } from "@/modules/page";
 import { getSiteId } from "@/lib/domains/tenant";
 import { apiResponse, apiError } from "@/lib/api/utils";
 
@@ -10,7 +10,7 @@ export async function GET(req: Request) {
         const siteId = await getSiteId();
         if (!siteId) return apiError("Site ID not found", 400);
 
-        const menu = await ContentClient.getMenu(slug, siteId);
+        const menu = await PageClient.getMenu(slug, siteId);
         return apiResponse(menu);
     } catch (error) {
         console.error("Error fetching menu:", error);

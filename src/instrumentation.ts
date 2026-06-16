@@ -2,11 +2,16 @@ export async function register() {
   if (process.env.NEXT_RUNTIME === "nodejs") {
     const { eventBus } = await import("@/modules/shared/core/event-bus");
     const { initAuthListeners } = await import("@/modules/auth/listeners");
-    const { initTenantListeners } = await import("@/modules/tenant/listeners");
-    const { initContentListeners } = await import("@/modules/content/listeners");
+    const { initSiteListeners } = await import("@/modules/site/listeners");
+    const { initDomainListeners } = await import("@/modules/domain/listeners");
+    const { initInfrastructureListeners } = await import("@/modules/infrastructure/listeners");
+    const { initPostListeners } = await import("@/modules/post/listeners");
+    const { initMediaListeners } = await import("@/modules/media/listeners");
     const { initCatalogListeners } = await import("@/modules/catalog/listeners");
     const { initOrderListeners } = await import("@/modules/order/listeners");
-    const { initBillingListeners } = await import("@/modules/billing/listeners");
+    const { initSubscriptionListeners } = await import("@/modules/subscription/listeners");
+    const { initPaymentListeners } = await import("@/modules/payment/listeners");
+    const { initFinancialListeners } = await import("@/modules/financial/listeners");
     const { initNotificationListeners } = await import("@/modules/notification/listeners");
     
     // Inisialisasi koneksi broker
@@ -14,11 +19,16 @@ export async function register() {
     
     // Inisialisasi semua listener modul
     await initAuthListeners();
-    await initTenantListeners();
-    await initContentListeners();
+    await initSiteListeners();
+    await initDomainListeners();
+    await initInfrastructureListeners();
+    await initPostListeners();
+    await initMediaListeners();
     await initCatalogListeners();
     await initOrderListeners();
-    await initBillingListeners();
+    await initSubscriptionListeners();
+    await initPaymentListeners();
+    await initFinancialListeners();
     await initNotificationListeners();
     
     console.log("🚀 Sistem Event-Driven berhasil diinisialisasi.");

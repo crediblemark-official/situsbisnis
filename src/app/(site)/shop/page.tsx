@@ -6,7 +6,7 @@ import { Metadata } from "next";
 import { serializeProducts } from "@/lib/content/serialize";
 
 
-import { getProducts } from "@/modules/content/services/content-display.service";
+import { getProducts } from "@/modules/page/ui/content-display";
 
 export async function generateMetadata(): Promise<Metadata> {
     return {

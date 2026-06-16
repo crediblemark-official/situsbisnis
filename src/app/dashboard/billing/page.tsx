@@ -3,7 +3,8 @@ import { AlertCircle } from "lucide-react";
 import { getSiteId } from "@/lib/domains/tenant";
 import { LinkButton } from "@/components/ui/LinkButton";
 import BillingClientComponent from "@/components/dashboard/BillingClient";
-import { BillingClient } from "@/modules/billing";
+import { SubscriptionClient } from "@/modules/subscription";
+import { FinancialClient } from "@/modules/financial";
 import { IdentityClient } from "@/modules/auth";
 
 import { getServerSession } from "next-auth/next";
@@ -38,7 +39,7 @@ export default async function BillingPage() {
         );
     }
 
-    const { plans, currentPlan, paymentMethods, whatsappNumber } = await BillingClient.getSubscriptionContext(siteId);
+    const { plans, currentPlan, paymentMethods, whatsappNumber } = await FinancialClient.getSubscriptionContext(siteId);
 
     return (
         <BillingClientComponent 

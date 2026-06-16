@@ -1,4 +1,4 @@
-import { ContentClient } from "@/modules/content";
+import { PostClient } from "@/modules/post";
 import { getApiContext, apiResponse, apiError, validateBody } from "@/lib/api/utils";
 import { z } from "zod";
 
@@ -21,7 +21,7 @@ export async function GET(
         if (!id) return apiError("Taxonomy ID required", 400);
 
         try {
-            const terms = await ContentClient.getTerms(id, siteId);
+            const terms = await PostClient.getTerms(id, siteId);
             return apiResponse(terms);
         } catch (err: any) {
             if (err.message === "Taxonomy not found") {
@@ -50,7 +50,7 @@ export async function POST(
         if (vError) return apiError(vError, vStatus, details);
 
         try {
-            const term = await ContentClient.createTerm(id, siteId, data);
+            const term = await PostClient.createTerm(id, siteId, data);
             return apiResponse(term);
         } catch (err: any) {
             if (err.message === "Taxonomy not found") {

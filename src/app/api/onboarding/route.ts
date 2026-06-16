@@ -1,8 +1,9 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { apiResponse, apiError } from "@/lib/api/utils";
-import { TenantClient } from "@/modules/tenant";
-import { BillingClient } from "@/modules/billing";
+import { SiteClient } from "@/modules/site"
+import { InfrastructureClient } from "@/modules/infrastructure";
+import { SubscriptionClient } from "@/modules/subscription";
 import { z } from "zod";
 
 const onboardingSchema = z.object({
@@ -31,7 +32,7 @@ export async function POST(req: Request) {
 
         // 1. Cek ketersediaan subdomain
         try {
-            await TenantClient.checkSubdomainAvailability(normalizedSubdomain);
+            await SiteClient.checkSubdomainAvailability(normalizedSubdomain);
         } catch (err: any) {
             if (err?.message === "SUBDOMAIN_TAKEN") {
                 return apiError("Subdomain already taken", 400);
@@ -40,16 +41,16 @@ export async function POST(req: Request) {
         }
 
         // 2. Ambil jumlah site milik user
-        const { siteIds, count: userSitesCount } = await TenantClient.getUserSiteCount(session.user.id);
+        const { siteIds, count: userSitesCount } = await SiteClient.getUserSiteCount(session.user.id);
 
         // 3. Validasi limit jumlah situs dari paket langganan
-        const limitCheck = await BillingClient.checkUserSitesLimit(siteIds, userSitesCount);
+        const limitCheck = await SubscriptionClient.checkUserSitesLimit(siteIds, userSitesCount);
         if (!limitCheck.allowed) {
             return apiError(limitCheck.message || "Batas situs tercapai", 403);
         }
 
         // 4. Provision site baru via TenantClient
-        const site = await TenantClient.provisionSite(session.user.id, siteName, normalizedSubdomain);
+        const site = await InfrastructureClient.provisionSite(session.user.id, siteName, normalizedSubdomain);
 
         return apiResponse({ success: true, site });
 

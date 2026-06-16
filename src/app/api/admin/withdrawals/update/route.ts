@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { BillingClient } from "@/modules/billing";
+import { FinancialClient } from "@/modules/financial";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -17,7 +17,7 @@ export async function POST(req: Request) {
             return new NextResponse("Missing data", { status: 400 });
         }
 
-        const result = await BillingClient.processWithdrawalStatus(withdrawalId, status);
+        const result = await FinancialClient.processWithdrawalStatus(withdrawalId, status);
         return NextResponse.json(result);
     } catch (error: any) {
         console.error("[ADMIN_WITHDRAWAL_UPDATE]", error);

@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { NextResponse } from "next/server";
-import { BillingClient } from "@/modules/billing";
+import { PaymentClient } from "@/modules/payment";
 
 export async function POST(req: Request) {
     try {
@@ -13,7 +13,7 @@ export async function POST(req: Request) {
         const body = await req.json();
         const { siteId, quantity, paymentMethod = "manual" } = body;
 
-        const transaction = await BillingClient.buySlot(
+        const transaction = await PaymentClient.buySlot(
             session.user.id,
             siteId,
             quantity,

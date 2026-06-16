@@ -1,5 +1,5 @@
 import { getApiContext, apiResponse, apiError } from "@/lib/api/utils";
-import { BillingClient } from "@/modules/billing";
+import { SubscriptionClient } from "@/modules/subscription";
 
 // GET handler ensures Turbopack compiles this route during warm-up,
 // preventing 404 cold-start race condition on PATCH requests.
@@ -36,10 +36,10 @@ export async function PATCH(req: Request) {
         } = body;
 
         // Mendapatkan data admin site
-        const adminSite = await BillingClient.getAdminSite();
+        const adminSite = await SubscriptionClient.getAdminSite();
 
-        // 1. Update Platform Branding via BillingClient
-        await BillingClient.updateAdminSiteBranding(adminSite.id, {
+        // 1. Update Platform Branding via SubscriptionClient
+        await SubscriptionClient.updateAdminSiteBranding(adminSite.id, {
             siteName,
             contactEmail,
             contactPhone,
@@ -48,19 +48,19 @@ export async function PATCH(req: Request) {
             allowRegistration
         });
 
-        // 2. Update Plans via BillingClient
+        // 2. Update Plans via SubscriptionClient
         if (plans && Array.isArray(plans)) {
-            await BillingClient.upsertPlans(plans);
+            await SubscriptionClient.upsertPlans(plans);
         }
 
-        // 3. Update Platform Payment Methods via BillingClient
+        // 3. Update Platform Payment Methods via SubscriptionClient
         if (paymentMethods && Array.isArray(paymentMethods)) {
-            await BillingClient.updateAdminPaymentMethods(adminSite.id, paymentMethods);
+            await SubscriptionClient.updateAdminPaymentMethods(adminSite.id, paymentMethods);
         }
 
-        // 4. Update Platform Settings (Storage, Affiliate, dll.) via BillingClient
+        // 4. Update Platform Settings (Storage, Affiliate, dll.) via SubscriptionClient
         if (storage) {
-            await BillingClient.updatePlatformSettings({
+            await SubscriptionClient.updatePlatformSettings({
                 r2AccessKeyId: storage.accessKeyId,
                 r2SecretAccessKey: storage.secretAccessKey,
                 r2BucketName: storage.bucketName,

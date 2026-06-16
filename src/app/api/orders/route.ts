@@ -1,6 +1,6 @@
 import { apiResponse, apiError, validateBody } from "@/lib/api/utils";
 import { OrderClient } from "@/modules/order";
-import { BillingClient } from "@/modules/billing";
+import { SubscriptionClient } from "@/modules/subscription";
 import { z as _z } from "zod";
 import zod from "zod";
 const z: typeof _z = _z || (zod as any).z || zod;
@@ -30,7 +30,7 @@ export async function POST(req: Request) {
         if (!siteId) return apiError("Site context required", 400);
 
         // Check subscription limit for orders
-        const limitCheck = await BillingClient.checkSiteLimit(siteId, "maxOrders");
+        const limitCheck = await SubscriptionClient.checkSiteLimit(siteId, "maxOrders");
         if (!limitCheck.allowed) {
             return apiError(limitCheck.message, 403);
         }

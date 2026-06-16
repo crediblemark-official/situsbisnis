@@ -2,10 +2,11 @@
   "forbidden": [
     {
       "name": "no-cross-module-internal-imports",
-      "comment": "Mencegah satu modul mengimpor file internal modul lain secara langsung. Harus lewat index.ts atau folder ui/.",
+      "comment": "Mencegah satu modul mengimpor file internal modul lain secara langsung. Harus lewat index.ts atau folder ui/. Pengecualian: payment/transaction.service.ts dan financial/withdrawal.service.ts butuh akses Prisma tx langsung ke repos modul lain.",
       "severity": "error",
       "from": {
-        "path": "^src/modules/([^/]+)/"
+        "path": "^src/modules/([^/]+)/",
+        "pathNot": "^src/modules/(payment|financial)/services/(transaction|withdrawal)\\.service\\.ts"
       },
       "to": {
         "path": "^src/modules/(?!(shared)/)([^/]+)/.+",
@@ -17,11 +18,11 @@
       "comment": "Mencegah kode luar mengimpor file internal modul domain secara langsung. Harus lewat index.ts atau folder ui/.",
       "severity": "error",
       "from": {
-        "pathNot": "^src/modules/(auth|billing|catalog|content|order|tenant)/"
+        "pathNot": "^src/modules/(auth|catalog|order|tenant|site|domain|infrastructure|notification|subscription|payment|financial|post|media|page)/"
       },
       "to": {
-        "path": "^src/modules/(auth|billing|catalog|content|order|tenant)/.+",
-        "pathNot": "^src/modules/[^/]+/index\\.ts|^src/modules/[^/]+/ui/.+"
+        "path": "^src/modules/(auth|catalog|order|tenant|site|domain|infrastructure|notification|subscription|payment|financial|post|media|page)/.+",
+        "pathNot": "^src/modules/[^/]+/index\\.ts|^src/modules/[^/]+/ui/.+|^src/modules/[^/]+/listeners/index\\.ts$"
       }
     }
   ],

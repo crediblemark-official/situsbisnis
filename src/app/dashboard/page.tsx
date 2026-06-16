@@ -10,11 +10,12 @@ import { StatCard, LibraryItem } from "@/components/ui/Stats";
 import { getSiteId } from "@/lib/domains/tenant";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { ContentClient } from "@/modules/content";
+import { PostClient } from "@/modules/post";
+import { MediaClient } from "@/modules/media";
 import { CatalogClient } from "@/modules/catalog";
 import { OrderClient } from "@/modules/order";
-import { TenantClient } from "@/modules/tenant";
-import { BillingClient } from "@/modules/billing";
+import { SiteClient } from "@/modules/site";
+import { SubscriptionClient } from "@/modules/subscription";
 
 async function getStats(siteId: string | null) {
     if (!siteId) {
@@ -40,16 +41,16 @@ async function getStats(siteId: string | null) {
             mediaSize,
             recentOrdersRaw
         ] = await Promise.all([
-            ContentClient.countPosts(siteId),
+            PostClient.countPosts(siteId),
             CatalogClient.countProducts(siteId),
             OrderClient.countOrders(siteId),
-            ContentClient.countMediaItems(siteId),
-            ContentClient.countGalleryItems(siteId),
-            ContentClient.countPortfolioItems(siteId),
-            TenantClient.getSiteUserIds(siteId),
-            TenantClient.getContactSubmissions(siteId),
-            TenantClient.getOrIncrementViews(siteId),
-            ContentClient.getMediaSize(siteId),
+            MediaClient.countMediaItems(siteId),
+            MediaClient.countGalleryItems(siteId),
+            MediaClient.countPortfolioItems(siteId),
+            SiteClient.getSiteUserIds(siteId),
+            SiteClient.getContactSubmissions(siteId),
+            SiteClient.getOrIncrementViews(siteId),
+            MediaClient.getMediaSize(siteId),
             OrderClient.getRecentOrders(siteId, 5)
         ]);
 
@@ -88,7 +89,7 @@ export default async function DashboardPage() {
     const userName = session?.user?.name || "Chipster";
     
     // Fetch Subscription to get limits
-    const subscription = siteId ? await BillingClient.getActiveSubscription(siteId) : null;
+    const subscription = siteId ? await SubscriptionClient.getActiveSubscription(siteId) : null;
     const plan = subscription?.plan as any;
 
     const paymentSettings = await getPaymentSettings(siteId || undefined);

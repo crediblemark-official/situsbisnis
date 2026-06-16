@@ -1,10 +1,10 @@
 import React from "react";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import { getProduct } from "@/modules/content/services/content-display.service";
+import { getProduct } from "@/modules/page/ui/content-display";
 import { serializeProduct } from "@/lib/content/serialize";
 import { getPaymentSettings } from "@/lib/settings/payment";
-import { getSiteSettings } from "@/modules/tenant/services/site-settings.service";
+import { getSiteSettings } from "@/modules/site/ui/site-settings";
 import ProductDetailViewClient from "@/components/shop/ProductDetailViewClient";
 import { generateAutoExcerpt } from "@/lib/utils/string";
 

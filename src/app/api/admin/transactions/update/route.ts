@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { NextResponse } from "next/server";
-import { BillingClient } from "@/modules/billing";
+import { PaymentClient } from "@/modules/payment";
 
 export async function POST(req: Request) {
     try {
@@ -19,9 +19,9 @@ export async function POST(req: Request) {
 
         let result;
         if (status === "approved") {
-            result = await BillingClient.processApprovedTransaction(transactionId);
+            result = await PaymentClient.processApprovedTransaction(transactionId);
         } else {
-            result = await BillingClient.updateTransactionStatus(transactionId, status);
+            result = await PaymentClient.updateTransactionStatus(transactionId, status);
         }
 
         return NextResponse.json(result);

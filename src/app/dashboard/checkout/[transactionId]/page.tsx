@@ -30,10 +30,10 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
     // Security: only site members or admin
     const isAdmin = (session.user as any).role === "admin";
     
-    const { TenantClient } = await import("@/modules/tenant");
+    const { SiteClient } = await import("@/modules/site");
     const { IdentityClient } = await import("@/modules/auth");
     
-    const site = await TenantClient.getSiteInfo(transaction.siteId);
+    const site = await SiteClient.getSiteInfo(transaction.siteId);
     const ownerInfo = await IdentityClient.getSiteOwner(transaction.siteId);
     const isOwner = ownerInfo?.id === session.user.id;
 

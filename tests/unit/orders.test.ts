@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { POST as createOrder } from '@/app/api/orders/route';
 import { db } from '@/lib/core/db';
 import { validateBody } from '@/lib/api/utils';
-import { BillingClient } from '@/modules/billing';
+import { SubscriptionClient } from '@/modules/subscription';
 import { getSiteId } from '@/lib/domains/tenant';
 import { getServerSession } from 'next-auth';
 
@@ -39,8 +39,8 @@ vi.mock('@/lib/domains/tenant', () => ({
   getSiteId: vi.fn(),
 }));
 
-vi.mock('@/modules/billing', () => ({
-  BillingClient: {
+vi.mock('@/modules/subscription', () => ({
+  SubscriptionClient: {
     checkSiteLimit: vi.fn(),
   },
 }));
@@ -61,7 +61,7 @@ describe('Orders API POST Route', () => {
   it('should successfully create an order using prices from database and ignore client-supplied prices', async () => {
     // 1. Setup mocks
     vi.mocked(getSiteId).mockResolvedValue('site-123');
-    vi.mocked(BillingClient.checkSiteLimit).mockResolvedValue({ allowed: true });
+    vi.mocked(SubscriptionClient.checkSiteLimit).mockResolvedValue({ allowed: true });
     
     // Client sends price of $1.50 for a $99.99 item (manipulation attempt)
     vi.mocked(validateBody).mockResolvedValue({
@@ -128,7 +128,7 @@ describe('Orders API POST Route', () => {
   it('should return 400 Bad Request if a product is not found or does not belong to the current siteId', async () => {
     // 1. Setup mocks
     vi.mocked(getSiteId).mockResolvedValue('site-123');
-    vi.mocked(BillingClient.checkSiteLimit).mockResolvedValue({ allowed: true });
+    vi.mocked(SubscriptionClient.checkSiteLimit).mockResolvedValue({ allowed: true });
     
     vi.mocked(validateBody).mockResolvedValue({
       data: {
@@ -156,7 +156,7 @@ describe('Orders API POST Route', () => {
   it('should return 403 Forbidden when maxOrders subscription limit is exceeded', async () => {
     // 1. Setup mocks
     vi.mocked(getSiteId).mockResolvedValue('site-123');
-    vi.mocked(BillingClient.checkSiteLimit).mockResolvedValue({ allowed: false, message: 'Limit exceeded for maxOrders' });
+    vi.mocked(SubscriptionClient.checkSiteLimit).mockResolvedValue({ allowed: false, message: 'Limit exceeded for maxOrders' });
 
     // 2. Execute
     const req = new Request('http://localhost/api/orders', { method: 'POST' });
@@ -172,7 +172,7 @@ describe('Orders API POST Route', () => {
   it('should successfully create a whatsapp order, saving paymentMethod and skipping payment gateway invoice creation', async () => {
     // 1. Setup mocks
     vi.mocked(getSiteId).mockResolvedValue('site-123');
-    vi.mocked(BillingClient.checkSiteLimit).mockResolvedValue({ allowed: true });
+    vi.mocked(SubscriptionClient.checkSiteLimit).mockResolvedValue({ allowed: true });
     
     // Mock valid payment settings so that system checkout would trigger Duitku
     vi.mocked(db.paymentSettings.findUnique).mockResolvedValue({
@@ -235,7 +235,7 @@ describe('Orders API POST Route', () => {
   it('should successfully create a manual bank transfer order, bypassing Duitku and saving manual bank details in paymentUrl', async () => {
     // 1. Setup mocks
     vi.mocked(getSiteId).mockResolvedValue('site-123');
-    vi.mocked(BillingClient.checkSiteLimit).mockResolvedValue({ allowed: true });
+    vi.mocked(SubscriptionClient.checkSiteLimit).mockResolvedValue({ allowed: true });
     
     // Mock valid payment settings so Duitku could be triggered, but we also have bank details
     vi.mocked(db.paymentSettings.findUnique).mockResolvedValue({

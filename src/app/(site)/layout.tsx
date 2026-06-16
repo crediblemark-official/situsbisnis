@@ -1,5 +1,5 @@
-import { getSiteSettings } from "@/modules/tenant/services/site-settings.service";
-import { getMenu } from "@/modules/content/services/menu.service";
+import { getSiteSettings } from "@/modules/site/ui/site-settings";
+import { getMenu } from "@/modules/page/ui/menu";
 import { ThemeLayoutSelector } from "@/lib/content/themes";
 import { getTenant, getSiteId, getSiteAccessStatus } from "@/lib/domains/tenant";
 import { ExpiredSiteView } from "@/components/site/ExpiredSiteView";
@@ -11,8 +11,8 @@ import { unstable_cache } from "next/cache";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import nextDynamic from "next/dynamic";
-import { BillingClient } from "@/modules/billing";
-import { getPage } from "@/modules/content/services/content-display.service";
+import { SubscriptionClient } from "@/modules/subscription";
+import { getPage } from "@/modules/page/ui/content-display";
 const SaaSLandingPage = nextDynamic(() => import("@/app/(pages)/SaaSLandingPage"), {
     ssr: true,
     loading: () => <div className="min-h-screen bg-background animate-pulse" />
@@ -43,7 +43,7 @@ export default async function SiteLayout({
                 getMenu("main"),
                 getMenu("footer"),
                 getPlatformSettings(),
-                BillingClient.getPricingPlans()
+                SubscriptionClient.getPricingPlans()
             ]);
             
             return (

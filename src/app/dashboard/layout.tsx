@@ -1,13 +1,13 @@
 import React from "react";
 import DashboardShell from "@/components/dashboard/DashboardShell";
-import { getSiteSettings } from "@/modules/tenant/services/site-settings.service";
+import { getSiteSettings } from "@/modules/site/ui/site-settings";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { getSiteId, getSiteAccessStatus, getTenant } from "@/lib/domains/tenant";
 import { AlertCircle, CreditCard } from "lucide-react";
 import Link from "next/link";
-import { TenantClient } from "@/modules/tenant";
+import { SiteClient } from "@/modules/site";
 import { IdentityClient } from "@/modules/auth";
 import { generateBridgeToken } from "@/lib/api/utils";
 
@@ -43,7 +43,7 @@ export default async function DashboardLayout({
 
     // Only check for onboarding if no sites exist
     if (!siteId && session.user.role !== "admin") {
-        const siteCountRes = await TenantClient.getUserSiteCount(session.user.id);
+        const siteCountRes = await SiteClient.getUserSiteCount(session.user.id);
         const siteCount = siteCountRes.count;
 
         if (siteCount === 0) {
@@ -60,7 +60,7 @@ export default async function DashboardLayout({
 
     // Verify that the logged-in user belongs to this site (unless they are platform admin)
     if (siteId && session.user.role !== "admin") {
-        const isUserLinked = await TenantClient.verifyUserSiteAccess(session.user.id, siteId);
+        const isUserLinked = await SiteClient.verifyUserSiteAccess(session.user.id, siteId);
 
         if (!isUserLinked) {
             // Find if user is associated with any other site(s)

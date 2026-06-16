@@ -1,4 +1,4 @@
-import { ContentClient } from "@/modules/content";
+import { PostClient } from "@/modules/post";
 import { getApiContext, apiResponse, apiError, validateBody } from "@/lib/api/utils";
 import { z } from "zod";
 
@@ -21,7 +21,7 @@ export async function DELETE(
         if (!termId) return apiError("Term ID required", 400);
 
         try {
-            await ContentClient.deleteTerm(termId, siteId);
+            await PostClient.deleteTerm(termId, siteId);
             return apiResponse({ success: true });
         } catch (err: any) {
             if (err.message === "Term not found") {
@@ -50,7 +50,7 @@ export async function PUT(
         if (vError) return apiError(vError, vStatus, details);
 
         try {
-            const updated = await ContentClient.updateTerm(termId, siteId, data);
+            const updated = await PostClient.updateTerm(termId, siteId, data);
             return apiResponse(updated);
         } catch (err: any) {
             if (err.message === "Term not found") {

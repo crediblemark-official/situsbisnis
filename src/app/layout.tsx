@@ -2,7 +2,7 @@ import "./styles.css";
 import { Providers } from "./providers";
 import { Metadata } from "next";
 import Script from "next/script";
-import { getSiteSettings } from "@/modules/tenant/services/site-settings.service";
+import { getSiteSettings } from "@/modules/site/ui/site-settings";
 import { getTenant } from "@/lib/domains/tenant";
 import { Inter } from "next/font/google";
 import { headers } from "next/headers";

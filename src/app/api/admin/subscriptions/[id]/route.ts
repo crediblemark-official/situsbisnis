@@ -1,4 +1,5 @@
-import { BillingClient } from "@/modules/billing";
+import { SubscriptionClient } from "@/modules/subscription"
+import { followupWhatsApp, followupEmail } from "@/modules/notification";
 import { getApiContext, apiResponse, apiError } from "@/lib/api/utils";
 import { Role } from "@prisma/client";
 
@@ -14,17 +15,17 @@ export async function PATCH(
         const body = await req.json();
         const { action } = body;
 
-        const sub = await BillingClient.getSubscriptionDetail(id);
+        const sub = await SubscriptionClient.getSubscriptionDetail(id);
         if (!sub) return apiError("Subscription not found", 404);
 
         if (action === "extend") {
             const days = body.days || 7;
-            const result = await BillingClient.extendSubscription(id, days);
+            const result = await SubscriptionClient.extendSubscription(id, days);
             return apiResponse(result);
         }
 
         if (action === "cancel") {
-            const result = await BillingClient.cancelSubscription(id);
+            const result = await SubscriptionClient.cancelSubscription(id);
             return apiResponse(result);
         }
 
@@ -32,7 +33,7 @@ export async function PATCH(
             const { planId } = body;
             if (!planId) return apiError("Plan ID is required", 400);
 
-            const result = await BillingClient.updateSubscriptionPlan(id, planId);
+            const result = await SubscriptionClient.updateSubscriptionPlan(id, planId);
             return apiResponse(result);
         }
 
@@ -42,7 +43,7 @@ export async function PATCH(
                 return apiError("Phone and message are required for followup", 400);
             }
 
-            const result = await BillingClient.followupWhatsApp(phone, message);
+            const result = await followupWhatsApp(phone, message);
             return apiResponse(result);
         }
 
@@ -52,7 +53,7 @@ export async function PATCH(
                 return apiError("Email and message are required for email followup", 400);
             }
 
-            const result = await BillingClient.followupEmail(email, message, sub.siteId);
+            const result = await followupEmail(email, message, sub.siteId);
             return apiResponse(result);
         }
 

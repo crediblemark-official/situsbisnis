@@ -1,7 +1,7 @@
 import { getApiContext, apiResponse, apiError, validateBody } from "@/lib/api/utils";
 import { z } from "zod";
-import { BillingClient } from "@/modules/billing";
-import { TenantClient } from "@/modules/tenant";
+import { FinancialClient } from "@/modules/financial";
+import { SiteClient } from "@/modules/site";
 
 export const dynamic = "force-dynamic";
 
@@ -74,12 +74,12 @@ const settingsSchema = z.object({
 export async function GET() {
     try {
         const { session, siteId } = await getApiContext(undefined, { requireSite: false, isPublic: true });
-        const settings = await TenantClient.getSiteSettings(siteId || undefined);
+        const settings = await SiteClient.getSiteSettings(siteId || undefined);
 
         if (session && siteId) {
             const [domainInfo, billingContext] = await Promise.all([
-                TenantClient.getSiteDomainInfo(siteId),
-                BillingClient.getSiteSettingsBillingContext(siteId)
+                SiteClient.getSiteDomainInfo(siteId),
+                FinancialClient.getSiteSettingsBillingContext(siteId)
             ]);
 
             return apiResponse({ 
@@ -113,10 +113,10 @@ async function handleUpdate(req: Request) {
 
         const { customDomain: _, ...settingsData } = data;
 
-        const updatedSettings = await TenantClient.updateSiteSettings(settingsData, siteId);
+        const updatedSettings = await SiteClient.updateSiteSettings(settingsData, siteId);
 
         // Ambil customDomain terkini untuk response
-        const domainInfo = await TenantClient.getSiteDomainInfo(siteId);
+        const domainInfo = await SiteClient.getSiteDomainInfo(siteId);
 
         return apiResponse({ ...updatedSettings, customDomain: domainInfo?.customDomain });
     } catch (error) {

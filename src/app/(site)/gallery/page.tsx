@@ -1,4 +1,4 @@
-import { getGalleryItems } from "@/modules/content/services/content-display.service";
+import { getGalleryItems } from "@/modules/page/ui/content-display";
 import Image from "next/image";
 import { ImageIcon, Maximize2 } from "lucide-react";
 import { Metadata } from "next";

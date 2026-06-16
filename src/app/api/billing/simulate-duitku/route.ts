@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { BillingClient } from "@/modules/billing";
+import { PaymentClient } from "@/modules/payment";
 
 export async function POST(req: Request) {
     // 1. Strict Guard: Only allow this simulation endpoint in development mode
@@ -17,7 +17,7 @@ export async function POST(req: Request) {
 
         console.log(`[DEV_SIMULATION] Simulating approved Duitku payment for transaction '${transactionId}'...`);
         
-        await BillingClient.processApprovedTransaction(transactionId);
+        await PaymentClient.processApprovedTransaction(transactionId);
         
         console.log(`[DEV_SIMULATION] Transaction '${transactionId}' successfully approved and subscription activated!`);
         

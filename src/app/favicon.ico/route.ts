@@ -1,4 +1,4 @@
-import { getSiteSettings } from "@/modules/tenant/services/site-settings.service";
+import { getSiteSettings } from "@/modules/site/ui/site-settings";
 import { join } from "path";
 import { readFile } from "fs/promises";
 

@@ -1,6 +1,6 @@
 import { getApiContext, apiResponse, apiError } from "@/lib/api/utils";
-import { TenantClient } from "@/modules/tenant";
-import { BillingClient } from "@/modules/billing";
+import { SiteClient } from "@/modules/site";
+import { FinancialClient } from "@/modules/financial";
 import { IdentityClient } from "@/modules/auth";
 
 /**
@@ -16,7 +16,7 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
         if (!id) return apiError("Site ID required", 400);
 
         try {
-            await TenantClient.deleteSite(id);
+            await SiteClient.deleteSite(id);
             return apiResponse({ success: true, message: "Site deleted successfully" });
         } catch (serviceError: any) {
             const msg = serviceError?.message || "";
@@ -48,7 +48,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         // Ambil detail site untuk validasi dan email
         let site;
         try {
-            site = await TenantClient.getSiteDetail(id);
+            site = await SiteClient.getSiteDetail(id);
         } catch (serviceError: any) {
             if (serviceError?.message === "SITE_NOT_FOUND") return apiError("Site not found", 404);
             throw serviceError;
@@ -56,7 +56,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
         if (action === "set_free") {
             try {
-                await BillingClient.setSiteToFreePlan(id);
+                await FinancialClient.setSiteToFreePlan(id);
             } catch (serviceError: any) {
                 if (serviceError?.message === "FREE_PLAN_NOT_FOUND") {
                     return apiError("Free plan not found in database", 404);
@@ -73,7 +73,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         if (action === "extend_trial") {
             let newEndDate: Date;
             try {
-                const result = await BillingClient.extendSiteTrial(id, 7);
+                const result = await FinancialClient.extendSiteTrial(id, 7);
                 newEndDate = result.newEndDate;
             } catch (serviceError: any) {
                 const msg = serviceError?.message || "";

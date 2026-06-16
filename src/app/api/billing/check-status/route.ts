@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { BillingClient } from "@/modules/billing";
+import { PaymentClient } from "@/modules/payment";
 
 export async function POST(req: Request) {
     try {
@@ -17,7 +17,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "transactionId is required" }, { status: 400 });
         }
 
-        const result = await BillingClient.checkTransactionStatus(
+        const result = await PaymentClient.checkTransactionStatus(
             session.user.id,
             (session.user as any).role,
             transactionId

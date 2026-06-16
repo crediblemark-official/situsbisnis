@@ -1,5 +1,5 @@
 import { getApiContext, apiResponse, apiError } from "@/lib/api/utils";
-import { ContentClient } from "@/modules/content";
+import { MediaClient } from "@/modules/media";
 
 /**
  * DELETE /api/media/[id]
@@ -13,7 +13,7 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
         const { id } = await params;
 
         try {
-            const result = await ContentClient.deleteMedia(siteId, id);
+            const result = await MediaClient.deleteMedia(siteId, id);
             return apiResponse(result);
         } catch (serviceError: any) {
             const msg = serviceError?.message || "";

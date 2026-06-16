@@ -1,8 +1,8 @@
 import React from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import { getSiteSettings } from "@/modules/tenant/services/site-settings.service";
-import { getMenu } from "@/modules/content/services/menu.service";
+import { getSiteSettings } from "@/modules/site/ui/site-settings";
+import { getMenu } from "@/modules/page/ui/menu";
 
 export default async function PagesLayout({
     children,

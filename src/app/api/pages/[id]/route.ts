@@ -1,4 +1,4 @@
-import { ContentClient } from "@/modules/content";
+import { PageClient } from "@/modules/page";
 import { getApiContext, apiResponse, apiError } from "@/lib/api/utils";
 
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -10,7 +10,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
         if (!id) return apiError("ID required", 400);
 
         try {
-            const page = await ContentClient.getPageDetail(id, siteId);
+            const page = await PageClient.getPageDetail(id, siteId);
             return apiResponse(page);
         } catch (err: any) {
             if (err.message === "Page not found") {
@@ -33,7 +33,7 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
         if (!id) return apiError("ID required", 400);
 
         try {
-            await ContentClient.deletePage(id, siteId);
+            await PageClient.deletePage(id, siteId);
             return apiResponse({ success: true });
         } catch (err: any) {
             if (err.message === "Page not found") {

@@ -2,8 +2,8 @@ import nextDynamic from "next/dynamic";
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getPage } from "@/modules/content/services/content-display.service";
-import { getSiteSettings } from "@/modules/tenant/services/site-settings.service";
+import { getPage } from "@/modules/page/ui/content-display";
+import { getSiteSettings } from "@/modules/site/ui/site-settings";
 import { getTenant, getSiteId } from "@/lib/domains/tenant";
 import GallerySection from "@/components/ui/GallerySection";
 import { hooks } from "@/lib/core/hooks";
@@ -30,7 +30,7 @@ const SaaSLandingPage = nextDynamic(() => import("@/app/(pages)/SaaSLandingPage"
     loading: () => <div className="min-h-screen bg-background animate-pulse" />
 });
 
-import { BillingClient } from "@/modules/billing";
+import { SubscriptionClient } from "@/modules/subscription";
 
 export async function generateMetadata(): Promise<Metadata> {
     const subdomain = await getTenant();
@@ -82,7 +82,7 @@ export default async function Page() {
     if (!subdomain) {
         const [platform, plans] = await Promise.all([
             getPlatformSettings(),
-            BillingClient.getPricingPlans()
+            SubscriptionClient.getPricingPlans()
         ]);
         return <SaaSLandingPage platform={platform} plans={plans} />;
     }
@@ -101,7 +101,7 @@ export default async function Page() {
         if (parts.length <= 2 || isIp || (rootDomain && (hostOnly === rootDomain || hostOnly === `www.${rootDomain}`))) {
             const [platform, plans] = await Promise.all([
                 getPlatformSettings(),
-                BillingClient.getPricingPlans()
+                SubscriptionClient.getPricingPlans()
             ]);
             return <SaaSLandingPage platform={platform} plans={plans} />;
         }

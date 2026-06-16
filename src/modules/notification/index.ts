@@ -9,3 +9,4 @@ export {
   sendDomainVerifiedEmail,
   sendSubscriptionCancelledEmail
 } from "./services/email-templates.service";
+export { followupWhatsApp, followupEmail } from "./services/followup.service";

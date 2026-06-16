@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { generatePageWithAI, generateSectionWithAI, refineFieldWithAI, type AIConfig } from "@crediblemark/build-ai/server";
 import presetSchemas from "./schemas.json";
-import { BillingClient } from "@/modules/billing";
+import { SubscriptionClient } from "@/modules/subscription";
 
 /**
  * Resolves the AI provider configuration from database or environment variables.
@@ -24,7 +24,7 @@ interface AIConfigItem {
 
 async function resolveAIConfig(): Promise<AIConfig | null> {
   try {
-    const settings = await BillingClient.getPlatformSettings();
+    const settings = await SubscriptionClient.getPlatformSettings();
     if (settings?.aiApiKey) {
       let configs: AIConfigItem[] = [];
       try {

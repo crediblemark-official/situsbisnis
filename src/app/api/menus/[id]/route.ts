@@ -1,4 +1,4 @@
-import { ContentClient } from "@/modules/content";
+import { PageClient } from "@/modules/page";
 import { getApiContext, apiResponse, apiError, validateBody } from "@/lib/api/utils";
 import { z } from "zod";
 
@@ -26,7 +26,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 
         const { items } = data;
 
-        const updated = await ContentClient.updateMenu(slug, items, siteId);
+        const updated = await PageClient.updateMenu(slug, items, siteId);
         return apiResponse(updated);
     } catch (error) {
         console.error("Error updating menu:", error);

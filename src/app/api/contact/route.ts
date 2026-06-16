@@ -1,6 +1,6 @@
 import { getSiteId } from "@/lib/domains/tenant";
 import { getApiContext, apiResponse, apiError, validateBody } from "@/lib/api/utils";
-import { TenantClient } from "@/modules/tenant";
+import { SiteClient } from "@/modules/site";
 import { z } from "zod";
 
 const contactFormSchema = z.object({
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
 
         const { emailTo: _emailTo, ...submissionData } = data;
 
-        await TenantClient.createContactSubmission(siteId, submissionData);
+        await SiteClient.createContactSubmission(siteId, submissionData);
 
         return apiResponse({ success: true, message: "Message sent successfully" });
     } catch (error) {
@@ -45,7 +45,7 @@ export async function GET(_req: Request) {
         const { siteId, error, status } = await getApiContext(["admin", "editor", "owner"]);
         if (error) return apiError(error, status);
 
-        const submissions = await TenantClient.getContactSubmissions(siteId);
+        const submissions = await SiteClient.getContactSubmissions(siteId);
         return apiResponse(submissions);
     } catch (error) {
         console.error("Fetch Submissions Error:", error);

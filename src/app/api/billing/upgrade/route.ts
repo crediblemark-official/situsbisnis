@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { NextResponse } from "next/server";
-import { BillingClient } from "@/modules/billing";
+import { PaymentClient } from "@/modules/payment";
 
 export async function POST(req: Request) {
     try {
@@ -19,7 +19,7 @@ export async function POST(req: Request) {
 
         console.log(`[UPGRADE] Attempting upgrade for siteId: '${siteId}', planId: '${planId}' by userId: '${session.user.id}' (role: '${session.user.role}')`);
 
-        const transaction = await BillingClient.upgradePlan(
+        const transaction = await PaymentClient.upgradePlan(
             session.user.id,
             (session.user as any).role,
             siteId,

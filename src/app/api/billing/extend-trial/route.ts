@@ -1,5 +1,5 @@
 import { getApiContext, apiResponse, apiError } from "@/lib/api/utils";
-import { BillingClient } from "@/modules/billing";
+import { SubscriptionClient } from "@/modules/subscription";
 
 export async function POST(req: Request) {
     try {
@@ -11,7 +11,7 @@ export async function POST(req: Request) {
 
         if (!siteId) return apiError("Site ID required", 400);
 
-        const result = await BillingClient.extendTrial(
+        const result = await SubscriptionClient.extendTrial(
             (session as any).user.id,
             (session as any).user.role,
             siteId

@@ -1,5 +1,5 @@
 import { getApiContext, apiResponse, apiError, validateBody } from "@/lib/api/utils";
-import { ContentClient } from "@/modules/content";
+import { PageClient } from "@/modules/page";
 import { z } from "zod";
 
 const credBuildSchema = z.object({
@@ -17,8 +17,8 @@ export async function POST(request: Request) {
 
     const { path, data } = body;
 
-    // Simpan data halaman via ContentClient
-    await ContentClient.saveCredBuildPage(siteId, path, data);
+    // Simpan data halaman via PageClient
+    await PageClient.saveCredBuildPage(siteId, path, data);
 
     return apiResponse({ status: "ok" });
   } catch (error) {
@@ -35,8 +35,8 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const path = searchParams.get("path") || "/";
 
-    // Ambil data halaman via ContentClient
-    const pageData = await ContentClient.getCredBuildPage(siteId, path);
+    // Ambil data halaman via PageClient
+    const pageData = await PageClient.getCredBuildPage(siteId, path);
 
     return apiResponse(pageData);
   } catch (error) {
