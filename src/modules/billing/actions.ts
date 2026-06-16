@@ -2,6 +2,9 @@ import * as planService from "./services/plan.service";
 import * as limitService from "./services/limit.service";
 import * as couponService from "./services/coupon.service";
 import * as checkoutService from "./services/checkout.service";
+import * as transactionService from "./services/transaction.service";
+import * as webhookService from "./services/webhook.service";
+import * as followupService from "./services/followup.service";
 import * as withdrawalService from "./services/withdrawal.service";
 import * as settingsService from "./services/settings.service";
 import * as adminService from "./services/admin.service";
@@ -21,11 +24,11 @@ export async function checkSiteLimit(siteId: string, type: LimitType) {
 }
 
 export async function processApprovedTransaction(transactionId: string) {
-    return checkoutService.processApprovedTransaction(transactionId);
+    return transactionService.processApprovedTransaction(transactionId);
 }
 
 export async function updateTransactionStatus(transactionId: string, status: string) {
-    return checkoutService.updateTransactionStatus(transactionId, status);
+    return transactionService.updateTransactionStatus(transactionId, status);
 }
 
 export async function validateCoupon(code: string, planId?: string) {
@@ -37,11 +40,11 @@ export async function buySlot(userId: string, siteId: string, quantity: number, 
 }
 
 export async function cancelTransaction(userId: string, transactionId: string) {
-    return checkoutService.cancelTransaction(userId, transactionId);
+    return transactionService.cancelTransaction(userId, transactionId);
 }
 
 export async function checkTransactionStatus(userId: string, userRole: string, transactionId: string) {
-    return checkoutService.checkTransactionStatus(userId, userRole, transactionId);
+    return webhookService.checkTransactionStatus(userId, userRole, transactionId);
 }
 
 export async function initializeCheckoutPayment(userId: string, userRole: string, transactionId: string, paymentMethod: string) {
@@ -49,7 +52,7 @@ export async function initializeCheckoutPayment(userId: string, userRole: string
 }
 
 export async function confirmManualPayment(userId: string, userRole: string, transactionId: string, notes?: string, proofOfPayment?: string) {
-    return checkoutService.confirmManualPayment(userId, userRole, transactionId, notes, proofOfPayment);
+    return transactionService.confirmManualPayment(userId, userRole, transactionId, notes, proofOfPayment);
 }
 
 export async function extendTrial(userId: string, userRole: string, siteId: string) {
@@ -57,7 +60,7 @@ export async function extendTrial(userId: string, userRole: string, siteId: stri
 }
 
 export async function getPaymentMethods(amount: number) {
-    return checkoutService.getPaymentMethods(amount);
+    return webhookService.getPaymentMethods(amount);
 }
 
 export async function upgradePlan(userId: string, userRole: string, siteId: string, planId: string, couponCode?: string, paymentMethod?: string) {
@@ -65,7 +68,7 @@ export async function upgradePlan(userId: string, userRole: string, siteId: stri
 }
 
 export async function processDuitkuWebhook(body: Record<string, any>) {
-    return checkoutService.processDuitkuWebhook(body);
+    return webhookService.processDuitkuWebhook(body);
 }
 
 export async function getAllPlans() {
@@ -89,11 +92,11 @@ export async function updateSubscriptionPlan(subId: string, planId: string) {
 }
 
 export async function followupWhatsApp(phone: string, message: string) {
-    return checkoutService.followupWhatsApp(phone, message);
+    return followupService.followupWhatsApp(phone, message);
 }
 
 export async function followupEmail(email: string, message: string, siteId: string) {
-    return checkoutService.followupEmail(email, message, siteId);
+    return followupService.followupEmail(email, message, siteId);
 }
 
 export async function getAllCoupons() {
@@ -155,4 +158,3 @@ export async function updateAdminSiteBranding(adminSiteId: string, data: Paramet
 export async function getPlatformSettings() {
     return platformService.getPlatformSettings();
 }
-
