@@ -2,6 +2,7 @@ import { db } from "@/lib/core/db";
 import { getSiteId } from "@/lib/domains/tenant";
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
+import { IdentityClient } from "@/lib/modules/identity/client";
 
 // Posts
 export const getPost = cache(async (slug: string, siteId?: string) => {
@@ -14,12 +15,19 @@ export const getPost = cache(async (slug: string, siteId?: string) => {
             const post = await db.post.findUnique({
                 where: { siteId_slug: { siteId: id, slug } },
                 include: {
-                    author: { select: { name: true } },
                     metaData: true
                 }
             });
 
-            return post ? { ...post, authorName: post.author?.name } : null;
+            if (!post) return null;
+
+            let authorName = null;
+            if (post.authorId) {
+                const author = await IdentityClient.getUserById(post.authorId);
+                authorName = author?.name || null;
+            }
+
+            return { ...post, authorName };
         },
         [`post-${id}-${slug}`],
         { revalidate: 300, tags: [`site-${id}`, `post-${slug}`] }

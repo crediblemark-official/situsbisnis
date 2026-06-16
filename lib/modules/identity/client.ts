@@ -1,18 +1,5 @@
 import { db } from "@/lib/core/db";
-
-export interface SiteOwnerInfo {
-    id: string;
-    email: string | null;
-    name: string | null;
-    referredById: string | null;
-}
-
-export interface AwardCommissionDTO {
-    userId: string;
-    amount: number;
-    transactionId: string;
-    description: string;
-}
+import { SiteOwnerInfo, AwardCommissionDTO, UserDTO } from "./types";
 
 export const IdentityClient = {
     /**
@@ -34,6 +21,48 @@ export const IdentityClient = {
             }
         });
         return user;
+    },
+
+    /**
+     * Mengambil data dasar user berdasarkan ID.
+     */
+    async getUserById(userId: string): Promise<UserDTO | null> {
+        const user = await db.user.findUnique({
+            where: { id: userId },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+                role: true
+            }
+        });
+        return user as UserDTO | null;
+    },
+
+    /**
+     * Mengambil peta informasi user berdasarkan daftar userId.
+     */
+    async getUsersMap(userIds: string[]): Promise<Record<string, UserDTO>> {
+        if (userIds.length === 0) return {};
+
+        const users = await db.user.findMany({
+            where: { id: { in: userIds } },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+                role: true
+            }
+        });
+
+        const resultMap: Record<string, UserDTO> = {};
+        users.forEach(u => {
+            resultMap[u.id] = u as UserDTO;
+        });
+
+        return resultMap;
     },
 
     /**
@@ -65,3 +94,4 @@ export const IdentityClient = {
         });
     }
 };
+

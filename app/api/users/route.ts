@@ -19,29 +19,27 @@ export async function GET() {
         const { session, siteId, error, status } = await getApiContext(["admin", "owner", "editor"]);
         if (error) return apiError(error, status);
 
-        let users;
+
 
         // Check if we are in a tenant subsite context (subdomain !== 'admin')
         const { getTenant } = await import("@/lib/domains/tenant");
         const tenant = await getTenant();
         const isTenantContext = !!siteId && tenant !== null && tenant !== "admin";
 
+        let rawUsers;
         if (session.user.role === "admin" && !isTenantContext) {
-            users = await db.user.findMany({
+            rawUsers = await db.user.findMany({
                 select: {
                     id: true,
                     name: true,
                     email: true,
                     role: true,
                     image: true,
-                    createdAt: true,
-                    _count: {
-                        select: { posts: true }
-                    }
+                    createdAt: true
                 }
             });
         } else {
-            users = await db.user.findMany({
+            rawUsers = await db.user.findMany({
                 where: {
                     sites: {
                         some: { id: siteId }
@@ -54,13 +52,31 @@ export async function GET() {
                     email: true,
                     role: true,
                     image: true,
-                    createdAt: true,
-                    _count: {
-                        select: { posts: { where: { siteId } } }
-                    }
+                    createdAt: true
                 }
             });
         }
+
+        // Ambil jumlah postingan (posts) per pengguna secara terpisah menggunakan groupBy
+        const postCounts = await db.post.groupBy({
+            by: ["authorId"],
+            _count: {
+                id: true
+            },
+            where: {
+                ...(isTenantContext ? { siteId } : {}),
+                published: true
+            }
+        });
+
+        const postCountMap = new Map(postCounts.map(pc => [pc.authorId, pc._count.id]));
+
+        const users = rawUsers.map(user => ({
+            ...user,
+            _count: {
+                posts: postCountMap.get(user.id) || 0
+            }
+        }));
 
         return apiResponse({ users });
     } catch (error) {

@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/core/db";
 import { NextResponse } from "next/server";
+import { IdentityClient } from "@/lib/modules/identity/client";
 
 export async function GET(_req: Request) {
     try {
@@ -10,20 +11,19 @@ export async function GET(_req: Request) {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        const coupons = await db.coupon.findMany({
-            include: {
-                affiliate: {
-                    select: {
-                        id: true,
-                        name: true,
-                        email: true
-                    }
-                }
-            },
+        const rawCoupons = await db.coupon.findMany({
             orderBy: {
                 createdAt: "desc"
             }
         });
+
+        const affiliateIds = Array.from(new Set(rawCoupons.map(c => c.affiliateId).filter(Boolean))) as string[];
+        const usersMap = await IdentityClient.getUsersMap(affiliateIds);
+
+        const coupons = rawCoupons.map(coupon => ({
+            ...coupon,
+            affiliate: coupon.affiliateId ? usersMap[coupon.affiliateId] || null : null
+        }));
 
         return NextResponse.json(coupons);
     } catch (error) {
@@ -69,19 +69,18 @@ export async function POST(req: Request) {
                 expiryDate: expiryDate ? new Date(expiryDate) : null,
                 maxUses: maxUses ? parseInt(maxUses) : null,
                 isActive: isActive ?? true
-            },
-            include: {
-                affiliate: {
-                    select: {
-                        id: true,
-                        name: true,
-                        email: true
-                    }
-                }
             }
         });
 
-        return NextResponse.json(coupon);
+        let affiliate = null;
+        if (coupon.affiliateId) {
+            affiliate = await IdentityClient.getUserById(coupon.affiliateId);
+        }
+
+        return NextResponse.json({
+            ...coupon,
+            affiliate
+        });
     } catch (error) {
         console.error("[ADMIN_COUPONS_POST]", error);
         return new NextResponse("Internal Error", { status: 500 });

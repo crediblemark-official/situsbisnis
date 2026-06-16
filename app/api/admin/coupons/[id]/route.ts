@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/core/db";
 import { NextResponse } from "next/server";
+import { IdentityClient } from "@/lib/modules/identity/client";
 
 export async function PATCH(
     req: Request,
@@ -59,19 +60,18 @@ export async function PATCH(
 
         const updatedCoupon = await db.coupon.update({
             where: { id: couponId },
-            data: updateData,
-            include: {
-                affiliate: {
-                    select: {
-                        id: true,
-                        name: true,
-                        email: true
-                    }
-                }
-            }
+            data: updateData
         });
 
-        return NextResponse.json(updatedCoupon);
+        let affiliate = null;
+        if (updatedCoupon.affiliateId) {
+            affiliate = await IdentityClient.getUserById(updatedCoupon.affiliateId);
+        }
+
+        return NextResponse.json({
+            ...updatedCoupon,
+            affiliate
+        });
     } catch (error) {
         console.error("[ADMIN_COUPON_PATCH]", error);
         return new NextResponse("Internal Error", { status: 500 });

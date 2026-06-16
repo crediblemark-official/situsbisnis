@@ -9,6 +9,7 @@ import { serializeProducts } from "@/lib/content/serialize";
 import { ProductGridItem } from "@/app/dashboard/products/ProductGridItem";
 import Link from "next/link";
 import { ArrowRight, ShoppingCart } from "lucide-react";
+import { IdentityClient } from "@/lib/modules/identity/client";
 
 export async function generateMetadata(): Promise<Metadata> {
     const siteId = await getSiteId();
@@ -23,12 +24,11 @@ export default async function BlogIndexPage() {
     const siteId = await getSiteId();
     if (!siteId) return notFound();
 
-    // Fetch all published posts for this tenant site, including author, metaData, and terms relations
-    const posts = await db.post.findMany({
+    // Fetch all published posts for this tenant site, including metaData, and terms relations
+    const rawPosts = await db.post.findMany({
         where: { published: true, siteId },
         orderBy: { createdAt: "desc" },
         include: {
-            author: { select: { name: true, image: true } },
             metaData: true,
             terms: {
                 select: {
@@ -39,6 +39,14 @@ export default async function BlogIndexPage() {
             }
         }
     });
+
+    const authorIds = Array.from(new Set(rawPosts.map(p => p.authorId).filter(Boolean))) as string[];
+    const usersMap = await IdentityClient.getUsersMap(authorIds);
+
+    const posts = rawPosts.map(post => ({
+        ...post,
+        author: post.authorId ? usersMap[post.authorId] || null : null
+    }));
 
     const settings = await getSiteSettings(siteId);
 

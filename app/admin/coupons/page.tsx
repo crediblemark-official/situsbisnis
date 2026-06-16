@@ -1,24 +1,25 @@
 import React from "react";
 import { db } from "@/lib/core/db";
 import CouponList from "@/components/admin/CouponList";
+import { IdentityClient } from "@/lib/modules/identity/client";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminCouponsPage() {
-    const coupons = await db.coupon.findMany({
-        include: {
-            affiliate: {
-                select: {
-                    id: true,
-                    name: true,
-                    email: true
-                }
-            }
-        },
+    const rawCoupons = await db.coupon.findMany({
         orderBy: {
             createdAt: "desc"
         }
     });
+
+    const affiliateIds = Array.from(new Set(rawCoupons.map(c => c.affiliateId).filter(Boolean))) as string[];
+    const usersMap = await IdentityClient.getUsersMap(affiliateIds);
+
+    const coupons = rawCoupons.map(coupon => ({
+        ...coupon,
+        affiliate: coupon.affiliateId ? usersMap[coupon.affiliateId] || null : null
+    }));
+
 
     const users = await db.user.findMany({
         select: {
