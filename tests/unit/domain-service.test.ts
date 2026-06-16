@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { DomainService } from '@/lib/services/domain.service';
+import * as DomainService from '@/modules/tenant/services/domain.service';
 import { db } from '@/lib/core/db';
 import { verifyDomainConfig } from '@/lib/domains/verification';
 import { DokployService } from '@/lib/services/dokploy.service';

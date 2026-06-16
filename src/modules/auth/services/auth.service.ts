@@ -166,19 +166,19 @@ export async function updateSiteCustomDomain(userId: string, siteId: string, cus
         }
     }
 
-    const { DomainService } = await import("@/lib/services/domain.service");
+    const { TenantClient } = await import("@/modules/tenant");
     const oldDomain = siteOwner.customDomain;
 
     if (newDomain && newDomain !== oldDomain) {
         if (oldDomain) {
-            await DomainService.removeDomain(siteId, oldDomain);
+            await TenantClient.removeDomain(siteId, oldDomain);
         }
-        const regResult = await DomainService.registerDomain(siteId, newDomain);
+        const regResult = await TenantClient.registerDomain(siteId, newDomain);
         if (regResult.status === "error") {
             throw new Error(regResult.message);
         }
     } else if (!newDomain && oldDomain) {
-        await DomainService.removeDomain(siteId, oldDomain);
+        await TenantClient.removeDomain(siteId, oldDomain);
     }
 
     await tenantUserRepo.updateSiteCustomDomain(siteId, newDomain);
@@ -203,8 +203,8 @@ export async function verifySiteCustomDomain(userId: string, siteId: string, dom
         throw new Error("Upgrade required");
     }
 
-    const { DomainService } = await import("@/lib/services/domain.service");
-    const result = await DomainService.verifyDomain(siteId, domain);
+    const { TenantClient } = await import("@/modules/tenant");
+    const result = await TenantClient.verifyDomain(siteId, domain);
     if (result.status === "error") {
         throw new Error(result.message);
     }
