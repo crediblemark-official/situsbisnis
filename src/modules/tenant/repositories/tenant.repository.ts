@@ -199,3 +199,53 @@ export async function upsertPaymentSettings(siteId: string, data: {
         } as any
     });
 }
+
+/**
+ * Mencari data statistik situs berdasarkan siteId.
+ */
+export async function findSiteStatistics(siteId: string) {
+    return db.siteStatistics.findUnique({
+        where: { siteId }
+    });
+}
+
+/**
+ * Membuat data statistik situs baru.
+ */
+export async function createSiteStatistics(data: {
+    siteId: string;
+    totalViews: number;
+    todayViews: number;
+    lastUpdated: Date;
+}) {
+    return db.siteStatistics.create({ data });
+}
+
+/**
+ * Memperbarui data statistik berdasarkan ID.
+ */
+export async function updateSiteStatistics(id: string, data: Record<string, unknown>) {
+    return db.siteStatistics.update({
+        where: { id },
+        data: data as any
+    });
+}
+
+/**
+ * Melakukan upsert data statistik berdasarkan siteId.
+ */
+export async function upsertSiteStatistics(siteId: string, data: {
+    totalViews: number;
+    todayViews: number;
+    lastUpdated: Date;
+}) {
+    return db.siteStatistics.upsert({
+        where: { siteId },
+        create: {
+            siteId,
+            ...data
+        },
+        update: data
+    });
+}
+

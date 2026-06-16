@@ -1,6 +1,7 @@
 import * as tenantService from "./services/tenant.service";
 import * as siteService from "./services/site.service";
 import * as contactService from "./services/contact.service";
+import * as analyticsService from "./services/analytics.service";
 import { SiteInfo, SiteContactInfo } from "./index";
 
 /**
@@ -111,4 +112,11 @@ export async function savePaymentSettingsInternal(siteId: string, data: {
     instructions?: string;
 }) {
     return contactService.savePaymentSettings(siteId, data);
+}
+
+/**
+ * Mencatat dan mengambil statistik kunjungan halaman situs.
+ */
+export async function getOrIncrementViewsInternal(siteId: string) {
+    return analyticsService.getOrIncrementViews(siteId);
 }

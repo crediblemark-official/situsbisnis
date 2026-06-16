@@ -12,7 +12,8 @@ import {
     createContactSubmissionInternal,
     getContactSubmissionsInternal,
     savePaymentSettingsInternal,
-    getSiteDomainInfoInternal
+    getSiteDomainInfoInternal,
+    getOrIncrementViewsInternal
 } from "./actions";
 
 export interface SiteInfo {
@@ -52,4 +53,7 @@ export const TenantClient = {
 
     // Payment settings
     savePaymentSettings: savePaymentSettingsInternal,
+
+    // Site statistics / analytics
+    getOrIncrementViews: getOrIncrementViewsInternal
 };
