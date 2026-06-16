@@ -1,0 +1,655 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id               String       @id @default(cuid())
+  name             String?
+  email            String?      @unique
+  phone            String?      @unique
+  emailVerified    DateTime?
+  image            String?
+  password         String?
+  role             Role         @default(user)
+  createdAt        DateTime     @default(now())
+  referralCode     String?      @unique
+  referredById     String?
+  affiliateBalance Decimal      @default(0) @db.Decimal(10, 2)
+  accounts         Account[]
+  commissions      Commission[]
+  coupons          Coupon[]     @relation("AffiliateCoupons")
+  posts            Post[]
+  sessions         Session[]
+  referredBy       User?        @relation("UserAffiliates", fields: [referredById], references: [id])
+  referrals        User[]       @relation("UserAffiliates")
+  withdrawals      Withdrawal[]
+  sites            Site[]       @relation("SiteToUser")
+}
+
+model Site {
+  id                   String               @id @default(cuid())
+  name                 String
+  subdomain            String               @unique
+  customDomain         String?              @unique
+  description          String?
+  logoUrl              String?
+  faviconUrl           String?
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+  customDomainVerified Boolean              @default(false)
+  contactSubmissions   ContactSubmission[]
+  pages                CredBuildPage[]
+  galleryItems         GalleryItem[]
+  mediaFolders         MediaFolder[]
+  mediaItems           MediaItem[]
+  menus                Menu[]
+  orders               Order[]
+  paymentSettings      PaymentSettings?
+  portfolioItems       PortfolioItem[]
+  posts                Post[]
+  products             Product[]
+  siteSettings         SiteSettings?
+  siteStatistics       SiteStatistics?
+  taxonomies           Taxonomy[]
+  testimonials         Testimonial[]
+  users                User[]               @relation("SiteToUser")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Post {
+  id        String     @id @default(cuid())
+  title     String
+  slug      String
+  content   Json?
+  excerpt   String?
+  published Boolean?   @default(false)
+  authorId  String?
+  siteId    String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  imageUrl  String?
+  metaData  MetaData[]
+  author    User?      @relation(fields: [authorId], references: [id])
+  site      Site       @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  seoMeta   SeoMeta?
+  terms     Term[]     @relation("PostToTerm")
+
+  @@unique([siteId, slug])
+}
+
+model Product {
+  id             String      @id @default(cuid())
+  name           String
+  slug           String
+  description    String?
+  price          Decimal
+  originalPrice  Decimal?
+  currency       String?     @default("USD")
+  images         String[]
+  stock          Int?        @default(0)
+  siteId         String
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  isArchived     Boolean     @default(false)
+  variantOptions Json?       @default("[]")
+  variants       Json?       @default("[]")
+  metaData       MetaData[]
+  orderItems     OrderItem[]
+  site           Site        @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  seoMeta        SeoMeta?
+  terms          Term[]      @relation("ProductToTerm")
+
+  @@unique([siteId, slug])
+}
+
+model Order {
+  id                String      @id @default(cuid())
+  customerName      String
+  customerEmail     String
+  customerAddress   String
+  total             Decimal
+  status            String?     @default("pending")
+  siteId            String
+  createdAt         DateTime    @default(now())
+  paymentStatus     String?     @default("pending")
+  fulfillmentStatus String?     @default("unfulfilled")
+  paymentUrl        String?
+  paymentReference  String?
+  paymentMethod     String?
+  vaNumber          String?
+  qrString          String?
+  qrCodeUrl         String?
+  paymentCode       String?
+  site              Site        @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  items             OrderItem[]
+
+  @@index([siteId])
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Decimal
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model PaymentSettings {
+  id                 String   @id @default(cuid())
+  bankName           String
+  accountNumber      String
+  accountHolder      String
+  instructions       String?
+  siteId             String   @unique
+  updatedAt          DateTime @updatedAt
+  currency           String?  @default("USD")
+  duitkuMerchantCode String?
+  duitkuApiKey       String?
+  duitkuSandbox      Boolean  @default(true)
+  site               Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+}
+
+model Testimonial {
+  id         String   @id @default(cuid())
+  quote      String
+  author     String
+  role       String?
+  avatarUrl  String?
+  rating     Int?     @default(5)
+  siteId     String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  isApproved Boolean? @default(false)
+  site       Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@index([siteId])
+}
+
+model SiteSettings {
+  id                           String   @id @default(cuid())
+  siteId                       String   @unique
+  siteName                     String?  @default("My Awesome Site")
+  activeTheme                  String?  @default("default")
+  logoUrl                      String?
+  description                  String?
+  footerAddress                String?
+  footerCopyright              String?
+  footerAboutText              String?
+  socialFacebook               String?
+  socialTwitter                String?
+  socialInstagram              String?
+  socialLinkedin               String?
+  socialWhatsapp               String?
+  socialTelegram               String?
+  socialTiktok                 String?
+  socialYoutube                String?
+  contactEmail                 String?
+  updatedAt                    DateTime @updatedAt
+  brandColor                   String?  @default("#0ea5e9")
+  brandPrimaryColor            String?
+  brandSecondaryColor          String?
+  brandAccentColor             String?
+  brandBackgroundColor         String?
+  brandTextColor               String?
+  brandFontPrimary             String?
+  brandFontSecondary           String?
+  brandFooterText              String?
+  brandSupportEmail            String?
+  headerStyle                  String?  @default("simple")
+  headerBackgroundColor        String?  @default("#0ea5e9")
+  headerTextColor              String?  @default("#ffffff")
+  headerMobileBackgroundColor  String?  @default("#f9fafb")
+  footerBackgroundColor        String?  @default("#0ea5e9")
+  footerTextColor              String?  @default("#ffffff")
+  showCart                     Boolean? @default(false)
+  showFloatingChat             Boolean? @default(false)
+  whatsappNumber               String?
+  seoTitle                     String?
+  seoKeywords                  String?
+  seoImage                     String?
+  faviconUrl                   String?
+  googleSiteVerificationId     String?
+  googleAnalyticsId            String?
+  tagline                      String?
+  allowRegistration            Boolean? @default(true)
+  themeConfig                  Json?    @default("{}")
+  currency                     String?  @default("IDR")
+  enabledPosts                 Boolean? @default(false)
+  enabledPortfolio             Boolean? @default(false)
+  enabledTestimonials          Boolean? @default(false)
+  enabledGallery               Boolean? @default(false)
+  enabledProducts              Boolean? @default(false)
+  enabledOrders                Boolean? @default(false)
+  enabledTaxonomies            Boolean? @default(false)
+  enabledInbox                 Boolean? @default(false)
+  enabledCustomers             Boolean? @default(false)
+  footerAddressBackgroundColor String?
+  footerAddressTextColor       String?
+  contactPhone                 String?
+  site                         Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+}
+
+model SiteStatistics {
+  id          String   @id @default(cuid())
+  siteId      String   @unique
+  totalViews  Int?     @default(0)
+  todayViews  Int?     @default(0)
+  lastUpdated DateTime @default(now()) @updatedAt
+  site        Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+}
+
+model Menu {
+  id        String     @id @default(cuid())
+  name      String
+  slug      String
+  siteId    String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  site      Site       @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  items     MenuItem[]
+
+  @@unique([siteId, slug])
+  @@index([siteId])
+}
+
+model MenuItem {
+  id        String   @id @default(cuid())
+  menuId    String
+  label     String
+  url       String
+  order     Int      @default(0)
+  target    String?  @default("_self")
+  parentId  String?
+  createdAt DateTime @default(now())
+  menu      Menu     @relation(fields: [menuId], references: [id], onDelete: Cascade)
+
+  @@index([menuId])
+}
+
+model ContactSubmission {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String?
+  message   String
+  status    String?  @default("new")
+  siteId    String
+  createdAt DateTime @default(now())
+  site      Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@index([siteId])
+}
+
+model GalleryItem {
+  id          String   @id @default(cuid())
+  title       String?
+  url         String
+  description String?
+  siteId      String
+  createdAt   DateTime @default(now())
+  site        Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@index([siteId])
+}
+
+model PortfolioItem {
+  id          String   @id @default(cuid())
+  title       String
+  category    String
+  imageUrl    String
+  link        String?
+  description String?
+  siteId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  site        Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@index([siteId])
+}
+
+model MediaFolder {
+  id        String        @id @default(cuid())
+  name      String
+  parentId  String?
+  siteId    String
+  createdAt DateTime      @default(now())
+  parent    MediaFolder?  @relation("SubFolders", fields: [parentId], references: [id])
+  children  MediaFolder[] @relation("SubFolders")
+  site      Site          @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  items     MediaItem[]
+
+  @@index([siteId])
+  @@index([parentId])
+}
+
+model MediaItem {
+  id          String       @id @default(cuid())
+  filename    String
+  url         String
+  mimeType    String
+  size        Int
+  folderId    String?
+  siteId      String
+  width       Int?
+  height      Int?
+  blurDataURL String?
+  createdAt   DateTime     @default(now())
+  folder      MediaFolder? @relation(fields: [folderId], references: [id])
+  site        Site         @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@index([siteId])
+  @@index([folderId])
+}
+
+model CredBuildPage {
+  id          String     @id @default(cuid())
+  path        String
+  title       String?
+  description String?
+  imageUrl    String?
+  body        String?
+  isPublished Boolean?   @default(true)
+  useBuilder  Boolean?   @default(true)
+  data        Json
+  siteId      String
+  updatedAt   DateTime   @updatedAt
+  createdAt   DateTime   @default(now())
+  site        Site       @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  metaData    MetaData[]
+  seoMeta     SeoMeta?
+  terms       Term[]     @relation("CredBuildPageToTerm")
+
+  @@unique([siteId, path])
+}
+
+model Taxonomy {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String
+  description String?
+  siteId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  site        Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  terms       Term[]
+
+  @@unique([siteId, slug])
+  @@index([siteId])
+}
+
+model Term {
+  id          String          @id @default(cuid())
+  name        String
+  slug        String
+  description String?
+  taxonomyId  String
+  parentId    String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  parent      Term?           @relation("TermToTerm", fields: [parentId], references: [id])
+  children    Term[]          @relation("TermToTerm")
+  taxonomy    Taxonomy        @relation(fields: [taxonomyId], references: [id], onDelete: Cascade)
+  pages       CredBuildPage[] @relation("CredBuildPageToTerm")
+  posts       Post[]          @relation("PostToTerm")
+  products    Product[]       @relation("ProductToTerm")
+
+  @@unique([taxonomyId, slug])
+  @@index([taxonomyId])
+  @@index([parentId])
+}
+
+model MetaData {
+  id        String         @id @default(cuid())
+  key       String
+  value     String?
+  type      String?        @default("string")
+  postId    String?
+  pageId    String?
+  productId String?
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  page      CredBuildPage? @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  post      Post?          @relation(fields: [postId], references: [id], onDelete: Cascade)
+  product   Product?       @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([key])
+  @@index([postId])
+  @@index([pageId])
+  @@index([productId])
+}
+
+model SeoMeta {
+  id          String         @id @default(cuid())
+  title       String?
+  description String?
+  keywords    String?
+  ogImage     String?
+  canonical   String?
+  noIndex     Boolean        @default(false)
+  postId      String?        @unique
+  pageId      String?        @unique
+  productId   String?        @unique
+  updatedAt   DateTime       @updatedAt
+  page        CredBuildPage? @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  post        Post?          @relation(fields: [postId], references: [id], onDelete: Cascade)
+  product     Product?       @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model Plan {
+  id                  String               @id @default(cuid())
+  name                String               @unique
+  description         String?
+  price               Decimal              @db.Decimal(10, 2)
+  priceYearly         Decimal?             @db.Decimal(10, 2)
+  originalPrice       Decimal?             @db.Decimal(10, 2)
+  originalPriceYearly Decimal?             @db.Decimal(10, 2)
+  trialDays           Int                  @default(14)
+  interval            String               @default("month")
+  features            Json?
+  maxPosts            Int?                 @default(-1)
+  maxProducts         Int?                 @default(-1)
+  maxAssets           Int?                 @default(-1)
+  maxTestimonials     Int?                 @default(-1)
+  maxOrders           Int?                 @default(-1)
+  maxSites            Int?                 @default(1)
+  addonSiteBilling    String?              @default("one_time")
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  showInPricing       Boolean              @default(true)
+  transactions        PaymentTransaction[]
+  subscriptions       Subscription[]
+}
+
+model Subscription {
+  id            String    @id @default(cuid())
+  siteId        String
+  planId        String
+  addonSlots    Int       @default(0)
+  status        String    @default("active")
+  startDate     DateTime  @default(now())
+  endDate       DateTime?
+  trialEndsAt   DateTime?
+  trialExtended Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  plan          Plan      @relation(fields: [planId], references: [id])
+
+  @@index([siteId])
+  @@index([planId])
+}
+
+model PaymentTransaction {
+  id               String            @id @default(cuid())
+  siteId           String
+  planId           String
+  amount           Decimal           @db.Decimal(10, 2)
+  addonType        String?
+  addonQuantity    Int               @default(0)
+  status           TransactionStatus @default(pending)
+  paymentMethod    String?
+  proofOfPayment   String?
+  paymentUrl       String?
+  paymentReference String?
+  vaNumber         String?
+  qrString         String?
+  qrCodeUrl        String?
+  paymentCode      String?
+  notes            String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  couponId         String?
+  commissions      Commission[]
+  coupon           Coupon?           @relation(fields: [couponId], references: [id])
+  plan             Plan              @relation(fields: [planId], references: [id])
+
+  @@index([siteId])
+  @@index([planId])
+}
+
+model Coupon {
+  id            String               @id @default(cuid())
+  code          String               @unique
+  discountType  String
+  discountValue Decimal              @db.Decimal(10, 2)
+  affiliateId   String?
+  expiryDate    DateTime?
+  maxUses       Int?
+  usedCount     Int                  @default(0)
+  isActive      Boolean              @default(true)
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  affiliate     User?                @relation("AffiliateCoupons", fields: [affiliateId], references: [id])
+  transactions  PaymentTransaction[]
+}
+
+model PlatformSettings {
+  id                               String   @id @default("global")
+  r2AccountId                      String?
+  r2AccessKeyId                    String?
+  r2SecretAccessKey                String?
+  r2BucketName                     String?
+  r2PublicDomain                   String?
+  r2Endpoint                       String?
+  duitkuMerchantCode               String?
+  duitkuApiKey                     String?
+  duitkuSandbox                    Boolean  @default(true)
+  affiliateCommissionRate          Decimal? @default(20.0) @db.Decimal(5, 2)
+  affiliateRecurringCommission     Boolean  @default(false)
+  affiliateRecurringCommissionRate Decimal? @default(10.0) @db.Decimal(5, 2)
+  aiProvider                       String?
+  aiApiKey                         String?
+  starsenderApiKey                 String?
+  starsenderDeviceKey              String?
+  resendApiKey                     String?
+  emailSenderName                  String?
+  emailSenderAddress               String?
+  updatedAt                        DateTime @updatedAt
+}
+
+model Commission {
+  id            String              @id @default(cuid())
+  userId        String
+  amount        Decimal             @db.Decimal(10, 2)
+  transactionId String?
+  description   String?
+  createdAt     DateTime            @default(now())
+  transaction   PaymentTransaction? @relation(fields: [transactionId], references: [id])
+  user          User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Withdrawal {
+  id            String           @id @default(cuid())
+  userId        String
+  amount        Decimal          @db.Decimal(10, 2)
+  status        WithdrawalStatus @default(pending)
+  bankName      String
+  accountNumber String
+  accountName   String
+  notes         String?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+enum Role {
+  admin
+  owner
+  editor
+  user
+}
+
+enum OrderStatus {
+  pending
+  paid
+  shipped
+  completed
+  cancelled
+}
+
+enum SubscriptionStatus {
+  active
+  expired
+  cancelled
+  past_due
+}
+
+enum TransactionStatus {
+  pending
+  approved
+  rejected
+  cancelled
+}
+
+enum WithdrawalStatus {
+  pending
+  approved
+  rejected
+}

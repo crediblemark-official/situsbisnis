@@ -1,0 +1,44 @@
+name: situsbisnis
+
+services:
+  nextjs-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: situsbisnis
+    restart: unless-stopped
+    environment:
+      # Koneksi database via PgBouncer internal (Port 6432)
+      DATABASE_URL: ${DATABASE_URL}
+
+      # Koneksi langsung ke PostgreSQL internal Dokploy untuk migrasi (Port 5432)
+      DIRECT_URL: ${DIRECT_URL}
+
+      # Redis URL diambil dari env Dokploy
+      REDIS_URL: ${REDIS_URL}
+
+      # Variabel lingkungan bawaan dari .env Anda (diambil secara dinamis oleh Dokploy)
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      NEXTAUTH_URL: ${NEXTAUTH_URL}
+      NEXTAUTH_URL_INTERNAL: ${NEXTAUTH_URL_INTERNAL}
+      NEXTAUTH_TRUST_HOST: ${NEXTAUTH_TRUST_HOST}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
+      NEXT_PUBLIC_ROOT_DOMAIN: ${NEXT_PUBLIC_ROOT_DOMAIN}
+      NEXT_PUBLIC_SERVER_IP: ${NEXT_PUBLIC_SERVER_IP}
+      NODE_ENV: production
+    networks:
+      - dokploy-network
+    labels:
+      - "traefik.enable=true"
+      # Wildcard subdomain router (Traefik v3 Go regex syntax)
+      - "traefik.http.routers.situsbisnis-router.rule=Host(`situsbisnis.com`) || Host(`www.situsbisnis.com`) || HostRegexp(`^.+\\.situsbisnis\\.com$`)"
+      - "traefik.http.routers.situsbisnis-router.entrypoints=websecure"
+      - "traefik.http.routers.situsbisnis-router.tls=true"
+      - "traefik.http.routers.situsbisnis-router.priority=1"
+      # CRITICAL: Explicitly point this router to our service (required in Traefik v3 when multiple routers exist)
+      - "traefik.http.routers.situsbisnis-router.service=situsbisnis-service"
+      - "traefik.http.services.situsbisnis-service.loadbalancer.server.port=3000"
+
+networks:
+  dokploy-network:
+    external: true # Menggunakan jaringan internal Dokploy (dokploy-network)

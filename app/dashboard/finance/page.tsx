@@ -1,0 +1,97 @@
+import React from "react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { db } from "@/lib/core/db";
+import UserFinanceView from "./UserFinanceView";
+import { redirect } from "next/navigation";
+
+export const dynamic = "force-dynamic";
+
+export default async function FinanceDashboardPage() {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) redirect("/login");
+
+    const userId = session.user.id;
+
+    // 1. Fetch user data (balance, commissions, withdrawals)
+    const user = await db.user.findUnique({
+        where: { id: userId },
+        select: {
+            id: true,
+            affiliateBalance: true,
+            commissions: {
+                orderBy: { createdAt: "desc" },
+                take: 100
+            },
+            withdrawals: {
+                orderBy: { createdAt: "desc" },
+                take: 100
+            }
+        }
+    });
+
+    if (!user) redirect("/login");
+
+    // 2. Query all sites owned by this user along with their payment settings
+    const userSites = await db.site.findMany({
+        where: { users: { some: { id: userId } } },
+        include: { paymentSettings: true }
+    });
+
+    // 3. Filter sites that are using the platform's payment gateway fallback
+    const fallbackSites = userSites.filter(site => {
+        return !site.paymentSettings?.duitkuMerchantCode || !site.paymentSettings?.duitkuApiKey;
+    });
+    const fallbackSiteIds = fallbackSites.map(site => site.id);
+
+    // 4. Query all paid automated orders from these platform fallback sites
+    const paidFallbackOrders = await db.order.findMany({
+        where: {
+            siteId: { in: fallbackSiteIds },
+            paymentStatus: "paid",
+            paymentMethod: { notIn: ["manual", "whatsapp"] }
+        },
+        orderBy: { createdAt: "desc" },
+        include: {
+            site: {
+                select: { name: true }
+            }
+        }
+    });
+
+    // 5. Self-Healing Balance Synchronization:
+    // Recalculate what the user's balance should be (Commissions + Platform Gateway Sales - Withdrawals)
+    // and sync it with the database if it doesn't match or is lower due to pre-existing transactions.
+    const totalEarnedCommissions = user.commissions.reduce((sum, com) => sum + Number(com.amount), 0);
+    const totalEarnedSales = paidFallbackOrders.reduce((sum, order) => sum + Number(order.total), 0);
+    const totalWithdrawals = user.withdrawals.reduce((sum, w) => sum + Number(w.amount), 0);
+
+    const expectedBalance = totalEarnedCommissions + totalEarnedSales - totalWithdrawals;
+    let finalBalance = Number(user.affiliateBalance);
+
+    if (finalBalance < expectedBalance) {
+        await db.user.update({
+            where: { id: userId },
+            data: { affiliateBalance: expectedBalance }
+        });
+        finalBalance = expectedBalance;
+    }
+
+    // 6. Map the paid fallback orders into standard sale transaction records for frontend rendering
+    const sales = paidFallbackOrders.map(order => ({
+        id: order.id,
+        amount: Number(order.total),
+        description: `Penjualan Toko: ${order.site.name} (Pesanan #${order.id.slice(0, 8).toUpperCase()})`,
+        createdAt: order.createdAt,
+        siteName: order.site.name
+    }));
+
+    // Serialize all values for the client component
+    const serializedUser = JSON.parse(JSON.stringify({
+        ...user,
+        affiliateBalance: finalBalance,
+        sales
+    }));
+
+    return <UserFinanceView user={serializedUser} />;
+}

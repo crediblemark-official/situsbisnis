@@ -1,0 +1,38 @@
+{
+  "forbidden": [
+    {
+      "name": "no-direct-internal-imports",
+      "comment": "Mencegah satu modul mengimpor bagian internal dari modul lain secara langsung. Impor harus lewat client/kontrak.",
+      "severity": "error",
+      "from": {
+        "path": "^lib/modules/([^/]+)/"
+      },
+      "to": {
+        "path": "^lib/modules/([^/]+)/internal/",
+        "pathNot": "^lib/modules/$1/"
+      }
+    },
+    {
+      "name": "no-outside-internal-imports",
+      "comment": "Mencegah kode di luar folder modules (seperti app/api, components, dll.) mengimpor bagian internal modul secara langsung. Harus lewat client/kontrak.",
+      "severity": "error",
+      "from": {
+        "pathNot": "^lib/modules/"
+      },
+      "to": {
+        "path": "^lib/modules/[^/]+/internal/"
+      }
+    }
+  ],
+  "options": {
+    "doNotFollow": "node_modules",
+    "tsPreCompilationDeps": true,
+    "tsConfig": {
+      "fileName": "tsconfig.json"
+    },
+    "enhancedResolveOptions": {
+      "exportsFields": ["exports"],
+      "conditionNames": ["import", "require", "node", "default"]
+    }
+  }
+}

@@ -1,0 +1,37 @@
+# CODEOWNERS
+# These owners will be requested for review on PRs that touch these files
+
+# Core team owns all code by default
+* @crediblemark/core
+
+# Specific ownership patterns
+/app/ @crediblemark/frontend
+/components/ @crediblemark/frontend
+/lib/ @crediblemark/backend
+/lib/api/ @crediblemark/backend
+/lib/core/ @crediblemark/backend
+/lib/domains/ @crediblemark/backend
+/lib/services/ @crediblemark/backend
+
+# Database schema owned by backend team
+/prisma/ @crediblemark/backend
+
+# Tests owned by QA team
+/tests/ @crediblemark/qa
+
+# CI/CD owned by DevOps
+/.github/ @crediblemark/devops
+/Dockerfile @crediblemark/devops
+/docker-compose.yml @crediblemark/devops
+
+# Configuration files
+/next.config.js @crediblemark/frontend @crediblemark/devops
+/tsconfig.json @crediblemark/frontend
+/eslint.config.mjs @crediblemark/frontend
+/vitest.config.ts @crediblemark/qa
+/playwright.config.ts @crediblemark/qa
+
+# Documentation
+/docs/ @crediblemark/core
+/README.md @crediblemark/core
+/CODEBASE_ANALYSIS.md @crediblemark/core

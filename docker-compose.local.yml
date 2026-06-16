@@ -1,0 +1,98 @@
+name: situsbisnis-local
+
+services:
+  # 1. Database PostgreSQL Lokal
+  postgres-local:
+    image: postgres:16-alpine
+    container_name: situsbisnis-postgres-local
+    restart: unless-stopped
+    ports:
+      - "5432:5432" # Mengekspos database lokal agar bisa diakses dari aplikasi luar/Prisma Studio
+    environment:
+      POSTGRES_USER: team-situsbisnis-local
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: data-situsbisnis-local
+    volumes:
+      - postgres_data_local:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U team-situsbisnis-local -d data-situsbisnis-local"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - local-network
+
+  # 2. Redis Lokal
+  redis-local:
+    image: redis:7-alpine
+    container_name: situsbisnis-redis-local
+    restart: unless-stopped
+    volumes:
+      - redis_data_local:/data
+    networks:
+      - local-network
+
+  # 3. PgBouncer Lokal (Menghubung ke postgres-local)
+  pgbouncer-local:
+    image: edoburu/pgbouncer:latest
+    container_name: situsbisnis-pgbouncer-local
+    restart: unless-stopped
+    ports:
+      - "6432:6432" # Mengekspos PgBouncer lokal ke port 6432 laptop Anda
+    environment:
+      DB_HOST: postgres-local
+      DB_PORT: 5432
+      DB_USER: team-situsbisnis-local
+      DB_PASSWORD: password123
+      DB_NAME: data-situsbisnis-local
+      POOL_MODE: transaction
+      MAX_CLIENT_CONN: 1000
+      DEFAULT_POOL_SIZE: 20
+      AUTH_TYPE: trust
+    depends_on:
+      postgres-local:
+        condition: service_healthy
+    networks:
+      - local-network
+
+  # 4. Aplikasi Next.js Lokal
+  nextjs-app-local:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: situsbisnis-nextjs-local
+    restart: unless-stopped
+    ports:
+      - "3000:3000" # Akses aplikasi di http://localhost:3000
+    environment:
+      # Terhubung ke PgBouncer lokal
+      DATABASE_URL: postgresql://team-situsbisnis-local:password123@pgbouncer-local:5432/data-situsbisnis-local?pgbouncer=true
+      
+      # Terhubung langsung ke PostgreSQL lokal untuk migrasi otomatis
+      DIRECT_URL: postgresql://team-situsbisnis-local:password123@postgres-local:5432/data-situsbisnis-local
+      
+      # Terhubung ke Redis lokal
+      REDIS_URL: redis://redis-local:6379
+      
+      # Variabel sesi dan testing Next.js lokal
+      NEXTAUTH_SECRET: local-development-secret-key-at-least-32-characters-long
+      NEXTAUTH_URL: http://localhost:3000
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      NEXT_PUBLIC_ROOT_DOMAIN: localhost:3000
+      NODE_ENV: production
+    depends_on:
+      - postgres-local
+      - redis-local
+      - pgbouncer-local
+    networks:
+      - local-network
+
+volumes:
+  postgres_data_local:
+    driver: local
+  redis_data_local:
+    driver: local
+
+networks:
+  local-network:
+    driver: bridge # Otomatis membuat jaringan lokal lokal-network (tidak butuh setup manual)

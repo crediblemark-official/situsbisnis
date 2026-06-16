@@ -1,0 +1,11 @@
+{
+  "css.lint.unknownAtRules": "ignore",
+  "json.schemas": [
+    {
+      "fileMatch": ["launch.json"],
+      "schema": {
+        "type": "object"
+      }
+    }
+  ]
+}

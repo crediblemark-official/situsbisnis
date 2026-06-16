@@ -1,0 +1,45 @@
+name: Staging Deployment
+
+on:
+  push:
+    branches: [develop]
+
+jobs:
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: bun run prisma:generate
+
+      - name: Run Database Migrations
+        run: bun run prisma:deploy
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Build
+        run: bun run build
+
+      - name: Deploy to Staging
+        env:
+          STAGING_URL: ${{ secrets.STAGING_URL }}
+        run: |
+          echo "Deploying to staging: $STAGING_URL"
+          # Add staging deployment commands
+
+      - name: Run Smoke Tests
+        run: |
+          sleep 10
+          curl -f $STAGING_URL || exit 1

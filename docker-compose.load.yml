@@ -1,0 +1,14 @@
+services:
+  # Service untuk k6 Load Tester
+  k6:
+    image: grafana/k6:latest
+    volumes:
+      - ./tests/load:/tests
+    environment:
+      - TARGET_URL=${TARGET_URL:-http://host.docker.internal:3000}
+      - SITE_ID=${SITE_ID:-cmptx3nj9002m6e17np8bytlk}
+      - STRESS_TEST=${STRESS_TEST:-false}
+    entrypoint: ["k6", "run", "/tests/k6-script.js"]
+    user: "root"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

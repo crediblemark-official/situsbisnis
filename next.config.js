@@ -1,0 +1,122 @@
+import { withSentryConfig } from "@sentry/nextjs";
+import path from "path";
+
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+const appHostname = new URL(appUrl).hostname;
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: 'standalone',
+  reactStrictMode: true,
+  transpilePackages: ["lucide-react", "@crediblemark/build-ui", "@crediblemark/buayar", "@crediblemark/build-ai", "@crediblemark/starsender"],
+  typescript: {
+    // Type checking is enforced in production builds
+  },
+  images: {
+    // Aktifkan optimasi — sharp sudah terinstall di package.json
+    unoptimized: false,
+    formats: ['image/avif', 'image/webp'],
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "localhost",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "**.r2.dev",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.univedpress.id",
+      },
+      {
+        protocol: "https",
+        hostname: "ui-avatars.com",
+      },
+      {
+        protocol: "https",
+        hostname: "i.pravatar.cc",
+      },
+      {
+        protocol: "http",
+        hostname: appHostname,
+      },
+      {
+        protocol: "https",
+        hostname: "file.situsbisnis.com",
+      },
+      {
+        protocol: "https",
+        hostname: "via.placeholder.com",
+      },
+      {
+        protocol: "https",
+        hostname: "placehold.co",
+      },
+      {
+        protocol: "https",
+        hostname: appHostname,
+      },
+    ],
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+  },
+  productionBrowserSourceMaps: false,
+  serverExternalPackages: ["@prisma/client"],
+  experimental: {
+    optimizePackageImports: [
+      "lucide-react",
+      "@crediblemark/build",
+      "@tiptap/react",
+      "@tiptap/starter-kit",
+      "@aws-sdk/client-s3",
+      "zod",
+      "clsx",
+      "tailwind-merge",
+      "react-hot-toast"
+    ],
+    // Naikkan stale time agar browser tidak terlalu sering re-fetch
+    staleTimes: { dynamic: 300, static: 3600 },
+    webpackMemoryOptimizations: true,
+    serverSourceMaps: false
+  },
+  turbopack: {
+    root: process.cwd(),
+    resolveAlias: {
+      "lucide-react/dynamicIconImports": "lucide-react/dynamicIconImports.mjs",
+    },
+  },
+  onDemandEntries: {
+    maxInactiveAge: 25 * 1000,
+    pagesBufferLength: 2,
+  },
+  webpack: (config, { isServer }) => {
+    config.watchOptions = {
+      ignored: ["**/node_modules", "**/public", "**/.git", "**/.next"],
+    };
+
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@crediblemark/build': path.resolve('./node_modules/@crediblemark/build'),
+    };
+
+    if (!isServer) {
+      config.resolve.alias['react'] = path.resolve('./node_modules/react');
+      config.resolve.alias['react-dom'] = path.resolve('./node_modules/react-dom');
+    }
+
+    return config;
+  },
+};
+
+export default withSentryConfig(nextConfig, {
+  org: process.env.SENTRY_ORG || "",
+  project: process.env.SENTRY_PROJECT || "",
+  silent: true,
+  widenClientFileUpload: true,
+  hideSourceMaps: true,
+});

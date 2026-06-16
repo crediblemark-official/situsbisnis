@@ -1,0 +1,97 @@
+"use client";
+
+import React from "react";
+import { ExternalLink, Settings, PenTool, Layout } from "lucide-react";
+import Link from "next/link";
+
+interface SiteCardProps {
+    site: any;
+    rootDomain: string;
+    onOpenSettings: (_site: any) => void;
+}
+
+export function SiteCard({ site, rootDomain, onOpenSettings }: SiteCardProps) {
+    const sub = site.subscriptions[0];
+    const planName = sub?.plan?.name || "Free";
+    const isVerified = site.customDomainVerified;
+    const domain = (site.customDomain && isVerified) ? site.customDomain : `${site.subdomain}.${rootDomain}`;
+    
+    const protocol = rootDomain.includes("localhost") ? "http" : "https";
+    const siteUrl = `${protocol}://${domain}`;
+    
+    const targetDashboardUrl = `${protocol}://${domain}/dashboard`;
+    const targetEditorUrl = `${protocol}://${domain}/credbuild`;
+    
+    const dashboardUrl = `/api/auth/bridge?target=${encodeURIComponent(targetDashboardUrl)}`;
+    const editorUrl = `/api/auth/bridge?target=${encodeURIComponent(targetEditorUrl)}`;
+
+    return (
+        <div className="group bg-card border border-border rounded-md overflow-hidden shadow-sm hover:border-primary/40 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5 flex flex-col">
+            {/* Preview Area / Header */}
+            <div className="bg-muted/20 border-b border-border/50 py-3 px-4 flex items-center justify-between relative overflow-hidden">
+                <h3 className="text-lg font-black text-foreground tracking-tighter leading-none group-hover:text-primary transition-colors">{site.name}</h3>
+                <div className="p-1.5 bg-background/80 backdrop-blur-xl border border-border rounded-md opacity-0 group-hover:opacity-100 transition-all transform translate-y-1 group-hover:translate-y-0">
+                    <Link href={siteUrl} target="_blank">
+                        <ExternalLink size={12} className="text-muted-foreground hover:text-primary transition-colors" />
+                    </Link>
+                </div>
+            </div>
+
+            {/* Content Stats */}
+            <div className="p-4 space-y-3 flex-grow">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                        <span className="text-[8px] font-black text-primary uppercase bg-primary/10 border border-primary/20 px-2 py-1 rounded tracking-widest">
+                            {site.subscriptions[0]?.trialEndsAt && new Date(site.subscriptions[0].trialEndsAt) > new Date() 
+                                ? "Trial Period" 
+                                : planName}
+                        </span>
+                        {site.customDomain && (
+                            <span className={`text-[8px] font-black uppercase px-2 py-1 rounded tracking-widest border ${
+                                isVerified 
+                                    ? 'bg-green-500/10 text-green-500 border-green-500/20' 
+                                    : 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20'
+                            }`}>
+                                {isVerified ? "Domain Aktif" : "Domain Pending"}
+                            </span>
+                        )}
+                    </div>
+                    <span className="text-[8px] text-muted-foreground uppercase font-black tracking-[0.2em] opacity-40">
+                        Status Aktif
+                    </span>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2 mt-1">
+                    <a
+                        href={editorUrl}
+                        className="flex flex-col items-center justify-center p-2.5 rounded-md border border-border bg-muted/5 hover:bg-primary/5 hover:border-primary/20 transition-all group/item space-y-1"
+                    >
+                        <div className="w-8 h-8 rounded bg-background border border-border flex items-center justify-center group-hover/item:border-primary/30 transition-all">
+                            <PenTool size={14} className="text-muted-foreground group-hover/item:text-primary transition-colors" />
+                        </div>
+                        <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest group-hover/item:text-primary transition-colors">Editor</span>
+                    </a>
+                    <a
+                        href={dashboardUrl}
+                        className="flex flex-col items-center justify-center p-2.5 rounded-md border border-border bg-muted/5 hover:bg-primary/5 hover:border-primary/20 transition-all group/item space-y-1"
+                    >
+                        <div className="w-8 h-8 rounded bg-background border border-border flex items-center justify-center group-hover/item:border-primary/30 transition-all">
+                            <Layout size={14} className="text-muted-foreground group-hover/item:text-primary transition-colors" />
+                        </div>
+                        <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest group-hover/item:text-primary transition-colors">Masuk</span>
+                    </a>
+                    <button
+                        type="button"
+                        onClick={() => onOpenSettings(site)}
+                        className="flex flex-col items-center justify-center p-2.5 rounded-md border border-border bg-muted/5 hover:bg-primary/5 hover:border-primary/20 transition-all group/item space-y-1 outline-none"
+                    >
+                        <div className="w-8 h-8 rounded bg-background border border-border flex items-center justify-center group-hover/item:border-primary/30 transition-all">
+                            <Settings size={14} className="text-muted-foreground group-hover/item:text-primary transition-colors" />
+                        </div>
+                        <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest group-hover/item:text-primary transition-colors">Domain</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}

@@ -1,0 +1,156 @@
+import { getSiteSettings, updateSiteSettings } from "@/lib/settings/site";
+import { getApiContext, apiResponse, apiError, validateBody } from "@/lib/api/utils";
+import { z } from "zod";
+import { db } from "@/lib/core/db";
+
+export const dynamic = "force-dynamic";
+
+const settingsSchema = z.object({
+    siteName: z.string().min(1, "Site name is required").optional().nullable(),
+    tagline: z.string().optional().nullable(),
+    description: z.string().optional().nullable(),
+    customDomain: z.string().optional().nullable(),
+    contactEmail: z.string().email("Invalid email address").optional().nullable().or(z.literal("")).or(z.literal(null)),
+    brandColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid hex color").optional().nullable(),
+    brandPrimaryColor: z.string().optional().nullable(),
+    brandSecondaryColor: z.string().optional().nullable(),
+    brandAccentColor: z.string().optional().nullable(),
+    brandBackgroundColor: z.string().optional().nullable(),
+    brandTextColor: z.string().optional().nullable(),
+    brandFontPrimary: z.string().optional().nullable(),
+    brandFontSecondary: z.string().optional().nullable(),
+    brandFooterText: z.string().optional().nullable(),
+    brandSupportEmail: z.string().optional().nullable(),
+    logoUrl: z.string().optional().nullable(),
+    logoDisplayMode: z.string().optional().nullable(),
+    faviconUrl: z.string().optional().nullable(),
+    headerStyle: z.string().optional().nullable(),
+    headerBackgroundColor: z.string().optional().nullable(),
+    headerTextColor: z.string().optional().nullable(),
+    footerCopyright: z.string().optional().nullable(),
+    footerAddress: z.string().optional().nullable(),
+    footerAboutText: z.string().optional().nullable(),
+    footerBackgroundColor: z.string().optional().nullable(),
+    footerTextColor: z.string().optional().nullable(),
+    footerAddressBackgroundColor: z.string().optional().nullable(),
+    footerAddressTextColor: z.string().optional().nullable(),
+    activeTheme: z.string().optional().nullable(),
+    showCart: z.boolean().optional().nullable(),
+    showFloatingChat: z.boolean().optional().nullable(),
+    whatsappNumber: z.string().optional().nullable(),
+    googleAnalyticsId: z.string().optional().nullable(),
+    googleSiteVerificationId: z.string().optional().nullable(),
+    metaPixelId: z.string().optional().nullable(),
+    tiktokPixelId: z.string().optional().nullable(),
+    googleTagManagerId: z.string().optional().nullable(),
+    seoTitle: z.string().optional().nullable(),
+    seoKeywords: z.string().optional().nullable(),
+    seoImage: z.string().optional().nullable(),
+    socialFacebook: z.string().optional().nullable(),
+    socialTwitter: z.string().optional().nullable(),
+    socialInstagram: z.string().optional().nullable(),
+    socialLinkedin: z.string().optional().nullable(),
+    socialWhatsapp: z.string().optional().nullable(),
+    socialTelegram: z.string().optional().nullable(),
+    socialTiktok: z.string().optional().nullable(),
+    socialYoutube: z.string().optional().nullable(),
+    enabledPosts: z.boolean().optional().nullable(),
+    enabledPortfolio: z.boolean().optional().nullable(),
+    enabledTestimonials: z.boolean().optional().nullable(),
+    enabledGallery: z.boolean().optional().nullable(),
+    enabledProducts: z.boolean().optional().nullable(),
+    enabledOrders: z.boolean().optional().nullable(),
+    enabledWhatsappCheckout: z.boolean().optional().nullable(),
+    enabledTaxonomies: z.boolean().optional().nullable(),
+    enabledInbox: z.boolean().optional().nullable(),
+    enabledCustomers: z.boolean().optional().nullable(),
+    // Tambahkan konfigurasi mata uang global toko
+    currency: z.string().optional().nullable(),
+});
+
+export async function GET() {
+    try {
+        const { session, siteId } = await getApiContext(undefined, { requireSite: false, isPublic: true });
+        const settings = await getSiteSettings(siteId || undefined);
+        if (session && siteId) {
+            const [site, subscription, allPlans] = await Promise.all([
+                db.site.findUnique({
+                    where: { id: siteId },
+                    select: { customDomain: true, customDomainVerified: true }
+                }),
+                db.subscription.findFirst({
+                    where: { siteId, status: "active" },
+                    include: { plan: true },
+                    orderBy: { createdAt: "desc" }
+                }),
+                db.plan.findMany({
+                    orderBy: { price: "asc" }
+                })
+            ]);
+
+            const activePlanName = subscription?.plan?.name || allPlans.find(p => Number(p.price) === 0)?.name || "Free";
+            const activePlanPrice = subscription?.plan?.price ? Number(subscription.plan.price) : 0;
+
+            return apiResponse({ 
+                ...settings, 
+                customDomain: site?.customDomain,
+                customDomainVerified: site?.customDomainVerified,
+                plan: activePlanName,
+                isTrial: subscription?.trialEndsAt ? new Date(subscription.trialEndsAt) > new Date() : false,
+                trialEndsAt: subscription?.trialEndsAt,
+                planPrice: activePlanPrice,
+                allPlans: allPlans.map(p => ({
+                    id: p.id,
+                    name: p.name,
+                    price: Number(p.price)
+                })),
+                planFeatures: {
+                    ...(subscription?.plan?.features as any || {}),
+                    maxPosts: subscription?.plan?.maxPosts,
+                    maxAssets: subscription?.plan?.maxAssets,
+                    maxProducts: subscription?.plan?.maxProducts,
+                    maxTestimonials: subscription?.plan?.maxTestimonials,
+                    maxOrders: subscription?.plan?.maxOrders,
+                },
+                maxSites: subscription?.plan?.maxSites || 1
+            });
+        }
+        return apiResponse(settings);
+    } catch (error) {
+        console.error("Error fetching settings:", error);
+        return apiError("Failed to fetch settings");
+    }
+}
+
+async function handleUpdate(req: Request) {
+    try {
+        const { error: authError, status: authStatus, siteId } = await getApiContext(["admin", "owner"], { requireSite: true });
+        if (authError || !siteId) return apiError(authError || "Unauthorized", authStatus);
+
+        const { data, error: vError, details, status: vStatus } = await validateBody(req, settingsSchema);
+        if (vError) return apiError(vError, vStatus, details);
+
+        const { customDomain: _, ...settingsData } = data;
+
+        const updatedSettings = await updateSiteSettings(settingsData, siteId);
+
+        // Fetch current custom domain directly from DB for settings response payload
+        const currentSite = await db.site.findUnique({
+            where: { id: siteId },
+            select: { customDomain: true }
+        });
+
+        return apiResponse({ ...updatedSettings, customDomain: currentSite?.customDomain });
+    } catch (error) {
+        console.error("Error updating settings:", error);
+        return apiError("Failed to update settings");
+    }
+}
+
+export async function PATCH(req: Request) {
+    return handleUpdate(req);
+}
+
+export async function PUT(req: Request) {
+    return handleUpdate(req);
+}

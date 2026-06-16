@@ -1,0 +1,3557 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "exportedAt": "2026-05-28T07:34:51.279Z",
+    "generator": "SitusBisnis Backup Engine"
+  },
+  "data": {
+    "plans": [
+      {
+        "id": "cmoy7zm1a0000j20j88ablncm",
+        "name": "Free",
+        "description": "Paket gratis selamanya untuk mencoba fitur dasar kami.",
+        "price": "0",
+        "priceYearly": null,
+        "originalPrice": "0",
+        "originalPriceYearly": "0",
+        "trialDays": 0,
+        "interval": "month",
+        "features": {
+          "hasBlog": false,
+          "hasCart": false,
+          "hasInbox": false,
+          "hasOrders": false,
+          "hasGallery": false,
+          "hasProducts": false,
+          "hasPortfolio": false,
+          "hasTaxonomies": false,
+          "addonSitePrice": 0,
+          "hasCustomDomain": false,
+          "hasTestimonials": false
+        },
+        "maxPosts": -1,
+        "maxProducts": -1,
+        "maxAssets": -1,
+        "maxTestimonials": -1,
+        "maxOrders": -1,
+        "maxSites": -1,
+        "addonSiteBilling": "one_time",
+        "createdAt": "2026-05-09T10:47:34.990Z",
+        "updatedAt": "2026-05-28T04:32:03.453Z",
+        "showInPricing": false
+      },
+      {
+        "id": "cmoxs0xd80001iexi3fqb19qy",
+        "name": "Pro",
+        "description": "Solusi profesional untuk bisnis yang sedang berkembang.",
+        "price": "99000",
+        "priceYearly": "999000",
+        "originalPrice": "150000",
+        "originalPriceYearly": "3000000",
+        "trialDays": 14,
+        "interval": "month",
+        "features": {
+          "hasBlog": true,
+          "hasCart": true,
+          "hasInbox": true,
+          "hasOrders": true,
+          "hasGallery": true,
+          "hasProducts": true,
+          "hasPortfolio": true,
+          "hasTaxonomies": true,
+          "addonSitePrice": 50000,
+          "hasCustomDomain": true,
+          "hasTestimonials": true
+        },
+        "maxPosts": 10,
+        "maxProducts": 10,
+        "maxAssets": 50,
+        "maxTestimonials": 10,
+        "maxOrders": -1,
+        "maxSites": 1,
+        "addonSiteBilling": "recurring",
+        "createdAt": "2026-05-09T03:20:42.476Z",
+        "updatedAt": "2026-05-28T04:32:03.673Z",
+        "showInPricing": true
+      },
+      {
+        "id": "cmoxs0xju0002iexin4dsottn",
+        "name": "Agency",
+        "description": "Skalabilitas tanpa batas untuk korporasi dan agensi.",
+        "price": "450000",
+        "priceYearly": "4999000",
+        "originalPrice": "700000",
+        "originalPriceYearly": "8400000",
+        "trialDays": 14,
+        "interval": "month",
+        "features": {
+          "hasBlog": true,
+          "hasCart": true,
+          "hasInbox": true,
+          "hasOrders": true,
+          "hasGallery": true,
+          "hasProducts": true,
+          "hasPortfolio": true,
+          "hasTaxonomies": true,
+          "addonSitePrice": 50000,
+          "hasCustomDomain": true,
+          "hasTestimonials": true
+        },
+        "maxPosts": -1,
+        "maxProducts": -1,
+        "maxAssets": -1,
+        "maxTestimonials": -1,
+        "maxOrders": -1,
+        "maxSites": -1,
+        "addonSiteBilling": "recurring",
+        "createdAt": "2026-05-09T03:20:42.714Z",
+        "updatedAt": "2026-05-28T04:32:03.783Z",
+        "showInPricing": true
+      }
+    ],
+    "users": [
+      {
+        "id": "cmoxpl9gz0000i1ywiafjjek9",
+        "name": "Rasyiqi",
+        "email": "info.rasyiqi@gmail.com",
+        "phone": null,
+        "emailVerified": null,
+        "image": null,
+        "password": "$2b$10$Aq.m/co9bbGAYkJfw4QHzeFyccQkxBFcav9p2MgfHdKjNvhmP8k5.",
+        "role": "owner",
+        "createdAt": "2026-05-09T02:12:32.435Z",
+        "referralCode": null,
+        "referredById": null,
+        "affiliateBalance": "0"
+      },
+      {
+        "id": "cmozgye48000052uk9e7fquyj",
+        "name": "Udin",
+        "email": "propersobat@gmail.com",
+        "phone": null,
+        "emailVerified": null,
+        "image": null,
+        "password": "$2b$10$GoFxbx3FjSrjP55J5CNGpexqPkEFLSu8rpz8imxT9kignS137p4P.",
+        "role": "owner",
+        "createdAt": "2026-05-10T07:46:20.793Z",
+        "referralCode": null,
+        "referredById": null,
+        "affiliateBalance": "0"
+      },
+      {
+        "id": "cmp3tvljo0000y7pdcm49bimr",
+        "name": "Imam Junaidi",
+        "email": "karyabaktimakmur@gmail.com",
+        "phone": null,
+        "emailVerified": null,
+        "image": null,
+        "password": "$2b$10$FI7dH/hnFpVqaFZbNtCjpeFcNOgX36r7gu35jdXlzksU4r6tJ13Iu",
+        "role": "owner",
+        "createdAt": "2026-05-13T08:59:10.164Z",
+        "referralCode": null,
+        "referredById": null,
+        "affiliateBalance": "0"
+      },
+      {
+        "id": "cmp70ndc60000kq7s9pcctck3",
+        "name": "Afton ",
+        "email": "afton.capital@gmail.com",
+        "phone": null,
+        "emailVerified": null,
+        "image": null,
+        "password": "$2b$10$hlRsX4ZQQfc8RWvvN71X0eGMGvBE5nL5SIgz3YAP6SxE47qg5P0aO",
+        "role": "owner",
+        "createdAt": "2026-05-15T14:32:02.118Z",
+        "referralCode": null,
+        "referredById": null,
+        "affiliateBalance": "0"
+      },
+      {
+        "id": "cmoxs0zgf0004iexisggle2om",
+        "name": "Platform Administrator",
+        "email": "admin@situsbisnis.com",
+        "phone": null,
+        "emailVerified": null,
+        "image": null,
+        "password": "$2b$10$epMAc5QKH9/5SFlKgwvLhe3qTXpiWp2jk.M41CIZnHKS3RXm5JV2K",
+        "role": "admin",
+        "createdAt": "2026-05-09T03:20:45.183Z",
+        "referralCode": null,
+        "referredById": null,
+        "affiliateBalance": "0"
+      },
+      {
+        "id": "cmpdv4h9w0000eip200c1q042",
+        "name": "Wafa Alaudin ",
+        "email": "wafaalaudin91@gmail.com",
+        "phone": null,
+        "emailVerified": null,
+        "image": null,
+        "password": "$2b$10$MV33zAMwBuOFSSXglamuMOsOeVDcoYBz0uDEJyxFDyoqr.wmvdb.e",
+        "role": "owner",
+        "createdAt": "2026-05-20T09:31:45.908Z",
+        "referralCode": null,
+        "referredById": null,
+        "affiliateBalance": "0"
+      },
+      {
+        "id": "cmpfezx6t0000u5f0wagscgri",
+        "name": "Muhammad Syaiful Bahri",
+        "email": "muhammadsyaifulbahri2@gmail.com",
+        "phone": null,
+        "emailVerified": null,
+        "image": null,
+        "password": "$2b$10$uvydEwrPURaXmrrmEUdwhOf/ecAsJxcwDJdfnfixcmZr3O4H4xejW",
+        "role": "admin",
+        "createdAt": "2026-05-21T11:35:51.750Z",
+        "referralCode": "576E6C",
+        "referredById": null,
+        "affiliateBalance": "0"
+      }
+    ],
+    "accounts": [],
+    "sessions": [],
+    "verificationTokens": [],
+    "sites": [
+      {
+        "id": "cmp3twfmn0002y7pd4fu6c51o",
+        "name": "KBM Kreator Yogyakarta",
+        "subdomain": "kbmkreatoryogyakarta",
+        "customDomain": "kbmkreatoryogyakarta.com",
+        "description": "Jasa Desain Cover, Jasa Layout Buku, Jasa Cetak Buku. Partner kreatif terpercaya untuk mewujudkan karya terbaik Anda sejak 2017.\n\n",
+        "logoUrl": "https://file.crediblemark.com/instantweb/1dc7bf9e-4291-4e01-bbb1-a3e94187b6ab-1778754541035-Logo.jpg",
+        "faviconUrl": "https://file.crediblemark.com/instantweb/5feb99b8-69f2-41d3-976c-a2a45b96c3a6-1779000845899-favicon.ico",
+        "createdAt": "2026-05-13T08:59:49.151Z",
+        "updatedAt": "2026-05-19T01:58:18.932Z",
+        "customDomainVerified": false,
+        "userIds": ["cmp3tvljo0000y7pdcm49bimr"]
+      },
+      {
+        "id": "cmozgyxtu00011mbc3naoxywz",
+        "name": "Gerobak jaya",
+        "subdomain": "gerobak",
+        "customDomain": null,
+        "description": null,
+        "logoUrl": null,
+        "faviconUrl": null,
+        "createdAt": "2026-05-10T07:46:46.338Z",
+        "updatedAt": "2026-05-12T02:12:22.303Z",
+        "customDomainVerified": false,
+        "userIds": ["cmozgye48000052uk9e7fquyj"]
+      },
+      {
+        "id": "cmpajs4rs0001ncnzgna0wpo2",
+        "name": "UnivedPress",
+        "subdomain": "univedpress",
+        "customDomain": null,
+        "description": null,
+        "logoUrl": "https://file.crediblemark.com/instantweb/3de4259a-a297-43f3-8b60-631099371682-1779075903047-4b67ec6b-84b7-468d-b60c-65ba9609c02d-LOGO.webp",
+        "faviconUrl": "https://file.crediblemark.com/instantweb/8a59eba3-0841-45c1-83ef-381b9ba4a2bb-1779075965972-icon.webp",
+        "createdAt": "2026-05-18T01:50:55.528Z",
+        "updatedAt": "2026-05-22T01:08:49.732Z",
+        "customDomainVerified": false,
+        "userIds": ["cmp3tvljo0000y7pdcm49bimr", "cmoxpl9gz0000i1ywiafjjek9"]
+      },
+      {
+        "id": "cmpff0ccz0002u5f0rp7dk8aq",
+        "name": "Konghuan",
+        "subdomain": "konghuan",
+        "customDomain": null,
+        "description": null,
+        "logoUrl": null,
+        "faviconUrl": null,
+        "createdAt": "2026-05-21T11:36:11.411Z",
+        "updatedAt": "2026-05-22T03:22:57.526Z",
+        "customDomainVerified": false,
+        "userIds": ["cmpfezx6t0000u5f0wagscgri"]
+      },
+      {
+        "id": "cmoxs0xq50003iexixdm2rkbt",
+        "name": "Situs Bisnis",
+        "subdomain": "admin",
+        "customDomain": null,
+        "description": "Central Platform Administration",
+        "logoUrl": null,
+        "faviconUrl": null,
+        "createdAt": "2026-05-09T03:20:42.941Z",
+        "updatedAt": "2026-05-28T04:32:02.365Z",
+        "customDomainVerified": false,
+        "userIds": ["cmoxs0zgf0004iexisggle2om"]
+      },
+      {
+        "id": "cmp70obn9000111054wyur2q2",
+        "name": "Kanjeng Pentol",
+        "subdomain": "kanjengpentol",
+        "customDomain": null,
+        "description": "Kanjeng Pentol hadir buat kamu yang pengen jajanan enak tanpa bikin dompet ikut pedas. Dengan rasa gurih, kenyal, dan bumbu yang nampol, kami percaya semua orang berhak menikmati pentol dengan kualitas rasa yang “naik kelas”.\n\nHarga Merakyat, Rasa Pejabat —  enak gak harus mahal.",
+        "logoUrl": "https://file.crediblemark.com/instantweb/424f2f25-b0cf-4196-9b81-07a69ac06b49-1778855919613-1000183957.jpg",
+        "faviconUrl": "https://file.crediblemark.com/instantweb/f90be00f-1839-4fb3-9fec-0de6491410b0-1778855731908-1000183956.jpg",
+        "createdAt": "2026-05-15T14:32:46.581Z",
+        "updatedAt": "2026-05-18T15:25:15.269Z",
+        "customDomainVerified": false,
+        "userIds": ["cmp70ndc60000kq7s9pcctck3"]
+      }
+    ],
+    "siteSettings": [
+      {
+        "id": "cmoxs28670000t35akj5181rq",
+        "siteId": "cmoxs0xq50003iexixdm2rkbt",
+        "siteName": "Situs Bisnis",
+        "activeTheme": "default",
+        "logoUrl": null,
+        "description": null,
+        "footerAddress": "JL. RAYA BATANG-BATAN RT. 2 RW. 1 GAPURA TIMUR, GAPURA KAB. SUMENEP JAWA TIMUR",
+        "footerCopyright": null,
+        "footerAboutText": null,
+        "socialFacebook": null,
+        "socialTwitter": null,
+        "socialInstagram": null,
+        "socialLinkedin": null,
+        "socialWhatsapp": null,
+        "socialTelegram": null,
+        "socialTiktok": null,
+        "socialYoutube": null,
+        "contactEmail": "credibilemarkofficial@gmail.com",
+        "updatedAt": "2026-05-28T04:32:02.365Z",
+        "brandColor": "#0ea5e9",
+        "brandPrimaryColor": null,
+        "brandSecondaryColor": null,
+        "brandAccentColor": null,
+        "brandBackgroundColor": null,
+        "brandTextColor": null,
+        "brandFontPrimary": null,
+        "brandFontSecondary": null,
+        "brandFooterText": null,
+        "brandSupportEmail": null,
+        "headerStyle": "simple",
+        "headerBackgroundColor": "#ffffff",
+        "headerTextColor": "111827",
+        "headerMobileBackgroundColor": "#f9fafb",
+        "footerBackgroundColor": "#0ea5e9",
+        "footerTextColor": "#ffffff",
+        "showCart": false,
+        "showFloatingChat": false,
+        "whatsappNumber": "6285183131249",
+        "seoTitle": null,
+        "seoKeywords": null,
+        "seoImage": null,
+        "faviconUrl": null,
+        "googleSiteVerificationId": null,
+        "googleAnalyticsId": null,
+        "tagline": null,
+        "allowRegistration": true,
+        "themeConfig": {},
+        "currency": "IDR",
+        "enabledPosts": false,
+        "enabledPortfolio": false,
+        "enabledTestimonials": false,
+        "enabledGallery": false,
+        "enabledProducts": false,
+        "enabledOrders": false,
+        "enabledTaxonomies": false,
+        "enabledInbox": false,
+        "footerAddressBackgroundColor": null,
+        "footerAddressTextColor": null,
+        "contactPhone": "+6285183131249"
+      },
+      {
+        "id": "cmozgyz3800051mbcym9z0vrg",
+        "siteId": "cmozgyxtu00011mbc3naoxywz",
+        "siteName": "Gerobak jaya",
+        "activeTheme": "default",
+        "logoUrl": null,
+        "description": "Welcome to Gerobak jaya. This site was created with WebInstant.",
+        "footerAddress": null,
+        "footerCopyright": "© 2026 Gerobak jaya. Built with WebInstant.",
+        "footerAboutText": null,
+        "socialFacebook": null,
+        "socialTwitter": null,
+        "socialInstagram": null,
+        "socialLinkedin": null,
+        "socialWhatsapp": null,
+        "socialTelegram": null,
+        "socialTiktok": null,
+        "socialYoutube": null,
+        "contactEmail": null,
+        "updatedAt": "2026-05-12T02:12:21.379Z",
+        "brandColor": "#0ea5e9",
+        "brandPrimaryColor": null,
+        "brandSecondaryColor": null,
+        "brandAccentColor": null,
+        "brandBackgroundColor": null,
+        "brandTextColor": null,
+        "brandFontPrimary": null,
+        "brandFontSecondary": null,
+        "brandFooterText": null,
+        "brandSupportEmail": null,
+        "headerStyle": "simple",
+        "headerBackgroundColor": "#0ea5e9",
+        "headerTextColor": "#ffffff",
+        "headerMobileBackgroundColor": "#f9fafb",
+        "footerBackgroundColor": "#0ea5e9",
+        "footerTextColor": "#ffffff",
+        "showCart": true,
+        "showFloatingChat": false,
+        "whatsappNumber": null,
+        "seoTitle": null,
+        "seoKeywords": null,
+        "seoImage": null,
+        "faviconUrl": null,
+        "googleSiteVerificationId": null,
+        "googleAnalyticsId": null,
+        "tagline": null,
+        "allowRegistration": true,
+        "themeConfig": {
+          "brandColor": "#0ea5e9",
+          "activeTheme": "default",
+          "headerStyle": "simple",
+          "brandTextColor": null,
+          "footerTextColor": "#ffffff",
+          "headerTextColor": "#ffffff",
+          "brandAccentColor": null,
+          "brandFontPrimary": null,
+          "brandPrimaryColor": null,
+          "brandFontSecondary": null,
+          "brandSecondaryColor": null,
+          "brandBackgroundColor": null,
+          "footerBackgroundColor": "#0ea5e9",
+          "headerBackgroundColor": "#0ea5e9"
+        },
+        "currency": "IDR",
+        "enabledPosts": true,
+        "enabledPortfolio": true,
+        "enabledTestimonials": true,
+        "enabledGallery": true,
+        "enabledProducts": true,
+        "enabledOrders": true,
+        "enabledTaxonomies": true,
+        "enabledInbox": true,
+        "footerAddressBackgroundColor": null,
+        "footerAddressTextColor": null,
+        "contactPhone": null
+      },
+      {
+        "id": "cmp70ocvp0005110598r4svlp",
+        "siteId": "cmp70obn9000111054wyur2q2",
+        "siteName": "Kanjeng Pentol",
+        "activeTheme": "default",
+        "logoUrl": null,
+        "description": "Welcome to Kanjeng Pentol. This site was created with WebInstant.",
+        "footerAddress": "📍 Dusun Dasuk Barat, Kabupaten Sumenep\nKanjeng Pentol — Pentol rakyat, rasa naik tahta. 😄",
+        "footerCopyright": "© 2026 Kanjeng Pentol. Built with WebInstant.",
+        "footerAboutText": "Kanjeng Pentol hadir buat nemenin lapar, nongkrong, sampai craving tengah malam. Pentol gurih, kenyal, dan bumbu yang bikin susah berhenti ngunyah. Karena hidup udah cukup rumit, urusan enak biar kami yang ngatur. 😄",
+        "socialFacebook": null,
+        "socialTwitter": null,
+        "socialInstagram": null,
+        "socialLinkedin": null,
+        "socialWhatsapp": null,
+        "socialTelegram": null,
+        "socialTiktok": null,
+        "socialYoutube": null,
+        "contactEmail": "afton.capital@gmail.com",
+        "updatedAt": "2026-05-18T15:25:15.151Z",
+        "brandColor": "#0ea5e9",
+        "brandPrimaryColor": "#D62828",
+        "brandSecondaryColor": "#F77F00",
+        "brandAccentColor": "#FCBF49",
+        "brandBackgroundColor": "#FFF8E8",
+        "brandTextColor": "#2B2B2B",
+        "brandFontPrimary": "Poppins",
+        "brandFontSecondary": "Open Sans",
+        "brandFooterText": null,
+        "brandSupportEmail": null,
+        "headerStyle": "simple",
+        "headerBackgroundColor": "#0ea5e9",
+        "headerTextColor": "#ffffff",
+        "headerMobileBackgroundColor": "#f9fafb",
+        "footerBackgroundColor": "#0ea5e9",
+        "footerTextColor": "#ffffff",
+        "showCart": true,
+        "showFloatingChat": true,
+        "whatsappNumber": "",
+        "seoTitle": "Kanjeng Pentol | Pentol Rakyat, Rasa Naik Tahta 😄",
+        "seoKeywords": "pentol enak pentol pedas pentol viral pentol kenyal pentol murah jajanan pentol",
+        "seoImage": "https://file.crediblemark.com/instantweb/424f2f25-b0cf-4196-9b81-07a69ac06b49-1778855919613-1000183957.jpg",
+        "faviconUrl": null,
+        "googleSiteVerificationId": null,
+        "googleAnalyticsId": null,
+        "tagline": "Harga Merakyat, Rasa Pejabat",
+        "allowRegistration": true,
+        "themeConfig": {
+          "brandColor": "#0ea5e9",
+          "activeTheme": "default",
+          "headerStyle": "simple",
+          "brandTextColor": "#2B2B2B",
+          "footerTextColor": "#ffffff",
+          "headerTextColor": "#ffffff",
+          "brandAccentColor": "#FCBF49",
+          "brandFontPrimary": "Poppins",
+          "brandPrimaryColor": "#D62828",
+          "brandFontSecondary": "Open Sans",
+          "brandSecondaryColor": "#F77F00",
+          "brandBackgroundColor": "#FFF8E8",
+          "footerBackgroundColor": "#0ea5e9",
+          "headerBackgroundColor": "#0ea5e9",
+          "footerAddressTextColor": "#ffffff",
+          "footerAddressBackgroundColor": "#1e293b"
+        },
+        "currency": "IDR",
+        "enabledPosts": true,
+        "enabledPortfolio": true,
+        "enabledTestimonials": true,
+        "enabledGallery": true,
+        "enabledProducts": true,
+        "enabledOrders": false,
+        "enabledTaxonomies": false,
+        "enabledInbox": true,
+        "footerAddressBackgroundColor": "#1e293b",
+        "footerAddressTextColor": "#ffffff",
+        "contactPhone": null
+      },
+      {
+        "id": "cmpajs6330005ncnzaatvwlxa",
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "siteName": "UnivedPress",
+        "activeTheme": "default",
+        "logoUrl": null,
+        "description": "Welcome to UnivedPress. This site was created with Situs Bisnis.",
+        "footerAddress": "Kampus 1: Jl. Meranti Raya No. 32 Sawah Lebar, Kec. Ratu Agung, Kota Bengkulu, Bengkulu 38228.",
+        "footerCopyright": "© 2026 UnivedPress. Built with Situs Bisnis.",
+        "footerAboutText": null,
+        "socialFacebook": null,
+        "socialTwitter": null,
+        "socialInstagram": null,
+        "socialLinkedin": null,
+        "socialWhatsapp": null,
+        "socialTelegram": null,
+        "socialTiktok": null,
+        "socialYoutube": null,
+        "contactEmail": null,
+        "updatedAt": "2026-05-22T01:08:49.286Z",
+        "brandColor": "#0ea5e9",
+        "brandPrimaryColor": "#000000",
+        "brandSecondaryColor": "#ffd700",
+        "brandAccentColor": null,
+        "brandBackgroundColor": null,
+        "brandTextColor": "#ffffff",
+        "brandFontPrimary": "Open Sans",
+        "brandFontSecondary": "Roboto",
+        "brandFooterText": null,
+        "brandSupportEmail": null,
+        "headerStyle": "simple",
+        "headerBackgroundColor": "#000000",
+        "headerTextColor": "#ffffff",
+        "headerMobileBackgroundColor": "#f9fafb",
+        "footerBackgroundColor": "#000000",
+        "footerTextColor": "#ffffff",
+        "showCart": false,
+        "showFloatingChat": false,
+        "whatsappNumber": null,
+        "seoTitle": null,
+        "seoKeywords": null,
+        "seoImage": null,
+        "faviconUrl": null,
+        "googleSiteVerificationId": null,
+        "googleAnalyticsId": null,
+        "tagline": null,
+        "allowRegistration": true,
+        "themeConfig": {
+          "brandColor": "#0ea5e9",
+          "activeTheme": "default",
+          "headerStyle": "simple",
+          "brandTextColor": "#ffffff",
+          "footerTextColor": "#ffffff",
+          "headerTextColor": "#ffffff",
+          "logoDisplayMode": "logo",
+          "brandAccentColor": null,
+          "brandFontPrimary": "Open Sans",
+          "brandPrimaryColor": "#000000",
+          "brandFontSecondary": "Roboto",
+          "brandSecondaryColor": "#ffd700",
+          "brandBackgroundColor": null,
+          "footerBackgroundColor": "#000000",
+          "headerBackgroundColor": "#000000",
+          "footerAddressTextColor": "#000000",
+          "footerAddressBackgroundColor": "#ffd700"
+        },
+        "currency": "IDR",
+        "enabledPosts": false,
+        "enabledPortfolio": false,
+        "enabledTestimonials": true,
+        "enabledGallery": true,
+        "enabledProducts": true,
+        "enabledOrders": false,
+        "enabledTaxonomies": false,
+        "enabledInbox": false,
+        "footerAddressBackgroundColor": "#ffd700",
+        "footerAddressTextColor": "#000000",
+        "contactPhone": null
+      },
+      {
+        "id": "cmp3twgvt0006y7pdqm3ep10h",
+        "siteId": "cmp3twfmn0002y7pd4fu6c51o",
+        "siteName": "KBM Kreator Yogyakarta",
+        "activeTheme": "default",
+        "logoUrl": null,
+        "description": "Welcome to KBM Kreator Yogyakarta. This site was created with WebInstant.",
+        "footerAddress": "Partner Penerbit Buku se-Indonesia",
+        "footerCopyright": "© 2017 KBM Kreator Yogyakarta | Rumah Para Penerbit Indonesia",
+        "footerAboutText": "",
+        "socialFacebook": null,
+        "socialTwitter": null,
+        "socialInstagram": "https://www.instagram.com/kbmkreatoryogyakarta/",
+        "socialLinkedin": null,
+        "socialWhatsapp": null,
+        "socialTelegram": null,
+        "socialTiktok": "https://www.tiktok.com/@kbm.kreator.yogya",
+        "socialYoutube": "https://www.youtube.com/@kbmkreatoryogyakarta",
+        "contactEmail": "karyabaktimakmur@gmail.com",
+        "updatedAt": "2026-05-19T01:58:18.500Z",
+        "brandColor": "#0ea5e9",
+        "brandPrimaryColor": "#20318b",
+        "brandSecondaryColor": "#ffd136",
+        "brandAccentColor": "#ff0000",
+        "brandBackgroundColor": "#20318b",
+        "brandTextColor": "#ffffff",
+        "brandFontPrimary": null,
+        "brandFontSecondary": null,
+        "brandFooterText": null,
+        "brandSupportEmail": null,
+        "headerStyle": "simple",
+        "headerBackgroundColor": "#032e63",
+        "headerTextColor": "#ffffff",
+        "headerMobileBackgroundColor": "#f9fafb",
+        "footerBackgroundColor": "#032e63",
+        "footerTextColor": "#ffffff",
+        "showCart": false,
+        "showFloatingChat": true,
+        "whatsappNumber": "6281357555797",
+        "seoTitle": "KBM Kreator Yogyakarta | Partner Penerbit Buku se-Indonesia",
+        "seoKeywords": null,
+        "seoImage": null,
+        "faviconUrl": null,
+        "googleSiteVerificationId": null,
+        "googleAnalyticsId": null,
+        "tagline": "Partner Penerbit Buku se-Indonesia",
+        "allowRegistration": true,
+        "themeConfig": {
+          "brandColor": "#0ea5e9",
+          "activeTheme": "default",
+          "headerStyle": "simple",
+          "brandTextColor": "#ffffff",
+          "footerTextColor": "#ffffff",
+          "headerTextColor": "#ffffff",
+          "logoDisplayMode": "logo",
+          "brandAccentColor": "#ff0000",
+          "brandFontPrimary": null,
+          "brandPrimaryColor": "#20318b",
+          "brandFontSecondary": null,
+          "brandSecondaryColor": "#ffd136",
+          "brandBackgroundColor": "#20318b",
+          "footerBackgroundColor": "#032e63",
+          "headerBackgroundColor": "#032e63",
+          "footerAddressTextColor": "#032e63",
+          "footerAddressBackgroundColor": "#f5f5f5"
+        },
+        "currency": "IDR",
+        "enabledPosts": false,
+        "enabledPortfolio": false,
+        "enabledTestimonials": false,
+        "enabledGallery": true,
+        "enabledProducts": false,
+        "enabledOrders": false,
+        "enabledTaxonomies": false,
+        "enabledInbox": false,
+        "footerAddressBackgroundColor": "#f5f5f5",
+        "footerAddressTextColor": "#032e63",
+        "contactPhone": null
+      },
+      {
+        "id": "cmpff0dpr0006u5f0bw0tjlut",
+        "siteId": "cmpff0ccz0002u5f0rp7dk8aq",
+        "siteName": "Konghuan",
+        "activeTheme": "default",
+        "logoUrl": null,
+        "description": "Welcome to Konghuan. This site was created with Situs Bisnis.",
+        "footerAddress": null,
+        "footerCopyright": "© 2026 Konghuan. Built with Situs Bisnis.",
+        "footerAboutText": null,
+        "socialFacebook": null,
+        "socialTwitter": null,
+        "socialInstagram": null,
+        "socialLinkedin": null,
+        "socialWhatsapp": null,
+        "socialTelegram": null,
+        "socialTiktok": null,
+        "socialYoutube": null,
+        "contactEmail": null,
+        "updatedAt": "2026-05-22T03:22:57.295Z",
+        "brandColor": "#0369a1",
+        "brandPrimaryColor": null,
+        "brandSecondaryColor": null,
+        "brandAccentColor": null,
+        "brandBackgroundColor": null,
+        "brandTextColor": null,
+        "brandFontPrimary": null,
+        "brandFontSecondary": null,
+        "brandFooterText": null,
+        "brandSupportEmail": null,
+        "headerStyle": "simple",
+        "headerBackgroundColor": "#0369a1",
+        "headerTextColor": "#ffffff",
+        "headerMobileBackgroundColor": "#f9fafb",
+        "footerBackgroundColor": "#0369a1",
+        "footerTextColor": "#ffffff",
+        "showCart": false,
+        "showFloatingChat": false,
+        "whatsappNumber": null,
+        "seoTitle": null,
+        "seoKeywords": null,
+        "seoImage": null,
+        "faviconUrl": null,
+        "googleSiteVerificationId": null,
+        "googleAnalyticsId": null,
+        "tagline": null,
+        "allowRegistration": true,
+        "themeConfig": {
+          "brandColor": "#0369a1",
+          "activeTheme": "default",
+          "headerStyle": "simple",
+          "brandTextColor": null,
+          "footerTextColor": "#ffffff",
+          "headerTextColor": "#ffffff",
+          "brandAccentColor": null,
+          "brandFontPrimary": null,
+          "brandPrimaryColor": null,
+          "brandFontSecondary": null,
+          "brandSecondaryColor": null,
+          "brandBackgroundColor": null,
+          "footerBackgroundColor": "#0369a1",
+          "headerBackgroundColor": "#0369a1",
+          "footerAddressTextColor": "#ffffff",
+          "footerAddressBackgroundColor": "#1e293b"
+        },
+        "currency": "IDR",
+        "enabledPosts": false,
+        "enabledPortfolio": false,
+        "enabledTestimonials": false,
+        "enabledGallery": false,
+        "enabledProducts": false,
+        "enabledOrders": false,
+        "enabledTaxonomies": false,
+        "enabledInbox": false,
+        "footerAddressBackgroundColor": "#1e293b",
+        "footerAddressTextColor": "#ffffff",
+        "contactPhone": null
+      }
+    ],
+    "siteStatistics": [
+      {
+        "id": "cmp1wzoye0003b5fgsehzvpeu",
+        "siteId": "cmozgyxtu00011mbc3naoxywz",
+        "totalViews": 26,
+        "todayViews": 18,
+        "lastUpdated": "2026-05-13T01:10:20.292Z"
+      },
+      {
+        "id": "cmp711jky00011z74oxw39eu5",
+        "siteId": "cmp70obn9000111054wyur2q2",
+        "totalViews": 13,
+        "todayViews": 1,
+        "lastUpdated": "2026-05-19T14:37:21.320Z"
+      },
+      {
+        "id": "cmpajxjc6000fncnzyqoi9yap",
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "totalViews": 106,
+        "todayViews": 29,
+        "lastUpdated": "2026-05-22T04:23:54.347Z"
+      },
+      {
+        "id": "cmp3u3k5f000iy7pdy3zqgbsa",
+        "siteId": "cmp3twfmn0002y7pd4fu6c51o",
+        "totalViews": 388,
+        "todayViews": 12,
+        "lastUpdated": "2026-05-22T11:22:08.448Z"
+      },
+      {
+        "id": "cmpfkzp1v00037jkes1h6rkc0",
+        "siteId": "cmpff0ccz0002u5f0rp7dk8aq",
+        "totalViews": 18,
+        "todayViews": 15,
+        "lastUpdated": "2026-05-28T04:49:22.720Z"
+      }
+    ],
+    "paymentSettings": [
+      {
+        "id": "cmozgz2u1000d1mbclvyce8pu",
+        "bankName": "Example Bank",
+        "accountNumber": "0000000000",
+        "accountHolder": "Store Owner",
+        "instructions": "Please include your order number in the transfer note.",
+        "siteId": "cmozgyxtu00011mbc3naoxywz",
+        "updatedAt": "2026-05-12T02:12:20.490Z",
+        "currency": "IDR",
+        "duitkuMerchantCode": null,
+        "duitkuApiKey": null,
+        "duitkuSandbox": true
+      },
+      {
+        "id": "cmp70ofpw000d1105xynphwj3",
+        "bankName": "Example Bank",
+        "accountNumber": "0000000000",
+        "accountHolder": "Store Owner",
+        "instructions": "Please include your order number in the transfer note.",
+        "siteId": "cmp70obn9000111054wyur2q2",
+        "updatedAt": "2026-05-18T15:25:14.869Z",
+        "currency": "IDR",
+        "duitkuMerchantCode": null,
+        "duitkuApiKey": null,
+        "duitkuSandbox": true
+      },
+      {
+        "id": "cmp3twjmn000ey7pds20ffvem",
+        "bankName": "Example Bank",
+        "accountNumber": "0000000000",
+        "accountHolder": "Store Owner",
+        "instructions": "Please include your order number in the transfer note.",
+        "siteId": "cmp3twfmn0002y7pd4fu6c51o",
+        "updatedAt": "2026-05-19T01:58:17.440Z",
+        "currency": "IDR",
+        "duitkuMerchantCode": null,
+        "duitkuApiKey": null,
+        "duitkuSandbox": true
+      },
+      {
+        "id": "cmpajs8mg000dncnznm4djrpu",
+        "bankName": "Example Bank",
+        "accountNumber": "0000000000",
+        "accountHolder": "Store Owner",
+        "instructions": "Please include your order number in the transfer note.",
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "updatedAt": "2026-05-22T01:08:48.030Z",
+        "currency": "IDR",
+        "duitkuMerchantCode": null,
+        "duitkuApiKey": null,
+        "duitkuSandbox": true
+      },
+      {
+        "id": "cmpff0gr9000eu5f02tqsxo4w",
+        "bankName": "Example Bank",
+        "accountNumber": "0000000000",
+        "accountHolder": "Store Owner",
+        "instructions": "Please include your order number in the transfer note.",
+        "siteId": "cmpff0ccz0002u5f0rp7dk8aq",
+        "updatedAt": "2026-05-22T03:22:56.655Z",
+        "currency": "IDR",
+        "duitkuMerchantCode": null,
+        "duitkuApiKey": null,
+        "duitkuSandbox": true
+      },
+      {
+        "id": "cmpozxvrl000562ruj92jgi1d",
+        "bankName": "BANK OCBC",
+        "accountNumber": "43434343",
+        "accountHolder": "PT Retas Lintas Batas",
+        "instructions": "43",
+        "siteId": "cmoxs0xq50003iexixdm2rkbt",
+        "updatedAt": "2026-05-28T04:32:04.114Z",
+        "currency": "USD",
+        "duitkuMerchantCode": null,
+        "duitkuApiKey": null,
+        "duitkuSandbox": true
+      }
+    ],
+    "subscriptions": [
+      {
+        "id": "cmozgyyq300031mbc1kjjl7uo",
+        "siteId": "cmozgyxtu00011mbc3naoxywz",
+        "planId": "cmoxs0xd80001iexi3fqb19qy",
+        "addonSlots": 0,
+        "status": "active",
+        "startDate": "2026-05-10T07:46:47.500Z",
+        "endDate": null,
+        "trialEndsAt": "2026-05-24T07:46:47.498Z",
+        "trialExtended": false,
+        "createdAt": "2026-05-10T07:46:47.500Z",
+        "updatedAt": "2026-05-10T07:46:47.500Z"
+      },
+      {
+        "id": "cmp98m6xk00039eqianglm9aq",
+        "siteId": "cmp70obn9000111054wyur2q2",
+        "planId": "cmoy7zm1a0000j20j88ablncm",
+        "addonSlots": 0,
+        "status": "cancelled",
+        "startDate": "2026-05-17T03:50:36.440Z",
+        "endDate": null,
+        "trialEndsAt": null,
+        "trialExtended": false,
+        "createdAt": "2026-05-17T03:50:36.440Z",
+        "updatedAt": "2026-05-17T03:52:29.190Z"
+      },
+      {
+        "id": "cmp70ociz000311053vayr6ai",
+        "siteId": "cmp70obn9000111054wyur2q2",
+        "planId": "cmoxs0xd80001iexi3fqb19qy",
+        "addonSlots": 0,
+        "status": "active",
+        "startDate": "2026-05-15T14:32:47.723Z",
+        "endDate": "2026-06-17T03:52:29.412Z",
+        "trialEndsAt": null,
+        "trialExtended": false,
+        "createdAt": "2026-05-15T14:32:47.723Z",
+        "updatedAt": "2026-05-17T03:52:29.636Z"
+      },
+      {
+        "id": "cmp3twgiv0004y7pdjvut9sm8",
+        "siteId": "cmp3twfmn0002y7pd4fu6c51o",
+        "planId": "cmoxs0xd80001iexi3fqb19qy",
+        "addonSlots": 1,
+        "status": "active",
+        "startDate": "2026-05-13T08:59:50.311Z",
+        "endDate": null,
+        "trialEndsAt": "2026-05-27T08:59:50.310Z",
+        "trialExtended": false,
+        "createdAt": "2026-05-13T08:59:50.311Z",
+        "updatedAt": "2026-05-18T01:50:08.823Z"
+      },
+      {
+        "id": "cmpajs5na0003ncnz5cztqfpj",
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "planId": "cmoxs0xd80001iexi3fqb19qy",
+        "addonSlots": 0,
+        "status": "active",
+        "startDate": "2026-05-18T01:50:56.663Z",
+        "endDate": null,
+        "trialEndsAt": "2026-06-01T01:50:56.662Z",
+        "trialExtended": false,
+        "createdAt": "2026-05-18T01:50:56.663Z",
+        "updatedAt": "2026-05-18T01:50:56.663Z"
+      },
+      {
+        "id": "cmpff0d9c0004u5f0zkqeqeyl",
+        "siteId": "cmpff0ccz0002u5f0rp7dk8aq",
+        "planId": "cmoxs0xd80001iexi3fqb19qy",
+        "addonSlots": 0,
+        "status": "active",
+        "startDate": "2026-05-21T11:36:12.577Z",
+        "endDate": null,
+        "trialEndsAt": "2026-06-04T11:36:12.575Z",
+        "trialExtended": false,
+        "createdAt": "2026-05-21T11:36:12.577Z",
+        "updatedAt": "2026-05-21T11:36:12.577Z"
+      }
+    ],
+    "coupons": [],
+    "paymentTransactions": [
+      {
+        "id": "cmp98nsmt0001hpa2jzag9bls",
+        "siteId": "cmp70obn9000111054wyur2q2",
+        "planId": "cmoxs0xd80001iexi3fqb19qy",
+        "amount": "99000",
+        "addonType": null,
+        "addonQuantity": 0,
+        "status": "approved",
+        "paymentMethod": null,
+        "proofOfPayment": "",
+        "paymentUrl": null,
+        "paymentReference": null,
+        "notes": "",
+        "createdAt": "2026-05-17T03:51:51.220Z",
+        "updatedAt": "2026-05-17T03:52:28.407Z",
+        "couponId": null
+      },
+      {
+        "id": "cmp98sjpt0001x16d78mtlaat",
+        "siteId": "cmozgyxtu00011mbc3naoxywz",
+        "planId": "cmoxs0xd80001iexi3fqb19qy",
+        "amount": "50000",
+        "addonType": "site_slot",
+        "addonQuantity": 1,
+        "status": "pending",
+        "paymentMethod": null,
+        "proofOfPayment": null,
+        "paymentUrl": null,
+        "paymentReference": null,
+        "notes": null,
+        "createdAt": "2026-05-17T03:55:32.945Z",
+        "updatedAt": "2026-05-17T03:55:32.945Z",
+        "couponId": null
+      },
+      {
+        "id": "cmp9c5ry20001uccdpkujkwsr",
+        "siteId": "cmp70obn9000111054wyur2q2",
+        "planId": "cmoxs0xd80001iexi3fqb19qy",
+        "amount": "50000",
+        "addonType": "site_slot",
+        "addonQuantity": 1,
+        "status": "pending",
+        "paymentMethod": null,
+        "proofOfPayment": "",
+        "paymentUrl": null,
+        "paymentReference": null,
+        "notes": "",
+        "createdAt": "2026-05-17T05:29:48.986Z",
+        "updatedAt": "2026-05-17T05:32:34.152Z",
+        "couponId": null
+      },
+      {
+        "id": "cmp8bjljh00037yd49fe4uolt",
+        "siteId": "cmp3twfmn0002y7pd4fu6c51o",
+        "planId": "cmoxs0xd80001iexi3fqb19qy",
+        "amount": "50000",
+        "addonType": "site_slot",
+        "addonQuantity": 1,
+        "status": "approved",
+        "paymentMethod": null,
+        "proofOfPayment": null,
+        "paymentUrl": null,
+        "paymentReference": null,
+        "notes": null,
+        "createdAt": "2026-05-16T12:24:48.077Z",
+        "updatedAt": "2026-05-18T01:50:07.711Z",
+        "couponId": null
+      },
+      {
+        "id": "cmpbc4stv000l16iasjenv1ez",
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "planId": "cmoxs0xd80001iexi3fqb19qy",
+        "amount": "99000",
+        "addonType": null,
+        "addonQuantity": 0,
+        "status": "pending",
+        "paymentMethod": null,
+        "proofOfPayment": null,
+        "paymentUrl": null,
+        "paymentReference": null,
+        "notes": null,
+        "createdAt": "2026-05-18T15:04:35.599Z",
+        "updatedAt": "2026-05-18T15:04:35.599Z",
+        "couponId": null
+      },
+      {
+        "id": "cmpbcdc6b001116ia8865yllg",
+        "siteId": "cmp3twfmn0002y7pd4fu6c51o",
+        "planId": "cmoxs0xd80001iexi3fqb19qy",
+        "amount": "99000",
+        "addonType": null,
+        "addonQuantity": 0,
+        "status": "pending",
+        "paymentMethod": null,
+        "proofOfPayment": null,
+        "paymentUrl": null,
+        "paymentReference": null,
+        "notes": null,
+        "createdAt": "2026-05-18T15:11:14.148Z",
+        "updatedAt": "2026-05-18T15:11:14.148Z",
+        "couponId": null
+      }
+    ],
+    "commissions": [],
+    "withdrawals": [],
+    "contactSubmissions": [],
+    "galleryItems": [
+      {
+        "id": "cmp5ccrwy000owpiyi8ongcxa",
+        "title": "Jasa KBM Kreator",
+        "url": "https://file.crediblemark.com/instantweb/a15d8bf3-9151-47f5-a51d-6ff8603ad676-1778754217183-1764208356610.jpg",
+        "description": "",
+        "siteId": "cmp3twfmn0002y7pd4fu6c51o",
+        "createdAt": "2026-05-14T10:24:10.834Z"
+      },
+      {
+        "id": "cmp5ktoc3000214kjgyq5f5k7",
+        "title": "Desain Cover",
+        "url": "https://file.crediblemark.com/instantweb/7e0a848f-9bcf-4172-ab62-6816dd068473-1778768409872-JASA-DESAIN-COVER.jpg.jpeg",
+        "description": "Harga Murah, Kualitas Mewah. Dan tak banyak waktu yang anda buang untuk mengerjakannya sendiri",
+        "siteId": "cmp3twfmn0002y7pd4fu6c51o",
+        "createdAt": "2026-05-14T14:21:16.276Z"
+      },
+      {
+        "id": "cmp5kvc2b0002ezynlag0lr74",
+        "title": "LAYOUT NASKAH",
+        "url": "https://file.crediblemark.com/instantweb/53fb032b-6ad3-4aa4-8662-0f230d6d15b6-1778768537388-Jasa-layout.jpeg",
+        "description": "",
+        "siteId": "cmp3twfmn0002y7pd4fu6c51o",
+        "createdAt": "2026-05-14T14:22:33.683Z"
+      },
+      {
+        "id": "cmp5kzd6w00027hsikk7lmgwh",
+        "title": "KONVERSI NASKAH PENERBIT",
+        "url": "https://file.crediblemark.com/instantweb/72e1bcdd-6fde-436c-8151-21e3fe514394-1778768719099-Paket-&-Layanan-Konversi-KBM-Kreator.jpg",
+        "description": "",
+        "siteId": "cmp3twfmn0002y7pd4fu6c51o",
+        "createdAt": "2026-05-14T14:25:41.768Z"
+      },
+      {
+        "id": "cmp5l2t3w0005ezynbq8l8rbs",
+        "title": "Jual AKun google Playbook",
+        "url": "https://file.crediblemark.com/instantweb/52db592c-bbbf-4b4c-8003-5601ba53e1e5-1778768883160-jual-akun-palybook.jpeg",
+        "description": "",
+        "siteId": "cmp3twfmn0002y7pd4fu6c51o",
+        "createdAt": "2026-05-14T14:28:22.364Z"
+      },
+      {
+        "id": "cmp5l3h8o0008ezynhqbsevaa",
+        "title": "Kelas Google Scholar",
+        "url": "https://file.crediblemark.com/instantweb/7b781939-e509-4450-939e-484138224ef2-1778768918266-Kelas-Sharing-Online-KBM.jpg.jpeg",
+        "description": "",
+        "siteId": "cmp3twfmn0002y7pd4fu6c51o",
+        "createdAt": "2026-05-14T14:28:53.641Z"
+      }
+    ],
+    "portfolioItems": [],
+    "testimonials": [
+      {
+        "id": "cmpap4vvp0003ibycodfd0vm0",
+        "quote": "Saya sangat terbantu dengan keramahan admin Unived Press. Saya dibimbing mulai dari pemberkasan hingga cover design yang sesuai dengan selera pasar akademik saat ini. Terima kasih Unived Press telah mewadahi karya dosen-dosen Bengkulu",
+        "author": "Budi Santoso, S.E., M.M.",
+        "role": "Penulis Buku Manajemen",
+        "avatarUrl": "",
+        "rating": 5,
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "createdAt": "2026-05-18T04:20:48.614Z",
+        "updatedAt": "2026-05-18T04:20:48.613Z",
+        "isApproved": true
+      },
+      {
+        "id": "cmpaqcdxg0001z673kuhyn324",
+        "quote": "Pengalaman menerbitkan buku ajar di Unived Press sangat memuaskan. Tim editor sangat teliti dalam mengoreksi naskah tanpa mengubah substansi materi. Proses layout hingga terbitnya ISBN juga tergolong cepat dibandingkan penerbit lain. Sangat direkomendasikan bagi rekan sejawat yang ingin meningkatkan kum.\"",
+        "author": "Dr. Rina S., M.Kom.",
+        "role": "Dosen Ilmu Komputer",
+        "avatarUrl": "",
+        "rating": 5,
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "createdAt": "2026-05-18T04:54:38.212Z",
+        "updatedAt": "2026-05-18T04:54:38.212Z",
+        "isApproved": true
+      },
+      {
+        "id": "cmpaqdt7a0001qjw9jhbau9qy",
+        "quote": "Koleksi referensi dari Unived Press sangat relevan dengan isu-isu lokal maupun nasional. Kami dari perpustakaan daerah sangat mengapresiasi konsistensi Unived Press dalam menerbitkan literatur berkualitas setiap tahunnya",
+        "author": "Rendra Wijaya",
+        "role": "Pustakawan",
+        "avatarUrl": "",
+        "rating": 5,
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "createdAt": "2026-05-18T04:55:44.662Z",
+        "updatedAt": "2026-05-18T04:55:44.661Z",
+        "isApproved": true
+      }
+    ],
+    "mediaFolders": [],
+    "mediaItems": [
+      {
+        "id": "cmp5aqa490001yx0rlrbh7lsq",
+        "filename": "1763987080932.jpg",
+        "url": "https://file.crediblemark.com/instantweb/faa61ca0-9eb0-43eb-b76f-b45e9c221359-1778751519698-1763987080932.jpg",
+        "mimeType": "image/jpeg",
+        "size": 147864,
+        "folderId": null,
+        "siteId": "cmp3twfmn0002y7pd4fu6c51o",
+        "width": 1414,
+        "height": 2000,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAKAAcDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIBAAAgIBAwUAAAAAAAAAAAAAAQIDEQAEEhQhI0FRgf/EABUBAQEAAAAAAAAAAAAAAAAAAAQF/8QAGBEAAwEBAAAAAAAAAAAAAAAAAAECQaH/2gAMAwEAAhEDEQA/AM9ni0iJM6TahikcbBuP22urpiwqvvnGTzLIRsLvt9X0xjlNayU6jJ6f/9k=",
+        "createdAt": "2026-05-14T09:38:41.721Z"
+      },
+      {
+        "id": "cmp5cc49t000mwpiyham0xmuo",
+        "filename": "1764208356610.jpg",
+        "url": "https://file.crediblemark.com/instantweb/a15d8bf3-9151-47f5-a51d-6ff8603ad676-1778754217183-1764208356610.jpg",
+        "mimeType": "image/jpeg",
+        "size": 257012,
+        "folderId": null,
+        "siteId": "cmp3twfmn0002y7pd4fu6c51o",
+        "width": 1007,
+        "height": 1600,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAKAAYDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAQH/8QAIxAAAQMDAgcAAAAAAAAAAAAAAQIDBAAFEQYSExQhIkFxwf/EABUBAQEAAAAAAAAAAAAAAAAAAAQF/8QAHBEAAQMFAAAAAAAAAAAAAAAAAQACIQMRIoHR/9oADAMBAAIRAxEAPwChzX19hSuaduMJgyUJdQeGHBtV3dB4z8IpWrxdPWVcqS2u0W5TaVnCTGQQPQxSjh1oV0g1MoGm8X//2Q==",
+        "createdAt": "2026-05-14T10:23:40.193Z"
+      },
+      {
+        "id": "cmp5cd276000pwpiyiodrm9pk",
+        "filename": "1766545968728.jpg",
+        "url": "https://file.crediblemark.com/instantweb/7cee07cb-c12a-4435-875d-c8706d84c632-1778754261980-1766545968728.jpg",
+        "mimeType": "image/jpeg",
+        "size": 369225,
+        "folderId": null,
+        "siteId": "cmp3twfmn0002y7pd4fu6c51o",
+        "width": 1080,
+        "height": 1350,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAKAAgDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAcI/8QAHxAAAgEEAgMAAAAAAAAAAAAAAQMCAAQFERIhBhOB/8QAFAEBAAAAAAAAAAAAAAAAAAAABP/EABsRAAIDAAMAAAAAAAAAAAAAAAECAAMRBFHw/9oADAMBAAIRAxEAPwCh5BllnsXeqyuPXc4IN9lhAum4yb2IzmuBiQADvW9d/aVnnzFzErYUsmsxMjHhIjR5kbFKfVVYUBV833cNyHrSxkKbhn//2Q==",
+        "createdAt": "2026-05-14T10:24:24.162Z"
+      },
+      {
+        "id": "cmp5cj17w000swpiyh53gl6cv",
+        "filename": "Logo.jpg",
+        "url": "https://file.crediblemark.com/instantweb/1dc7bf9e-4291-4e01-bbb1-a3e94187b6ab-1778754541035-Logo.jpg",
+        "mimeType": "image/jpeg",
+        "size": 66416,
+        "folderId": null,
+        "siteId": "cmp3twfmn0002y7pd4fu6c51o",
+        "width": 1024,
+        "height": 767,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAHAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAiEAAABgEDBQAAAAAAAAAAAAAAAQIDBBESBQYTFCExQWH/xAAVAQEBAAAAAAAAAAAAAAAAAAAAA//EABgRAAMBAQAAAAAAAAAAAAAAAAABAhEE/9oADAMBAAIRAxEAPwCAga/tpO3GocqFA6kmONbpQMncqo1Evxf0Qzq0G4s2q47PGy716ABTotqFohLT/9k=",
+        "createdAt": "2026-05-14T10:29:02.829Z"
+      },
+      {
+        "id": "cmp5h4sdd000088q2lfhh4mzx",
+        "filename": "hero.jpg",
+        "url": "https://file.crediblemark.com/instantweb/217d24ac-846b-4969-883c-8f75b752131f-1778762275191-hero.jpg",
+        "mimeType": "image/jpeg",
+        "size": 111258,
+        "folderId": null,
+        "siteId": "cmp3twfmn0002y7pd4fu6c51o",
+        "width": 1024,
+        "height": 559,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAFAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAEF/8QAIRAAAQMEAQUAAAAAAAAAAAAAAQIDEQAFEhMEBhUxUXH/xAAUAQEAAAAAAAAAAAAAAAAAAAAD/8QAFxEBAQEBAAAAAAAAAAAAAAAAAQACEf/aAAwDAQACEQMRAD8AnLuaup1sbC+w7GTatuYQVJmcYAkAxPmsV/k3pDzie/XAwoidh9/aUoMvSbQF/9k=",
+        "createdAt": "2026-05-14T12:37:56.258Z"
+      },
+      {
+        "id": "cmp5ksa63000014kjpfscn1yz",
+        "filename": "JASA DESAIN COVER.jpg.jpeg",
+        "url": "https://file.crediblemark.com/instantweb/7e0a848f-9bcf-4172-ab62-6816dd068473-1778768409872-JASA-DESAIN-COVER.jpg.jpeg",
+        "mimeType": "image/jpeg",
+        "size": 801939,
+        "folderId": null,
+        "siteId": "cmp3twfmn0002y7pd4fu6c51o",
+        "width": 1759,
+        "height": 2050,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAKAAkDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABgQH/8QAJxAAAQIEAgsAAAAAAAAAAAAAAgEDAAQFEQYhEhMVFkFSVJOU0eH/xAAVAQEBAAAAAAAAAAAAAAAAAAACBP/EAB8RAAEDAwUAAAAAAAAAAAAAAAEAAgMEEUEhImGR4f/aAAwDAQACEQMRAD8AHVjD8pRsKYdqLbrZO1ARJwnLJqV0UvYkW63VbZxVuTVeaV8j5A2kvOtT0qTThgVlzElReEbNtKe62Z7pe4pZNJTXjBvnXnCBbG/c4dHxf//Z",
+        "createdAt": "2026-05-14T14:20:11.259Z"
+      },
+      {
+        "id": "cmp5kv0iu0000ezynusfs8b5a",
+        "filename": "Jasa layout.jpeg",
+        "url": "https://file.crediblemark.com/instantweb/53fb032b-6ad3-4aa4-8662-0f230d6d15b6-1778768537388-Jasa-layout.jpeg",
+        "mimeType": "image/jpeg",
+        "size": 556015,
+        "folderId": null,
+        "siteId": "cmp3twfmn0002y7pd4fu6c51o",
+        "width": 1258,
+        "height": 1600,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAKAAgDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAQG/8QAHhAAAgEFAQEBAAAAAAAAAAAAAQIDAAQFBhExE1H/xAAVAQEBAAAAAAAAAAAAAAAAAAAEBf/EAB8RAAEDAwUAAAAAAAAAAAAAAAEAAgMEERIhIjGR0f/aAAwDAQACEQMRAD8At2/K3O0PmcPkBJdQQ3DvEFVnML9dFYAE9538HlKxOx3t3HvoWO5nVTk2UhZCBz7+Uqu6nqGgOilxBHFgUWXe82068X//2Q==",
+        "createdAt": "2026-05-14T14:22:18.727Z"
+      },
+      {
+        "id": "cmp5kyx5j00007hsigsultu4o",
+        "filename": "Paket & Layanan Konversi KBM Kreator.jpg",
+        "url": "https://file.crediblemark.com/instantweb/72e1bcdd-6fde-436c-8151-21e3fe514394-1778768719099-Paket-&-Layanan-Konversi-KBM-Kreator.jpg",
+        "mimeType": "image/jpeg",
+        "size": 3489719,
+        "folderId": null,
+        "siteId": "cmp3twfmn0002y7pd4fu6c51o",
+        "width": 2480,
+        "height": 3508,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAKAAcDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIRAAAQIFBQEAAAAAAAAAAAAAAgEDAAQFESESExQxQRb/xAAVAQEBAAAAAAAAAAAAAAAAAAADBf/EABsRAAIBBQAAAAAAAAAAAAAAAAABAgMRIcHR/9oADAMBAAIRAxEAPwDWKRThJxRlGCl2xIk0tzJIF7rfAjjzvuEQafUZ36BGuZM7auuJo3SthC8vCBjkp1E4uy30/9k=",
+        "createdAt": "2026-05-14T14:25:20.984Z"
+      },
+      {
+        "id": "cmp5l2fdz0003ezyn7bqo8ibr",
+        "filename": "jual akun palybook.jpeg",
+        "url": "https://file.crediblemark.com/instantweb/52db592c-bbbf-4b4c-8003-5601ba53e1e5-1778768883160-jual-akun-palybook.jpeg",
+        "mimeType": "image/jpeg",
+        "size": 962469,
+        "folderId": null,
+        "siteId": "cmp3twfmn0002y7pd4fu6c51o",
+        "width": 1648,
+        "height": 2000,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAKAAgDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIBAAAQMEAgMAAAAAAAAAAAAAAQACAwQREjEGQRMicf/EABQBAQAAAAAAAAAAAAAAAAAAAAb/xAAcEQAABgMAAAAAAAAAAAAAAAAAAQIEEUEDElH/2gAMAwEAAhEDEQA/ALk9JSQcMM8T4Iy2k9neONxLrHR3fLtFn8JLYKTEkXIcbdnLf1EtbYoNcnYBPHCT0hNdH//Z",
+        "createdAt": "2026-05-14T14:28:04.584Z"
+      },
+      {
+        "id": "cmp5l36me0006ezyns3zf0cpo",
+        "filename": "Kelas Sharing Online KBM.jpg.jpeg",
+        "url": "https://file.crediblemark.com/instantweb/7b781939-e509-4450-939e-484138224ef2-1778768918266-Kelas-Sharing-Online-KBM.jpg.jpeg",
+        "mimeType": "image/jpeg",
+        "size": 1296367,
+        "folderId": null,
+        "siteId": "cmp3twfmn0002y7pd4fu6c51o",
+        "width": 4500,
+        "height": 4500,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAKAAoDASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAwQFB//EACEQAAIBAwQDAQAAAAAAAAAAAAECAwAEERIhIjEFQWFR/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAL/xAAWEQEBAQAAAAAAAAAAAAAAAAAAATH/2gAMAwEAAhEDEQA/ANvtZnSHyr3ss9vHEWxIpfXjV6IJ+YABOeqZt7KwaCNliYqVBBy++33eiWaI0jFlUkqckjvlVBFXQvEdflVdH//Z",
+        "createdAt": "2026-05-14T14:28:39.879Z"
+      },
+      {
+        "id": "cmp70rw0w00007sv3gkob42g9",
+        "filename": "1000183956.jpg",
+        "url": "https://file.crediblemark.com/instantweb/f90be00f-1839-4fb3-9fec-0de6491410b0-1778855731908-1000183956.jpg",
+        "mimeType": "image/jpeg",
+        "size": 104451,
+        "folderId": null,
+        "siteId": "cmp70obn9000111054wyur2q2",
+        "width": 736,
+        "height": 1070,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAKAAcDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAQH/8QAIBAAAgEEAQUAAAAAAAAAAAAAAQIRAAMEBRITITFBof/EABQBAQAAAAAAAAAAAAAAAAAAAAP/xAAbEQEAAgIDAAAAAAAAAAAAAAABAhEAAwQSIf/aAAwDAQACEQMRAD8AyvHw9e3Sv4aBGy05hLbErZUR7mSDMTPn4qTVItrWA21CSxB4iJ70odIkak23jcpOwwKEPM//2Q==",
+        "createdAt": "2026-05-15T14:35:32.960Z"
+      },
+      {
+        "id": "cmp70vws3000063ahly9w4hhg",
+        "filename": "1000183957.jpg",
+        "url": "https://file.crediblemark.com/instantweb/424f2f25-b0cf-4196-9b81-07a69ac06b49-1778855919613-1000183957.jpg",
+        "mimeType": "image/jpeg",
+        "size": 73828,
+        "folderId": null,
+        "siteId": "cmp70obn9000111054wyur2q2",
+        "width": 736,
+        "height": 736,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAKAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABgUH/8QAIBAAAgEEAgMBAAAAAAAAAAAAAQIDAAQFERIhFDKBkf/EABQBAQAAAAAAAAAAAAAAAAAAAAT/xAAbEQEAAgIDAAAAAAAAAAAAAAABABECAxMhwf/aAAwDAQACEQMRAD8AyLG2mJx10y31wGvGCtHyVSF7Gtqfb5VwwRqSrRlmHRPjxDZo5exRyZqzMiK55AbYbpEWbZ7P7R+IW8m4h3dAFez/2Q==",
+        "createdAt": "2026-05-15T14:38:40.564Z"
+      },
+      {
+        "id": "cmp9f67jn00041158jkgf0lw6",
+        "filename": "favicon.ico",
+        "url": "https://file.crediblemark.com/instantweb/5feb99b8-69f2-41d3-976c-a2a45b96c3a6-1779000845899-favicon.ico",
+        "mimeType": "image/vnd.microsoft.icon",
+        "size": 15086,
+        "folderId": null,
+        "siteId": "cmp3twfmn0002y7pd4fu6c51o",
+        "width": null,
+        "height": null,
+        "blurDataURL": null,
+        "createdAt": "2026-05-17T06:54:08.051Z"
+      },
+      {
+        "id": "cmpakog8v000010lo2q9zufab",
+        "filename": "ec8650ac-fe87-44b5-a17b-2ef90440e616.webp",
+        "url": "https://file.crediblemark.com/instantweb/96a4bf5a-cfbd-4aef-9ff4-e33ec463cfde-1779070562283-ec8650ac-fe87-44b5-a17b-2ef90440e616.webp",
+        "mimeType": "image/webp",
+        "size": 132040,
+        "folderId": null,
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "width": 572,
+        "height": 1024,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDACgcHiMeGSgjISMtKygwPGRBPDc3PHtYXUlkkYCZlo+AjIqgtObDoKrarYqMyP/L2u71////m8H////6/+b9//j/2wBDASstLTw1PHZBQXb4pYyl+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj/wgARCAAKAAYDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAID/8QAFQEBAQAAAAAAAAAAAAAAAAAAAQL/2gAMAwEAAhADEAAAAc0Cf//EABQQAQAAAAAAAAAAAAAAAAAAABD/2gAIAQEAAQUCP//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQMBAT8Bf//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQIBAT8Bf//EABQQAQAAAAAAAAAAAAAAAAAAABD/2gAIAQEABj8CP//EABYQAAMAAAAAAAAAAAAAAAAAABAhUf/aAAgBAQABPyFUf//aAAwDAQACAAMAAAAQB//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQMBAT8Qf//EABURAQEAAAAAAAAAAAAAAAAAAAAR/9oACAECAQE/EI//xAAXEAEBAQEAAAAAAAAAAAAAAAABABFB/9oACAEBAAE/EEwZeF//2Q==",
+        "createdAt": "2026-05-18T02:16:03.391Z"
+      },
+      {
+        "id": "cmpakpvya000110log7buhrt1",
+        "filename": "f157070d-81b3-4880-907b-9b7afb05529b-HERO-UNIVED.webp",
+        "url": "https://file.crediblemark.com/instantweb/f7fefa35-2c43-4487-8144-d2f4da0ba9cd-1779070629670-f157070d-81b3-4880-907b-9b7afb05529b-HERO-UNIVED.webp",
+        "mimeType": "image/webp",
+        "size": 65270,
+        "folderId": null,
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "width": 531,
+        "height": 764,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDACgcHiMeGSgjISMtKygwPGRBPDc3PHtYXUlkkYCZlo+AjIqgtObDoKrarYqMyP/L2u71////m8H////6/+b9//j/2wBDASstLTw1PHZBQXb4pYyl+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj/wgARCAAKAAcDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAIE/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEAMQAAABzIH/xAAVEAEBAAAAAAAAAAAAAAAAAAAAQv/aAAgBAQABBQKX/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAgBAwEBPwF//8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAgBAgEBPwF//8QAFBABAAAAAAAAAAAAAAAAAAAAEP/aAAgBAQAGPwI//8QAGBAAAwEBAAAAAAAAAAAAAAAAAAERIVH/2gAIAQEAAT8haU9Lh//aAAwDAQACAAMAAAAQA//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQMBAT8Qf//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQIBAT8Qf//EABcQAQEBAQAAAAAAAAAAAAAAAAEAITH/2gAIAQEAAT8QFw0qynS3/9k=",
+        "createdAt": "2026-05-18T02:17:10.402Z"
+      },
+      {
+        "id": "cmpalvrqo0004ur8jtrxscfq9",
+        "filename": "1765824507723-Gemini_Generated_Image_x2yum1x2yum1x2yu.webp",
+        "url": "https://file.crediblemark.com/instantweb/7ab4f111-27cc-4633-bc1a-e6a90a3e8701-1779072583725-1765824507723-Gemini_Generated_Image_x2yum1x2yum1x2yu.webp",
+        "mimeType": "image/webp",
+        "size": 19898,
+        "folderId": null,
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "width": 640,
+        "height": 427,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDACgcHiMeGSgjISMtKygwPGRBPDc3PHtYXUlkkYCZlo+AjIqgtObDoKrarYqMyP/L2u71////m8H////6/+b9//j/2wBDASstLTw1PHZBQXb4pYyl+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj/wgARCAAHAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAP/xAAVAQEBAAAAAAAAAAAAAAAAAAAAAf/aAAwDAQACEAMQAAABpMj/xAAWEAEBAQAAAAAAAAAAAAAAAAABABH/2gAIAQEAAQUCW0v/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAEDAQE/AX//xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAECAQE/AX//xAAUEAEAAAAAAAAAAAAAAAAAAAAQ/9oACAEBAAY/Aj//xAAWEAEBAQAAAAAAAAAAAAAAAAABERD/2gAIAQEAAT8hkhMP/9oADAMBAAIAAwAAABAP/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAgBAwEBPxB//8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAgBAgEBPxB//8QAGRAAAwADAAAAAAAAAAAAAAAAAAERIUHR/9oACAEBAAE/EKRg90dHw//Z",
+        "createdAt": "2026-05-18T02:49:44.497Z"
+      },
+      {
+        "id": "cmpanuwxu0000tujbdncf8m3h",
+        "filename": "4b67ec6b-84b7-468d-b60c-65ba9609c02d-LOGO.webp",
+        "url": "https://file.crediblemark.com/instantweb/3de4259a-a297-43f3-8b60-631099371682-1779075903047-4b67ec6b-84b7-468d-b60c-65ba9609c02d-LOGO.webp",
+        "mimeType": "image/webp",
+        "size": 6720,
+        "folderId": null,
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "width": 256,
+        "height": 65,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDACgcHiMeGSgjISMtKygwPGRBPDc3PHtYXUlkkYCZlo+AjIqgtObDoKrarYqMyP/L2u71////m8H////6/+b9//j/2wBDASstLTw1PHZBQXb4pYyl+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj/wgARCAADAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAP/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIQAxAAAAGcQ//EABYQAQEBAAAAAAAAAAAAAAAAAAEAIf/aAAgBAQABBQIl3//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQMBAT8Bf//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQIBAT8Bf//EABQQAQAAAAAAAAAAAAAAAAAAABD/2gAIAQEABj8CP//EABkQAAIDAQAAAAAAAAAAAAAAAAAhARFBkf/aAAgBAQABPyF+Elnp/9oADAMBAAIAAwAAABCD/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAgBAwEBPxB//8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAgBAgEBPxB//8QAGBABAAMBAAAAAAAAAAAAAAAAAQARMSH/2gAIAQEAAT8QVmwxgEOZwKf/2Q==",
+        "createdAt": "2026-05-18T03:45:03.810Z"
+      },
+      {
+        "id": "cmpanw9gz0001tujb5x1zarh0",
+        "filename": "icon.webp",
+        "url": "https://file.crediblemark.com/instantweb/8a59eba3-0841-45c1-83ef-381b9ba4a2bb-1779075965972-icon.webp",
+        "mimeType": "image/webp",
+        "size": 20174,
+        "folderId": null,
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "width": 500,
+        "height": 500,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDACgcHiMeGSgjISMtKygwPGRBPDc3PHtYXUlkkYCZlo+AjIqgtObDoKrarYqMyP/L2u71////m8H////6/+b9//j/2wBDASstLTw1PHZBQXb4pYyl+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj/wgARCAAKAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAwAB/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEAMQAAABAsj/xAAWEAEBAQAAAAAAAAAAAAAAAAABAiD/2gAIAQEAAQUCCcf/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAEDAQE/AX//xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAECAQE/AX//xAAVEAEBAAAAAAAAAAAAAAAAAAAgQf/aAAgBAQAGPwKD/8QAGRABAAIDAAAAAAAAAAAAAAAAAQARECGh/9oACAEBAAE/IaBfUdLn/9oADAMBAAIAAwAAABCD/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAgBAwEBPxB//8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAgBAgEBPxB//8QAGRABAQADAQAAAAAAAAAAAAAAAREAECFR/9oACAEBAAE/EKtVKiu33CCGgwd//9k=",
+        "createdAt": "2026-05-18T03:46:06.708Z"
+      },
+      {
+        "id": "cmpaotoyf0000ekwq0bg071qw",
+        "filename": "1767027236053-WhatsApp-Image-2025-12-29-at-14.40.43.webp",
+        "url": "https://file.crediblemark.com/instantweb/785e9182-352b-4df2-85a6-7cbd56f50e8e-1779077525379-1767027236053-WhatsApp-Image-2025-12-29-at-14.40.43.webp",
+        "mimeType": "image/webp",
+        "size": 188068,
+        "folderId": null,
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "width": 1229,
+        "height": 1600,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDACgcHiMeGSgjISMtKygwPGRBPDc3PHtYXUlkkYCZlo+AjIqgtObDoKrarYqMyP/L2u71////m8H////6/+b9//j/2wBDASstLTw1PHZBQXb4pYyl+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj/wgARCAAKAAgDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAL/xAAVAQEBAAAAAAAAAAAAAAAAAAAAAv/aAAwDAQACEAMQAAABpBP/xAAWEAADAAAAAAAAAAAAAAAAAAAAEkL/2gAIAQEAAQUCUn//xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAEDAQE/AX//xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAECAQE/AX//xAAUEAEAAAAAAAAAAAAAAAAAAAAQ/9oACAEBAAY/Aj//xAAWEAEBAQAAAAAAAAAAAAAAAAABAKH/2gAIAQEAAT8hUkuL/9oADAMBAAIAAwAAABD/AP/EABYRAAMAAAAAAAAAAAAAAAAAAAABEf/aAAgBAwEBPxCI/8QAFREBAQAAAAAAAAAAAAAAAAAAAAH/2gAIAQIBAT8Qj//EABkQAQADAQEAAAAAAAAAAAAAAAEAETEhQf/aAAgBAQABPxCgjuDE6tv1P//Z",
+        "createdAt": "2026-05-18T04:12:06.424Z"
+      },
+      {
+        "id": "cmpaou34h0001ekwq55zgcy4x",
+        "filename": "1767027257562-WhatsApp-Image-2025-12-29-at-14.40.43-(1).webp",
+        "url": "https://file.crediblemark.com/instantweb/e84e5e8b-8958-4517-b88d-185b9a27beeb-1779077543765-1767027257562-WhatsApp-Image-2025-12-29-at-14.40.43-(1).webp",
+        "mimeType": "image/webp",
+        "size": 169192,
+        "folderId": null,
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "width": 1229,
+        "height": 1600,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDACgcHiMeGSgjISMtKygwPGRBPDc3PHtYXUlkkYCZlo+AjIqgtObDoKrarYqMyP/L2u71////m8H////6/+b9//j/2wBDASstLTw1PHZBQXb4pYyl+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj/wgARCAAKAAgDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAL/xAAUAQEAAAAAAAAAAAAAAAAAAAAB/9oADAMBAAIQAxAAAAGkh//EABYQAQEBAAAAAAAAAAAAAAAAAAEAMv/aAAgBAQABBQJFnP8A/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAgBAwEBPwF//8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAgBAgEBPwF//8QAFBABAAAAAAAAAAAAAAAAAAAAEP/aAAgBAQAGPwI//8QAFxAAAwEAAAAAAAAAAAAAAAAAAAExYf/aAAgBAQABPyGpRqw//9oADAMBAAIAAwAAABAH/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAgBAwEBPxB//8QAFREBAQAAAAAAAAAAAAAAAAAAAAH/2gAIAQIBAT8Qj//EABkQAQEBAAMAAAAAAAAAAAAAAAERACExQf/aAAgBAQABPxAJJU+9XJdN5W7/2Q==",
+        "createdAt": "2026-05-18T04:12:24.785Z"
+      },
+      {
+        "id": "cmpaouciz0002ekwqnp72y8tm",
+        "filename": "1767027267086-WhatsApp-Image-2025-12-29-at-14.40.43-(2).webp",
+        "url": "https://file.crediblemark.com/instantweb/839622ed-4a54-4acc-8fa1-87de41b3a97d-1779077556079-1767027267086-WhatsApp-Image-2025-12-29-at-14.40.43-(2).webp",
+        "mimeType": "image/webp",
+        "size": 155726,
+        "folderId": null,
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "width": 1229,
+        "height": 1600,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDACgcHiMeGSgjISMtKygwPGRBPDc3PHtYXUlkkYCZlo+AjIqgtObDoKrarYqMyP/L2u71////m8H////6/+b9//j/2wBDASstLTw1PHZBQXb4pYyl+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj/wgARCAAKAAgDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAH/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIQAxAAAAGoP//EABYQAQEBAAAAAAAAAAAAAAAAAAEAQv/aAAgBAQABBQJFs//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQMBAT8Bf//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQIBAT8Bf//EABQQAQAAAAAAAAAAAAAAAAAAABD/2gAIAQEABj8CP//EABkQAQACAwAAAAAAAAAAAAAAAAEAESFBUf/aAAgBAQABPyFZvsVy3U//2gAMAwEAAgADAAAAEMv/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAEDAQE/EH//xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAECAQE/EH//xAAYEAADAQEAAAAAAAAAAAAAAAABESEAMf/aAAgBAQABPxCYCyAczlj0bu//2Q==",
+        "createdAt": "2026-05-18T04:12:36.971Z"
+      },
+      {
+        "id": "cmpaous9g0003ekwqvxa7wi4j",
+        "filename": "1767027274845-WhatsApp-Image-2025-12-29-at-14.40.44.webp",
+        "url": "https://file.crediblemark.com/instantweb/60f9a33a-0ed9-43d2-8644-f86c96e07770-1779077576362-1767027274845-WhatsApp-Image-2025-12-29-at-14.40.44.webp",
+        "mimeType": "image/webp",
+        "size": 157854,
+        "folderId": null,
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "width": 1229,
+        "height": 1600,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDACgcHiMeGSgjISMtKygwPGRBPDc3PHtYXUlkkYCZlo+AjIqgtObDoKrarYqMyP/L2u71////m8H////6/+b9//j/2wBDASstLTw1PHZBQXb4pYyl+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj/wgARCAAKAAgDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAEC/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAH/2gAMAwEAAhADEAAAAayT/8QAFxAAAwEAAAAAAAAAAAAAAAAAARESQv/aAAgBAQABBQKWc//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQMBAT8Bf//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQIBAT8Bf//EABQQAQAAAAAAAAAAAAAAAAAAABD/2gAIAQEABj8CP//EABgQAQEAAwAAAAAAAAAAAAAAAAEAESFh/9oACAEBAAE/IVJmV35f/9oADAMBAAIAAwAAABA//8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAgBAwEBPxB//8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAgBAgEBPxB//8QAGRABAQADAQAAAAAAAAAAAAAAEQEAITFB/9oACAEBAAE/ELwI33jemMKuy5//2Q==",
+        "createdAt": "2026-05-18T04:12:57.364Z"
+      },
+      {
+        "id": "cmparqfcv0000i8suz7cxsqlo",
+        "filename": "ikapi.webp",
+        "url": "https://file.crediblemark.com/instantweb/a3ef916b-8668-4202-ab7f-bca83e730742-1779082411678-ikapi.webp",
+        "mimeType": "image/webp",
+        "size": 6648,
+        "folderId": null,
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "width": 400,
+        "height": 169,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDACgcHiMeGSgjISMtKygwPGRBPDc3PHtYXUlkkYCZlo+AjIqgtObDoKrarYqMyP/L2u71////m8H////6/+b9//j/2wBDASstLTw1PHZBQXb4pYyl+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj/wgARCAAEAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAT/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIQAxAAAAGIH//EABQQAQAAAAAAAAAAAAAAAAAAABD/2gAIAQEAAQUCP//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQMBAT8Bf//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQIBAT8Bf//EABQQAQAAAAAAAAAAAAAAAAAAABD/2gAIAQEABj8CP//EABQQAQAAAAAAAAAAAAAAAAAAABD/2gAIAQEAAT8hP//aAAwDAQACAAMAAAAQ8//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQMBAT8Qf//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQIBAT8Qf//EABcQAQADAAAAAAAAAAAAAAAAAAEQITH/2gAIAQEAAT8QXKI//9k=",
+        "createdAt": "2026-05-18T05:33:32.863Z"
+      },
+      {
+        "id": "cmparqyb00001i8su1zk0cs9u",
+        "filename": "1765854544887-Logo_Perpusnas.png.webp",
+        "url": "https://file.crediblemark.com/instantweb/25d9d455-6895-4341-a6dc-7929aec8853b-1779082435987-1765854544887-Logo_Perpusnas.png.webp",
+        "mimeType": "image/webp",
+        "size": 76344,
+        "folderId": null,
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "width": 2560,
+        "height": 563,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDACgcHiMeGSgjISMtKygwPGRBPDc3PHtYXUlkkYCZlo+AjIqgtObDoKrarYqMyP/L2u71////m8H////6/+b9//j/2wBDASstLTw1PHZBQXb4pYyl+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj/wgARCAACAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAT/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIQAxAAAAGMH//EABQQAQAAAAAAAAAAAAAAAAAAABD/2gAIAQEAAQUCP//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQMBAT8Bf//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQIBAT8Bf//EABQQAQAAAAAAAAAAAAAAAAAAABD/2gAIAQEABj8CP//EABYQAAMAAAAAAAAAAAAAAAAAAAEQQf/aAAgBAQABPyGBf//aAAwDAQACAAMAAAAQg//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQMBAT8Qf//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQIBAT8Qf//EABUQAQEAAAAAAAAAAAAAAAAAABCx/9oACAEBAAE/EIH/2Q==",
+        "createdAt": "2026-05-18T05:33:57.420Z"
+      },
+      {
+        "id": "cmparrg2k0002i8su8c8p8xee",
+        "filename": "1765854497450-Logo_DJKI_Kemenkumham.png.webp",
+        "url": "https://file.crediblemark.com/instantweb/92f05cfc-c886-413c-be88-40139cd67387-1779082459246-1765854497450-Logo_DJKI_Kemenkumham.png.webp",
+        "mimeType": "image/webp",
+        "size": 16470,
+        "folderId": null,
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "width": 1024,
+        "height": 275,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDACgcHiMeGSgjISMtKygwPGRBPDc3PHtYXUlkkYCZlo+AjIqgtObDoKrarYqMyP/L2u71////m8H////6/+b9//j/2wBDASstLTw1PHZBQXb4pYyl+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj/wgARCAADAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAIE/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEAMQAAABySH/xAAVEAEBAAAAAAAAAAAAAAAAAAABEP/aAAgBAQABBQJn/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAgBAwEBPwF//8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAgBAgEBPwF//8QAFBABAAAAAAAAAAAAAAAAAAAAEP/aAAgBAQAGPwI//8QAFRABAQAAAAAAAAAAAAAAAAAAEDH/2gAIAQEAAT8ho//aAAwDAQACAAMAAAAQc//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQMBAT8Qf//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQIBAT8Qf//EABUQAQEAAAAAAAAAAAAAAAAAAAEQ/9oACAEBAAE/EGqn/9k=",
+        "createdAt": "2026-05-18T05:34:20.445Z"
+      },
+      {
+        "id": "cmpars0pt0003i8su4lobal6y",
+        "filename": "1765854486481-Google_Play_Books.png.webp",
+        "url": "https://file.crediblemark.com/instantweb/1267be10-c346-4b0c-989f-59c137bdc78a-1779082486022-1765854486481-Google_Play_Books.png.webp",
+        "mimeType": "image/webp",
+        "size": 35342,
+        "folderId": null,
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "width": 2048,
+        "height": 1070,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDACgcHiMeGSgjISMtKygwPGRBPDc3PHtYXUlkkYCZlo+AjIqgtObDoKrarYqMyP/L2u71////m8H////6/+b9//j/2wBDASstLTw1PHZBQXb4pYyl+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj/wgARCAAFAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAT/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIQAxAAAAGIH//EABQQAQAAAAAAAAAAAAAAAAAAABD/2gAIAQEAAQUCP//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQMBAT8Bf//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQIBAT8Bf//EABQQAQAAAAAAAAAAAAAAAAAAABD/2gAIAQEABj8CP//EABQQAQAAAAAAAAAAAAAAAAAAABD/2gAIAQEAAT8hP//aAAwDAQACAAMAAAAQg//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQMBAT8Qf//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQIBAT8Qf//EABgQAQEAAwAAAAAAAAAAAAAAAAERECGR/9oACAEBAAE/EFs0EO4//9k=",
+        "createdAt": "2026-05-18T05:34:47.202Z"
+      },
+      {
+        "id": "cmpas4icu00005tddl4o4bjwz",
+        "filename": "Sistem Informasi Management.webp",
+        "url": "https://file.crediblemark.com/instantweb/dd01efd7-387e-43ca-a204-3939bcbe8405-1779083069163-Sistem-Informasi-Management.webp",
+        "mimeType": "image/webp",
+        "size": 88770,
+        "folderId": null,
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "width": 1600,
+        "height": 1110,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDACgcHiMeGSgjISMtKygwPGRBPDc3PHtYXUlkkYCZlo+AjIqgtObDoKrarYqMyP/L2u71////m8H////6/+b9//j/2wBDASstLTw1PHZBQXb4pYyl+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj/wgARCAAHAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAIE/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEAMQAAABvSH/xAAWEAADAAAAAAAAAAAAAAAAAAAAAjL/2gAIAQEAAQUCez//xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAEDAQE/AX//xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAECAQE/AX//xAAUEAEAAAAAAAAAAAAAAAAAAAAQ/9oACAEBAAY/Aj//xAAWEAEBAQAAAAAAAAAAAAAAAAAREIH/2gAIAQEAAT8hByf/2gAMAwEAAgADAAAAEHv/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAEDAQE/EH//xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAECAQE/EH//xAAYEAEAAwEAAAAAAAAAAAAAAAABEBEh0f/aAAgBAQABPxAq43qP/9k=",
+        "createdAt": "2026-05-18T05:44:29.935Z"
+      },
+      {
+        "id": "cmpatbcui000yi8sujdwxt8kt",
+        "filename": "english-for-pysical.webp",
+        "url": "https://file.crediblemark.com/instantweb/b06205c0-168d-420c-8aaf-13d23458d05a-1779085067460-english-for-pysical.webp",
+        "mimeType": "image/webp",
+        "size": 67620,
+        "folderId": null,
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "width": 1600,
+        "height": 1110,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDACgcHiMeGSgjISMtKygwPGRBPDc3PHtYXUlkkYCZlo+AjIqgtObDoKrarYqMyP/L2u71////m8H////6/+b9//j/2wBDASstLTw1PHZBQXb4pYyl+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj/wgARCAAHAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAP/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIQAxAAAAG1g//EABcQAAMBAAAAAAAAAAAAAAAAAAABAhH/2gAIAQEAAQUCp5Z//8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAgBAwEBPwF//8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAgBAgEBPwF//8QAFBABAAAAAAAAAAAAAAAAAAAAEP/aAAgBAQAGPwI//8QAFhABAQEAAAAAAAAAAAAAAAAAARBB/9oACAEBAAE/IRA2f//aAAwDAQACAAMAAAAQ8//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQMBAT8Qf//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQIBAT8Qf//EABcQAQEBAQAAAAAAAAAAAAAAAAEREJH/2gAIAQEAAT8QWQ1Duf/Z",
+        "createdAt": "2026-05-18T06:17:49.002Z"
+      },
+      {
+        "id": "cmpdewg100000l5wueg43hxso",
+        "filename": "705fab10-38af-4e9f-8ab3-083c3aab8b95-Desain-tanpa-judul1.webp",
+        "url": "https://file.crediblemark.com/instantweb/5da0bd7e-60a6-4534-9ed7-7630eb2b481c-1779242256503-705fab10-38af-4e9f-8ab3-083c3aab8b95-Desain-tanpa-judul1.webp",
+        "mimeType": "image/webp",
+        "size": 24006,
+        "folderId": null,
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "width": 1600,
+        "height": 1110,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDACgcHiMeGSgjISMtKygwPGRBPDc3PHtYXUlkkYCZlo+AjIqgtObDoKrarYqMyP/L2u71////m8H////6/+b9//j/2wBDASstLTw1PHZBQXb4pYyl+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj/wgARCAAHAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAEE/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEAMQAAAB10P/xAAUEAEAAAAAAAAAAAAAAAAAAAAQ/9oACAEBAAEFAj//xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAEDAQE/AX//xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAECAQE/AX//xAAUEAEAAAAAAAAAAAAAAAAAAAAQ/9oACAEBAAY/Aj//xAAWEAADAAAAAAAAAAAAAAAAAAABEDH/2gAIAQEAAT8hNX//2gAMAwEAAgADAAAAEPP/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAEDAQE/EH//xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAECAQE/EH//xAAWEAEBAQAAAAAAAAAAAAAAAAABEBH/2gAIAQEAAT8QGif/2Q==",
+        "createdAt": "2026-05-20T01:57:37.188Z"
+      },
+      {
+        "id": "cmpg960n10000rn60dz0oyx0b",
+        "filename": "Screenshot from 2026-05-22 08-39-27.webp",
+        "url": "https://file.crediblemark.com/instantweb/7f3ec5ab-d971-4e1e-a3da-47bcf4a0f7de-1779414023481-Screenshot-from-2026-05-22-08-39-27.webp",
+        "mimeType": "image/webp",
+        "size": 30366,
+        "folderId": null,
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "width": 415,
+        "height": 617,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDACgcHiMeGSgjISMtKygwPGRBPDc3PHtYXUlkkYCZlo+AjIqgtObDoKrarYqMyP/L2u71////m8H////6/+b9//j/2wBDASstLTw1PHZBQXb4pYyl+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj/wgARCAAKAAcDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAME/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAH/2gAMAwEAAhADEAAAAbMiP//EABYQAQEBAAAAAAAAAAAAAAAAABEAAf/aAAgBAQABBQJxv//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQMBAT8Bf//EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQIBAT8Bf//EABQQAQAAAAAAAAAAAAAAAAAAABD/2gAIAQEABj8CP//EABYQAQEBAAAAAAAAAAAAAAAAAAEAMf/aAAgBAQABPyECml//2gAMAwEAAgADAAAAEAv/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAEDAQE/EH//xAAVEQEBAAAAAAAAAAAAAAAAAAAAEf/aAAgBAgEBPxCv/8QAGBABAAMBAAAAAAAAAAAAAAAAAQAhMVH/2gAIAQEAAT8QqCXw2J2dZ//Z",
+        "createdAt": "2026-05-22T01:40:24.638Z"
+      }
+    ],
+    "credBuildPages": [
+      {
+        "id": "cmozgyzmr000b1mbcxv2r1zyj",
+        "path": "/",
+        "title": "Welcome to our Store",
+        "description": "Discover amazing things at Gerobak jaya",
+        "imageUrl": null,
+        "body": null,
+        "isPublished": true,
+        "useBuilder": true,
+        "data": {
+          "root": {
+            "type": "section",
+            "props": {
+              "padding": "py-20",
+              "backgroundColor": "bg-white"
+            },
+            "children": [
+              {
+                "type": "container",
+                "props": {
+                  "maxWidth": "max-w-4xl"
+                },
+                "children": [
+                  {
+                    "type": "heading",
+                    "props": {
+                      "text": "Welcome to Gerobak jaya",
+                      "align": "center",
+                      "level": "h1",
+                      "className": "text-5xl font-extrabold tracking-tight text-gray-900"
+                    }
+                  },
+                  {
+                    "type": "text",
+                    "props": {
+                      "text": "Your professional website is ready. Start by editing this page in the dashboard.",
+                      "align": "center",
+                      "className": "mt-6 text-xl text-gray-500"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "zones": {},
+          "content": [
+            {
+              "type": "HeroDental",
+              "props": {
+                "id": "HeroDental-a5a6f3ed-c9ee-4f14-b121-de0d1aada4c3",
+                "content": {
+                  "title": "Your Destination For Healthy Teeth And",
+                  "ctaLink1": "#",
+                  "ctaLink2": "#",
+                  "ctaText1": "Book Appointment",
+                  "ctaText2": "Our Treatments",
+                  "subtitle": "Welcome to dental care where healthy teeth and beautiful smiles are not just aspirations, but destinations",
+                  "service1Desc": "Transformative Teeth Whitening Services for all ages",
+                  "service2Desc": "Implants that Feel and Look Like Your Own",
+                  "service3Desc": "Anxiety-free dentistry: your comfort, our priority",
+                  "service1Title": "Teeth Whitening",
+                  "service2Title": "Precision Dental Implants",
+                  "service3Title": "Gentle Sedation Dentistry",
+                  "titleHighlight": "Beautiful Smile"
+                },
+                "styling": {
+                  "btnRadius": "8px",
+                  "paddingTop": {
+                    "desktop": 80
+                  },
+                  "titleColor": "#1a1a1a",
+                  "accentColor": "#4169E1",
+                  "paddingBottom": {
+                    "desktop": 60
+                  },
+                  "serviceCardBg": "#f8fafc",
+                  "subtitleColor": "#64748b",
+                  "highlightColor": "#4169E1",
+                  "backgroundColor": "#ffffff",
+                  "btnPrimaryColor": "#4169E1",
+                  "btnSecondaryColor": "transparent",
+                  "btnPaddingVertical": "14px",
+                  "btnPrimaryTextColor": "#ffffff",
+                  "btnPaddingHorizontal": "40px",
+                  "btnSecondaryTextColor": "#4169E1"
+                },
+                "typography": {
+                  "titleFont": "Inter",
+                  "titleSize": {
+                    "desktop": 3.5
+                  },
+                  "titleWeight": "700",
+                  "subtitleSize": {
+                    "desktop": 1
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "siteId": "cmozgyxtu00011mbc3naoxywz",
+        "updatedAt": "2026-05-12T01:12:57.201Z",
+        "createdAt": "2026-05-10T07:46:48.675Z"
+      },
+      {
+        "id": "cmp70odew000b1105mt7ofpx8",
+        "path": "/",
+        "title": "Welcome to our Store",
+        "description": "Discover amazing things at Kanjeng Pentol",
+        "imageUrl": null,
+        "body": null,
+        "isPublished": true,
+        "useBuilder": true,
+        "data": {
+          "root": {
+            "type": "section",
+            "props": {
+              "title": "cek",
+              "padding": "py-20",
+              "backgroundColor": "bg-white"
+            },
+            "children": [
+              {
+                "type": "container",
+                "props": {
+                  "maxWidth": "max-w-4xl"
+                },
+                "children": [
+                  {
+                    "type": "heading",
+                    "props": {
+                      "text": "Welcome to Kanjeng Pentol",
+                      "align": "center",
+                      "level": "h1",
+                      "className": "text-5xl font-extrabold tracking-tight text-gray-900"
+                    }
+                  },
+                  {
+                    "type": "text",
+                    "props": {
+                      "text": "Your professional website is ready. Start by editing this page in the dashboard.",
+                      "align": "center",
+                      "className": "mt-6 text-xl text-gray-500"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "zones": {},
+          "content": [
+            {
+              "type": "HeroYoga",
+              "props": {
+                "id": "HeroYoga-aff925d1-0894-4075-ab15-524cdf20a7e4",
+                "media": {
+                  "imageUrl": "https://file.crediblemark.com/instantweb/424f2f25-b0cf-4196-9b81-07a69ac06b49-1778855919613-1000183957.jpg"
+                },
+                "content": {
+                  "tag": "Street Food",
+                  "title": "Kanjeng Pentol",
+                  "ctaLink": "#",
+                  "ctaText": "Cobain Sekarang 🌶️",
+                  "subtitle": "Pentol gurih, kenyal, dan pedas yang siap nemenin lapar, nongkrong, sampai craving tengah malam. Harga merakyat, rasa pejabat.",
+                  "stat1Label": "Porsi Terjual",
+                  "stat1Value": "150+",
+                  "stat2Label": "Pelanggan Nagih",
+                  "stat2Value": "300+",
+                  "stat3Label": "Varian Rasa Favorit",
+                  "stat3Value": "500+",
+                  "secondaryButtonText": "Lihat Menu"
+                },
+                "styling": {
+                  "gap": {
+                    "desktop": 51
+                  },
+                  "btnRadius": 8,
+                  "paddingTop": {
+                    "desktop": 71
+                  },
+                  "imageRadius": 24,
+                  "btnTextColor": "#D62828",
+                  "primaryColor": "#D4A017",
+                  "paddingBottom": {
+                    "desktop": 62
+                  },
+                  "subtitleColor": "#7A1F1F",
+                  "backgroundColor": "#F2D16B",
+                  "secondaryBtnColor": "#ff6b3d",
+                  "btnPaddingVertical": "12px",
+                  "iconBackgroundColor": "#ffebe5",
+                  "btnPaddingHorizontal": "32px",
+                  "imageBackgroundColor": "#D62828"
+                },
+                "typography": {
+                  "titleSize": {
+                    "desktop": 3.5
+                  },
+                  "titleWeight": "800",
+                  "subtitleSize": {
+                    "desktop": 1.1
+                  }
+                }
+              }
+            },
+            {
+              "type": "Testimonials",
+              "props": {
+                "id": "Testimonials-65c4c789-0b1d-4163-a444-7b4aadc77266",
+                "content": {
+                  "items": [],
+                  "limit": 6,
+                  "title": "Apa Kata Mereka",
+                  "description": "Testimoni dari klien kami yang puas."
+                },
+                "styling": {
+                  "columns": 3,
+                  "padding": {
+                    "mobile": 40,
+                    "tablet": 60,
+                    "desktop": 80
+                  },
+                  "roleColor": "#94a3b8",
+                  "quoteColor": "#475569",
+                  "scrollMode": "grid",
+                  "titleColor": "#1e293b",
+                  "authorColor": "#1e293b",
+                  "backgroundColor": "#ffffff",
+                  "cardBorderColor": "#f1f5f9",
+                  "descriptionColor": "#475569",
+                  "cardBackgroundColor": "white"
+                },
+                "typography": {
+                  "quoteFont": "inherit",
+                  "titleFont": "inherit"
+                }
+              }
+            },
+            {
+              "type": "Pricing",
+              "props": {
+                "id": "Pricing-b0ed2127-f080-4d53-b4e7-118dab5639c6",
+                "content": {
+                  "items": [
+                    {
+                      "name": "Paket Sultan Pentol",
+                      "price": "Rp 3.0000",
+                      "features": [
+                        {
+                          "feature": "ISBN + Barcode",
+                          "available": true
+                        }
+                      ],
+                      "subtitle": "Untuk Pemula",
+                      "buttonUrl": "#",
+                      "buttonText": "Paket Sultan Pentol",
+                      "priceSuffix": "/porsi"
+                    },
+                    {
+                      "name": "Paket Rakyat ",
+                      "price": "Rp 5.0000",
+                      "features": [
+                        {
+                          "feature": "Semua di Majapahit",
+                          "available": true
+                        }
+                      ],
+                      "subtitle": "Paling Lengkap",
+                      "buttonUrl": "#",
+                      "buttonDesc": "* Slot terbatas bulan ini",
+                      "buttonText": "Pilih Paket Rakyat ",
+                      "priceSuffix": "All in One",
+                      "highlightLabel": "Terpopuler"
+                    },
+                    {
+                      "name": "Paket Kombo Ngab",
+                      "price": "70.000",
+                      "subtitle": "Paling Irit",
+                      "buttonText": "Pilih Paket Kombi",
+                      "pricePrefix": ""
+                    }
+                  ],
+                  "title": "Paket Menu Kanjeng Pentol"
+                },
+                "styling": {
+                  "gap": {
+                    "mobile": 16,
+                    "tablet": 24,
+                    "desktop": 28
+                  },
+                  "cardBg": "#ffffff",
+                  "mainColor": "#dc2626",
+                  "sectionBg": "#f8fafc",
+                  "scrollMode": "grid",
+                  "columnsMobile": 1,
+                  "columnsTablet": 2,
+                  "columnsDesktop": 3
+                },
+                "typography": {
+                  "bodyFont": "inherit",
+                  "textColor": "#475569",
+                  "titleFont": "inherit",
+                  "titleColor": "#1e293b",
+                  "cardFontSize": {
+                    "mobile": 16,
+                    "tablet": 16,
+                    "desktop": 16
+                  }
+                }
+              }
+            },
+            {
+              "type": "BlogList",
+              "props": {
+                "id": "BlogList-7c9a64ae-9786-4139-baa6-a14980a83c41",
+                "content": {
+                  "limit": 3,
+                  "title": "Cerita & Update Kanjeng Pentol",
+                  "description": "Mulai dari info menu baru, cerita dapur, sampai konten kuliner yang siap bikin lapar datang tanpa izin. 😄"
+                },
+                "styling": {
+                  "columns": 3,
+                  "padding": {
+                    "mobile": 40,
+                    "tablet": 60,
+                    "desktop": 80
+                  },
+                  "backgroundColor": "#ffffff",
+                  "cardBorderColor": "#f3f4f6",
+                  "cardBackgroundColor": "#ffffff"
+                },
+                "typography": {
+                  "linkColor": "#2563eb",
+                  "titleColor": "#111827",
+                  "cardDateColor": "#9ca3af",
+                  "cardTextColor": "#4b5563",
+                  "cardTitleColor": "#111827",
+                  "descriptionColor": "#4b5563"
+                }
+              }
+            },
+            {
+              "type": "OpeningHours",
+              "props": {
+                "id": "OpeningHours-e63a4cc6-36be-4ed0-9bb4-7159a6126576",
+                "content": {
+                  "hours": [
+                    {
+                      "day": "Senin",
+                      "time": "09:00 - 18:00",
+                      "isClosed": "false"
+                    },
+                    {
+                      "day": "Selasa",
+                      "time": "09:00 - 18:00",
+                      "isClosed": "false"
+                    },
+                    {
+                      "day": "Rabu",
+                      "time": "09:00 - 18:00",
+                      "isClosed": "false"
+                    },
+                    {
+                      "day": "Kamis",
+                      "time": "09:00 - 18:00",
+                      "isClosed": "false"
+                    },
+                    {
+                      "day": "Jumat",
+                      "time": "09:00 - 18:00",
+                      "isClosed": "false"
+                    },
+                    {
+                      "day": "Sabtu",
+                      "time": "10:00 - 15:00",
+                      "isClosed": "false"
+                    },
+                    {
+                      "day": "Minggu",
+                      "time": "-",
+                      "isClosed": "true"
+                    }
+                  ],
+                  "title": "Jam Operasional"
+                },
+                "styling": {
+                  "padding": {
+                    "mobile": 40,
+                    "tablet": 60,
+                    "desktop": 80
+                  },
+                  "textColor": "#334155",
+                  "titleColor": "#0f172a",
+                  "borderRadius": 24,
+                  "highlightColor": "#ef4444",
+                  "backgroundColor": "#f1f5f9",
+                  "cardBackgroundColor": "#ffffff"
+                }
+              }
+            },
+            {
+              "type": "GoogleMaps",
+              "props": {
+                "id": "GoogleMaps-ad32751f-e046-4016-bed1-48d3301c3abf",
+                "content": {
+                  "zoom": 15,
+                  "address": "Monas, Jakarta, Indonesia"
+                },
+                "styling": {
+                  "height": {
+                    "mobile": 350,
+                    "tablet": 400,
+                    "desktop": 450
+                  },
+                  "padding": {
+                    "mobile": 32,
+                    "tablet": 48,
+                    "desktop": 64
+                  },
+                  "grayscale": "false",
+                  "borderRadius": 16,
+                  "backgroundColor": "transparent"
+                }
+              }
+            },
+            {
+              "type": "LogoMarquee",
+              "props": {
+                "id": "LogoMarquee-2872c3f6-ac45-4176-899b-c7d9ae983877",
+                "media": {
+                  "logos": [
+                    {
+                      "alt": "Logo 1",
+                      "src": "https://via.placeholder.com/150x50?text=Logo+1"
+                    },
+                    {
+                      "alt": "Logo 2",
+                      "src": "https://via.placeholder.com/150x50?text=Logo+2"
+                    },
+                    {
+                      "alt": "Logo 3",
+                      "src": "https://via.placeholder.com/150x50?text=Logo+3"
+                    },
+                    {
+                      "alt": "Logo 4",
+                      "src": "https://via.placeholder.com/150x50?text=Logo+4"
+                    },
+                    {
+                      "alt": "Logo 5",
+                      "src": "https://via.placeholder.com/150x50?text=Logo+5"
+                    }
+                  ]
+                },
+                "content": {
+                  "title": ""
+                },
+                "styling": {
+                  "speed": 30,
+                  "padding": "60px 0",
+                  "grayscale": false,
+                  "titleSize": "1.5rem",
+                  "titleColor": "#475569",
+                  "backgroundColor": "#ffffff"
+                }
+              }
+            },
+            {
+              "type": "Stats",
+              "props": {
+                "id": "Stats-a8060698-063d-4d87-b7d3-01e62ee16198",
+                "content": {
+                  "items": [
+                    {
+                      "label": "Manis",
+                      "value": "100+"
+                    },
+                    {
+                      "label": "Pedas",
+                      "value": "500+"
+                    },
+                    {
+                      "label": "Gurih",
+                      "value": "50+"
+                    }
+                  ]
+                },
+                "styling": {
+                  "labelColor": "#475569",
+                  "paddingTop": "60px",
+                  "valueColor": "#dc2626",
+                  "cardBgColor": "#fef2f2",
+                  "mobileLayout": "stack",
+                  "paddingBottom": "60px",
+                  "backgroundColor": "#ffffff",
+                  "cardBorderColor": "#fecaca"
+                },
+                "typography": {}
+              }
+            }
+          ]
+        },
+        "siteId": "cmp70obn9000111054wyur2q2",
+        "updatedAt": "2026-05-17T13:56:20.950Z",
+        "createdAt": "2026-05-15T14:32:48.872Z"
+      },
+      {
+        "id": "cmp3twhf9000cy7pdowmi6pm2",
+        "path": "/",
+        "title": "Welcome to our Store",
+        "description": "Discover amazing things at KBM Kreator Yogyakarta",
+        "imageUrl": null,
+        "body": null,
+        "isPublished": true,
+        "useBuilder": true,
+        "data": {
+          "root": {
+            "type": "section",
+            "props": {
+              "padding": "py-20",
+              "backgroundColor": "bg-white"
+            },
+            "children": [
+              {
+                "type": "container",
+                "props": {
+                  "maxWidth": "max-w-4xl"
+                },
+                "children": [
+                  {
+                    "type": "heading",
+                    "props": {
+                      "text": "Welcome to KBM Kreator Yogyakarta",
+                      "align": "center",
+                      "level": "h1",
+                      "className": "text-5xl font-extrabold tracking-tight text-gray-900"
+                    }
+                  },
+                  {
+                    "type": "text",
+                    "props": {
+                      "text": "Your professional website is ready. Start by editing this page in the dashboard.",
+                      "align": "center",
+                      "className": "mt-6 text-xl text-gray-500"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "zones": {},
+          "content": [
+            {
+              "type": "HeroAutoService",
+              "props": {
+                "id": "HeroAutoService-a5afbc01-0865-4421-b367-932de261f98e",
+                "media": {
+                  "imageUrl": "https://file.crediblemark.com/instantweb/217d24ac-846b-4969-883c-8f75b752131f-1778762275191-hero.jpg"
+                },
+                "content": {
+                  "title": "Jasa Desain Layout, Pembuatan Sampul ",
+                  "ctaLink": "https://wa.me/6281357555797",
+                  "ctaText": "Konsultasi Gratis",
+                  "bulletPoints": [
+                    {
+                      "text": "Garansi sebesar Rp 5.000.000 per naskah, apabila ada kebocoran naskah maka KBM Kreator Yogyakarta berani memberikan klaim"
+                    },
+                    {
+                      "text": "Sebagai Rumah Para Penerbit maka KBM Kreator Yogyakarta adalah Mitra & Partner terbaik untuk perusahaan Penerbit Buku di Indonesia"
+                    }
+                  ],
+                  "highlightText": "Cetak Buku - Album Foto (Sekolah) & Pdf",
+                  "secondaryButtonText": ""
+                },
+                "styling": {
+                  "gap": {
+                    "desktop": 60
+                  },
+                  "btnRadius": 8,
+                  "textColor": "#ffffff",
+                  "paddingTop": {
+                    "desktop": 80
+                  },
+                  "bulletColor": "#cbd5e1",
+                  "imageRadius": 24,
+                  "primaryColor": "#ffd700",
+                  "paddingBottom": {
+                    "desktop": 60
+                  },
+                  "backgroundColor": "#032e63",
+                  "secondaryBtnColor": "#ffd700",
+                  "btnPaddingVertical": "14px",
+                  "btnPaddingHorizontal": "40px"
+                },
+                "typography": {
+                  "titleSize": {
+                    "desktop": 3.5
+                  },
+                  "bulletSize": {
+                    "desktop": 1
+                  },
+                  "titleWeight": "800"
+                }
+              }
+            },
+            {
+              "type": "SocialFeed",
+              "props": {
+                "id": "SocialFeed-267136e8-7494-4f30-89a0-7a120cf48a9a",
+                "content": {
+                  "items": [
+                    {
+                      "url": "https://www.tiktok.com/@kbm.kreator.yogya",
+                      "mode": "profile",
+                      "caption": "",
+                      "platform": "tiktok",
+                      "profileBio": "Melayani jasa:\n- Layout naskah\n- Desain cover\n- Cetak buku",
+                      "profileName": "KBM KREATOR YOGYAKARTA"
+                    },
+                    {
+                      "url": "https://www.instagram.com/kbmkreatoryogyakarta/",
+                      "mode": "profile",
+                      "caption": "",
+                      "platform": "instagram",
+                      "profileBio": "Behind the scenes dan portofolio terbaru.",
+                      "profileName": "KBM KREATOR YOGYAKARTA"
+                    }
+                  ],
+                  "title": "Temukan Kami di Sosial Media",
+                  "description": "Ikuti kami untuk konten terbaru seputar layanan kami."
+                },
+                "styling": {
+                  "columns": "2",
+                  "titleColor": "#FFFFFF",
+                  "showCaptions": "false",
+                  "cardBackground": "#FFFFFF",
+                  "backgroundColor": "#032e63"
+                }
+              }
+            },
+            {
+              "type": "Stats",
+              "props": {
+                "id": "Stats-1892c763-b560-4897-9967-be96b82418b4",
+                "content": {
+                  "items": [
+                    {
+                      "label": "Mitra Penerbit",
+                      "value": "568+"
+                    },
+                    {
+                      "label": "Layout Selesai",
+                      "value": "8.050+"
+                    },
+                    {
+                      "label": "Cover Dibuat",
+                      "value": "3.050+"
+                    },
+                    {
+                      "label": "Tahun Pengalaman",
+                      "value": "10+"
+                    }
+                  ]
+                },
+                "styling": {
+                  "labelColor": "#032e63",
+                  "paddingTop": "60px",
+                  "valueColor": "#032e63",
+                  "cardBgColor": "#ffffff",
+                  "mobileLayout": "scroll",
+                  "paddingBottom": "60px",
+                  "backgroundColor": "#032e63",
+                  "cardBorderColor": "#fecaca"
+                },
+                "typography": {
+                  "labelFont": "Roboto",
+                  "valueFont": "Inter"
+                }
+              }
+            },
+            {
+              "type": "SectionHeader",
+              "props": {
+                "id": "SectionHeader-a43fa962-3f5e-447e-9a34-bada43e6b3c5",
+                "content": {
+                  "badge": "Sejak 2017",
+                  "title": "RUMAH PARA PENERBIT DI INDONESIA ",
+                  "subtitle": "KBM Kreator Yogyakarta berdiri sejak 2017 dan mulai fokus pengembangan serta ekspansi bisnis sejak 2023. Lokasi kantor yang berdiri di Depok, Sleman - Yogyakarta."
+                },
+                "styling": {
+                  "padding": {
+                    "mobile": 40,
+                    "tablet": 60,
+                    "desktop": 80
+                  },
+                  "maxWidth": 800,
+                  "alignment": "center",
+                  "badgeColor": "#3b82f6",
+                  "showAccent": "true",
+                  "titleColor": "#ffffff",
+                  "subtitleColor": "#f5f5f5",
+                  "badgeTextColor": "#ffffff",
+                  "backgroundColor": "#032e63"
+                },
+                "typography": {
+                  "titleSize": {
+                    "mobile": 32,
+                    "tablet": 40,
+                    "desktop": 48
+                  },
+                  "subtitleSize": {
+                    "mobile": 16,
+                    "tablet": 17,
+                    "desktop": 18
+                  }
+                }
+              }
+            },
+            {
+              "type": "FeatureItem",
+              "props": {
+                "id": "FeatureItem-994b57a5-41fc-4169-b620-ac8679d03791",
+                "content": {
+                  "items": [
+                    {
+                      "icon": "Shield",
+                      "badge": "",
+                      "title": "Visi",
+                      "buttonLink": "#",
+                      "buttonText": "",
+                      "description": "\"Berusaha Membantu Meringankan Pekerjaan Setiap Penerbit Buku di Indonesia Secara Cepat, Berintegritas - Berkomitmen Tinggi Dan Saling Menguntungkan.\""
+                    },
+                    {
+                      "icon": "Zap",
+                      "badge": "",
+                      "title": "Misi",
+                      "buttonLink": "#",
+                      "buttonText": "",
+                      "description": "Kuantitas orderan di atas rata-rata orderan Penerbit Lain maka diperbolehkan untuk melakukan nego fasilitas layanan, harga dan kualitas "
+                    }
+                  ]
+                },
+                "styling": {
+                  "gap": {
+                    "desktop": 10
+                  },
+                  "grid": {
+                    "gap": {
+                      "desktop": 12
+                    },
+                    "columns": {
+                      "desktop": 2
+                    },
+                    "sectionBg": "#032e63"
+                  },
+                  "iconBg": "#ff0505",
+                  "layout": "top",
+                  "shadow": "lg",
+                  "badgeBg": "#ffffff",
+                  "bgColor": "#032e63",
+                  "columns": {
+                    "mobile": 1,
+                    "tablet": 2,
+                    "desktop": 2
+                  },
+                  "padding": {
+                    "mobile": 20,
+                    "tablet": 24,
+                    "desktop": 20
+                  },
+                  "iconSize": {
+                    "desktop": 20
+                  },
+                  "maxWidth": "max-w-full",
+                  "alignment": "center",
+                  "animation": "slideUp",
+                  "descColor": "#ffffff",
+                  "iconColor": "#fff0f0",
+                  "iconShape": "circle",
+                  "itemWidth": {
+                    "mobile": 85,
+                    "tablet": 85,
+                    "desktop": 100
+                  },
+                  "sectionBg": "#032e63",
+                  "badgeColor": "#000000",
+                  "paddingTop": {
+                    "mobile": 20,
+                    "tablet": 24,
+                    "desktop": 40
+                  },
+                  "titleColor": "#ffffff",
+                  "borderColor": "#ffffff",
+                  "borderWidth": {
+                    "desktop": 0
+                  },
+                  "hoverEffect": "glow",
+                  "paddingLeft": {
+                    "mobile": 20,
+                    "tablet": 24,
+                    "desktop": 20
+                  },
+                  "borderRadius": {
+                    "desktop": 10
+                  },
+                  "paddingRight": {
+                    "mobile": 20,
+                    "tablet": 24,
+                    "desktop": 20
+                  },
+                  "paddingBottom": {
+                    "mobile": 20,
+                    "tablet": 24,
+                    "desktop": 40
+                  },
+                  "scrollBehavior": "horizontal",
+                  "sectionPadding": {
+                    "desktop": 0
+                  },
+                  "containerMaxWidth": "max-w-screen-lg"
+                }
+              }
+            },
+            {
+              "type": "IconGrid",
+              "props": {
+                "id": "IconGrid-31e76803-1aac-4b14-be82-89d724ea93b0",
+                "content": {
+                  "items": [
+                    {
+                      "icon": "👁️",
+                      "title": "Bekerja dibalik Layar",
+                      "description": "Siapa pun mitra partner kami maka privasinya akan kami jaga. Label, logo, dan identitas KBM Kreator Yogyakarta tidak akan pernah kami munculkan pada lembar naskah atau jobs yang diberikan oleh mitra partner."
+                    },
+                    {
+                      "icon": "👮",
+                      "title": "Anti Sabotase & Pencurian Pelanggan",
+                      "description": "Kepercayaan mitra partner adalah yang terpenting bagi kami. Kepercayaan melahirkan kerjasama dengan komitmen tinggi, dan komitmen tinggi membuat kerjasama berlangsung sangat lama."
+                    },
+                    {
+                      "icon": "🔏",
+                      "title": "Menjaga Privasi Mitra Partner",
+                      "description": "Kami tidak pernah membocorkan data dan nama penerbit yang bekerjasama kecuali atas ijin mereka. Ratusan penerbit, puluhan ribu cetakan buku, dan ribuan layout telah dipercayakan kepada kami."
+                    },
+                    {
+                      "icon": "📖",
+                      "title": "Memudahkan Dalam Pelayanan",
+                      "description": "Ketika branding mitra partner kami naik karena pelayanan yang memudahkan, omset kami pun ikut naik. Saling menguntungkan adalah kunci kesuksesan bersama."
+                    }
+                  ],
+                  "title": "Prinsip Kerja Kami"
+                },
+                "styling": {
+                  "columns": 4,
+                  "padding": {
+                    "mobile": 40,
+                    "tablet": 60,
+                    "desktop": 68
+                  },
+                  "mobileLayout": "scroll",
+                  "backgroundColor": "#032e63",
+                  "cardBorderColor": "#ffffff",
+                  "cardBackgroundColor": "#032e63"
+                },
+                "typography": {
+                  "iconSize": {
+                    "mobile": 40,
+                    "tablet": 48,
+                    "desktop": 40
+                  },
+                  "titleSize": {
+                    "mobile": 28,
+                    "tablet": 40,
+                    "desktop": 50
+                  },
+                  "titleColor": "#ffffff",
+                  "itemTextColor": "#ffffff",
+                  "itemTitleSize": {
+                    "mobile": 18,
+                    "tablet": 20,
+                    "desktop": 20
+                  },
+                  "itemDescriptionSize": {
+                    "mobile": 14,
+                    "tablet": 15,
+                    "desktop": 15
+                  }
+                }
+              }
+            },
+            {
+              "type": "Gallery",
+              "props": {
+                "id": "Gallery-64c2f669-fcd9-4e29-926f-0021de524c5c",
+                "content": {
+                  "title": "Promo TERBARU",
+                  "description": "Ratusan penerbit telah mempercayai kami untuk desain cover, layout buku, dan layanan kreatif profesional"
+                },
+                "styling": {
+                  "gap": 10,
+                  "variant": "white",
+                  "imageFit": "contain",
+                  "scrollMode": "horizontal",
+                  "aspectRatio": "portrait",
+                  "borderRadius": "32px",
+                  "columnsMobile": 3,
+                  "columnsTablet": 3,
+                  "columnsDesktop": 6,
+                  "backgroundColor": "#032d62"
+                },
+                "typography": {
+                  "titleFont": "Inter",
+                  "titleColor": "#fffafa"
+                }
+              }
+            },
+            {
+              "type": "CTA",
+              "props": {
+                "id": "CTA-8e4eb212-6c31-47a4-af39-b29a1e6530dc",
+                "content": {
+                  "title": "KBM Kreator Yogyakarta",
+                  "subtitle": "Hubungi kami sekarang untuk konsultasi gratis",
+                  "buttonLink": "https://wa.me/6281357555797",
+                  "buttonText": "Mulai Sekarang"
+                },
+                "styling": {
+                  "padding": {
+                    "mobile": 60,
+                    "tablet": 80,
+                    "desktop": 100
+                  },
+                  "titleColor": "#ffffff",
+                  "buttonColor": "#ffffff",
+                  "backgroundColor": "#032d62",
+                  "buttonTextColor": "#032d62",
+                  "descriptionColor": "rgba(255, 255, 255, 0.95)"
+                },
+                "typography": {
+                  "titleSize": {
+                    "mobile": 32,
+                    "tablet": 48,
+                    "desktop": 56
+                  },
+                  "descriptionSize": {
+                    "mobile": 16,
+                    "tablet": 18,
+                    "desktop": 20
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "siteId": "cmp3twfmn0002y7pd4fu6c51o",
+        "updatedAt": "2026-05-19T03:49:20.133Z",
+        "createdAt": "2026-05-13T08:59:51.478Z"
+      },
+      {
+        "id": "cmp5ldyld00012s9kvc4rxkf9",
+        "path": "/tentang",
+        "title": "Tentang",
+        "description": "",
+        "imageUrl": "",
+        "body": "",
+        "isPublished": true,
+        "useBuilder": false,
+        "data": {},
+        "siteId": "cmp3twfmn0002y7pd4fu6c51o",
+        "updatedAt": "2026-05-14T14:37:56.141Z",
+        "createdAt": "2026-05-14T14:37:02.690Z"
+      },
+      {
+        "id": "cmp5lfl1l0001yssx1ihmkiqc",
+        "path": "/kontak",
+        "title": "Kontak",
+        "description": "",
+        "imageUrl": "",
+        "body": "",
+        "isPublished": true,
+        "useBuilder": false,
+        "data": {},
+        "siteId": "cmp3twfmn0002y7pd4fu6c51o",
+        "updatedAt": "2026-05-14T14:38:18.441Z",
+        "createdAt": "2026-05-14T14:38:18.441Z"
+      },
+      {
+        "id": "cmp98jdyp0003var3lnkvgwj4",
+        "path": "/tentang",
+        "title": "Tentang",
+        "description": "**Kanjeng Pentol** adalah kuliner pentol pedas di Sumenep dengan rasa gurih, kenyal, dan bumbu khas yang bikin nagih. Cocok untuk ngemil, nongkrong, dan pecinta jajanan pedas dengan harga merakyat rasa pejabat.",
+        "imageUrl": "https://file.crediblemark.com/instantweb/424f2f25-b0cf-4196-9b81-07a69ac06b49-1778855919613-1000183957.jpg",
+        "body": "{\"type\":\"doc\",\"content\":[{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Kadang yang bikin bahagia itu sederhana:\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"pentol hangat, saus pedas, dan gak ada yang bilang “udah cukup”.\"}]},{\"type\":\"paragraph\"},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Dari situ lahir \"},{\"type\":\"text\",\"marks\":[{\"type\":\"bold\"}],\"text\":\"Kanjeng Pentol\"},{\"type\":\"text\",\"text\":\" — brand kuliner yang percaya kalau jajanan rakyat juga bisa punya rasa yang serius. Kami hadir buat nemenin nongkrong, lapar dadakan, sampai momen “cuma mau ngemil satu”… tapi ujungnya habis satu porsi.\"}]},{\"type\":\"paragraph\"},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Kami fokus bikin pentol yang:\"}]},{\"type\":\"bulletList\",\"content\":[{\"type\":\"listItem\",\"content\":[{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"gurihnya terasa,\"}]}]},{\"type\":\"listItem\",\"content\":[{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"kenyalnya pas,\"}]}]},{\"type\":\"listItem\",\"content\":[{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"dan pedasnya bikin keringetan tapi nagih.\"}]}]}]},{\"type\":\"paragraph\"},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Dengan bahan pilihan dan racikan bumbu yang terus dijaga kualitasnya, kami ingin setiap pelanggan dapat rasa yang konsisten dan pengalaman makan yang bikin balik lagi.\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Karena buat kami, pentol bukan sekadar jajanan.\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"Pentol itu mood booster.\"}]},{\"type\":\"paragraph\"},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"marks\":[{\"type\":\"bold\"}],\"text\":\"Kanjeng Pentol\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"marks\":[{\"type\":\"italic\"}],\"text\":\"Harga Merakyat, Rasa Pejabat.\"}]}]}",
+        "isPublished": true,
+        "useBuilder": false,
+        "data": {},
+        "siteId": "cmp70obn9000111054wyur2q2",
+        "updatedAt": "2026-05-17T13:14:59.585Z",
+        "createdAt": "2026-05-17T03:48:25.586Z"
+      },
+      {
+        "id": "cmpff10s4000gu5f0jgvswzs9",
+        "path": "/konghuan",
+        "title": "Konghuan",
+        "description": "",
+        "imageUrl": "",
+        "body": "",
+        "isPublished": true,
+        "useBuilder": true,
+        "data": {},
+        "siteId": "cmpff0ccz0002u5f0rp7dk8aq",
+        "updatedAt": "2026-05-21T11:36:43.060Z",
+        "createdAt": "2026-05-21T11:36:43.060Z"
+      },
+      {
+        "id": "cmpajs6m1000bncnzko82r2em",
+        "path": "/",
+        "title": "Welcome to our Store",
+        "description": "Discover amazing things at UnivedPress",
+        "imageUrl": null,
+        "body": null,
+        "isPublished": true,
+        "useBuilder": true,
+        "data": {
+          "root": {
+            "type": "section",
+            "props": {
+              "padding": "py-20",
+              "backgroundColor": "bg-white"
+            },
+            "children": [
+              {
+                "type": "container",
+                "props": {
+                  "maxWidth": "max-w-4xl"
+                },
+                "children": [
+                  {
+                    "type": "heading",
+                    "props": {
+                      "text": "Welcome to UnivedPress",
+                      "align": "center",
+                      "level": "h1",
+                      "className": "text-5xl font-extrabold tracking-tight text-gray-900"
+                    }
+                  },
+                  {
+                    "type": "text",
+                    "props": {
+                      "text": "Your professional website is ready. Start by editing this page in the dashboard.",
+                      "align": "center",
+                      "className": "mt-6 text-xl text-gray-500"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "zones": {},
+          "content": [
+            {
+              "type": "HeroPublisherTwo",
+              "props": {
+                "id": "HeroPublisherTwo-7b1b0327-7f9e-4244-b5d6-93f5a9debdcc",
+                "media": {
+                  "imageUrl": "https://file.crediblemark.com/instantweb/f7fefa35-2c43-4487-8144-d2f4da0ba9cd-1779070629670-f157070d-81b3-4880-907b-9b7afb05529b-HERO-UNIVED.webp"
+                },
+                "content": {
+                  "title": "Terbitkan Karya Terbaik Anda",
+                  "description": "Tempat Menerbitkan Buku Secara Cepat Tanpa Ribet"
+                },
+                "styling": {
+                  "gap": {
+                    "mobile": 20,
+                    "desktop": 100
+                  },
+                  "textColor": "#000000",
+                  "waveColor": "#000000",
+                  "imageAlign": "right",
+                  "imageWidth": "70%",
+                  "paddingTop": {
+                    "mobile": 70,
+                    "desktop": 100
+                  },
+                  "imageRadius": "0px",
+                  "imageShadow": "none",
+                  "paddingBottom": {
+                    "mobile": 15,
+                    "desktop": 26
+                  },
+                  "imageObjectFit": "contain",
+                  "backgroundColor": "#ffd700",
+                  "descriptionColor": "#000000",
+                  "imageAspectRatio": "3/4"
+                },
+                "typography": {
+                  "descFont": "Lato",
+                  "titleFont": "Roboto",
+                  "titleSize": {
+                    "mobile": 2.4,
+                    "desktop": 3.6
+                  },
+                  "titleWeight": "800",
+                  "subtitleSize": {
+                    "mobile": 1.2,
+                    "desktop": 1.2
+                  }
+                }
+              }
+            },
+            {
+              "type": "Stats",
+              "props": {
+                "id": "Stats-0ee93c40-209a-482f-a872-a6e9c9acdf49",
+                "content": {
+                  "items": [
+                    {
+                      "label": "Judul Buku",
+                      "value": "100+"
+                    },
+                    {
+                      "label": "Eksemplar",
+                      "value": "500+"
+                    },
+                    {
+                      "label": "Penulis Puas",
+                      "value": "50+"
+                    }
+                  ]
+                },
+                "styling": {
+                  "labelColor": "#000000",
+                  "paddingTop": "60px",
+                  "valueColor": "#000000",
+                  "cardBgColor": "#ffd700",
+                  "mobileLayout": "scroll",
+                  "paddingBottom": "60px",
+                  "backgroundColor": "#000000",
+                  "cardBorderColor": "#ffd700"
+                },
+                "typography": {}
+              }
+            },
+            {
+              "type": "AboutCompany",
+              "props": {
+                "id": "AboutCompany-3a807e07-b4bc-4d2b-b84c-b58e3db3292e",
+                "media": {
+                  "imageUrl": "https://file.crediblemark.com/instantweb/7ab4f111-27cc-4633-bc1a-e6a90a3e8701-1779072583725-1765824507723-Gemini_Generated_Image_x2yum1x2yum1x2yu.webp"
+                },
+                "content": {
+                  "content": "Unived Press (UP) adalah penerbit profesional yang fokus pada layanan penerbitan buku akademik, ilmiah, dan umum, dengan tujuan membantu penulis, peneliti, dan institusi menerbitkan karya terbaiknya menggunakan standar kualitas tinggi dan proses yang efisien. Berada di bawah naungan Universitas Dehasen Bengkulu, UP kini merupakan Bidang Penerbitan pada Lembaga Publikasi, Pengembangan Jurnal, Penerbitan dan Hak Kekayaan Intelektual (LPPJPHKI) sejak tahun 2020 , dan bertugas meningkatkan produktivitas dosen dan akademisi serta melayani masyarakat luas melalui Program Penerbitan Mandiri."
+                },
+                "styling": {
+                  "gap": {
+                    "mobile": 16,
+                    "tablet": 24,
+                    "desktop": 32
+                  },
+                  "padding": {
+                    "mobile": 24,
+                    "tablet": 32,
+                    "desktop": 48
+                  },
+                  "textColor": "#374151",
+                  "backgroundColor": "#ffffff"
+                },
+                "typography": {
+                  "fontSize": {
+                    "mobile": 16,
+                    "tablet": 16,
+                    "desktop": 18
+                  }
+                }
+              }
+            },
+            {
+              "type": "IconGrid",
+              "props": {
+                "id": "IconGrid-27bb98d6-4972-4b5d-bdd9-27dc506cae92",
+                "content": {
+                  "items": [
+                    {
+                      "icon": "🛡️",
+                      "title": "Profesional",
+                      "description": "Tim profesional siap melayani anda hingga buku terbit"
+                    },
+                    {
+                      "icon": "🔄",
+                      "title": "Efisien",
+                      "description": "Kami mengutamakan proses yang efisien dan maksimal"
+                    },
+                    {
+                      "icon": "🔍",
+                      "title": "Transparan",
+                      "description": "Proses transparan dari awal hingga terbit"
+                    },
+                    {
+                      "icon": "🔋",
+                      "title": "Dukungan",
+                      "description": "Gratis konsultasi dan pendampingan gratis"
+                    }
+                  ],
+                  "title": "Mengapa Memilih UP?"
+                },
+                "styling": {
+                  "columns": 4,
+                  "padding": {
+                    "mobile": 40,
+                    "tablet": 60,
+                    "desktop": 80
+                  },
+                  "mobileLayout": "scroll",
+                  "backgroundColor": "#ffd700",
+                  "cardBorderColor": "#ffd700",
+                  "cardBackgroundColor": "#000000"
+                },
+                "typography": {
+                  "iconSize": {
+                    "mobile": 40,
+                    "tablet": 48,
+                    "desktop": 56
+                  },
+                  "iconColor": "#ffffff",
+                  "titleSize": {
+                    "mobile": 28,
+                    "tablet": 40,
+                    "desktop": 48
+                  },
+                  "titleColor": "#000000",
+                  "itemTextColor": "#ffffff",
+                  "itemTitleSize": {
+                    "mobile": 18,
+                    "tablet": 20,
+                    "desktop": 24
+                  },
+                  "itemDescriptionSize": {
+                    "mobile": 14,
+                    "tablet": 15,
+                    "desktop": 16
+                  }
+                }
+              }
+            },
+            {
+              "type": "PricingImage",
+              "props": {
+                "id": "PricingImage-4e16851b-1bff-4d8b-8c33-7140d0d804e6",
+                "media": {
+                  "items": [
+                    {
+                      "link": "#",
+                      "altText": "Package 1",
+                      "imageUrl": "https://file.crediblemark.com/instantweb/785e9182-352b-4df2-85a6-7cbd56f50e8e-1779077525379-1767027236053-WhatsApp-Image-2025-12-29-at-14.40.43.webp"
+                    },
+                    {
+                      "link": "#",
+                      "altText": "Package 2",
+                      "imageUrl": "https://file.crediblemark.com/instantweb/e84e5e8b-8958-4517-b88d-185b9a27beeb-1779077543765-1767027257562-WhatsApp-Image-2025-12-29-at-14.40.43-(1).webp"
+                    },
+                    {
+                      "link": "#",
+                      "altText": "Package 3",
+                      "imageUrl": "https://file.crediblemark.com/instantweb/839622ed-4a54-4acc-8fa1-87de41b3a97d-1779077556079-1767027267086-WhatsApp-Image-2025-12-29-at-14.40.43-(2).webp"
+                    },
+                    {
+                      "link": "#",
+                      "altText": "Package 3",
+                      "imageUrl": "https://file.crediblemark.com/instantweb/60f9a33a-0ed9-43d2-8644-f86c96e07770-1779077576362-1767027274845-WhatsApp-Image-2025-12-29-at-14.40.44.webp"
+                    }
+                  ]
+                },
+                "content": {
+                  "title": "Paket Spesial"
+                },
+                "styling": {
+                  "gap": {
+                    "mobile": 16,
+                    "tablet": 24,
+                    "desktop": 8
+                  },
+                  "hoverLift": 10,
+                  "sectionBg": "#f8fafc",
+                  "cardRadius": 16,
+                  "cardShadow": "sm",
+                  "scrollMode": "grid",
+                  "cardObjectFit": "contain",
+                  "columnsMobile": 1,
+                  "columnsTablet": 2,
+                  "columnsDesktop": 4,
+                  "cardAspectRatio": "auto"
+                },
+                "typography": {
+                  "titleFont": "inherit",
+                  "titleColor": "#1e293b"
+                }
+              }
+            },
+            {
+              "type": "Testimonials",
+              "props": {
+                "id": "Testimonials-8906be8a-1436-42d5-9049-b7b6b7d9f357",
+                "content": {
+                  "items": [],
+                  "limit": 6,
+                  "title": "Apa Kata Mereka",
+                  "description": "Testimoni dari klien kami yang puas."
+                },
+                "styling": {
+                  "columns": 3,
+                  "padding": {
+                    "mobile": 40,
+                    "tablet": 60,
+                    "desktop": 80
+                  },
+                  "roleColor": "#000000",
+                  "quoteColor": "#000000",
+                  "scrollMode": "horizontal",
+                  "titleColor": "#000000",
+                  "authorColor": "#000000",
+                  "backgroundColor": "#ffd700",
+                  "cardBorderColor": "#ffffff",
+                  "descriptionColor": "#000000",
+                  "cardBackgroundColor": "#ffffff"
+                },
+                "typography": {
+                  "quoteFont": "inherit",
+                  "titleFont": "inherit"
+                }
+              }
+            },
+            {
+              "type": "LogoMarquee",
+              "props": {
+                "id": "LogoMarquee-8cb3fbde-6c52-450e-bcdb-236dc8166b17",
+                "media": {
+                  "logos": [
+                    {
+                      "alt": "Logo IKAPI",
+                      "src": "https://file.crediblemark.com/instantweb/a3ef916b-8668-4202-ab7f-bca83e730742-1779082411678-ikapi.webp"
+                    },
+                    {
+                      "alt": "Logo Perpusnas",
+                      "src": "https://file.crediblemark.com/instantweb/25d9d455-6895-4341-a6dc-7929aec8853b-1779082435987-1765854544887-Logo_Perpusnas.png.webp"
+                    },
+                    {
+                      "alt": "Kemenkumham",
+                      "src": "https://file.crediblemark.com/instantweb/92f05cfc-c886-413c-be88-40139cd67387-1779082459246-1765854497450-Logo_DJKI_Kemenkumham.png.webp"
+                    },
+                    {
+                      "alt": "Google Play",
+                      "src": "https://file.crediblemark.com/instantweb/1267be10-c346-4b0c-989f-59c137bdc78a-1779082486022-1765854486481-Google_Play_Books.png.webp"
+                    }
+                  ]
+                },
+                "content": {
+                  "title": ""
+                },
+                "styling": {
+                  "speed": 30,
+                  "padding": "60px 0",
+                  "grayscale": false,
+                  "titleSize": "1.5rem",
+                  "titleColor": "#475569",
+                  "backgroundColor": "#ffffff"
+                }
+              }
+            },
+            {
+              "type": "ProductList",
+              "props": {
+                "id": "ProductList-0efe28b6-60d3-42a4-a4ef-e9ae83e9675a",
+                "content": {
+                  "limit": 4,
+                  "title": "Produk Unggulan",
+                  "description": "Koleksi buku terbaik dari penulis pilihan."
+                },
+                "styling": {
+                  "columns": 4,
+                  "imageFit": "cover",
+                  "cardShadow": "none",
+                  "cardTitleColor": "#fffafa",
+                  "showCardBorder": false,
+                  "backgroundColor": "#ffffff",
+                  "cardBorderColor": "#ffffff",
+                  "imageAspectRatio": "aspect-[2/3]",
+                  "cardBackgroundColor": "#000000"
+                },
+                "typography": {
+                  "bodyFont": "inherit",
+                  "titleFont": "inherit",
+                  "titleColor": "#111827",
+                  "descriptionColor": "#4b5563"
+                }
+              }
+            },
+            {
+              "type": "Accordion",
+              "props": {
+                "id": "Accordion-e8a3e4cd-3d7f-4d67-ae09-47b3cf672b4d",
+                "content": {
+                  "items": [
+                    {
+                      "answer": "Kirim via email atau form website kami. Pastikan naskah sudah rapi dan lengkap.",
+                      "question": "Bagaimana cara mengirim naskah?"
+                    },
+                    {
+                      "answer": "Standar 3-4 minggu untuk paket reguler, namun bisa lebih cepat dengan paket ekspres.",
+                      "question": "Berapa lama proses penerbitan?"
+                    },
+                    {
+                      "answer": "Tidak ada. Semua biaya transparan dan tertera di paket harga.",
+                      "question": "Apakah ada biaya tersembunyi?"
+                    }
+                  ],
+                  "title": "Pertanyaan Umum"
+                },
+                "styling": {
+                  "textColor": "#000000",
+                  "titleColor": "#000000",
+                  "activeColor": "#000000",
+                  "itemBgColor": "#f8fafc",
+                  "backgroundColor": "#ffd700"
+                },
+                "typography": {}
+              }
+            }
+          ]
+        },
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "updatedAt": "2026-05-22T14:36:56.407Z",
+        "createdAt": "2026-05-18T01:50:57.914Z"
+      },
+      {
+        "id": "cmpff0e99000cu5f0lek0f4p1",
+        "path": "/",
+        "title": "Welcome to our Store",
+        "description": "Discover amazing things at Konghuan",
+        "imageUrl": null,
+        "body": null,
+        "isPublished": true,
+        "useBuilder": true,
+        "data": {
+          "root": {
+            "type": "section",
+            "props": {
+              "mode": "html",
+              "padding": "py-20",
+              "htmlCode": "<main class=\"min-h-screen overflow-hidden bg-slate-950 text-slate-100\">\n  <!-- Hero Section -->\n  <section class=\"relative px-4 py-8 sm:px-6 sm:py-10 md:px-8 lg:px-12\">\n    <div class=\"absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.22),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(59,130,246,0.18),transparent_32%)]\"></div>\n    <div class=\"mx-auto grid max-w-6xl items-center gap-6 rounded-[2rem] border border-white/10 bg-white/[0.04] p-4 shadow-2xl shadow-black/30 backdrop-blur sm:p-6 md:grid-cols-[1.05fr_0.95fr] md:p-7 lg:p-8\">\n      <div class=\"space-y-5\">\n        <div class=\"inline-flex items-center gap-2 rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1 text-xs font-medium text-amber-200\">\n          <span class=\"h-1.5 w-1.5 rounded-full bg-amber-300\"></span>\n          Koleksi pilihan, harga bersahabat\n        </div>\n\n        <div class=\"space-y-3\">\n          <h1 class=\"max-w-2xl text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl\">\n            Toko Buku Modern untuk Pembaca Serius dan Santai\n          </h1>\n          <p class=\"max-w-xl text-sm leading-6 text-slate-300 sm:text-base\">\n            Temukan buku akademik, novel, pengembangan diri, dan bacaan anak dalam satu tempat yang rapi, cepat, dan nyaman diakses dari ponsel.\n          </p>\n        </div>\n\n        <div class=\"flex flex-col gap-3 sm:flex-row\">\n          <a href=\"#cta\" class=\"group inline-flex items-center justify-center rounded-2xl bg-amber-300 px-5 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-300/20 transition hover:-translate-y-0.5 hover:bg-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-200 focus:ring-offset-2 focus:ring-offset-slate-950\">\n            Belanja Sekarang\n            <span class=\"ml-2 transition group-hover:translate-x-1\">→</span>\n          </a>\n          <a href=\"#layanan\" class=\"inline-flex items-center justify-center rounded-2xl border border-white/10 bg-white/[0.06] px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/[0.1] focus:outline-none focus:ring-2 focus:ring-slate-300 focus:ring-offset-2 focus:ring-offset-slate-950\">\n            Lihat Layanan\n          </a>\n        </div>\n\n        <div class=\"grid grid-cols-3 gap-2 pt-1 text-center sm:max-w-md\">\n          <div class=\"rounded-2xl border border-white/10 bg-white/[0.05] p-3\">\n            <p class=\"text-lg font-bold text-white\">8K+</p>\n            <p class=\"text-[11px] text-slate-400\">Judul Buku</p>\n          </div>\n          <div class=\"rounded-2xl border border-white/10 bg-white/[0.05] p-3\">\n            <p class=\"text-lg font-bold text-white\">24J</p>\n            <p class=\"text-[11px] text-slate-400\">Proses Pesan</p>\n          </div>\n          <div class=\"rounded-2xl border border-white/10 bg-white/[0.05] p-3\">\n            <p class=\"text-lg font-bold text-white\">4.9</p>\n            <p class=\"text-[11px] text-slate-400\">Rating Toko</p>\n          </div>\n        </div>\n      </div>\n\n      <div class=\"relative\">\n        <div class=\"absolute -inset-3 rounded-[2rem] bg-gradient-to-br from-amber-300/20 via-blue-400/10 to-fuchsia-400/10 blur-2xl\"></div>\n        <div class=\"relative rounded-[1.75rem] border border-white/10 bg-slate-900/80 p-4 shadow-xl backdrop-blur\">\n          <div class=\"grid grid-cols-3 gap-3\">\n            <div class=\"h-44 rounded-2xl bg-gradient-to-br from-amber-200 to-orange-500 p-3 shadow-lg shadow-orange-500/10 sm:h-52\">\n              <p class=\"text-xs font-bold text-slate-950\">Novel</p>\n              <p class=\"mt-1 text-[10px] text-slate-800\">Cerita pilihan</p>\n            </div>\n            <div class=\"mt-6 h-44 rounded-2xl bg-gradient-to-br from-sky-200 to-blue-600 p-3 shadow-lg shadow-blue-500/10 sm:h-52\">\n              <p class=\"text-xs font-bold text-slate-950\">Akademik</p>\n              <p class=\"mt-1 text-[10px] text-slate-800\">Referensi kampus</p>\n            </div>\n            <div class=\"h-44 rounded-2xl bg-gradient-to-br from-emerald-200 to-teal-600 p-3 shadow-lg shadow-teal-500/10 sm:h-52\">\n              <p class=\"text-xs font-bold text-slate-950\">Anak</p>\n              <p class=\"mt-1 text-[10px] text-slate-800\">Belajar ceria</p>\n            </div>\n          </div>\n          <div class=\"mt-4 rounded-2xl border border-white/10 bg-white/[0.05] p-4\">\n            <div class=\"flex items-center justify-between gap-3\">\n              <div>\n                <p class=\"text-sm font-semibold text-white\">Rekomendasi Minggu Ini</p>\n                <p class=\"text-xs text-slate-400\">Kurasi buku baru dan paling dicari.</p>\n              </div>\n              <span class=\"rounded-full bg-amber-300/15 px-3 py-1 text-xs font-semibold text-amber-200\">Diskon 20%</span>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </section>\n\n  <!-- Features / Layanan -->\n  <section id=\"layanan\" class=\"px-4 py-6 sm:px-6 md:px-8 lg:px-12\">\n    <div class=\"mx-auto max-w-6xl\">\n      <div class=\"mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between\">\n        <div>\n          <p class=\"text-xs font-semibold uppercase tracking-[0.22em] text-amber-200\">Layanan</p>\n          <h2 class=\"mt-1 text-2xl font-bold tracking-tight text-white sm:text-3xl\">Belanja buku dibuat lebih praktis</h2>\n        </div>\n        <p class=\"max-w-md text-sm leading-6 text-slate-400\">Sistem toko dirancang ringkas agar pembaca dapat memilih, memesan, dan menerima buku tanpa proses berbelit.</p>\n      </div>\n\n      <div class=\"grid gap-3 sm:grid-cols-2 lg:grid-cols-4\">\n        <div class=\"group rounded-3xl border border-white/10 bg-white/[0.04] p-4 transition hover:-translate-y-1 hover:border-amber-200/30 hover:bg-white/[0.07]\">\n          <div class=\"mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-300/15 text-lg text-amber-200\">📚</div>\n          <h3 class=\"text-base font-semibold text-white\">Katalog Terpilih</h3>\n          <p class=\"mt-2 text-sm leading-6 text-slate-400\">Kategori buku ditata jelas berdasarkan tema, kebutuhan belajar, dan minat pembaca.</p>\n        </div>\n\n        <div class=\"group rounded-3xl border border-white/10 bg-white/[0.04] p-4 transition hover:-translate-y-1 hover:border-sky-200/30 hover:bg-white/[0.07]\">\n          <div class=\"mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-sky-300/15 text-lg text-sky-200\">🔎</div>\n          <h3 class=\"text-base font-semibold text-white\">Pencarian Cepat</h3>\n          <p class=\"mt-2 text-sm leading-6 text-slate-400\">Pembeli dapat menemukan judul, penulis, atau kategori dengan alur yang sederhana.</p>\n        </div>\n\n        <div class=\"group rounded-3xl border border-white/10 bg-white/[0.04] p-4 transition hover:-translate-y-1 hover:border-emerald-200/30 hover:bg-white/[0.07]\">\n          <div class=\"mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-300/15 text-lg text-emerald-200\">🚚</div>\n          <h3 class=\"text-base font-semibold text-white\">Pengiriman Rapi</h3>\n          <p class=\"mt-2 text-sm leading-6 text-slate-400\">Buku dikemas aman agar kondisi fisik tetap baik saat diterima pelanggan.</p>\n        </div>\n\n        <div class=\"group rounded-3xl border border-white/10 bg-white/[0.04] p-4 transition hover:-translate-y-1 hover:border-fuchsia-200/30 hover:bg-white/[0.07]\">\n          <div class=\"mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-fuchsia-300/15 text-lg text-fuchsia-200\">💬</div>\n          <h3 class=\"text-base font-semibold text-white\">Konsultasi Buku</h3>\n          <p class=\"mt-2 text-sm leading-6 text-slate-400\">Tim membantu memberi saran bacaan sesuai kebutuhan akademik atau hiburan.</p>\n        </div>\n      </div>\n    </div>\n  </section>\n\n  <!-- Testimoni -->\n  <section class=\"px-4 py-6 sm:px-6 md:px-8 lg:px-12\">\n    <div class=\"mx-auto max-w-6xl rounded-[2rem] border border-white/10 bg-white/[0.035] p-4 backdrop-blur sm:p-5 md:p-6\">\n      <div class=\"mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between\">\n        <div>\n          <p class=\"text-xs font-semibold uppercase tracking-[0.22em] text-amber-200\">Testimoni</p>\n          <h2 class=\"mt-1 text-2xl font-bold tracking-tight text-white sm:text-3xl\">Dipercaya pembaca dari berbagai kebutuhan</h2>\n        </div>\n        <p class=\"text-sm text-slate-400\">Ulasan singkat dari pelanggan toko.</p>\n      </div>\n\n      <div class=\"grid gap-3 md:grid-cols-3\">\n        <div class=\"rounded-3xl border border-white/10 bg-slate-900/70 p-4 transition hover:-translate-y-1 hover:bg-slate-900\">\n          <div class=\"mb-3 flex items-center gap-3\">\n            <div class=\"flex h-10 w-10 items-center justify-center rounded-full bg-amber-300 text-sm font-bold text-slate-950\">AR</div>\n            <div>\n              <p class=\"text-sm font-semibold text-white\">Ari Rahman</p>\n              <p class=\"text-xs text-slate-400\">Mahasiswa</p>\n            </div>\n          </div>\n          <p class=\"text-sm leading-6 text-slate-300\">“Buku referensi kuliah mudah ditemukan. Kemasannya aman dan proses pesannya tidak membingungkan.”</p>\n        </div>\n\n        <div class=\"rounded-3xl border border-white/10 bg-slate-900/70 p-4 transition hover:-translate-y-1 hover:bg-slate-900\">\n          <div class=\"mb-3 flex items-center gap-3\">\n            <div class=\"flex h-10 w-10 items-center justify-center rounded-full bg-sky-300 text-sm font-bold text-slate-950\">DN</div>\n            <div>\n              <p class=\"text-sm font-semibold text-white\">Dina Novia</p>\n              <p class=\"text-xs text-slate-400\">Guru</p>\n            </div>\n          </div>\n          <p class=\"text-sm leading-6 text-slate-300\">“Pilihan buku anak cukup lengkap. Tampilannya nyaman dibuka dari ponsel dan informasinya jelas.”</p>\n        </div>\n\n        <div class=\"rounded-3xl border border-white/10 bg-slate-900/70 p-4 transition hover:-translate-y-1 hover:bg-slate-900\">\n          <div class=\"mb-3 flex items-center gap-3\">\n            <div class=\"flex h-10 w-10 items-center justify-center rounded-full bg-emerald-300 text-sm font-bold text-slate-950\">MS</div>\n            <div>\n              <p class=\"text-sm font-semibold text-white\">Maya Sari</p>\n              <p class=\"text-xs text-slate-400\">Pembaca Novel</p>\n            </div>\n          </div>\n          <p class=\"text-sm leading-6 text-slate-300\">“Rekomendasi bukunya membantu. Saya jadi lebih cepat memilih bacaan tanpa harus membuka banyak halaman.”</p>\n        </div>\n      </div>\n    </div>\n  </section>\n\n  <!-- Call-to-Action -->\n  <section id=\"cta\" class=\"px-4 pb-8 pt-6 sm:px-6 sm:pb-10 md:px-8 lg:px-12\">\n    <div class=\"mx-auto max-w-6xl overflow-hidden rounded-[2rem] border border-amber-200/20 bg-gradient-to-br from-amber-300 via-orange-300 to-rose-300 p-5 text-slate-950 shadow-2xl shadow-amber-300/10 sm:p-6 md:p-8\">\n      <div class=\"grid items-center gap-5 md:grid-cols-[1fr_auto]\">\n        <div class=\"space-y-2\">\n          <p class=\"text-xs font-bold uppercase tracking-[0.22em] text-slate-800/70\">Mulai dari rak terbaik</p>\n          <h2 class=\"text-2xl font-black tracking-tight sm:text-3xl lg:text-4xl\">Siap menemukan buku berikutnya?</h2>\n          <p class=\"max-w-2xl text-sm leading-6 text-slate-800/80 sm:text-base\">Jelajahi koleksi pilihan dan dapatkan rekomendasi buku yang sesuai dengan kebutuhan belajar, kerja, dan waktu santai Anda.</p>\n        </div>\n        <a href=\"#\" class=\"inline-flex items-center justify-center rounded-2xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-950/20 transition hover:-translate-y-0.5 hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2 focus:ring-offset-amber-300\">\n          Buka Katalog\n        </a>\n      </div>\n    </div>\n  </section>\n</main>\n",
+              "htmlViewMode": "preview",
+              "backgroundColor": "bg-white"
+            },
+            "children": [
+              {
+                "type": "container",
+                "props": {
+                  "maxWidth": "max-w-4xl"
+                },
+                "children": [
+                  {
+                    "type": "heading",
+                    "props": {
+                      "text": "Welcome to Konghuan",
+                      "align": "center",
+                      "level": "h1",
+                      "className": "text-5xl font-extrabold tracking-tight text-gray-900"
+                    }
+                  },
+                  {
+                    "type": "text",
+                    "props": {
+                      "text": "Your professional website is ready. Start by editing this page in the dashboard.",
+                      "align": "center",
+                      "className": "mt-6 text-xl text-gray-500"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "zones": {},
+          "content": []
+        },
+        "siteId": "cmpff0ccz0002u5f0rp7dk8aq",
+        "updatedAt": "2026-05-28T03:19:38.697Z",
+        "createdAt": "2026-05-21T11:36:13.869Z"
+      },
+      {
+        "id": "cmpoz433u0001wee4kbjj0k7g",
+        "path": "/test-html",
+        "title": "Test HTML",
+        "description": "",
+        "imageUrl": "",
+        "body": "",
+        "isPublished": true,
+        "useBuilder": true,
+        "data": {
+          "root": {
+            "props": {
+              "mode": "html",
+              "htmlCode": "<!DOCTYPE html>\n<html lang=\"id\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\">\n    <title>Paket All Digital - Bayar Suka-Suka</title>\n    \n    <!-- Facebook Pixel Code (INIT ONLY) -->\n    <script>\n        !function(f,b,e,v,n,t,s)\n        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?\n        n.callMethod.apply(n,arguments):n.queue.push(arguments)};\n        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';\n        n.queue=[];t=b.createElement(e);t.async=!0;\n        t.src=v;s=b.getElementsByTagName(e)[0];\n        s.parentNode.insertBefore(t,s)}(window, document,'script',\n        'https://connect.facebook.net/en_US/fbevents.js');\n        \n        // GANTI DENGAN ID PIXEL ANDA\n        fbq('init', '1247506060374235'); \n        // PageView dihapus sesuai permintaan\n    </script>\n    <!-- End Facebook Pixel Code -->\n\n    <style>\n        /* Reset & Base */\n        * { box-sizing: border-box; margin: 0; padding: 0; }\n        body {\n            font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif;\n            background-color: #f4f4f4;\n            color: #333;\n            line-height: 1.6;\n            -webkit-font-smoothing: antialiased;\n        }\n\n        /* HERO */\n        .hero {\n            background: #000000;\n            color: white;\n            padding: 40px 15px 60px;\n            text-align: center;\n        }\n        \n        .warning-badge {\n            background: #ff0000;\n            color: white;\n            padding: 8px 15px;\n            border-radius: 5px;\n            font-weight: bold;\n            text-transform: uppercase;\n            font-size: 0.75rem;\n            letter-spacing: 1px;\n            animation: blinker 1.5s linear infinite;\n            display: inline-block;\n            margin-bottom: 15px;\n        }\n        @keyframes blinker { 50% { opacity: 0.6; } }\n\n        h1 { font-size: 1.6rem; line-height: 1.3; margin-bottom: 12px; color: #fff; }\n        h1 span { color: #ffcc00; }\n\n        .sub-hero { font-size: 0.95rem; color: #ccc; margin-bottom: 25px; padding: 0 5px; }\n\n        /* Value Stack Box */\n        .value-stack {\n            background: white;\n            max-width: 500px;\n            margin: 0 auto;\n            border-radius: 12px;\n            overflow: hidden;\n            box-shadow: 0 10px 30px rgba(0,0,0,0.5);\n        }\n        \n        .stack-header {\n            background: #ffcc00;\n            color: #000;\n            padding: 10px;\n            font-weight: 800;\n            text-align: center;\n            font-size: 0.9rem;\n            text-transform: uppercase;\n        }\n        \n        .stack-content { padding: 20px 15px; background: #fff; }\n        \n        .stack-item {\n            display: flex;\n            justify-content: space-between;\n            align-items: center;\n            margin-bottom: 12px;\n            font-size: 0.85rem;\n            border-bottom: 1px solid #f0f0f0;\n            padding-bottom: 8px;\n        }\n        .stack-item:last-of-type { border-bottom: none; margin-bottom: 0; }\n        \n        .item-name { text-align: left; padding-right: 8px; color: #333; font-weight: 500; flex: 1; }\n        .item-price { text-align: right; white-space: nowrap; color: #999; text-decoration: line-through; font-weight: 600; font-size: 0.8rem; }\n\n        /* Total Section */\n        .total-value {\n            text-align: center;\n            margin-top: 15px;\n            padding-top: 15px;\n            border-top: 2px dashed #ffcc00;\n            background: #fffbeb;\n            margin-left: -15px;\n            margin-right: -15px;\n            margin-bottom: -20px;\n            padding-bottom: 20px;\n        }\n        .total-value p { color: #666; font-size: 0.85rem; margin-bottom: 4px; }\n        .total-value h2 { color: #d32f2f; font-size: 1.4rem; font-weight: 800; text-decoration: line-through; }\n        \n        .pay-what-you-want {\n            background: #000;\n            color: #fff;\n            padding: 8px 15px;\n            margin-top: 12px;\n            border-radius: 5px;\n            font-size: 1rem;\n            font-weight: bold;\n            display: inline-block;\n            cursor: pointer;\n            text-decoration: none;\n        }\n\n        /* Container */\n        .container {\n            max-width: 600px;\n            margin: 0 auto;\n            padding: 0 12px;\n            background: white;\n        }\n\n        /* Logic Section */\n        .logic-box {\n            background: #fff3cd;\n            border-left: 4px solid #ffc107;\n            padding: 15px;\n            margin: 25px 0;\n            font-size: 0.9rem;\n            border-radius: 0 10px 10px 0;\n        }\n        .logic-title { font-weight: bold; color: #856404; margin-bottom: 8px; font-size: 1rem; }\n\n        /* Pricing Card Section */\n        .compare-section {\n            background: white;\n            padding: 25px 15px;\n            text-align: center;\n        }\n        \n        .price-card {\n            background: white;\n            padding: 25px 15px;\n            border-radius: 12px;\n            box-shadow: 0 5px 20px rgba(0,0,0,0.1);\n            border: 2px solid #e0e0e0;\n            position: relative;\n            overflow: hidden;\n        }\n\n        /* SCARCITY BAR - Mobile Optimized */\n        .scarcity-box {\n            background: #fff5f5;\n            border: 2px solid #ffcccc;\n            border-radius: 10px;\n            padding: 12px;\n            margin-bottom: 20px;\n        }\n\n        .scarcity-header {\n            display: flex;\n            justify-content: space-between;\n            align-items: center;\n            margin-bottom: 8px;\n        }\n\n        .scarcity-label-red { color: #d32f2f; font-weight: 800; font-size: 0.85rem; }\n        .scarcity-badge {\n            background: #d32f2f;\n            color: white;\n            padding: 3px 8px;\n            border-radius: 4px;\n            font-size: 0.75rem;\n            font-weight: bold;\n        }\n\n        .progress-track {\n            background: #e0e0e0;\n            border-radius: 20px;\n            height: 24px;\n            width: 100%;\n            position: relative;\n            overflow: hidden;\n        }\n\n        .progress-bar {\n            background: linear-gradient(90deg, #ff512f, #dd2476);\n            height: 100%;\n            width: 83%;\n            border-radius: 20px 0 0 20px;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n        }\n\n        .progress-text { color: white; font-size: 0.7rem; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }\n\n        /* Arrow Animation */\n        .arrow-bounce {\n            font-size: 2rem;\n            color: #d32f2f;\n            animation: bounce 1s infinite;\n            margin: 8px 0;\n        }\n        @keyframes bounce {\n            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}\n            40% {transform: translateY(-12px);}\n            60% {transform: translateY(-5px);}\n        }\n\n        .cta-btn-main {\n            display: block;\n            width: 100%;\n            background: linear-gradient(90deg, #ff512f, #dd2476);\n            color: white;\n            text-align: center;\n            padding: 16px 10px;\n            border-radius: 10px;\n            font-size: 1.1rem;\n            font-weight: 800;\n            text-decoration: none;\n            text-transform: uppercase;\n            box-shadow: 0 4px 15px rgba(221, 36, 118, 0.4);\n            border: none;\n            cursor: pointer;\n        }\n\n        /* Kategori Grid - Mobile */\n        .kategori-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 25px 0; }\n        .kat-item { background: #fff; border: 1px solid #eee; padding: 10px 5px; border-radius: 8px; text-align: center; font-size: 0.75rem; font-weight: 600; }\n        .kat-icon { font-size: 1.3rem; display: block; margin-bottom: 4px; }\n\n        /* Section Title - Mobile */\n        .section-title { text-align: center; font-size: 1.2rem; margin: 30px 0 15px; color: #111; font-weight: 800; }\n        .section-title span { color: #d32f2f; }\n\n        /* Product List - Mobile */\n        .prod-list { background: #f9f9f9; padding: 12px; border-radius: 10px; margin-bottom: 15px; }\n        .prod-item { display: flex; align-items: center; padding: 8px 0; border-bottom: 1px dashed #ddd; }\n        .prod-item:last-child { border-bottom: none; }\n        .prod-icon { font-size: 1rem; margin-right: 8px; }\n        .prod-name { font-size: 0.85rem; font-weight: 500; }\n\n        /* Benefit Box */\n        .benefit-box { background: white; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }\n        .benefit-item { display: flex; margin-bottom: 12px; }\n        .benefit-item:last-child { margin-bottom: 0; }\n        .benefit-icon { font-size: 1.3rem; margin-right: 12px; color: #ff512f; flex-shrink: 0; }\n        .benefit-text h4 { font-size: 0.95rem; color: #333; margin-bottom: 2px; }\n        .benefit-text p { font-size: 0.8rem; color: #666; }\n\n        /* Target Market */\n        .target-box { background: #e3f2fd; padding: 15px; border-radius: 10px; text-align: center; margin-bottom: 15px; }\n        .target-icons { display: flex; justify-content: center; gap: 10px; margin-top: 12px; flex-wrap: wrap; }\n        .target-item { font-size: 0.75rem; color: #1e88e5; width: 55px; }\n        .target-item div { font-size: 1.3rem; display: block; margin-bottom: 3px; }\n\n        /* Testimonial */\n        .testimonial-box { background: white; border: 1px solid #eee; padding: 12px; border-radius: 10px; margin-bottom: 12px; }\n        .testi-head { display: flex; align-items: center; margin-bottom: 8px; }\n        .testi-avatar { width: 35px; height: 35px; background: #ddd; border-radius: 50%; margin-right: 10px; }\n        .testi-name { font-weight: bold; font-size: 0.85rem; }\n        .testi-star { color: #fbc02d; font-size: 0.75rem; }\n        .testi-body { font-size: 0.85rem; font-style: italic; color: #555; }\n\n        /* FAQ */\n        .faq-item { margin-bottom: 12px; background: #fff; padding: 12px; border-radius: 8px; border-left: 3px solid #333; }\n        .faq-q { font-weight: bold; margin-bottom: 4px; font-size: 0.9rem; }\n        .faq-a { font-size: 0.85rem; color: #666; }\n\n        /* Cara Beli */\n        .step-box { display: flex; margin-bottom: 15px; }\n        .step-num { background: #333; color: #fff; width: 28px; height: 28px; border-radius: 50%; text-align: center; line-height: 28px; font-weight: bold; margin-right: 12px; flex-shrink: 0; font-size: 0.85rem; }\n        .step-content h4 { margin-bottom: 3px; font-size: 0.95rem; }\n        .step-content p { font-size: 0.8rem; color: #666; }\n\n        /* Sticky Footer CTA */\n        .sticky-footer {\n            position: fixed;\n            bottom: 0;\n            left: 0;\n            right: 0;\n            background: white;\n            padding: 8px 12px;\n            box-shadow: 0 -5px 20px rgba(0,0,0,0.2);\n            z-index: 999;\n            border-top: 3px solid #d32f2f;\n        }\n        \n        .scarcity-footer { font-size: 0.7rem; color: #d32f2f; font-weight: bold; margin-bottom: 4px; text-align: center; }\n\n        .cta-btn {\n            display: block;\n            width: 100%;\n            background: linear-gradient(90deg, #ff512f, #dd2476);\n            color: white;\n            text-align: center;\n            padding: 14px;\n            border-radius: 50px;\n            font-size: 1rem;\n            font-weight: 800;\n            text-decoration: none;\n            text-transform: uppercase;\n            cursor: pointer;\n        }\n\n        /* Footer space */\n        .footer-space { height: 90px; }\n        \n        /* Guarantee */\n        .guarantee-box { text-align: center; margin: 15px 0; padding: 15px; background: #e0f2f1; border-radius: 10px; }\n        .guarantee-title { color: #00695c; margin-bottom: 5px; font-size: 1rem; font-weight: bold; }\n        .guarantee-text { font-size: 0.8rem; color: #333; }\n\n    </style>\n</head>\n<body>\n\n    <!-- HERO SECTION -->\n    <div class=\"hero\">\n        <div class=\"warning-badge\">PROMO SPESIAL 🔥</div>\n        <h1>KOLEKSI <span>222 PRODUK DIGITAL</span> PREMIUM SIAP JUAL ULANG</h1>\n        <p class=\"sub-hero\">Tinggal Download, Edit Sedikit, Jual Ulang. 100% Profit Masuk Kantong Anda.</p>\n        \n        <!-- Value Stack -->\n        <div class=\"value-stack\">\n            <div class=\"stack-header\">NILAI TOTAL KESELURUHAN</div>\n            <div class=\"stack-content\">\n                <div class=\"stack-item\">\n                    <span class=\"item-name\">222+ Produk Digital Premium</span>\n                    <span class=\"item-price\">Rp 15.000.000</span>\n                </div>\n                <div class=\"stack-item\">\n                    <span class=\"item-name\">Lisensi Jual Ulang (Resell Rights)</span>\n                    <span class=\"item-price\">Rp 5.000.000</span>\n                </div>\n                <div class=\"stack-item\">\n                    <span class=\"item-name\">Bonus: Tema WordPress Premium</span>\n                    <span class=\"item-price\">Rp 900.000</span>\n                </div>\n                \n                <div class=\"total-value\">\n                    <p>Total Nilai Produk:</p>\n                    <h2>Rp 20.900.000</h2>\n                    <!-- TOMBOL 1: ANCHOR KE PRICING + PIXEL -->\n                    <a href=\"#pricing-section\" class=\"pay-what-you-want\" onclick=\"trackAddToCartOnce()\">SEKARANG BAYAR SUKA-SUKA!</a>\n                </div>\n            </div>\n        </div>\n    </div>\n\n    <!-- MAIN CONTENT -->\n    <div class=\"container\">\n        \n        <!-- LOGIC SECTION -->\n        <div class=\"logic-box\">\n            <div class=\"logic-title\">🤔 KOK BISA SUKA-SUKA?</div>\n            Kami ingin semua orang bisa memulai bisnis digital. Karena itu, kami buka sistem \"Pay What You Want\". Anda tentukan harganya sendiri, tapi kuota terbatas!\n        </div>\n\n        <!-- PRICE SECTION DENGAN ANCHOR ID -->\n        <div class=\"compare-section\" id=\"pricing-section\">\n            <div class=\"price-card\">\n                \n                <!-- SCARCITY BOX -->\n                <div class=\"scarcity-box\">\n                    <div class=\"scarcity-header\">\n                        <div class=\"scarcity-label-red\">🔥 KUOTA TERBATAS</div>\n                        <div class=\"scarcity-badge\">SISA 17 KUOTA</div>\n                    </div>\n                    <div class=\"progress-track\">\n                        <div class=\"progress-bar\">\n                            <span class=\"progress-text\">83% TERISI</span>\n                        </div>\n                    </div>\n                </div>\n\n                <p style=\"font-size: 1.1rem; font-weight: bold; margin-bottom: 8px;\">Dapatkan Akses Sekarang</p>\n                <p style=\"color: #666; font-size: 0.85rem;\">Klik tombol di bawah ini, masukkan harga yang Anda mau (donasi), dan langsung akses file!</p>\n                \n                <!-- Animated Arrow -->\n                <div class=\"arrow-bounce\">👇</div>\n\n                <!-- TOMBOL 2: LINK CO + PIXEL -->\n                <a href=\"https://lynk.id/digitalinstitute/k9o2792g3enn\" class=\"cta-btn-main\" target=\"_blank\" onclick=\"trackAddToCartOnce()\">\n                    BAYAR SUKA-SUKA DISINI\n                </a>\n                <p style=\"font-size: 0.7rem; color: #888; margin-top: 8px;\">*Harga minimal untuk server & maintenance</p>\n            </div>\n        </div>\n\n        <!-- PRODUK DETAIL LIST -->\n        <h2 class=\"section-title\">Apa Saja Isi <span>Di Dalamnya?</span></h2>\n        \n        <div class=\"prod-list\">\n            <div class=\"prod-item\"><span class=\"prod-icon\">🎥</span><span class=\"prod-name\">105 Template Video Pernikahan PPT</span></div>\n            <div class=\"prod-item\"><span class=\"prod-icon\">🖼️</span><span class=\"prod-name\">300 Template Desain Berbagai Tema PPT</span></div>\n            <div class=\"prod-item\"><span class=\"prod-icon\">🌙</span><span class=\"prod-name\">500 Template Ramadhan PPT</span></div>\n            <div class=\"prod-item\"><span class=\"prod-icon\">⛪</span><span class=\"prod-name\">118 Template Idul Fitri PPT</span></div>\n            <div class=\"prod-item\"><span class=\"prod-icon\">📱</span><span class=\"prod-name\">130 Template Produk Digital Elementor</span></div>\n            <div class=\"prod-item\"><span class=\"prod-icon\">🎨</span><span class=\"prod-name\">120 Template Canva Produk Digital</span></div>\n            <div class=\"prod-item\"><span class=\"prod-icon\">📸</span><span class=\"prod-name\">70 Template Insta Viral Frame</span></div>\n            <div class=\"prod-item\"><span class=\"prod-icon\">🎞️</span><span class=\"prod-name\">40 Reel Covers dengan Hook</span></div>\n            <div class=\"prod-item\"><span class=\"prod-icon\">💻</span><span class=\"prod-name\">3 Tema WordPress Premium (TemaToko)</span></div>\n            <div class=\"prod-item\"><span class=\"prod-icon\">📚</span><span class=\"prod-name\">Video Belajar Bisnis Online</span></div>\n            <div class=\"prod-item\"><span class=\"prod-icon\">🖍️</span><span class=\"prod-name\">12000 Worksheet Anak & Buku Cerita</span></div>\n            <div class=\"prod-item\" style=\"justify-content: center; font-weight: bold; color: #d32f2f; font-size: 0.9rem;\">+ 211 Produk Lainnya!</div>\n        </div>\n\n        <!-- MANFAAT UTAMA -->\n        <h2 class=\"section-title\">Kenapa Harus <span>Milik Ini?</span></h2>\n        \n        <div class=\"benefit-box\">\n            <div class=\"benefit-item\">\n                <div class=\"benefit-icon\">💰</div>\n                <div class=\"benefit-text\">\n                    <h4>Siap Jual Ulang (PLR)</h4>\n                    <p>Anda berhak menjual ulang produk ini 100% profit masuk kantong Anda.</p>\n                </div>\n            </div>\n            <div class=\"benefit-item\">\n                <div class=\"benefit-icon\">🎨</div>\n                <div class=\"benefit-text\">\n                    <h4>Full Editable</h4>\n                    <p>Bisa diedit menggunakan Canva, PowerPoint, atau Elementor.</p>\n                </div>\n            </div>\n            <div class=\"benefit-item\">\n                <div class=\"benefit-icon\">📦</div>\n                <div class=\"benefit-text\">\n                    <h4>Hemat Waktu</h4>\n                    <p>Tidak perlu buat dari nol. Tinggal download, edit, lalu jual.</p>\n                </div>\n            </div>\n            <div class=\"benefit-item\">\n                <div class=\"benefit-icon\">☁️</div>\n                <div class=\"benefit-text\">\n                    <h4>Akses Permanen</h4>\n                    <p>File disimpan di Google Drive & Mega, akses kapan saja.</p>\n                </div>\n            </div>\n        </div>\n\n        <!-- TARGET PASAR -->\n        <h2 class=\"section-title\">Cocok Untuk <span>Siapa?</span></h2>\n        \n        <div class=\"target-box\">\n            <p style=\"font-size: 0.9rem;\">Produk ini wajib dimiliki jika Anda:</p>\n            <div class=\"target-icons\">\n                <div class=\"target-item\"><div>👨‍🎓</div>Mahasiswa</div>\n                <div class=\"target-item\"><div>👩‍💼</div>Ibu Rumah Tangga</div>\n                <div class=\"target-item\"><div>📱</div>Content Creator</div>\n                <div class=\"target-item\"><div>💼</div>Freelancer</div>\n                <div class=\"target-item\"><div>🚀</div>Marketer</div>\n            </div>\n        </div>\n\n        <!-- TESTIMONIAL -->\n        <h2 class=\"section-title\">Kata <span>Mereka</span></h2>\n\n        <div class=\"testimonial-box\">\n            <div class=\"testi-head\">\n                <div class=\"testi-avatar\" style=\"background: #ffcc00;\"></div>\n                <div>\n                    <div class=\"testi-name\">Rina S.</div>\n                    <div class=\"testi-star\">⭐⭐⭐⭐⭐</div>\n                </div>\n            </div>\n            <div class=\"testi-body\">\n                \"Isinya banyakk banget! Cuma modal 99rb udah dapet ribuan file. Templatenya juga modern, cocok buat yang mau mulai jualan digital.\"\n            </div>\n        </div>\n\n        <div class=\"testimonial-box\">\n            <div class=\"testi-head\">\n                <div class=\"testi-avatar\" style=\"background: #4caf50;\"></div>\n                <div>\n                    <div class=\"testi-name\">Budi T.</div>\n                    <div class=\"testi-star\">⭐⭐⭐⭐⭐</div>\n                </div>\n            </div>\n            <div class=\"testi-body\">\n                \"Saya udah jual 3 produk aja udah balik modal berkali-kali lipat. Worth it banget!\"\n            </div>\n        </div>\n\n        <!-- CARA PEMBELIAN -->\n        <h2 class=\"section-title\">Cara <span>Mendapatkan</span></h2>\n\n        <div style=\"margin-bottom: 25px;\">\n            <div class=\"step-box\">\n                <div class=\"step-num\">1</div>\n                <div class=\"step-content\">\n                    <h4>Klik Tombol \"Bayar Suka-Suka\"</h4>\n                    <p>Anda akan diarahkan ke halaman pembayaran.</p>\n                </div>\n            </div>\n            <div class=\"step-box\">\n                <div class=\"step-num\">2</div>\n                <div class=\"step-content\">\n                    <h4>Masukkan Nominal</h4>\n                    <p>Tentukan harga sesukamu (bisa dari Rp 0 atau donasi).</p>\n                </div>\n            </div>\n            <div class=\"step-box\">\n                <div class=\"step-num\">3</div>\n                <div class=\"step-content\">\n                    <h4>Selesaikan Pembayaran</h4>\n                    <p>Pembayaran via QRIS, Transfer Bank, atau E-Wallet.</p>\n                </div>\n            </div>\n            <div class=\"step-box\">\n                <div class=\"step-num\">4</div>\n                <div class=\"step-content\">\n                    <h4>Akses Langsung!</h4>\n                    <p>Link download otomatis dikirim setelah pembayaran sukses.</p>\n                </div>\n            </div>\n        </div>\n\n        <!-- FAQ -->\n        <h2 class=\"section-title\">Pertanyaan <span>Umum</span></h2>\n\n        <div class=\"faq-item\">\n            <div class=\"faq-q\">❓ Apakah benar bisa bayar suka-suka?</div>\n            <div class=\"faq-a\">✅ Ya! Anda bebas memasukkan harga, Minimal Harga di 10.000.</div>\n        </div>\n        <div class=\"faq-item\">\n            <div class=\"faq-q\">❓ Apakah boleh dijual ulang?</div>\n            <div class=\"faq-a\">✅ Boleh. Semua produk punya lisensi PLR. Bebas jual ulang 100% profit.</div>\n        </div>\n        <div class=\"faq-item\">\n            <div class=\"faq-q\">❓ Bagaimana jika file corrupt?</div>\n            <div class=\"faq-a\">✅ Hubungi admin, kami akan kirim ulang link aktif segera.</div>\n        </div>\n\n        <!-- GUARANTEE -->\n        <div class=\"guarantee-box\">\n            <h4 class=\"guarantee-title\">🛡️ GARANSI 100% AMAN</h4>\n            <p class=\"guarantee-text\">Produk digital sudah pasti sampai. Jika ada file corrupt, kami siap bantu.</p>\n        </div>\n\n        <div class=\"footer-space\"></div>\n    </div>\n\n    <!-- STICKY FOOTER -->\n    <div class=\"sticky-footer\">\n        <div class=\"scarcity-footer\">⚠️ SISA 17 KUOTA LAGI!</div>\n        <!-- TOMBOL 3: LINK CO + PIXEL -->\n        <a href=\"https://lynk.id/digitalinstitute/k9o2792g3enn\" class=\"cta-btn\" target=\"_blank\" onclick=\"trackAddToCartOnce()\">\n            DAPATKAN SEKARANG\n        </a>\n    </div>\n\n    <!-- SCRIPT PIXEL ADD TO CART (TRIGGER SEKALI) -->\n    <script>\n        function trackAddToCartOnce() {\n            // Cek di Local Storage apakah sudah pernah trigger\n            var hasTriggered = localStorage.getItem('pixel_cart_tracked');\n            \n            if (!hasTriggered) {\n                // Jika belum pernah, kirim event ke Facebook\n                fbq('track', 'AddToCart');\n                \n                // Tandai sudah pernah trigger di browser ini\n                localStorage.setItem('pixel_cart_tracked', 'true');\n                \n                console.log(\"Pixel AddToCart Triggered\"); // Untuk debug, bisa dihapus\n            }\n        }\n    </script>\n\n</body>\n</html>",
+              "htmlViewMode": "preview"
+            }
+          },
+          "zones": {},
+          "content": []
+        },
+        "siteId": "cmpff0ccz0002u5f0rp7dk8aq",
+        "updatedAt": "2026-05-28T04:33:58.160Z",
+        "createdAt": "2026-05-28T04:08:53.945Z"
+      }
+    ],
+    "posts": [
+      {
+        "id": "cmp2lyxt00001c0z1w3x8ofcb",
+        "title": "TEST",
+        "slug": "test",
+        "content": "",
+        "excerpt": null,
+        "published": false,
+        "authorId": "cmoxs0zgf0004iexisggle2om",
+        "siteId": "cmozgyxtu00011mbc3naoxywz",
+        "createdAt": "2026-05-12T12:30:02.916Z",
+        "updatedAt": "2026-05-12T12:30:02.914Z",
+        "imageUrl": ""
+      }
+    ],
+    "products": [
+      {
+        "id": "cmozh4kom000252ukfmvgvc45",
+        "name": "Gerobak hot ",
+        "slug": "gerobak-hot",
+        "description": "{\"type\":\"doc\",\"content\":[{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"Gerobak Hot Bukan Sekadar Gerobak.\"}]},{\"type\":\"paragraph\"},{\"type\":\"heading\",\"attrs\":{\"level\":3},\"content\":[{\"type\":\"text\",\"text\":\"Ini “Mesin Jualan” Untuk Bikin Dagangan Lebih Dilirik, Lebih Profesional, dan Lebih Cepat Laku.\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Di luar sana, banyak orang jualan enak…\"},{\"type\":\"hardBreak\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"tapi kalah cuma karena gerobaknya terlihat asal.\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Pembeli sekarang bukan cuma lihat rasa.\"},{\"type\":\"hardBreak\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Mereka lihat tampilan.\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"Lihat kebersihan.\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"Lihat keseriusan.\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Dan sering kali…\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"gerobak adalah kesan pertama.\"}]},{\"type\":\"paragraph\"},{\"type\":\"heading\",\"attrs\":{\"level\":1},\"content\":[{\"type\":\"text\",\"marks\":[{\"type\":\"bold\"}],\"text\":\"Gerobak Kusam = Dagangan \"},{\"type\":\"text\",\"text\":\"Dianggap Biasa\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Pernah lihat?\"},{\"type\":\"hardBreak\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Ada jualan yang sebenarnya enak, tapi sepi karena tampilannya kurang meyakinkan.\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Cat mulai pudar.\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"Desain asal jadi.\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"Atap bocor.\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"Roda seret.\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"Lampu redup.\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Akhirnya pembeli lewat begitu saja.\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Padahal…\"},{\"type\":\"hardBreak\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"kalau tampilannya lebih menarik, orang jauh lebih mudah berhenti dan membeli.\"}]},{\"type\":\"paragraph\"},{\"type\":\"heading\",\"attrs\":{\"level\":1},\"content\":[{\"type\":\"text\",\"text\":\"Kenapa Banyak Pedagang Mulai Upgrade Gerobaknya?\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Karena mereka sadar:\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"✅ Gerobak yang rapi bikin usaha terlihat lebih serius\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"✅ Desain menarik bikin orang gampang melirik\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"✅ Material kuat bikin awet dipakai bertahun-tahun\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"✅ Gerobak nyaman bikin jualan lebih semangat\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"✅ Tampilan profesional bikin pembeli lebih percaya\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Dan itulah alasan banyak pelaku usaha memilih \"},{\"type\":\"text\",\"marks\":[{\"type\":\"bold\"}],\"text\":\"Gerobak Hot dari Gerobak Jaya.\"}]},{\"type\":\"paragraph\"},{\"type\":\"heading\",\"attrs\":{\"level\":1},\"content\":[{\"type\":\"text\",\"text\":\"Dibuat Untuk Pedagang yang Mau Naik Kelas\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Kami bukan sekadar bikin gerobak.\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"Kami membantu usaha kecil tampil lebih profesional.\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Setiap gerobak dibuat dengan perhatian detail:\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"✔ Desain modern & menarik\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"✔ Rangka kokoh dan kuat\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"✔ Finishing rapi\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"✔ Bisa custom sesuai kebutuhan usaha\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"✔ Cocok untuk jualan hotdog, sosis bakar, kebab, burger, minuman, dan lainnya\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Karena kami tahu…\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"gerobak bukan cuma alat jualan.\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"Tapi wajah dari usaha Anda.\"}]},{\"type\":\"paragraph\"},{\"type\":\"heading\",\"attrs\":{\"level\":1},\"content\":[{\"type\":\"text\",\"text\":\"Bayangkan Saat Pembeli Melihat Gerobak Anda…\"}]},{\"type\":\"bulletList\",\"content\":[{\"type\":\"listItem\",\"content\":[{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Lampu terang.\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"Desain bersih.\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"Tulisan jelas.\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"Tampilan menggoda.\"}]}]}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Orang yang tadinya cuma lewat…\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"jadi berhenti.\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Yang tadinya cuma lihat…\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"jadi beli.\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Yang tadinya beli sekali…\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"jadi langganan.\"}]},{\"type\":\"paragraph\"},{\"type\":\"heading\",\"attrs\":{\"level\":1},\"content\":[{\"type\":\"text\",\"text\":\"Cocok Untuk:\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"✅ Pemula yang baru mulai usaha\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"✅ Pedagang yang ingin upgrade tampilan\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"✅ Franchise & usaha kuliner\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"✅ Jualan di pinggir jalan, food court, event, maupun depan rumah\"}]},{\"type\":\"paragraph\"},{\"type\":\"heading\",\"attrs\":{\"level\":1},\"content\":[{\"type\":\"text\",\"text\":\"Saatnya Punya Gerobak yang Bikin Orang Menoleh\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Jangan biarkan dagangan bagus kalah karena tampilan gerobak seadanya.\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Mulai usaha dengan tampilan yang lebih profesional bersama \"},{\"type\":\"text\",\"marks\":[{\"type\":\"bold\"}],\"text\":\"Gerobak Jaya\"},{\"type\":\"text\",\"text\":\".\"}]},{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"Pesan Sekarang & Konsultasikan Desain Gerobak Anda\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"👉 Klik Tombol WhatsApp di bawah ini\"},{\"type\":\"hardBreak\"},{\"type\":\"text\",\"text\":\"👉 Tanya harga & model sesuai kebutuhan usaha Anda\"}]}]}",
+        "price": "5000000",
+        "currency": "USD",
+        "images": [],
+        "stock": 5,
+        "siteId": "cmozgyxtu00011mbc3naoxywz",
+        "createdAt": "2026-05-10T07:51:09.238Z",
+        "updatedAt": "2026-05-10T07:51:09.237Z",
+        "isArchived": false,
+        "variantOptions": [],
+        "variants": []
+      },
+      {
+        "id": "cmpas54mx00025tddugrjvws0",
+        "name": "SISTEM INFORMASI MANAJEMEN",
+        "slug": "sistem-informasi-manajemen",
+        "description": "{\"type\":\"doc\",\"content\":[{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Di tengah arus digitalisasi yang terus melaju, informasi menjadi aset paling berharga bagi organisasi. Sistem Informasi Manajemen mengupas bagaimana teknologi, data, dan strategi berpadu untuk menciptakan keputusan yang cerdas dan kompetitif. Dengan bahasa yang ringkas dan aplikatif, buku ini mengajak pembaca memahami peran sistem informasi tidak hanya sebagai alat, tetapi sebagai kekuatan utama dalam mendorong inovasi, efisiensi, dan keunggulan bisnis di era modern.\"}]}]}",
+        "price": "80000",
+        "currency": "USD",
+        "images": [
+          "https://file.crediblemark.com/instantweb/dd01efd7-387e-43ca-a204-3939bcbe8405-1779083069163-Sistem-Informasi-Management.webp"
+        ],
+        "stock": 1,
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "createdAt": "2026-05-18T05:44:58.809Z",
+        "updatedAt": "2026-05-18T05:44:58.808Z",
+        "isArchived": false,
+        "variantOptions": [],
+        "variants": []
+      },
+      {
+        "id": "cmpdld8jm0001kxujixay6x7b",
+        "name": "Tidak Semua Cinta Harus Memiliki",
+        "slug": "tidak-semua-cinta-harus-memiliki",
+        "description": "{\"type\":\"doc\",\"content\":[{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"“Tidak Semua Cinta Harus Memiliki” adalah kumpulan cerita pendek yang mengangkat tema cinta, kehilangan, dan keikhlasan. Terinspirasi dari pengalaman pribadi dan kisah nyata di sekitar penulis, setiap cerita menyajikan perjalanan emosi yang mendalam tentang bagaimana seseorang menghadapi perasaan, merelakan yang tak bisa dimiliki, serta belajar tumbuh dari luka. Buku ini hadir sebagai teman bagi pembaca untuk memahami bahwa cinta tidak selalu tentang memiliki, melainkan tentang menerima dan melepaskan dengan lapang dada.\"}]}]}",
+        "price": "50000",
+        "currency": "USD",
+        "images": [
+          "https://file.crediblemark.com/instantweb/5da0bd7e-60a6-4534-9ed7-7630eb2b481c-1779242256503-705fab10-38af-4e9f-8ab3-083c3aab8b95-Desain-tanpa-judul1.webp"
+        ],
+        "stock": 1,
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "createdAt": "2026-05-20T04:58:38.338Z",
+        "updatedAt": "2026-05-20T04:58:38.336Z",
+        "isArchived": false,
+        "variantOptions": [],
+        "variants": []
+      },
+      {
+        "id": "cmpatbpne0010i8suwen2fa2x",
+        "name": "ENGLISH FOR PHYSICAL EDUCATION : Komunikasi dan Instruksi Bahasa Inggris dalam Pembelajaran Pendidikan Jasmani",
+        "slug": "english-for-physical-education-komunikasi-dan-instruksi-bahasa-inggris-dalam-pembelajaran-pendidikan-jasmani",
+        "description": "{\"type\":\"doc\",\"content\":[{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Buku ini hadir sebagai jawaban atas kebutuhan pembelajaran Pendidikan Jasmani yang semakin menuntut kemampuan komunikasi efektif, tidak hanya dalam Bahasa Indonesia tetapi juga dalam Bahasa Inggris. Dalam aktivitas fisik seperti olahraga dan latihan gerak, instruksi yang jelas, ringkas, dan tepat menjadi kunci keberhasilan proses pembelajaran. \"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Namun, masih banyak mahasiswa dan praktisi Pendidikan Jasmani yang belum terbiasa menggunakan instruksi berbahasa Inggris secara langsung di lapangan. Melalui pendekatan yang mengintegrasikan teori komunikasi pembelajaran, strategi pemberian instruksi, serta konsep Content and Language Integrated Learning (CLIL), buku ini menjembatani kesenjangan antara penguasaan materi gerak dan kemampuan berbahasa Inggris. \"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Disajikan secara bilingual, buku ini memadukan penjelasan konsep dalam Bahasa Indonesia dengan contoh English commands yang aplikatif dan mudah digunakan dalam berbagai aktivitas olahraga. Materi dalam buku ini mencakup dasar-dasar komunikasi dalam pembelajaran Pendidikan Jasmani, jenis-jenis instruksi, penggunaan Bahasa Inggris dalam aktivitas fisik dan cabang olahraga, hingga praktik langsung seperti dialog pelatih dan peserta didik, microteaching, serta contoh RPP bilingual. \"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Dengan pendekatan yang komunikatif dan berbasis kebutuhan lapangan, buku ini dirancang untuk meningkatkan kepercayaan diri mahasiswa, guru, dan pelatih dalam menggunakan Bahasa Inggris secara efektif. Buku ini diharapkan menjadi panduan praktis sekaligus referensi akademik bagi mahasiswa Pendidikan Jasmani, guru olahraga, pelatih, serta dosen dalam mengembangkan pembelajaran yang lebih modern, interaktif, dan relevan dengan tuntutan global.\"}]}]}",
+        "price": "70000",
+        "currency": "USD",
+        "images": [
+          "https://file.crediblemark.com/instantweb/7f3ec5ab-d971-4e1e-a3da-47bcf4a0f7de-1779414023481-Screenshot-from-2026-05-22-08-39-27.webp"
+        ],
+        "stock": 1,
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "createdAt": "2026-05-18T06:18:05.594Z",
+        "updatedAt": "2026-05-22T01:40:31.073Z",
+        "isArchived": false,
+        "variantOptions": [],
+        "variants": []
+      }
+    ],
+    "orders": [],
+    "orderItems": [],
+    "taxonomies": [],
+    "terms": [],
+    "menus": [
+      {
+        "id": "cmozgyz9r00071mbcn0hk5iyu",
+        "name": "Main Menu",
+        "slug": "main",
+        "siteId": "cmozgyxtu00011mbc3naoxywz",
+        "createdAt": "2026-05-10T07:46:48.207Z",
+        "updatedAt": "2026-05-10T07:46:48.207Z"
+      },
+      {
+        "id": "cmp1wzml20001b5fgvcmxcs6k",
+        "name": "Footer Menu",
+        "slug": "footer",
+        "siteId": "cmozgyxtu00011mbc3naoxywz",
+        "createdAt": "2026-05-12T00:50:44.505Z",
+        "updatedAt": "2026-05-12T00:50:44.505Z"
+      },
+      {
+        "id": "cmp3twh2b0008y7pdqo2zw2fa",
+        "name": "Main Menu",
+        "slug": "main",
+        "siteId": "cmp3twfmn0002y7pd4fu6c51o",
+        "createdAt": "2026-05-13T08:59:51.012Z",
+        "updatedAt": "2026-05-13T08:59:51.012Z"
+      },
+      {
+        "id": "cmp3u3hvf000gy7pd8lc1ywjk",
+        "name": "Footer Menu",
+        "slug": "footer",
+        "siteId": "cmp3twfmn0002y7pd4fu6c51o",
+        "createdAt": "2026-05-13T09:05:18.652Z",
+        "updatedAt": "2026-05-13T09:05:18.652Z"
+      },
+      {
+        "id": "cmp70od25000711055bi9lmlb",
+        "name": "Main Menu",
+        "slug": "main",
+        "siteId": "cmp70obn9000111054wyur2q2",
+        "createdAt": "2026-05-15T14:32:48.413Z",
+        "updatedAt": "2026-05-15T14:32:48.413Z"
+      },
+      {
+        "id": "cmp711fad000263ahe2c4p3pb",
+        "name": "Footer Menu",
+        "slug": "footer",
+        "siteId": "cmp70obn9000111054wyur2q2",
+        "createdAt": "2026-05-15T14:42:57.829Z",
+        "updatedAt": "2026-05-15T14:42:57.829Z"
+      },
+      {
+        "id": "cmpajs69f0007ncnz590hw97w",
+        "name": "Main Menu",
+        "slug": "main",
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "createdAt": "2026-05-18T01:50:57.460Z",
+        "updatedAt": "2026-05-18T01:50:57.460Z"
+      },
+      {
+        "id": "cmpajxhtf0002vtkqu9f9v1r8",
+        "name": "Footer Menu",
+        "slug": "footer",
+        "siteId": "cmpajs4rs0001ncnzgna0wpo2",
+        "createdAt": "2026-05-18T01:55:05.715Z",
+        "updatedAt": "2026-05-18T01:55:05.715Z"
+      },
+      {
+        "id": "cmpff0dwa0008u5f0fo33aoyx",
+        "name": "Main Menu",
+        "slug": "main",
+        "siteId": "cmpff0ccz0002u5f0rp7dk8aq",
+        "createdAt": "2026-05-21T11:36:13.403Z",
+        "updatedAt": "2026-05-21T11:36:13.403Z"
+      },
+      {
+        "id": "cmpfkzkze00017jkeedt92vvt",
+        "name": "Footer Menu",
+        "slug": "footer",
+        "siteId": "cmpff0ccz0002u5f0rp7dk8aq",
+        "createdAt": "2026-05-21T14:23:33.626Z",
+        "updatedAt": "2026-05-21T14:23:33.626Z"
+      }
+    ],
+    "menuItems": [
+      {
+        "id": "cmozgyzg800081mbc4tka8mjt",
+        "menuId": "cmozgyz9r00071mbcn0hk5iyu",
+        "label": "Home",
+        "url": "/",
+        "order": 0,
+        "target": "_self",
+        "parentId": null,
+        "createdAt": "2026-05-10T07:46:48.440Z"
+      },
+      {
+        "id": "cmozgyzg800091mbcw8bl0y3t",
+        "menuId": "cmozgyz9r00071mbcn0hk5iyu",
+        "label": "Blog",
+        "url": "/blog",
+        "order": 1,
+        "target": "_self",
+        "parentId": null,
+        "createdAt": "2026-05-10T07:46:48.440Z"
+      },
+      {
+        "id": "cmp5lijcj00047hsizh9kc36k",
+        "menuId": "cmp3u3hvf000gy7pd8lc1ywjk",
+        "label": "Tentang",
+        "url": "/tentang",
+        "order": 0,
+        "target": "_self",
+        "parentId": null,
+        "createdAt": "2026-05-14T14:40:36.211Z"
+      },
+      {
+        "id": "cmp5lijcj00057hsibromkyfr",
+        "menuId": "cmp3u3hvf000gy7pd8lc1ywjk",
+        "label": "Kontak",
+        "url": "/kontak",
+        "order": 1,
+        "target": "_self",
+        "parentId": null,
+        "createdAt": "2026-05-14T14:40:36.211Z"
+      },
+      {
+        "id": "cmp5ljdwn00077hsidw88srv6",
+        "menuId": "cmp3twh2b0008y7pdqo2zw2fa",
+        "label": "KONTAK",
+        "url": "https://wa.me/6281357555797",
+        "order": 0,
+        "target": "_self",
+        "parentId": null,
+        "createdAt": "2026-05-14T14:41:15.815Z"
+      },
+      {
+        "id": "cmp9rwlye0006cyzuepiaqobb",
+        "menuId": "cmp70od25000711055bi9lmlb",
+        "label": "Home",
+        "url": "/Kanjeng Pentol",
+        "order": 0,
+        "target": "_self",
+        "parentId": null,
+        "createdAt": "2026-05-17T12:50:35.174Z"
+      },
+      {
+        "id": "cmp9rwlye0007cyzu8q5u8vi5",
+        "menuId": "cmp70od25000711055bi9lmlb",
+        "label": "Blog",
+        "url": "/blog",
+        "order": 1,
+        "target": "_self",
+        "parentId": null,
+        "createdAt": "2026-05-17T12:50:35.174Z"
+      },
+      {
+        "id": "cmp9rwlye0008cyzubw7m2cv9",
+        "menuId": "cmp70od25000711055bi9lmlb",
+        "label": "Tentang",
+        "url": "/tentang",
+        "order": 2,
+        "target": "_self",
+        "parentId": null,
+        "createdAt": "2026-05-17T12:50:35.174Z"
+      },
+      {
+        "id": "cmp9rwlye0009cyzux8xud48f",
+        "menuId": "cmp70od25000711055bi9lmlb",
+        "label": "Welcome to our Store",
+        "url": "/pentol",
+        "order": 3,
+        "target": "_self",
+        "parentId": null,
+        "createdAt": "2026-05-17T12:50:35.174Z"
+      },
+      {
+        "id": "cmpajs6fr0008ncnz17rn746k",
+        "menuId": "cmpajs69f0007ncnz590hw97w",
+        "label": "Home",
+        "url": "/",
+        "order": 0,
+        "target": "_self",
+        "parentId": null,
+        "createdAt": "2026-05-18T01:50:57.687Z"
+      },
+      {
+        "id": "cmpajs6fr0009ncnzrwk0kn0i",
+        "menuId": "cmpajs69f0007ncnz590hw97w",
+        "label": "Blog",
+        "url": "/blog",
+        "order": 1,
+        "target": "_self",
+        "parentId": null,
+        "createdAt": "2026-05-18T01:50:57.687Z"
+      },
+      {
+        "id": "cmpff0e2t0009u5f03dez2dbg",
+        "menuId": "cmpff0dwa0008u5f0fo33aoyx",
+        "label": "Home",
+        "url": "/",
+        "order": 0,
+        "target": "_self",
+        "parentId": null,
+        "createdAt": "2026-05-21T11:36:13.637Z"
+      },
+      {
+        "id": "cmpff0e2t000au5f0wurxnzok",
+        "menuId": "cmpff0dwa0008u5f0fo33aoyx",
+        "label": "Blog",
+        "url": "/blog",
+        "order": 1,
+        "target": "_self",
+        "parentId": null,
+        "createdAt": "2026-05-21T11:36:13.637Z"
+      }
+    ],
+    "metaData": [
+      {
+        "id": "cmp5lf43v000aezynfqb1sj2w",
+        "key": "show_gallery",
+        "value": "false",
+        "type": "text",
+        "postId": null,
+        "pageId": "cmp5ldyld00012s9kvc4rxkf9",
+        "productId": null,
+        "createdAt": "2026-05-14T14:37:56.492Z",
+        "updatedAt": "2026-05-14T14:37:56.492Z"
+      },
+      {
+        "id": "cmp5lflh00002yssx2d4iag5t",
+        "key": "show_gallery",
+        "value": "false",
+        "type": "text",
+        "postId": null,
+        "pageId": "cmp5lfl1l0001yssx1ihmkiqc",
+        "productId": null,
+        "createdAt": "2026-05-14T14:38:18.997Z",
+        "updatedAt": "2026-05-14T14:38:18.997Z"
+      },
+      {
+        "id": "cmp9ss0ft0004ml5etbl1pwc7",
+        "key": "show_gallery",
+        "value": "true",
+        "type": "text",
+        "postId": null,
+        "pageId": "cmp98jdyp0003var3lnkvgwj4",
+        "productId": null,
+        "createdAt": "2026-05-17T13:15:00.281Z",
+        "updatedAt": "2026-05-17T13:15:00.281Z"
+      },
+      {
+        "id": "cmpdld8q70002kxujmevbr956",
+        "key": "Penulis",
+        "value": "Mutiara Octa Sari",
+        "type": "text",
+        "postId": null,
+        "pageId": null,
+        "productId": "cmpdld8jm0001kxujixay6x7b",
+        "createdAt": "2026-05-20T04:58:38.576Z",
+        "updatedAt": "2026-05-20T04:58:38.576Z"
+      },
+      {
+        "id": "cmpdld8q70003kxujsy02x4m7",
+        "key": "Penerbit",
+        "value": "Univedpress",
+        "type": "text",
+        "postId": null,
+        "pageId": null,
+        "productId": "cmpdld8jm0001kxujixay6x7b",
+        "createdAt": "2026-05-20T04:58:38.576Z",
+        "updatedAt": "2026-05-20T04:58:38.576Z"
+      },
+      {
+        "id": "cmpdld8q70004kxujlh2ozupf",
+        "key": "Bahasa",
+        "value": "Indonesia",
+        "type": "text",
+        "postId": null,
+        "pageId": null,
+        "productId": "cmpdld8jm0001kxujixay6x7b",
+        "createdAt": "2026-05-20T04:58:38.576Z",
+        "updatedAt": "2026-05-20T04:58:38.576Z"
+      },
+      {
+        "id": "cmpdld8q70005kxuj9te32f3i",
+        "key": "Edisi",
+        "value": "Pertama",
+        "type": "text",
+        "postId": null,
+        "pageId": null,
+        "productId": "cmpdld8jm0001kxujixay6x7b",
+        "createdAt": "2026-05-20T04:58:38.576Z",
+        "updatedAt": "2026-05-20T04:58:38.576Z"
+      },
+      {
+        "id": "cmpdld8q70006kxujmfu6iey0",
+        "key": "Kategori",
+        "value": "Pengembangan",
+        "type": "text",
+        "postId": null,
+        "pageId": null,
+        "productId": "cmpdld8jm0001kxujixay6x7b",
+        "createdAt": "2026-05-20T04:58:38.576Z",
+        "updatedAt": "2026-05-20T04:58:38.576Z"
+      },
+      {
+        "id": "cmpff118a000hu5f0z7lg0v0g",
+        "key": "show_gallery",
+        "value": "false",
+        "type": "text",
+        "postId": null,
+        "pageId": "cmpff10s4000gu5f0jgvswzs9",
+        "productId": null,
+        "createdAt": "2026-05-21T11:36:43.642Z",
+        "updatedAt": "2026-05-21T11:36:43.642Z"
+      },
+      {
+        "id": "cmpg966aa0001rn60qdva0f3v",
+        "key": "Penulis",
+        "value": "Aziiz R. Putra & Ami Pradana",
+        "type": "text",
+        "postId": null,
+        "pageId": null,
+        "productId": "cmpatbpne0010i8suwen2fa2x",
+        "createdAt": "2026-05-22T01:40:31.954Z",
+        "updatedAt": "2026-05-22T01:40:31.954Z"
+      },
+      {
+        "id": "cmpg966aa0002rn60pfg5iouh",
+        "key": "Penerbit",
+        "value": "Unived Press",
+        "type": "text",
+        "postId": null,
+        "pageId": null,
+        "productId": "cmpatbpne0010i8suwen2fa2x",
+        "createdAt": "2026-05-22T01:40:31.954Z",
+        "updatedAt": "2026-05-22T01:40:31.954Z"
+      },
+      {
+        "id": "cmpg966aa0003rn60q0ogxhyq",
+        "key": "Bahasa",
+        "value": "Indonesia",
+        "type": "text",
+        "postId": null,
+        "pageId": null,
+        "productId": "cmpatbpne0010i8suwen2fa2x",
+        "createdAt": "2026-05-22T01:40:31.954Z",
+        "updatedAt": "2026-05-22T01:40:31.954Z"
+      },
+      {
+        "id": "cmpg966aa0004rn603gegzj6j",
+        "key": "Dimensi",
+        "value": "16 x 23 cm",
+        "type": "text",
+        "postId": null,
+        "pageId": null,
+        "productId": "cmpatbpne0010i8suwen2fa2x",
+        "createdAt": "2026-05-22T01:40:31.954Z",
+        "updatedAt": "2026-05-22T01:40:31.954Z"
+      },
+      {
+        "id": "cmpg966aa0005rn60j0thz8m1",
+        "key": "Edisi",
+        "value": "Cetakan Pertama, 2026",
+        "type": "text",
+        "postId": null,
+        "pageId": null,
+        "productId": "cmpatbpne0010i8suwen2fa2x",
+        "createdAt": "2026-05-22T01:40:31.954Z",
+        "updatedAt": "2026-05-22T01:40:31.954Z"
+      },
+      {
+        "id": "cmpg966aa0006rn605zlbnd48",
+        "key": "Kategori",
+        "value": "Pendidikan Jasmani",
+        "type": "text",
+        "postId": null,
+        "pageId": null,
+        "productId": "cmpatbpne0010i8suwen2fa2x",
+        "createdAt": "2026-05-22T01:40:31.954Z",
+        "updatedAt": "2026-05-22T01:40:31.954Z"
+      },
+      {
+        "id": "cmpoz43jm0002wee4werf2ky5",
+        "key": "show_gallery",
+        "value": "false",
+        "type": "text",
+        "postId": null,
+        "pageId": "cmpoz433u0001wee4kbjj0k7g",
+        "productId": null,
+        "createdAt": "2026-05-28T04:08:54.515Z",
+        "updatedAt": "2026-05-28T04:08:54.515Z"
+      }
+    ],
+    "seoMetas": [],
+    "platformSettings": [
+      {
+        "id": "global",
+        "r2AccountId": "rustfs",
+        "r2AccessKeyId": "REEjBLeBujEa1swOmdSi",
+        "r2SecretAccessKey": "Cxhrf7eNIzwieeCYh1gnfsRhbyl8xLj5x1BOf4fe",
+        "r2BucketName": "instantweb",
+        "r2PublicDomain": "https://file.crediblemark.com/instantweb",
+        "r2Endpoint": "https://file.crediblemark.com",
+        "duitkuMerchantCode": "",
+        "duitkuApiKey": "",
+        "duitkuSandbox": true,
+        "affiliateCommissionRate": "30",
+        "affiliateRecurringCommission": true,
+        "affiliateRecurringCommissionRate": "30",
+        "aiProvider": "gemini",
+        "aiApiKey": "",
+        "starsenderApiKey": "",
+        "starsenderDeviceKey": "",
+        "resendApiKey": "",
+        "emailSenderName": "",
+        "emailSenderAddress": "",
+        "updatedAt": "2026-05-28T04:32:04.547Z"
+      }
+    ]
+  }
+}
