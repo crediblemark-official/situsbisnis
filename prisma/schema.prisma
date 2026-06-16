@@ -23,8 +23,6 @@ model User {
   affiliateBalance Decimal      @default(0) @db.Decimal(10, 2)
   accounts         Account[]
   commissions      Commission[]
-  coupons          Coupon[]     @relation("AffiliateCoupons")
-  posts            Post[]
   sessions         Session[]
   referredBy       User?        @relation("UserAffiliates", fields: [referredById], references: [id])
   referrals        User[]       @relation("UserAffiliates")
@@ -108,7 +106,6 @@ model Post {
   updatedAt DateTime   @updatedAt
   imageUrl  String?
   metaData  MetaData[]
-  author    User?      @relation(fields: [authorId], references: [id])
   site      Site       @relation(fields: [siteId], references: [id], onDelete: Cascade)
   seoMeta   SeoMeta?
   terms     Term[]     @relation("PostToTerm")
@@ -133,7 +130,6 @@ model Product {
   variantOptions Json?       @default("[]")
   variants       Json?       @default("[]")
   metaData       MetaData[]
-  orderItems     OrderItem[]
   site           Site        @relation(fields: [siteId], references: [id], onDelete: Cascade)
   seoMeta        SeoMeta?
   terms          Term[]      @relation("ProductToTerm")
@@ -172,7 +168,6 @@ model OrderItem {
   quantity  Int
   price     Decimal
   order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product   Product @relation(fields: [productId], references: [id])
 
   @@index([orderId])
   @@index([productId])
@@ -542,7 +537,6 @@ model PaymentTransaction {
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
   couponId         String?
-  commissions      Commission[]
   coupon           Coupon?           @relation(fields: [couponId], references: [id])
   plan             Plan              @relation(fields: [planId], references: [id])
 
@@ -562,7 +556,6 @@ model Coupon {
   isActive      Boolean              @default(true)
   createdAt     DateTime             @default(now())
   updatedAt     DateTime             @updatedAt
-  affiliate     User?                @relation("AffiliateCoupons", fields: [affiliateId], references: [id])
   transactions  PaymentTransaction[]
 }
 
@@ -597,7 +590,6 @@ model Commission {
   transactionId String?
   description   String?
   createdAt     DateTime            @default(now())
-  transaction   PaymentTransaction? @relation(fields: [transactionId], references: [id])
   user          User                @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])

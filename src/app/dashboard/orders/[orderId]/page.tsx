@@ -29,24 +29,23 @@ export default async function OrderDetailPage({
 
     // Fetch items with product details
     const items = await db.orderItem.findMany({
-        where: { orderId: orderId },
-        include: {
-            product: {
-                select: {
-                    name: true,
-                    images: true
-                }
-            }
-        }
+        where: { orderId: orderId }
     });
 
-    const formattedItems = items.map(item => ({
-        id: item.id,
-        quantity: item.quantity,
-        price: item.price,
-        productName: item.product?.name,
-        productImage: item.product?.images,
-    }));
+    const { CatalogClient } = await import("@/lib/modules/catalog/client");
+    const productIds = items.map(item => item.productId);
+    const productsMap = await CatalogClient.getProductsMap(productIds);
+
+    const formattedItems = items.map(item => {
+        const product = productsMap[item.productId];
+        return {
+            id: item.id,
+            quantity: item.quantity,
+            price: item.price,
+            productName: product?.name,
+            productImage: product?.images,
+        };
+    });
 
     return (
         <div className="w-full animate-in fade-in duration-700 pb-20 space-y-6">

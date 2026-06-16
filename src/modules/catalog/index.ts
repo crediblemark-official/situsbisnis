@@ -1,6 +1,7 @@
-import { countProductsInternal } from "./actions";
+import { countProductsInternal, getProductsMapInternal } from "./actions";
 
 // Facade / Client kontrak publik
 export const CatalogClient = {
-    countProducts: countProductsInternal
+    countProducts: countProductsInternal,
+    getProductsMap: getProductsMapInternal
 };

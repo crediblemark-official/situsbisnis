@@ -34,22 +34,14 @@ export default async function OrderSuccessPage({
         );
     }
 
-    const order = await db.order.findUnique({
+    const dbOrder = await db.order.findUnique({
         where: { id: orderId },
         include: {
-            items: {
-                include: {
-                    product: {
-                        include: {
-                            metaData: true
-                        }
-                    }
-                }
-            }
+            items: true
         }
     });
 
-    if (!order) {
+    if (!dbOrder) {
         return (
             <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
                 <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center border border-slate-100">
@@ -71,6 +63,22 @@ export default async function OrderSuccessPage({
             </div>
         );
     }
+
+    const { CatalogClient } = await import("@/lib/modules/catalog/client");
+    const productIds = dbOrder.items.map(item => item.productId);
+    const productsMap = await CatalogClient.getProductsMap(productIds);
+
+    const decoratedItems = dbOrder.items.map(item => ({
+        ...item,
+        product: productsMap[item.productId] || { id: item.productId, name: "", metaData: [] }
+    }));
+
+    const order = {
+        ...dbOrder,
+        items: decoratedItems
+    };
+
+
 
     // Check if there are any digital products in this order
     const digitalItems = order.items

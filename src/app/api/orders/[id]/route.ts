@@ -11,12 +11,24 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
 
         const order = await db.order.findFirst({
             where: { id, siteId },
-            include: { items: { include: { product: true } } }
+            include: { items: true }
         });
 
         if (!order) return apiError("Order not found", 404);
 
-        return apiResponse(order);
+        const { CatalogClient } = await import("@/lib/modules/catalog/client");
+        const productIds = order.items.map(item => item.productId);
+        const productsMap = await CatalogClient.getProductsMap(productIds);
+
+        const decoratedItems = order.items.map(item => ({
+            ...item,
+            product: productsMap[item.productId] || null
+        }));
+
+        return apiResponse({
+            ...order,
+            items: decoratedItems
+        });
     } catch (error) {
         console.error("Error fetching order:", error);
         return apiError("Internal Error");
