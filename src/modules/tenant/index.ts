@@ -14,14 +14,20 @@ import {
     savePaymentSettingsInternal,
     getSiteDomainInfoInternal,
     getOrIncrementViewsInternal,
-    pingDatabaseInternal,
+    pingDatabaseInternal
+} from "./controllers/tenant.controller";
+import {
     registerDomainInternal,
     verifyDomainInternal,
-    removeDomainInternal,
+    removeDomainInternal
+} from "./controllers/domain.controller";
+import {
     getSiteSettingsInternal,
-    updateSiteSettingsInternal,
+    updateSiteSettingsInternal
+} from "./controllers/settings.controller";
+import {
     provisionSiteInternal
-} from "./actions";
+} from "./controllers/provisioning.controller";
 
 export interface SiteInfo {
     id: string;

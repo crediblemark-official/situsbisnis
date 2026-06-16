@@ -1,0 +1,62 @@
+import * as orderService from "../services/order.service";
+
+/**
+ * Menghitung jumlah pesanan di suatu situs.
+ */
+export async function countOrdersInternal(siteId: string): Promise<number> {
+    return orderService.countOrders(siteId);
+}
+
+/**
+ * Mendapatkan data pesanan berdasarkan ID.
+ */
+export async function getOrderByIdInternal(orderId: string) {
+    return orderService.getOrderById(orderId);
+}
+
+/**
+ * Mendapatkan pengaturan pembayaran situs.
+ */
+export async function getPaymentSettingsInternal(siteId: string) {
+    return orderService.getPaymentSettings(siteId);
+}
+
+/**
+ * Memproses callback pembayaran pesanan dari Duitku.
+ */
+export async function processOrderPaymentCallbackInternal(orderId: string, siteId: string, amount: number, creditOwner: boolean) {
+    return orderService.processOrderPaymentCallback(orderId, siteId, amount, creditOwner);
+}
+
+export async function createOrderInternal(
+    siteId: string,
+    items: Array<{ productId: string; quantity: number }>,
+    customerDetails: any,
+    sessionCustomer?: any
+) {
+    return orderService.createOrder(siteId, items, customerDetails, sessionCustomer);
+}
+
+export async function checkOrderStatusInternal(orderId: string) {
+    return orderService.checkOrderStatus(orderId);
+}
+
+export async function initializeOrderPaymentInternal(orderId: string, paymentMethod: string, origin: string) {
+    return orderService.initializeOrderPayment(orderId, paymentMethod, origin);
+}
+
+export async function getOrderPaymentMethodsInternal(orderId: string) {
+    return orderService.getOrderPaymentMethods(orderId);
+}
+
+export async function processOrderWebhookInternal(body: Record<string, any>) {
+    return orderService.processOrderWebhook(body);
+}
+
+export async function getOrderDetailInternal(orderId: string, siteId: string) {
+    return orderService.getOrderDetail(orderId, siteId);
+}
+
+export async function updateOrderFulfillmentInternal(orderId: string, siteId: string, body: any) {
+    return orderService.updateOrderFulfillment(orderId, siteId, body);
+}

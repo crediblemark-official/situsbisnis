@@ -17,7 +17,7 @@ import {
     updateSiteCustomDomainInternal,
     verifySiteCustomDomainInternal,
     checkReferralCodeInternal
-} from "./actions";
+} from "./controllers/auth.controller";
 
 export interface UserDTO {
     id: string;

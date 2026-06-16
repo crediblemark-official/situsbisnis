@@ -10,7 +10,7 @@ import {
     processOrderWebhookInternal,
     getOrderDetailInternal,
     updateOrderFulfillmentInternal
-} from "./actions";
+} from "./controllers/order.controller";
 
 // Facade / Client kontrak publik
 export const OrderClient = {

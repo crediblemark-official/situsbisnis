@@ -1,5 +1,5 @@
-import * as authService from "./services/auth.service";
-import { SiteOwnerInfo, UserDTO, AwardCommissionDTO } from "./index";
+import * as authService from "../services/auth.service";
+import { SiteOwnerInfo, UserDTO, AwardCommissionDTO } from "../index";
 
 /**
  * Mendapatkan pemilik site.

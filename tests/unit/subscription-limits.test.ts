@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { checkSiteLimit } from '@/modules/billing/actions';
+import { BillingClient } from '@/modules/billing';
 
 // Mock dependencies
 vi.mock('@/lib/core/db', () => ({
@@ -37,7 +37,7 @@ describe('lib/subscription-limits.ts', () => {
     it('should return not allowed when no subscription', async () => {
       vi.mocked(db.subscription.findFirst).mockResolvedValue(null);
       
-      const result = await checkSiteLimit('site-1', 'maxPosts');
+      const result = await BillingClient.checkSiteLimit('site-1', 'maxPosts');
       
       expect(result).toEqual({ allowed: false, message: expect.stringContaining('subscription') });
     });
@@ -47,7 +47,7 @@ describe('lib/subscription-limits.ts', () => {
         plan: { name: 'Pro', maxPosts: -1, features: { hasBlog: true } }
       } as any);
       
-      const result = await checkSiteLimit('site-1', 'maxPosts');
+      const result = await BillingClient.checkSiteLimit('site-1', 'maxPosts');
       
       expect(result).toEqual({ allowed: true });
     });
@@ -59,7 +59,7 @@ describe('lib/subscription-limits.ts', () => {
       
       vi.mocked(ContentClient.countPosts).mockResolvedValue(5);
       
-      const result = await checkSiteLimit('site-1', 'maxPosts');
+      const result = await BillingClient.checkSiteLimit('site-1', 'maxPosts');
       
       expect(result).toEqual({ allowed: true });
     });
@@ -71,7 +71,7 @@ describe('lib/subscription-limits.ts', () => {
       
       vi.mocked(ContentClient.countPosts).mockResolvedValue(10);
       
-      const result = await checkSiteLimit('site-1', 'maxPosts');
+      const result = await BillingClient.checkSiteLimit('site-1', 'maxPosts');
       
       expect(result.allowed).toBe(false);
       expect(result.message).toContain('10');
@@ -85,7 +85,7 @@ describe('lib/subscription-limits.ts', () => {
       
       vi.mocked(CatalogClient.countProducts).mockResolvedValue(6);
       
-      const result = await checkSiteLimit('site-1', 'maxProducts');
+      const result = await BillingClient.checkSiteLimit('site-1', 'maxProducts');
       
       expect(result.allowed).toBe(false);
     });

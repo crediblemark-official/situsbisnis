@@ -1,4 +1,4 @@
-import * as catalogService from "./services/catalog.service";
+import * as catalogService from "../services/catalog.service";
 
 /**
  * Menghitung jumlah produk aktif di suatu situs.

@@ -18,10 +18,12 @@ import {
     deleteMediaFolderInternal,
     searchAllInternal,
     getCredBuildPageInternal,
-    saveCredBuildPageInternal,
+    saveCredBuildPageInternal
+} from "./controllers/content.controller";
+import {
     getMenuInternal,
     updateMenuInternal
-} from "./actions";
+} from "./controllers/menu.controller";
 
 // Facade / Client kontrak publik
 export const ContentClient = {

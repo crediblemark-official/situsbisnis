@@ -1,15 +1,15 @@
-import * as planService from "./services/plan.service";
-import * as limitService from "./services/limit.service";
-import * as couponService from "./services/coupon.service";
-import * as checkoutService from "./services/checkout.service";
-import * as transactionService from "./services/transaction.service";
-import * as webhookService from "./services/webhook.service";
-import * as followupService from "./services/followup.service";
-import * as withdrawalService from "./services/withdrawal.service";
-import * as settingsService from "./services/settings.service";
-import * as adminService from "./services/admin.service";
-import * as platformService from "./services/platform.service";
-import { LimitType } from "./index";
+import * as planService from "../services/plan.service";
+import * as limitService from "../services/limit.service";
+import * as couponService from "../services/coupon.service";
+import * as checkoutService from "../services/checkout.service";
+import * as transactionService from "../services/transaction.service";
+import * as webhookService from "../services/webhook.service";
+import * as followupService from "../services/followup.service";
+import * as withdrawalService from "../services/withdrawal.service";
+import * as settingsService from "../services/settings.service";
+import * as adminService from "../services/admin.service";
+import * as platformService from "../services/platform.service";
+import { LimitType } from "../index";
 
 export async function getPricingPlans() {
     return planService.getPricingPlans();

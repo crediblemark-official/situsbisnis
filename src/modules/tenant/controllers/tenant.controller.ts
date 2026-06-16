@@ -1,11 +1,8 @@
-import * as tenantService from "./services/tenant.service";
-import * as siteService from "./services/site.service";
-import * as contactService from "./services/contact.service";
-import * as analyticsService from "./services/analytics.service";
-import * as domainService from "./services/domain.service";
-import * as settingsService from "./services/settings.service";
-import * as provisioningService from "./services/provisioning.service";
-import { SiteInfo, SiteContactInfo } from "./index";
+import * as tenantService from "../services/tenant.service";
+import * as siteService from "../services/site.service";
+import * as contactService from "../services/contact.service";
+import * as analyticsService from "../services/analytics.service";
+import { SiteInfo, SiteContactInfo } from "../index";
 
 /**
  * Server Actions / Wrapper internal untuk mengambil info site.
@@ -126,31 +123,4 @@ export async function getOrIncrementViewsInternal(siteId: string) {
 
 export async function pingDatabaseInternal(): Promise<boolean> {
     return tenantService.pingDatabase();
-}
-
-// Domain Service Actions
-export async function registerDomainInternal(siteId: string, domain: string) {
-    return domainService.registerDomain(siteId, domain);
-}
-
-export async function verifyDomainInternal(siteId: string, domain: string) {
-    return domainService.verifyDomain(siteId, domain);
-}
-
-export async function removeDomainInternal(siteId: string, domain: string) {
-    return domainService.removeDomain(siteId, domain);
-}
-
-// Settings Service Actions
-export async function getSiteSettingsInternal(siteId?: string) {
-    return settingsService.getSiteSettings(siteId);
-}
-
-export async function updateSiteSettingsInternal(data: any, siteId: string) {
-    return settingsService.updateSiteSettings(data, siteId);
-}
-
-// Provisioning Service Actions
-export async function provisionSiteInternal(userId: string, siteName: string, subdomain: string) {
-    return provisioningService.provisionSite(userId, siteName, subdomain);
 }

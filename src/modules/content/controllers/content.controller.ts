@@ -1,7 +1,6 @@
-import * as contentService from "./services/content.service";
-import * as mediaService from "./services/media.service";
-import * as searchService from "./services/search.service";
-import * as menuService from "./services/menu.service";
+import * as contentService from "../services/content.service";
+import * as mediaService from "../services/media.service";
+import * as searchService from "../services/search.service";
 
 /**
  * Menghitung jumlah artikel/post di suatu situs.
@@ -115,13 +114,4 @@ export async function getCredBuildPageInternal(siteId: string, path: string) {
 
 export async function saveCredBuildPageInternal(siteId: string, path: string, data: any) {
     return contentService.saveCredBuildPage(siteId, path, data);
-}
-
-// Menu Actions
-export async function getMenuInternal(slug: string, siteId: string) {
-    return menuService.getMenu(slug, siteId);
-}
-
-export async function updateMenuInternal(slug: string, items: any[], siteId: string) {
-    return menuService.updateMenu(slug, items, siteId);
 }

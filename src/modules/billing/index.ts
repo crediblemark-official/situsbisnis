@@ -36,7 +36,7 @@ import {
     getAdminSite,
     updateAdminSiteBranding,
     getPlatformSettings
-} from "./actions";
+} from "./controllers/billing.controller";
 
 export type LimitType = "maxPosts" | "maxProducts" | "maxOrders" | "maxTestimonials" | "maxAssets";
 
