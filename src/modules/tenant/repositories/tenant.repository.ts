@@ -249,3 +249,16 @@ export async function upsertSiteStatistics(siteId: string, data: {
     });
 }
 
+/**
+ * Melakukan ping/raw query ke database untuk check health status.
+ */
+export async function pingDatabase(): Promise<boolean> {
+    try {
+        await db.$queryRaw`SELECT 1`;
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+

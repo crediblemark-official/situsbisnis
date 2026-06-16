@@ -120,3 +120,8 @@ export async function savePaymentSettingsInternal(siteId: string, data: {
 export async function getOrIncrementViewsInternal(siteId: string) {
     return analyticsService.getOrIncrementViews(siteId);
 }
+
+export async function pingDatabaseInternal(): Promise<boolean> {
+    return tenantService.pingDatabase();
+}
+

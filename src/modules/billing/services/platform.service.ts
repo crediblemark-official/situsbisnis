@@ -154,3 +154,11 @@ export async function updateAdminSiteBranding(adminSiteId: string, data: {
 }): Promise<void> {
     await billingRepo.updateAdminSiteSettings(adminSiteId, data);
 }
+
+/**
+ * Mengambil pengaturan platform global.
+ */
+export async function getPlatformSettings() {
+    return billingRepo.findPlatformSettings(null);
+}
+

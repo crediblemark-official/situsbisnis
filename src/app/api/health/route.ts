@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/core/db";
 import { createLogger } from "@/lib/core/logger";
+import { TenantClient } from "@/modules/tenant";
+import { BillingClient } from "@/modules/billing";
 
 const healthLogger = createLogger("health");
 
 async function checkDatabase(): Promise<boolean> {
   try {
-    await db.$queryRaw`SELECT 1`;
-    return true;
+    return await TenantClient.pingDatabase();
   } catch (error) {
     healthLogger.error({ error }, "Database health check failed");
     return false;
@@ -16,15 +16,7 @@ async function checkDatabase(): Promise<boolean> {
 
 async function checkStorage(): Promise<boolean> {
   try {
-    const settings = await db.platformSettings.findUnique({
-      where: { id: "global" },
-      select: {
-        r2AccountId: true,
-        r2AccessKeyId: true,
-        r2SecretAccessKey: true,
-        r2BucketName: true,
-      },
-    });
+    const settings = await BillingClient.getPlatformSettings();
 
     const hasR2Config = !!(
       settings &&
@@ -77,4 +69,3 @@ export async function GET() {
     { status: statusCode }
   );
 }
-

@@ -151,3 +151,8 @@ export async function getAdminSite() {
 export async function updateAdminSiteBranding(adminSiteId: string, data: Parameters<typeof platformService.updateAdminSiteBranding>[1]) {
     return platformService.updateAdminSiteBranding(adminSiteId, data);
 }
+
+export async function getPlatformSettings() {
+    return platformService.getPlatformSettings();
+}
+

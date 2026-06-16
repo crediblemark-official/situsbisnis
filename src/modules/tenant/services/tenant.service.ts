@@ -52,3 +52,11 @@ export async function getSiteUserIds(siteId: string): Promise<string[]> {
     const links = await tenantRepo.findSiteUsers(siteId);
     return links.map(link => link.userId);
 }
+
+/**
+ * Melakukan ping database untuk pemeriksaan kesehatan sistem.
+ */
+export async function pingDatabase(): Promise<boolean> {
+    return tenantRepo.pingDatabase();
+}
+

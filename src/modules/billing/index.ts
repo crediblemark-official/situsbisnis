@@ -34,7 +34,8 @@ import {
     updatePlatformSettings,
     updateAdminPaymentMethods,
     getAdminSite,
-    updateAdminSiteBranding
+    updateAdminSiteBranding,
+    getPlatformSettings
 } from "./actions";
 
 export type LimitType = "maxPosts" | "maxProducts" | "maxOrders" | "maxTestimonials" | "maxAssets";
@@ -102,7 +103,8 @@ export const BillingClient = {
     updatePlatformSettings,
     updateAdminPaymentMethods,
     getAdminSite,
-    updateAdminSiteBranding
+    updateAdminSiteBranding,
+    getPlatformSettings
 };
 
 
