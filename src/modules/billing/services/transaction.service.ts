@@ -3,16 +3,13 @@ import * as billingRepo from "../repositories/billing.repository";
 import * as transactionRepo from "../repositories/transaction.repository";
 import * as subscriptionRepo from "../repositories/subscription.repository";
 import * as couponRepo from "../repositories/coupon.repository";
-import { TenantClient } from "@/modules/tenant";
-import { IdentityClient } from "@/modules/auth";
-import { sendWhatsAppNotification } from "@/lib/services/whatsapp";
 import { eventBus } from "@/modules/shared/core/event-bus";
 
 /**
  * Memproses transaksi yang disetujui (aktivasi paket/addon slots).
  */
 export async function processApprovedTransaction(transactionId: string) {
-    let outboxEvent: any = null;
+    let outboxEvents: any[] = [];
 
     const updatedTx = await db.$transaction(async (tx) => {
         const currentTx = await transactionRepo.findTransactionById(tx, transactionId);
@@ -29,8 +26,8 @@ export async function processApprovedTransaction(transactionId: string) {
             await couponRepo.incrementCouponUses(tx, updated.couponId);
         }
 
-        const siteOwner = await IdentityClient.getSiteOwner(updated.siteId);
-        const siteInfo = await TenantClient.getSiteInfo(updated.siteId);
+        const siteOwner = await eventBus.request<any, any>("request.auth.getSiteOwner", { siteId: updated.siteId });
+        const siteInfo = await eventBus.request<any, any>("request.tenant.getSiteInfo", { siteId: updated.siteId });
 
         if (siteOwner && siteOwner.referredById) {
             const platformSettings = await billingRepo.findPlatformSettings(tx);
@@ -54,7 +51,7 @@ export async function processApprovedTransaction(transactionId: string) {
                 
                 const commissionAmount = Number(updated.amount) * (ratePercentage / 100);
                 
-                outboxEvent = await tx.eventOutbox.create({
+                const outboxAffiliate = await tx.eventOutbox.create({
                     data: {
                         eventName: "affiliate.commission.awarded",
                         payload: {
@@ -67,8 +64,24 @@ export async function processApprovedTransaction(transactionId: string) {
                         status: "pending"
                     }
                 });
+                outboxEvents.push(outboxAffiliate);
             }
         }
+
+        const outboxPayment = await tx.eventOutbox.create({
+            data: {
+                eventName: "billing.payment.completed",
+                payload: {
+                    transactionId: updated.id,
+                    siteId: updated.siteId,
+                    amount: Number(updated.amount),
+                    couponId: updated.couponId
+                },
+                sourceModule: "billing",
+                status: "pending"
+            }
+        });
+        outboxEvents.push(outboxPayment);
 
         if (updated.addonType === "site_slot") {
             const existingSub = await subscriptionRepo.findLatestSubscription(tx, updated.siteId);
@@ -113,20 +126,21 @@ export async function processApprovedTransaction(transactionId: string) {
         timeout: 45000,
     });
 
-    if (outboxEvent) {
+    // Publikasikan semua outbox events yang terkumpul di luar transaksi
+    for (const outbox of outboxEvents) {
         try {
-            await eventBus.publish(outboxEvent.eventName, outboxEvent.payload, outboxEvent.sourceModule);
+            await eventBus.publish(outbox.eventName, outbox.payload, outbox.sourceModule);
             await db.eventOutbox.update({
-                where: { id: outboxEvent.id },
+                where: { id: outbox.id },
                 data: {
                     status: "published",
                     publishedAt: new Date()
                 }
             });
         } catch (publishError: any) {
-            console.error(`[Outbox Error] Gagal mempublikasikan outbox ${outboxEvent.id}:`, publishError);
+            console.error(`[Outbox Error] Gagal mempublikasikan outbox ${outbox.id}:`, publishError);
             await db.eventOutbox.update({
-                where: { id: outboxEvent.id },
+                where: { id: outbox.id },
                 data: {
                     status: "failed",
                     error: publishError.message || String(publishError)
@@ -142,60 +156,6 @@ export async function processApprovedTransaction(transactionId: string) {
         } catch (e) {
             console.error("Failed to revalidate subscription cache:", e);
         }
-
-        (async () => {
-            try {
-                const siteContact = await TenantClient.getSiteContact(updatedTx.siteId);
-                const siteInfo = await TenantClient.getSiteInfo(updatedTx.siteId);
-                const activeSub = await subscriptionRepo.findActiveSubscription(updatedTx.siteId);
-
-                const formattedEndDate = activeSub?.endDate
-                    ? new Date(activeSub.endDate).toLocaleDateString("id-ID", {
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric"
-                      })
-                    : "";
-
-                const formattedAmount = new Intl.NumberFormat("id-ID", {
-                    style: "currency",
-                    currency: "IDR",
-                    minimumFractionDigits: 0
-                }).format(Number(updatedTx.amount));
-
-                const planName = updatedTx.plan.name.toUpperCase();
-                const siteName = siteInfo?.name || "Website Anda";
-
-                const recipientPhone = siteContact?.whatsappNumber || siteContact?.contactPhone;
-                if (recipientPhone) {
-                    let message = `*SitusBisnis - Pembayaran Berhasil* 🎉\n\n`;
-                    message += `Halo Pengelola *${siteName}*,\n\n`;
-                    message += `Pembayaran Anda untuk paket *${planName}* sebesar *${formattedAmount}* telah berhasil diverifikasi dan disetujui.\n\n`;
-                    if (formattedEndDate) {
-                        message += `Layanan paket aktif/diperpanjang hingga: *${formattedEndDate}*.\n\n`;
-                    }
-                    message += `Terima kasih atas kepercayaan Anda menggunakan layanan kami!\n\n`;
-                    message += `_Pesan ini dikirim otomatis oleh sistem SitusBisnis._`;
-
-                    await sendWhatsAppNotification(recipientPhone, message);
-                }
-
-                const siteOwner = await IdentityClient.getSiteOwner(updatedTx.siteId);
-                if (siteOwner && siteOwner.email) {
-                    const { sendPaymentSuccessEmail } = await import("@/lib/services/email");
-                    await sendPaymentSuccessEmail({
-                        toEmail: siteOwner.email,
-                        userName: siteOwner.name || "Pengguna",
-                        siteName,
-                        planName,
-                        amount: formattedAmount,
-                        endDate: formattedEndDate
-                    });
-                }
-            } catch (error) {
-                console.error("[NOTIFICATION_TRIGGER_ERROR]", error);
-            }
-        })();
     }
 
     return updatedTx;
@@ -230,7 +190,7 @@ export async function cancelTransaction(userId: string, transactionId: string) {
         throw new Error("Transaction not found");
     }
 
-    const ownerInfo = await IdentityClient.getSiteOwner(tx.siteId);
+    const ownerInfo = await eventBus.request<any, any>("request.auth.getSiteOwner", { siteId: tx.siteId });
     const isOwner = ownerInfo?.id === userId;
 
     if (!isOwner) {
@@ -264,7 +224,7 @@ export async function confirmManualPayment(
         throw new Error("Transaction not found");
     }
 
-    const ownerInfo = await IdentityClient.getSiteOwner(existingTransaction.siteId);
+    const ownerInfo = await eventBus.request<any, any>("request.auth.getSiteOwner", { siteId: existingTransaction.siteId });
     const isUserMember = ownerInfo?.id === userId;
 
     if (!isUserMember && userRole !== "admin") {

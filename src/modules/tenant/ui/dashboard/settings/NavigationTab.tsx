@@ -1,6 +1,6 @@
 import React from "react";
 import { FormSection, FormSelect, FormInput, FormTextArea } from "@/components/ui/Form";
-import { SiteSettings } from "@/lib/settings/site";
+import { SiteSettings } from "@/modules/tenant/services/site-settings.service";
 import { Palette, MousePointer2 } from "lucide-react";
 
 interface NavigationTabProps {

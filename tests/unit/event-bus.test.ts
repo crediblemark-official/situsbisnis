@@ -88,4 +88,27 @@ describe("EventBus Unit Test", () => {
 
     unsubscribe();
   });
+
+  it("harus dapat melakukan Request/Reply secara lokal", async () => {
+    // Daftarkan responder
+    const unsubscribeReply = await eventBus.reply("request.catalog.countProducts", async (data: { siteId: string }) => {
+      expect(data.siteId).toBe("site-xyz");
+      return 42;
+    });
+
+    // Kirim request
+    const response = await eventBus.request("request.catalog.countProducts", { siteId: "site-xyz" });
+
+    // Verifikasi response
+    expect(response).toBe(42);
+
+    unsubscribeReply();
+  });
+
+  it("harus timeout jika tidak ada responder untuk request", async () => {
+    // Jalankan request tanpa responder, atur timeout sangat singkat
+    await expect(
+      eventBus.request("request.unhandled.channel", { siteId: "site-xyz" }, { timeout: 50 })
+    ).rejects.toThrow("Request timeout");
+  });
 });

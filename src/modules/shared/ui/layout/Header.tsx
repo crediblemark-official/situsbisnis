@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { Menu, X } from "lucide-react";
-import { SiteSettings } from "@/lib/settings/site";
+import { SiteSettings } from "@/modules/tenant/services/site-settings.service";
 
 interface HeaderProps {
     initialSettings?: SiteSettings | null;

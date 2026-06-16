@@ -1,6 +1,6 @@
 import { db } from "@/lib/core/db";
 import { getApiContext, apiResponse, apiError, validateBody } from "@/lib/api/utils";
-import { BillingClient } from "@/modules/billing";
+import { eventBus } from "@/modules/shared/core/event-bus";
 import { z } from "zod";
 import { Prisma, Role } from "@prisma/client";
 import { AppError } from "./errors";
@@ -147,7 +147,10 @@ export function createCrudHandler<T extends z.ZodType<any, any>>(config: CrudHan
 
                     // Create new
                     if (config.limitCheckType) {
-                        const limitCheck = await BillingClient.checkSiteLimit(siteId, config.limitCheckType as any);
+                        const limitCheck = await eventBus.request<{ siteId: string; limitType: string }, { allowed: boolean; message: string }>(
+                            "request.billing.checkLimit",
+                            { siteId, limitType: config.limitCheckType }
+                        );
                         if (!limitCheck.allowed) return apiError(limitCheck.message, 403);
                     }
 

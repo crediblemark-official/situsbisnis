@@ -1,4 +1,4 @@
-import { getTestimonials } from "@/lib/services/content.service";
+import { getTestimonials } from "@/modules/content/services/content-display.service";
 import Image from "next/image";
 import { Quote, Star, MessageSquarePlus } from "lucide-react";
 import { Metadata } from "next";

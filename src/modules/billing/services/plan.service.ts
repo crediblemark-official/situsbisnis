@@ -2,8 +2,7 @@ import * as billingRepo from "../repositories/billing.repository";
 import * as planRepo from "../repositories/plan.repository";
 import * as subscriptionRepo from "../repositories/subscription.repository";
 import { unstable_cache } from "next/cache";
-import { TenantClient } from "@/modules/tenant";
-import { IdentityClient } from "@/modules/auth";
+import { eventBus } from "@/modules/shared/core/event-bus";
 import { PricingPlanDTO } from "../index";
 
 /**
@@ -122,7 +121,7 @@ export async function extendTrial(userId: string, userRole: string, siteId: stri
 
     const isAdmin = userRole === "admin";
     if (!isAdmin) {
-        const hasAccess = await TenantClient.verifyUserSiteAccess(userId, siteId);
+        const hasAccess = await eventBus.request<any, any>("request.tenant.verifyUserSiteAccess", { userId, siteId });
         if (!hasAccess) {
             throw new Error("Forbidden");
         }
@@ -151,9 +150,9 @@ export async function extendTrial(userId: string, userRole: string, siteId: stri
 
     (async () => {
         try {
-            const siteOwner = await IdentityClient.getSiteOwner(siteId);
+            const siteOwner = await eventBus.request<any, any>("request.auth.getSiteOwner", { siteId });
             if (siteOwner && siteOwner.email) {
-                const { sendTrialExtendedEmail } = await import("@/lib/services/email");
+                const { sendTrialExtendedEmail } = await import("@/modules/tenant/services/email.service");
                 const formattedEndDate = newEndDate.toLocaleDateString("id-ID", {
                     day: "numeric",
                     month: "long",
@@ -266,9 +265,9 @@ export async function cancelSubscription(subId: string) {
     // Kirim email pembatalan
     try {
         const site = await billingRepo.findSiteById(sub.siteId);
-        const siteOwner = site ? await IdentityClient.getSiteOwner(site.id) : null;
+        const siteOwner = site ? await eventBus.request<any, any>("request.auth.getSiteOwner", { siteId: site.id }) : null;
         if (siteOwner && siteOwner.email) {
-            const { sendSubscriptionCancelledEmail } = await import("@/lib/services/email");
+            const { sendSubscriptionCancelledEmail } = await import("@/modules/tenant/services/email.service");
             await sendSubscriptionCancelledEmail({
                 toEmail: siteOwner.email,
                 userName: siteOwner.name || "Pengguna",

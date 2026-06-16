@@ -1,5 +1,5 @@
 import { sendWhatsAppNotification } from "@/lib/services/whatsapp";
-import { IdentityClient } from "@/modules/auth";
+import { eventBus } from "@/modules/shared/core/event-bus";
 
 /**
  * Mengirim notifikasi follow-up melalui WhatsApp (admin).
@@ -22,10 +22,10 @@ export async function followupEmail(email: string, message: string, siteId: stri
     if (!email || !message) {
         throw new Error("Email and message are required");
     }
-    const siteOwner = siteId ? await IdentityClient.getSiteOwner(siteId) : null;
+    const siteOwner = siteId ? await eventBus.request<any, any>("request.auth.getSiteOwner", { siteId }) : null;
     const userName = siteOwner?.name || "Pengguna";
 
-    const { sendFollowupEmail } = await import("@/lib/services/email");
+    const { sendFollowupEmail } = await import("@/modules/tenant/services/email.service");
     const result = await sendFollowupEmail({
         toEmail: email,
         userName,

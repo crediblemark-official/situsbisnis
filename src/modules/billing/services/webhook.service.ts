@@ -1,6 +1,6 @@
 import * as billingRepo from "../repositories/billing.repository";
 import * as transactionRepo from "../repositories/transaction.repository";
-import { IdentityClient } from "@/modules/auth";
+import { eventBus } from "@/modules/shared/core/event-bus";
 import { processApprovedTransaction } from "./transaction.service";
 
 /**
@@ -20,7 +20,7 @@ export async function checkTransactionStatus(userId: string, userRole: string, t
     let isOwner = false;
 
     if (!isAdmin) {
-        const ownerInfo = await IdentityClient.getSiteOwner(transaction.siteId);
+        const ownerInfo = await eventBus.request<any, any>("request.auth.getSiteOwner", { siteId: transaction.siteId });
         isOwner = ownerInfo?.id === userId;
     }
 

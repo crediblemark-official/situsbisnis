@@ -1,6 +1,6 @@
 import React from "react";
 import DashboardShell from "@/components/dashboard/DashboardShell";
-import { getSiteSettings } from "@/lib/settings/site";
+import { getSiteSettings } from "@/modules/tenant/services/site-settings.service";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";

@@ -1,6 +1,6 @@
 import React from "react";
 import { FormSection, FormInput, FormTextArea, FormSelect } from "@/components/ui/Form";
-import { SiteSettings } from "@/lib/settings/site";
+import { SiteSettings } from "@/modules/tenant/services/site-settings.service";
 
 interface IdentityTabProps {
     settings: SiteSettings;

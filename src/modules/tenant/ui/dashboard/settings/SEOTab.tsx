@@ -1,7 +1,7 @@
 import React from "react";
 import { FormSection, FormInput } from "@/components/ui/Form";
 import { FormMediaPicker } from "@/components/ui/FormMediaPicker";
-import { SiteSettings } from "@/lib/settings/site";
+import { SiteSettings } from "@/modules/tenant/services/site-settings.service";
 
 interface SEOTabProps {
     settings: SiteSettings;

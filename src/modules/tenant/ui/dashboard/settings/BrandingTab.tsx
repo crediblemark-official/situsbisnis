@@ -1,7 +1,7 @@
 import React from "react";
 import { FormSection, FormSelect } from "@/components/ui/Form";
 import { FormMediaPicker } from "@/components/ui/FormMediaPicker";
-import { SiteSettings } from "@/lib/settings/site";
+import { SiteSettings } from "@/modules/tenant/services/site-settings.service";
 
 const CURATED_FONTS = [
     { label: "Inter (Sans)", value: "Inter" },

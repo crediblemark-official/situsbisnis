@@ -1,6 +1,6 @@
 import React from "react";
 import { FormSection, FormInput } from "@/components/ui/Form";
-import { SiteSettings } from "@/lib/settings/site";
+import { SiteSettings } from "@/modules/tenant/services/site-settings.service";
 import { AlertCircle } from "lucide-react";
 
 interface PixelTabProps {

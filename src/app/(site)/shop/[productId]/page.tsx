@@ -2,7 +2,7 @@ import { db } from "@/lib/core/db";
 import { serializeProduct } from "@/lib/content/serialize";
 import ProductDetailViewClient from "@/components/shop/ProductDetailViewClient";
 import { getPaymentSettings } from "@/lib/settings/payment";
-import { getSiteSettings } from "@/lib/settings/site";
+import { getSiteSettings } from "@/modules/tenant/services/site-settings.service";
 import Script from "next/script";
 import { headers } from "next/headers";
 import { getBaseUrl } from "@/lib/domains/utils";

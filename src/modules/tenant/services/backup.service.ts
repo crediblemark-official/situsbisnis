@@ -1,4 +1,4 @@
-import { db } from "@/lib/core/db";
+import { db } from "@/modules/shared/core/db";
 
 export interface BackupData {
     metadata: {

@@ -4,12 +4,15 @@ import crypto from "crypto";
 import { EventPayload, EventMetadata } from "./event-types";
 
 type EventCallback<T = any> = (data: T, metadata: EventMetadata) => void | Promise<void>;
+type RequestHandler<T = any, R = any> = (data: T) => R | Promise<R>;
 
 class EventBus {
   private localEmitter = new EventEmitter();
   private subClient: any = null;
   private pubClient: any = null;
   private channels = new Set<string>();
+  private requestChannels = new Set<string>();
+  private replyChannels = new Set<string>();
   private listeners = new Map<string, Set<EventCallback>>();
 
   constructor() {
@@ -30,11 +33,20 @@ class EventBus {
           connectTimeout: 2000,
         });
 
+        // Handler pesan masuk Redis terpusat
         this.subClient.on("message", (channel: string, message: string) => {
           try {
-            const payload: EventPayload = JSON.parse(message);
-            const channelName = channel.replace(/^event:/, "");
-            this.triggerLocal(channelName, payload.data, payload.metadata);
+            const payload = JSON.parse(message);
+            
+            if (channel.startsWith("event:request:")) {
+              const reqChannel = channel.replace(/^event:request:/, "");
+              this.localEmitter.emit(`request:${reqChannel}`, payload);
+            } else if (channel.startsWith("reply:")) {
+              this.localEmitter.emit(`reply:${channel}`, payload);
+            } else if (channel.startsWith("event:")) {
+              const pubChannel = channel.replace(/^event:/, "");
+              this.localEmitter.emit(pubChannel, payload);
+            }
           } catch (e) {
             console.error(`[EventBus] Gagal parse pesan dari channel ${channel}:`, e);
           }
@@ -44,9 +56,19 @@ class EventBus {
           console.warn("[EventBus Warning] Redis Subscribe client error:", err.message || err);
         });
 
-        // Daftarkan ulang semua channel yang sudah terlanjur di-subscribe sebelum init selesai
+        // Daftarkan ulang semua channel pub/sub biasa
         for (const channel of this.channels) {
           await this.subClient.subscribe(`event:${channel}`);
+        }
+
+        // Daftarkan ulang semua request channel
+        for (const reqChannel of this.requestChannels) {
+          await this.subClient.subscribe(`event:request:${reqChannel}`);
+        }
+
+        // Daftarkan ulang semua reply channel aktif
+        for (const repChannel of this.replyChannels) {
+          await this.subClient.subscribe(repChannel);
         }
         
         console.log("🔌 [EventBus] Redis Pub/Sub terhubung dan aktif.");
@@ -132,6 +154,139 @@ class EventBus {
     this.localEmitter.emit(channel, payload);
   }
 
+  /**
+   * Mengirimkan request asinkron dan menunggu response (Pola Request/Reply).
+   */
+  async request<T = any, R = any>(channel: string, data: T, options?: { timeout?: number }): Promise<R> {
+    const timeoutMs = options?.timeout || 5000;
+    const correlationId = crypto.randomUUID();
+    const replyChannel = `reply:${channel}:${correlationId}`;
+
+    const metadata: EventMetadata = {
+      eventId: crypto.randomUUID(),
+      eventName: channel,
+      sourceModule: "caller",
+      timestamp: Date.now(),
+      correlationId,
+      retryCount: 0,
+    };
+
+    const requestPayload = {
+      data,
+      metadata,
+      replyTo: replyChannel,
+    };
+
+    if (this.pubClient && this.subClient) {
+      return new Promise<R>(async (resolve, reject) => {
+        let isTimedOut = false;
+        
+        const timer = setTimeout(async () => {
+          isTimedOut = true;
+          this.replyChannels.delete(replyChannel);
+          this.localEmitter.off(`reply:${replyChannel}`, responseHandler);
+          try {
+            await this.subClient.unsubscribe(replyChannel);
+          } catch (_) {}
+          reject(new Error(`[EventBus] Request timeout pada channel ${channel} setelah ${timeoutMs}ms`));
+        }, timeoutMs);
+
+        const responseHandler = (payload: any) => {
+          if (!isTimedOut) {
+            clearTimeout(timer);
+            this.replyChannels.delete(replyChannel);
+            resolve(payload.data);
+            this.subClient.unsubscribe(replyChannel).catch(() => {});
+          }
+        };
+
+        // Daftarkan listener lokal sekali pakai untuk reply channel
+        this.localEmitter.once(`reply:${replyChannel}`, responseHandler);
+
+        try {
+          this.replyChannels.add(replyChannel);
+          await this.subClient.subscribe(replyChannel);
+          if (isTimedOut) return;
+          
+          await this.pubClient.publish(`event:request:${channel}`, JSON.stringify(requestPayload));
+        } catch (e) {
+          clearTimeout(timer);
+          this.replyChannels.delete(replyChannel);
+          this.localEmitter.off(`reply:${replyChannel}`, responseHandler);
+          try {
+            await this.subClient.unsubscribe(replyChannel);
+          } catch (_) {}
+          reject(e);
+        }
+      });
+    }
+
+    // Fallback ke In-Memory
+    return new Promise<R>((resolve, reject) => {
+      const timer = setTimeout(() => {
+        this.localEmitter.off(`reply:${replyChannel}`, responseHandler);
+        reject(new Error(`[EventBus In-Memory] Request timeout pada channel ${channel}`));
+      }, timeoutMs);
+
+      const responseHandler = (res: any) => {
+        clearTimeout(timer);
+        resolve(res.data);
+      };
+
+      this.localEmitter.once(`reply:${replyChannel}`, responseHandler);
+      this.localEmitter.emit(`request:${channel}`, requestPayload);
+    });
+  }
+
+  /**
+   * Mendaftarkan handler untuk menjawab request (Pola Request/Reply).
+   */
+  async reply<T = any, R = any>(channel: string, handler: RequestHandler<T, R>) {
+    // Daftarkan ke Redis jika tersedia
+    if (this.subClient) {
+      if (!this.requestChannels.has(channel)) {
+        this.requestChannels.add(channel);
+        try {
+          await this.subClient.subscribe(`event:request:${channel}`);
+        } catch (e) {
+          console.error(`[EventBus] Gagal subscribe request channel ${channel} di Redis:`, e);
+        }
+      }
+    }
+
+    const localHandler = async (requestPayload: any) => {
+      try {
+        const result = await handler(requestPayload.data);
+        const replyPayload = {
+          data: result,
+          metadata: {
+            eventId: crypto.randomUUID(),
+            eventName: `reply:${channel}`,
+            sourceModule: "responder",
+            timestamp: Date.now(),
+            correlationId: requestPayload.metadata.correlationId,
+            retryCount: 0,
+          }
+        };
+
+        if (this.pubClient) {
+          await this.pubClient.publish(requestPayload.replyTo, JSON.stringify(replyPayload));
+        } else {
+          // Emit lokal jika in-memory
+          this.localEmitter.emit(`reply:${requestPayload.replyTo}`, replyPayload);
+        }
+      } catch (e) {
+        console.error(`[EventBus Reply Error] Gagal memproses request channel ${channel}:`, e);
+      }
+    };
+
+    this.localEmitter.on(`request:${channel}`, localHandler);
+
+    return () => {
+      this.localEmitter.off(`request:${channel}`, localHandler);
+    };
+  }
+
   async disconnect() {
     if (this.subClient) {
       try {
@@ -141,6 +296,8 @@ class EventBus {
     }
     this.pubClient = null;
     this.channels.clear();
+    this.requestChannels.clear();
+    this.replyChannels.clear();
     this.listeners.clear();
     this.localEmitter.removeAllListeners();
   }

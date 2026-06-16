@@ -1,5 +1,5 @@
 import { getApiContext, apiResponse, apiError } from "@/lib/api/utils";
-import { exportBackupData, importBackupData } from "@/lib/services/backup.service";
+import { exportBackupData, importBackupData } from "@/modules/tenant/services/backup.service";
 
 /**
  * GET /api/admin/backup

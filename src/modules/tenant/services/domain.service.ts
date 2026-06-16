@@ -1,6 +1,7 @@
 import * as domainRepo from "../repositories/domain.repository";
 import { verifyDomainConfig as verifyDns } from "@/modules/shared/utils/domains/verification";
 import { DokployService } from "./dokploy.service";
+import { eventBus } from "@/modules/shared/core/event-bus";
 
 export interface DomainStatus {
     status: "valid" | "pending" | "error";
@@ -107,10 +108,12 @@ export async function verifyDomain(siteId: string, domain: string): Promise<Doma
             // Kirim email notifikasi secara asinkron
             (async () => {
                 try {
-                    const { IdentityClient } = await import("@/modules/auth");
-                    const siteOwner = await IdentityClient.getSiteOwner(siteId);
+                    const siteOwner = await eventBus.request<{ siteId: string }, { email: string | null; name: string | null } | null>(
+                        "request.auth.getSiteOwner",
+                        { siteId }
+                    );
                     if (siteOwner && siteOwner.email) {
-                        const { sendDomainVerifiedEmail } = await import("@/lib/services/email");
+                        const { sendDomainVerifiedEmail } = await import("@/modules/tenant/services/email.service");
                         await sendDomainVerifiedEmail({
                             toEmail: siteOwner.email,
                             userName: siteOwner.name || "Pengguna",

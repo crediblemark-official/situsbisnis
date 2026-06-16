@@ -59,6 +59,17 @@ vi.mock('@/modules/shared/core/event-bus', () => ({
         await awardAffiliateCommissionInternal(db, data);
       }
     }),
+    request: vi.fn(async (channel, data) => {
+      if (channel === 'request.auth.getSiteOwner') {
+        const user = await db.user.findUnique({ where: { id: 'any' } });
+        return user ? { id: user.id, name: user.name, email: user.email, referredById: user.referredById } : null;
+      }
+      if (channel === 'request.tenant.getSiteInfo') {
+        const site = await db.site.findUnique({ where: { id: 'any' } });
+        return site ? { id: site.id, name: site.name } : null;
+      }
+      return null;
+    }),
     subscribe: vi.fn(),
     init: vi.fn(),
     disconnect: vi.fn(),

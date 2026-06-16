@@ -1,7 +1,7 @@
 import { db } from "@/lib/core/db";
 import { getSiteId } from "@/lib/domains/tenant";
 import { getPaymentSettings } from "@/lib/settings/payment";
-import { getSiteSettings } from "@/lib/settings/site";
+import { getSiteSettings } from "@/modules/tenant/services/site-settings.service";
 import { notFound } from "next/navigation";
 import CustomersClient from "./CustomersClient";
 

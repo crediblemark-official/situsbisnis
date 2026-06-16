@@ -51,13 +51,54 @@ vi.mock('@/lib/core/db', () => ({
     commission: {
       create: vi.fn(),
     },
+    eventOutbox: {
+      create: vi.fn(({ data }) => Promise.resolve({
+        id: 'outbox-1',
+        eventName: data.eventName,
+        payload: data.payload,
+        sourceModule: data.sourceModule,
+        status: data.status || 'pending'
+      })),
+      update: vi.fn(),
+    },
   },
+}));
+
+vi.mock('@/modules/shared/core/event-bus', () => ({
+  eventBus: {
+    publish: vi.fn(async (channel, data) => {
+      // Handler komisi afiliasi jika ada
+      if (channel === 'affiliate.commission.awarded') {
+        const { awardAffiliateCommissionInternal } = await import('@/modules/auth/controllers/auth.controller');
+        await awardAffiliateCommissionInternal(db, data);
+      }
+    }),
+    request: vi.fn(async (channel, data) => {
+      if (channel === 'request.tenant.verifyUserSiteAccess') {
+        return TenantClient.verifyUserSiteAccess(data.userId, data.siteId);
+      }
+      if (channel === 'request.tenant.getSiteInfo') {
+        return TenantClient.getSiteInfo(data.siteId);
+      }
+      if (channel === 'request.auth.getSiteOwner') {
+        return IdentityClient.getSiteOwner(data.siteId);
+      }
+      if (channel === 'request.auth.updateUserReferrer') {
+        return IdentityClient.updateUserReferrer(data.userId, data.referredById);
+      }
+      return null;
+    }),
+    subscribe: vi.fn(),
+    init: vi.fn(),
+    disconnect: vi.fn(),
+  }
 }));
 
 vi.mock('@/modules/auth', () => ({
   IdentityClient: {
     getSiteOwner: vi.fn(),
     updateUserReferrer: vi.fn(),
+    awardAffiliateCommission: vi.fn(),
   }
 }));
 

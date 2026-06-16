@@ -1,7 +1,7 @@
 import React from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import { getSiteSettings } from "@/lib/settings/site";
+import { getSiteSettings } from "@/modules/tenant/services/site-settings.service";
 import { getMenu } from "@/lib/content/menus";
 
 export default async function PagesLayout({

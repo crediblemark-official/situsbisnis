@@ -1,8 +1,8 @@
-import { getSiteId } from "@/lib/domains/tenant";
+import { getSiteId } from "@/modules/shared/utils/domains/tenant";
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
 import { ContentClient } from "@/modules/content";
-import { CatalogClient } from "@/modules/catalog";
+import { eventBus } from "@/modules/shared/core/event-bus";
 
 // Posts
 export const getPost = cache(async (slug: string, siteId?: string) => {
@@ -33,14 +33,19 @@ export const getPosts = cache(async (siteId?: string) => {
     )();
 });
 
+// Menggunakan eventBus untuk mengambil data dari modul catalog secara asinkron
 export const getProducts = cache(async (siteId?: string) => {
     const id = siteId || await getSiteId();
     if (!id) return [];
 
-    // Cache persistent antar request, revalidasi setiap 5 menit
     return unstable_cache(
         async () => {
-            return CatalogClient.getProducts(id);
+            try {
+                return await eventBus.request("request.catalog.getProducts", { siteId: id });
+            } catch (err) {
+                console.error("[ContentDisplayService] Gagal memuat produk via eventBus:", err);
+                return [];
+            }
         },
         [`products-${id}`],
         { revalidate: 300, tags: [`site-${id}`, "products"] }
@@ -61,15 +66,19 @@ export const getPage = cache(async (path: string, siteId?: string) => {
     )();
 });
 
-// Products
+// Menggunakan eventBus untuk mengambil data produk spesifik dari modul catalog secara asinkron
 export const getProduct = cache(async (slug: string, siteId?: string) => {
     const id = siteId || await getSiteId();
     if (!id) return null;
 
-    // Cache persistent antar request, revalidasi setiap 5 menit
     return unstable_cache(
         async () => {
-            return CatalogClient.getProduct(slug, id);
+            try {
+                return await eventBus.request("request.catalog.getProduct", { slug, siteId: id });
+            } catch (err) {
+                console.error(`[ContentDisplayService] Gagal memuat produk ${slug} via eventBus:`, err);
+                return null;
+            }
         },
         [`product-${id}-${slug}`],
         { revalidate: 300, tags: [`site-${id}`, `product-${slug}`, "products"] }

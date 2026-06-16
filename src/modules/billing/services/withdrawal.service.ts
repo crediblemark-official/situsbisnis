@@ -33,7 +33,7 @@ export async function processWithdrawalStatus(withdrawalId: string, status: stri
     // Kirim email notifikasi status
     if (result && result.user && result.user.email) {
         try {
-            const { sendWithdrawalStatusEmail } = await import("@/lib/services/email");
+            const { sendWithdrawalStatusEmail } = await import("@/modules/tenant/services/email.service");
             const formattedAmount = new Intl.NumberFormat("id-ID", {
                 style: "currency",
                 currency: "IDR",

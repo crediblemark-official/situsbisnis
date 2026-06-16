@@ -1,5 +1,5 @@
 import React from "react";
-import { SiteSettings } from "@/lib/settings/site";
+import { SiteSettings } from "@/modules/tenant/services/site-settings.service";
 import { 
     PenTool, 
     ImageIcon, 

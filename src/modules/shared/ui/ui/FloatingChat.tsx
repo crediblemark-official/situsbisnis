@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { MessageCircle } from "lucide-react";
-import { SiteSettings } from "@/lib/settings/site";
+import { SiteSettings } from "@/modules/tenant/services/site-settings.service";
 
 
 interface FloatingChatProps {

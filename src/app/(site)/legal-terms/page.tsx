@@ -1,8 +1,8 @@
 import React from "react";
 import nextDynamic from "next/dynamic";
 import { Metadata } from "next";
-import { getPage } from "@/lib/services/content.service";
-import { getSiteSettings } from "@/lib/settings/site";
+import { getPage } from "@/modules/content/services/content-display.service";
+import { getSiteSettings } from "@/modules/tenant/services/site-settings.service";
 import { FileText, Award, ShoppingBag, Landmark } from "lucide-react";
 import TiptapRenderer from "@/components/editor/TiptapRenderer";
 import { generateAutoExcerpt } from "@/lib/editor/render";

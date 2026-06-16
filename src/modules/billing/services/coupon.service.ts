@@ -1,6 +1,6 @@
 import * as couponRepo from "../repositories/coupon.repository";
 import * as planRepo from "../repositories/plan.repository";
-import { IdentityClient } from "@/modules/auth";
+import { eventBus } from "@/modules/shared/core/event-bus";
 
 /**
  * Memvalidasi kupon diskon dan menghitung harga akhirnya.
@@ -68,7 +68,7 @@ export async function validateCoupon(code: string, planId?: string) {
 export async function getAllCoupons() {
     const rawCoupons = await couponRepo.findAllCoupons();
     const affiliateIds = Array.from(new Set(rawCoupons.map(c => c.affiliateId).filter(Boolean))) as string[];
-    const usersMap = await IdentityClient.getUsersMap(affiliateIds);
+    const usersMap = await eventBus.request<any, any>("request.auth.getUsersMap", { userIds: affiliateIds });
 
     return rawCoupons.map(coupon => ({
         ...coupon,
@@ -105,7 +105,7 @@ export async function createCoupon(body: any) {
 
     let affiliate = null;
     if (coupon.affiliateId) {
-        affiliate = await IdentityClient.getUserById(coupon.affiliateId);
+        affiliate = await eventBus.request<any, any>("request.auth.getUserById", { userId: coupon.affiliateId });
     }
 
     return {
@@ -148,7 +148,7 @@ export async function updateCoupon(couponId: string, body: any) {
 
     let affiliate = null;
     if (updatedCoupon.affiliateId) {
-        affiliate = await IdentityClient.getUserById(updatedCoupon.affiliateId);
+        affiliate = await eventBus.request<any, any>("request.auth.getUserById", { userId: updatedCoupon.affiliateId });
     }
 
     return {

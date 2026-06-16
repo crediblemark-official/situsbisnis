@@ -15,7 +15,7 @@ import React from "react";
 import "@crediblemark/build/credbuild.css";
 import { Client } from "./client";
 import { Metadata } from "next";
-import { getPage } from "@/lib/services/content.service";
+import { getPage } from "@/modules/content/services/content-display.service";
 import type { Data } from "@crediblemark/build";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";

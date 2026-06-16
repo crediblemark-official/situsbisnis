@@ -1,4 +1,4 @@
-import { getSiteSettings } from "@/lib/settings/site";
+import { getSiteSettings } from "@/modules/tenant/services/site-settings.service";
 import { getMenu } from "@/lib/content/menus";
 import { ThemeLayoutSelector } from "@/lib/content/themes";
 import { getTenant, getSiteId, getSiteAccessStatus } from "@/lib/domains/tenant";
@@ -12,7 +12,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import nextDynamic from "next/dynamic";
 import { BillingClient } from "@/modules/billing";
-import { getPage } from "@/lib/services/content.service";
+import { getPage } from "@/modules/content/services/content-display.service";
 const SaaSLandingPage = nextDynamic(() => import("@/app/(pages)/SaaSLandingPage"), {
     ssr: true,
     loading: () => <div className="min-h-screen bg-background animate-pulse" />

@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { POST as updateWithdrawalHandler } from '@/app/api/admin/withdrawals/update/route';
 import { db } from '@/lib/core/db';
 import { getServerSession } from 'next-auth';
-import { sendWithdrawalStatusEmail } from '@/lib/services/email';
+import { sendWithdrawalStatusEmail } from '@/modules/tenant/services/email.service';
 
 vi.mock('@/lib/core/db', () => ({
   db: {
@@ -21,7 +21,7 @@ vi.mock('next-auth', () => ({
   getServerSession: vi.fn(),
 }));
 
-vi.mock('@/lib/services/email', () => ({
+vi.mock('@/modules/tenant/services/email.service', () => ({
   sendWithdrawalStatusEmail: vi.fn().mockResolvedValue({ success: true }),
 }));
 

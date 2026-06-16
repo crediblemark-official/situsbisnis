@@ -13,7 +13,7 @@
 import nextDynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import { getPage } from "@/lib/services/content.service";
+import { getPage } from "@/modules/content/services/content-display.service";
 import { hooks } from "@/lib/core/hooks";
 import GallerySection from "@/components/ui/GallerySection";
 import Script from "next/script";

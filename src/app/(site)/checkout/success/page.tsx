@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { CheckCircle, ShoppingBag, Download, Lock, MessageCircle, AlertCircle, Landmark, ExternalLink } from "lucide-react";
 import { db } from "@/lib/core/db";
-import { getSiteSettings } from "@/lib/settings/site";
+import { getSiteSettings } from "@/modules/tenant/services/site-settings.service";
 
 export default async function OrderSuccessPage({
     searchParams,

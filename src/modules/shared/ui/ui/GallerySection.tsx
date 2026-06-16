@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { ImageIcon, Maximize2 } from "lucide-react";
-import { getGalleryItems } from "@/lib/services/content.service";
+import { getGalleryItems } from "@/modules/content/services/content-display.service";
 import { getProxiedUrl } from "@/lib/media/utils";
 
 export default async function GallerySection({ title, description }: { title?: string, description?: string }) {

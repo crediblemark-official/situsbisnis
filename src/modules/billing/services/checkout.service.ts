@@ -3,8 +3,7 @@ import * as subscriptionRepo from "../repositories/subscription.repository";
 import * as transactionRepo from "../repositories/transaction.repository";
 import * as couponRepo from "../repositories/coupon.repository";
 import * as planRepo from "../repositories/plan.repository";
-import { TenantClient } from "@/modules/tenant";
-import { IdentityClient } from "@/modules/auth";
+import { eventBus } from "@/modules/shared/core/event-bus";
 
 /**
  * Membeli slot situs tambahan untuk tenant.
@@ -24,7 +23,7 @@ export async function buySlot(
         throw new Error("Not Found");
     }
 
-    const hasAccess = await TenantClient.verifyUserSiteAccess(userId, siteId);
+    const hasAccess = await eventBus.request<any, any>("request.tenant.verifyUserSiteAccess", { userId, siteId });
     if (!hasAccess) {
         throw new Error("Forbidden");
     }
@@ -121,8 +120,8 @@ export async function initializeCheckoutPayment(
     }
 
     const isAdmin = userRole === "admin";
-    const site = await TenantClient.getSiteInfo(transaction.siteId);
-    const ownerInfo = await IdentityClient.getSiteOwner(transaction.siteId);
+    const site = await eventBus.request<any, any>("request.tenant.getSiteInfo", { siteId: transaction.siteId });
+    const ownerInfo = await eventBus.request<any, any>("request.auth.getSiteOwner", { siteId: transaction.siteId });
     const isOwner = ownerInfo?.id === userId;
 
     if (!isAdmin && !isOwner) {
@@ -212,7 +211,7 @@ export async function upgradePlan(
     }
 
     if (!isAdmin) {
-        const hasAccess = await TenantClient.verifyUserSiteAccess(userId, siteId);
+        const hasAccess = await eventBus.request<any, any>("request.tenant.verifyUserSiteAccess", { userId, siteId });
         if (!hasAccess) {
             throw new Error("Forbidden");
         }
@@ -267,9 +266,9 @@ export async function upgradePlan(
         }
         totalAmount = Math.max(0, totalAmount - discountAmount);
 
-        const siteOwner = await IdentityClient.getSiteOwner(siteId);
+        const siteOwner = await eventBus.request<any, any>("request.auth.getSiteOwner", { siteId });
         if (appliedCoupon.affiliateId && siteOwner && !siteOwner.referredById && siteOwner.id !== appliedCoupon.affiliateId) {
-            await IdentityClient.updateUserReferrer(siteOwner.id, appliedCoupon.affiliateId);
+            await eventBus.request<any, any>("request.auth.updateUserReferrer", { userId: siteOwner.id, referredById: appliedCoupon.affiliateId });
         }
     }
 

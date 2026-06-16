@@ -3,7 +3,7 @@ import { PATCH as handleSubscriptionAction } from '@/app/api/admin/subscriptions
 import { db } from '@/lib/core/db';
 import { getApiContext } from '@/lib/api/utils';
 import { sendWhatsAppNotification } from '@/lib/services/whatsapp';
-import { sendSubscriptionCancelledEmail, sendFollowupEmail } from '@/lib/services/email';
+import { sendSubscriptionCancelledEmail, sendFollowupEmail } from '@/modules/tenant/services/email.service';
 import { IdentityClient } from '@/modules/auth';
 
 vi.mock('@/lib/core/db', () => ({
@@ -31,7 +31,7 @@ vi.mock('@/lib/services/whatsapp', () => ({
   sendWhatsAppNotification: vi.fn(),
 }));
 
-vi.mock('@/lib/services/email', () => ({
+vi.mock('@/modules/tenant/services/email.service', () => ({
   sendSubscriptionCancelledEmail: vi.fn().mockResolvedValue({ success: true }),
   sendFollowupEmail: vi.fn().mockResolvedValue({ success: true }),
 }));
@@ -39,6 +39,21 @@ vi.mock('@/lib/services/email', () => ({
 vi.mock('@/modules/auth', () => ({
   IdentityClient: {
     getSiteOwner: vi.fn(),
+  }
+}));
+
+vi.mock('@/modules/shared/core/event-bus', () => ({
+  eventBus: {
+    publish: vi.fn(),
+    request: vi.fn(async (channel, data) => {
+      if (channel === 'request.auth.getSiteOwner') {
+        return IdentityClient.getSiteOwner(data.siteId);
+      }
+      return null;
+    }),
+    subscribe: vi.fn(),
+    init: vi.fn(),
+    disconnect: vi.fn(),
   }
 }));
 

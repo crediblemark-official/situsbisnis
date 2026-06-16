@@ -24,6 +24,30 @@ vi.mock('@/modules/catalog', () => ({
   }
 }));
 
+vi.mock('@/modules/shared/core/event-bus', () => ({
+  eventBus: {
+    request: vi.fn(async (channel, data) => {
+      if (channel === 'request.content.countPosts') {
+        return ContentClient.countPosts(data.siteId);
+      }
+      if (channel === 'request.catalog.countProducts') {
+        return CatalogClient.countProducts(data.siteId);
+      }
+      if (channel === 'request.content.countTestimonials') {
+        return ContentClient.countTestimonials(data.siteId);
+      }
+      if (channel === 'request.content.getMediaSize') {
+        return ContentClient.getMediaSize(data.siteId);
+      }
+      return 0;
+    }),
+    subscribe: vi.fn(),
+    publish: vi.fn(),
+    init: vi.fn(),
+    disconnect: vi.fn(),
+  }
+}));
+
 import { db } from '@/lib/core/db';
 import { ContentClient } from '@/modules/content';
 import { CatalogClient } from '@/modules/catalog';

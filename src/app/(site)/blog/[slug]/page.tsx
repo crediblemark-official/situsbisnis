@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import { getPost } from "@/lib/services/content.service";
+import { getPost } from "@/modules/content/services/content-display.service";
 import Link from "next/link";
 import Image from "next/image";
 import { ChevronRight } from "lucide-react";

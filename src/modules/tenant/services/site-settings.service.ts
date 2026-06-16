@@ -1,4 +1,4 @@
-import { getSiteId } from "@/lib/domains/tenant";
+import { getSiteId } from "@/modules/shared/utils/domains/tenant";
 import { TenantClient } from "@/modules/tenant";
 
 export interface SiteSettings {
@@ -29,6 +29,7 @@ export interface SiteSettings {
     socialTelegram: string | null;
     socialTiktok: string | null;
     socialYoutube: string | null;
+    socialEmail?: string | null; // contactEmail
     contactEmail: string | null;
     headerStyle: string | null;
     headerBackgroundColor: string | null;
@@ -73,7 +74,6 @@ export type SiteSettingsUpdate = Partial<Omit<SiteSettings, "id" | "updatedAt">>
  */
 export const getSiteSettings = async (siteId?: string): Promise<SiteSettings> => {
     const id = siteId || await getSiteId();
-    // Panggil TenantClient, jika id undefined maka getSiteSettings akan mengembalikan fallback admin platform
     return TenantClient.getSiteSettings(id || undefined) as unknown as SiteSettings;
 };
 

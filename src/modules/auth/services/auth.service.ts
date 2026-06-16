@@ -1,6 +1,7 @@
 import * as userRepo from "../repositories/user.repository";
 import * as affiliateRepo from "../repositories/affiliate.repository";
 import * as tenantUserRepo from "../repositories/tenant-user.repository";
+import { eventBus } from "@/modules/shared/core/event-bus";
 import { SiteOwnerInfo } from "../index";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
@@ -88,7 +89,7 @@ export async function registerUser(body: any, referralCodeFromCookie?: string) {
     });
 
     if (user.email) {
-        const { sendWelcomeEmail } = await import("@/lib/services/email");
+        const { sendWelcomeEmail } = await import("@/modules/tenant/services/email.service");
         sendWelcomeEmail(user.email, user.name || "Pengguna", "SitusBisnis").catch(err => {
             console.error("[WELCOME_EMAIL_ERROR] Failed to send welcome email:", err);
         });
@@ -166,19 +167,18 @@ export async function updateSiteCustomDomain(userId: string, siteId: string, cus
         }
     }
 
-    const { TenantClient } = await import("@/modules/tenant");
     const oldDomain = siteOwner.customDomain;
 
     if (newDomain && newDomain !== oldDomain) {
         if (oldDomain) {
-            await TenantClient.removeDomain(siteId, oldDomain);
+            await eventBus.request("request.tenant.removeDomain", { siteId, domain: oldDomain });
         }
-        const regResult = await TenantClient.registerDomain(siteId, newDomain);
+        const regResult = await eventBus.request<any, any>("request.tenant.registerDomain", { siteId, domain: newDomain });
         if (regResult.status === "error") {
             throw new Error(regResult.message);
         }
     } else if (!newDomain && oldDomain) {
-        await TenantClient.removeDomain(siteId, oldDomain);
+        await eventBus.request("request.tenant.removeDomain", { siteId, domain: oldDomain });
     }
 
     await tenantUserRepo.updateSiteCustomDomain(siteId, newDomain);
@@ -203,8 +203,7 @@ export async function verifySiteCustomDomain(userId: string, siteId: string, dom
         throw new Error("Upgrade required");
     }
 
-    const { TenantClient } = await import("@/modules/tenant");
-    const result = await TenantClient.verifyDomain(siteId, domain);
+    const result = await eventBus.request<any, any>("request.tenant.verifyDomain", { siteId, domain });
     if (result.status === "error") {
         throw new Error(result.message);
     }

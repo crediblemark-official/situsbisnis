@@ -3,7 +3,7 @@ import { POST as registerHandler } from '@/app/api/auth/register/route';
 import { db } from '@/lib/core/db';
 import { cookies } from 'next/headers';
 import bcrypt from 'bcryptjs';
-import { sendWelcomeEmail } from '@/lib/services/email';
+import { sendWelcomeEmail } from '@/modules/tenant/services/email.service';
 
 vi.mock('@/lib/core/db', () => ({
   db: {
@@ -24,7 +24,7 @@ vi.mock('bcryptjs', () => ({
   },
 }));
 
-vi.mock('@/lib/services/email', () => ({
+vi.mock('@/modules/tenant/services/email.service', () => ({
   sendWelcomeEmail: vi.fn().mockResolvedValue({ success: true }),
 }));
 

@@ -1,9 +1,6 @@
 import * as subscriptionRepo from "../repositories/subscription.repository";
-
-import { ContentClient } from "@/modules/content";
-import { CatalogClient } from "@/modules/catalog";
-import { OrderClient } from "@/modules/order";
 import { LimitType, LimitCheckResult } from "../index";
+import { eventBus } from "@/modules/shared/core/event-bus";
 
 const LIMIT_CONFIG: Record<LimitType, {
     field: string;
@@ -15,32 +12,32 @@ const LIMIT_CONFIG: Record<LimitType, {
         field: "maxPosts",
         label: "posts",
         dependency: "hasBlog",
-        countFn: (siteId) => ContentClient.countPosts(siteId)
+        countFn: (siteId) => eventBus.request("request.content.countPosts", { siteId })
     },
     maxProducts: {
         field: "maxProducts",
         label: "products",
         dependency: "hasProducts",
-        countFn: (siteId) => CatalogClient.countProducts(siteId)
+        countFn: (siteId) => eventBus.request("request.catalog.countProducts", { siteId })
     },
     maxOrders: {
         field: "maxOrders",
         label: "orders",
         dependency: "hasOrders",
-        countFn: (siteId) => OrderClient.countOrders(siteId)
+        countFn: (siteId) => eventBus.request("request.order.countOrders", { siteId })
     },
     maxTestimonials: {
         field: "maxTestimonials",
         label: "testimonials",
         dependency: "hasTestimonials",
-        countFn: (siteId) => ContentClient.countTestimonials(siteId)
+        countFn: (siteId) => eventBus.request("request.content.countTestimonials", { siteId })
     },
     maxAssets: {
         field: "maxAssets",
         label: "MB storage",
         dependency: "hasGallery", 
         countFn: async (siteId) => {
-            const bytes = await ContentClient.getMediaSize(siteId);
+            const bytes: number = await eventBus.request("request.content.getMediaSize", { siteId });
             return bytes / (1024 * 1024);
         }
     }
