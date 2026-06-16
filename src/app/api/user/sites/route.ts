@@ -8,10 +8,10 @@ export async function GET() {
         const session = await getServerSession(authOptions);
         if (!session) return apiError("Unauthorized", 401);
 
-        const userWithSites = await db.user.findUnique({
-            where: { id: session.user.id },
+        const siteUserLinks = await db.siteUser.findMany({
+            where: { userId: session.user.id },
             select: {
-                sites: {
+                site: {
                     select: {
                         id: true,
                         name: true,
@@ -22,7 +22,8 @@ export async function GET() {
             }
         });
 
-        return apiResponse({ sites: userWithSites?.sites || [] });
+        const sites = siteUserLinks.map(link => link.site);
+        return apiResponse({ sites: sites || [] });
     } catch (error) {
         console.error("[USER_SITES_GET]", error);
         return apiError("Internal Server Error");
@@ -51,16 +52,21 @@ export async function PATCH(req: Request) {
         const { siteId, customDomain } = parsed.data;
 
         // Verify the user owns this site
-        const siteOwner = await db.site.findFirst({
+        const siteUserLink = await db.siteUser.findFirst({
             where: {
-                id: siteId,
-                users: { some: { id: userId } }
+                siteId,
+                userId,
+                role: "owner"
             }
         });
-
-        if (!siteOwner) {
+ 
+        if (!siteUserLink) {
             return apiError("Site not found or access denied", 404);
         }
+
+        const siteOwner = await db.site.findUnique({
+            where: { id: siteId }
+        });
 
         const newDomain = customDomain?.trim().toLowerCase() || null;
         

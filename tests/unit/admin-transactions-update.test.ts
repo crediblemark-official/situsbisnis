@@ -20,6 +20,11 @@ vi.mock('@/lib/core/db', () => ({
     user: {
       update: vi.fn(),
       findFirst: vi.fn(),
+      findUnique: vi.fn(),
+    },
+    siteUser: {
+      findFirst: vi.fn(),
+      findMany: vi.fn(),
     },
     subscription: {
       findFirst: vi.fn(),
@@ -99,7 +104,8 @@ describe('Admin Transactions Update API Route', () => {
 
     vi.mocked(db.paymentTransaction.count).mockResolvedValue(1);
     vi.mocked(db.subscription.findFirst).mockResolvedValue(null);
-    vi.mocked(db.user.findFirst).mockResolvedValue({
+    vi.mocked(db.siteUser.findFirst).mockResolvedValue({ userId: 'user-1' } as any);
+    vi.mocked(db.user.findUnique).mockResolvedValue({
       id: 'user-1',
       referredById: 'affiliate-1'
     } as any);
@@ -156,7 +162,8 @@ describe('Admin Transactions Update API Route', () => {
     // Mock count = 2 (representing that this is the second approved transaction)
     vi.mocked(db.paymentTransaction.count).mockResolvedValue(2);
     vi.mocked(db.subscription.findFirst).mockResolvedValue(null);
-    vi.mocked(db.user.findFirst).mockResolvedValue({
+    vi.mocked(db.siteUser.findFirst).mockResolvedValue({ userId: 'user-1' } as any);
+    vi.mocked(db.user.findUnique).mockResolvedValue({
       id: 'user-1',
       referredById: 'affiliate-1'
     } as any);
@@ -213,7 +220,8 @@ describe('Admin Transactions Update API Route', () => {
     // Mock count = 2 (subsequent transaction)
     vi.mocked(db.paymentTransaction.count).mockResolvedValue(2);
     vi.mocked(db.subscription.findFirst).mockResolvedValue(null);
-    vi.mocked(db.user.findFirst).mockResolvedValue({
+    vi.mocked(db.siteUser.findFirst).mockResolvedValue({ userId: 'user-1' } as any);
+    vi.mocked(db.user.findUnique).mockResolvedValue({
       id: 'user-1',
       referredById: 'affiliate-1'
     } as any);

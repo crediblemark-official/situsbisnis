@@ -33,9 +33,17 @@ async function getSystemActivities() {
                     id: true,
                     name: true,
                     subdomain: true,
-                    createdAt: true,
-                    users: { select: { name: true }, take: 1 }
+                    createdAt: true
                 }
+            }).then(async (rawSites) => {
+                const { IdentityClient } = await import("@/lib/modules/identity/client");
+                return Promise.all(rawSites.map(async (site) => {
+                    const owner = await IdentityClient.getSiteOwner(site.id);
+                    return {
+                        ...site,
+                        users: owner ? [{ name: owner.name, email: owner.email }] : []
+                    };
+                }));
             }),
             db.subscription.findMany({
                 take: 5,
@@ -161,17 +169,25 @@ export default async function AdminDashboardPage() {
         getSystemActivities()
     ]);
 
-    const recentSites = await db.site.findMany({
+    const rawRecentSites = await db.site.findMany({
         take: 5,
         orderBy: { createdAt: "desc" },
         select: {
             id: true,
             name: true,
             subdomain: true,
-            createdAt: true,
-            users: { select: { name: true, email: true }, take: 1 }
+            createdAt: true
         }
     });
+
+    const { IdentityClient } = await import("@/lib/modules/identity/client");
+    const recentSites = await Promise.all(rawRecentSites.map(async (site) => {
+        const owner = await IdentityClient.getSiteOwner(site.id);
+        return {
+            ...site,
+            users: owner ? [{ name: owner.name, email: owner.email }] : []
+        };
+    }));
 
     const recentSiteIds = recentSites.map(site => site.id);
     const activePlans = await BillingClient.getActivePlanNamesForSites(recentSiteIds);

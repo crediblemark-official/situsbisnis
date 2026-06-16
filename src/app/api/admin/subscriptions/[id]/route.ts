@@ -23,9 +23,11 @@ export async function PATCH(
         if (!sub) return apiError("Subscription not found", 404);
 
         const site = await db.site.findUnique({
-            where: { id: sub.siteId },
-            include: { users: true }
+            where: { id: sub.siteId }
         });
+
+        const { IdentityClient } = await import("@/modules/auth");
+        const siteOwner = site ? await IdentityClient.getSiteOwner(site.id) : null;
 
         if (action === "extend") {
             const days = body.days || 7;
@@ -90,7 +92,6 @@ export async function PATCH(
             });
 
             // Trigger cancellation email in background
-            const siteOwner = site?.users?.[0];
             if (siteOwner && siteOwner.email) {
                 const { sendSubscriptionCancelledEmail } = await import("@/lib/services/email");
                 sendSubscriptionCancelledEmail({
@@ -146,7 +147,6 @@ export async function PATCH(
                 return apiError("Email and message are required for email followup", 400);
             }
 
-            const siteOwner = site?.users?.[0];
             const userName = siteOwner?.name || "Pengguna";
 
             const { sendFollowupEmail } = await import("@/lib/services/email");

@@ -12,10 +12,10 @@ export default async function MySitesPage() {
     const session = await getServerSession(authOptions);
     if (!session) redirect("/login");
 
-    const userWithSites = await db.user.findUnique({
-        where: { id: (session.user as any).id },
+    const siteLinks = await db.siteUser.findMany({
+        where: { userId: (session.user as any).id },
         select: {
-            sites: {
+            site: {
                 select: {
                     id: true,
                     name: true,
@@ -27,7 +27,7 @@ export default async function MySitesPage() {
         }
     });
 
-    const rawSites = userWithSites?.sites || [];
+    const rawSites = siteLinks.map(link => link.site);
     
     // Dapatkan data subscription untuk masing-masing siteId
     const sites = await Promise.all(rawSites.map(async (site) => {

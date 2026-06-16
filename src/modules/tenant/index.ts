@@ -1,4 +1,11 @@
-import { getSiteInfoInternal, getSiteContactInternal } from "./actions";
+import { 
+    getSiteInfoInternal, 
+    getSiteContactInternal,
+    verifyUserSiteAccessInternal,
+    associateUserToSiteInternal,
+    disassociateUserFromSiteInternal,
+    getSiteUserIdsInternal
+} from "./actions";
 
 export interface SiteInfo {
     id: string;
@@ -15,5 +22,9 @@ export interface SiteContactInfo {
 // Facade / Client kontrak publik
 export const TenantClient = {
     getSiteInfo: getSiteInfoInternal,
-    getSiteContact: getSiteContactInternal
+    getSiteContact: getSiteContactInternal,
+    verifyUserSiteAccess: verifyUserSiteAccessInternal,
+    associateUserToSite: associateUserToSiteInternal,
+    disassociateUserFromSite: disassociateUserFromSiteInternal,
+    getSiteUserIds: getSiteUserIdsInternal
 };

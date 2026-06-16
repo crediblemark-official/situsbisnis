@@ -20,10 +20,10 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         if (!targetUser) return apiError("User not found", 404);
 
         if (session.user.role !== "admin") {
-            const belongs = await db.user.findFirst({
-                where: { 
-                    id,
-                    sites: { some: { id: siteId } }
+            const belongs = await db.siteUser.findFirst({
+                where: {
+                    userId: id,
+                    siteId: siteId
                 }
             });
             if (!belongs) return apiError("User not found in this site context", 404);
@@ -77,20 +77,18 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
         const isTenantContext = !!siteId && tenant !== null && tenant !== "admin";
 
         if (session.user.role !== "admin" || isTenantContext) {
-            const belongs = await db.user.findFirst({
-                where: { 
-                    id,
-                    sites: { some: { id: siteId } }
+            const belongs = await db.siteUser.findFirst({
+                where: {
+                    userId: id,
+                    siteId: siteId
                 }
             });
             if (!belongs) return apiError("User not found in this site context", 404);
             
-            await db.site.update({
-                where: { id: siteId },
-                data: {
-                    users: {
-                        disconnect: { id }
-                    }
+            await db.siteUser.deleteMany({
+                where: {
+                    siteId: siteId,
+                    userId: id
                 }
             });
             return apiResponse({ success: true, message: "User removed from site" });

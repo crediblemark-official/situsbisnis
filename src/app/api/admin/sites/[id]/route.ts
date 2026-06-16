@@ -99,9 +99,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
             revalidateTag(`site-${id}`, "default");
 
             // Send email notification in background
-            const siteOwner = await db.user.findFirst({
-                where: { sites: { some: { id } } }
-            });
+            const { IdentityClient } = await import("@/modules/auth");
+            const siteOwner = await IdentityClient.getSiteOwner(id);
 
             if (siteOwner && siteOwner.email) {
                 const { sendTrialExtendedEmail } = await import("@/lib/services/email");

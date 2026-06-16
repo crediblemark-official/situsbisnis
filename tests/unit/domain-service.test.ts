@@ -3,6 +3,7 @@ import { DomainService } from '@/lib/services/domain.service';
 import { db } from '@/lib/core/db';
 import { verifyDomainConfig } from '@/lib/domains/verification';
 import { DokployService } from '@/lib/services/dokploy.service';
+import { IdentityClient } from '@/modules/auth';
 
 vi.mock('@/lib/core/db', () => ({
   db: {
@@ -11,7 +12,17 @@ vi.mock('@/lib/core/db', () => ({
       findUnique: vi.fn(),
       update: vi.fn(),
     },
+    siteUser: {
+      findFirst: vi.fn(),
+      findMany: vi.fn(),
+    },
   },
+}));
+
+vi.mock('@/modules/auth', () => ({
+  IdentityClient: {
+    getSiteOwner: vi.fn(),
+  }
 }));
 
 vi.mock('@/lib/domains/verification', () => ({
@@ -92,6 +103,7 @@ describe('lib/services/domain.service.ts', () => {
     it('should verify successfully when domain matches current custom domain and call DokployService.addDomain', async () => {
       vi.mocked(db.site.findUnique).mockResolvedValue({ customDomain: 'butikku.id' } as any);
       vi.mocked(verifyDomainConfig).mockResolvedValue({ valid: true, cname: true, aRecord: false, error: null });
+      vi.mocked(IdentityClient.getSiteOwner).mockResolvedValue({ id: 'user-123', name: 'John Doe', email: 'john@example.com' } as any);
       vi.mocked(db.site.update).mockResolvedValue({ id: siteId, name: 'Toko', users: [] } as any);
       vi.mocked(DokployService.addDomain).mockResolvedValue(true);
 

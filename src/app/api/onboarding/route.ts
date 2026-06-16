@@ -34,12 +34,12 @@ export async function POST(req: Request) {
 
         // --- ENFORCE RESOURCE LIMITS ---
         // 1. Get user's current site count
-        const userSites = await db.site.findMany({
-            where: { users: { some: { id: session.user.id } } },
-            select: { id: true }
+        const siteUserLinks = await db.siteUser.findMany({
+            where: { userId: session.user.id },
+            select: { siteId: true }
         });
-        const userSitesCount = userSites.length;
-        const siteIds = userSites.map(s => s.id);
+        const siteIds = siteUserLinks.map(link => link.siteId);
+        const userSitesCount = siteIds.length;
 
         // 2. Get user's active subscription and its limit
         // Since a user can have multiple sites, we check the limit of their "primary" or "most recent" active subscription

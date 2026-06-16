@@ -41,12 +41,6 @@ export default async function AdminSubscriptionsPage() {
             id: true,
             name: true, 
             subdomain: true,
-            users: {
-                select: {
-                    name: true,
-                    email: true
-                }
-            },
             siteSettings: {
                 select: {
                     whatsappNumber: true,
@@ -55,13 +49,39 @@ export default async function AdminSubscriptionsPage() {
             }
         } 
     });
+
+    // Ambil data owner situs secara in-memory
+    const siteUsers = await db.siteUser.findMany({
+        where: { siteId: { in: siteIds }, role: "owner" },
+        select: { siteId: true, userId: true }
+    });
+    const userIds = Array.from(new Set(siteUsers.map(su => su.userId)));
+    
+    const { IdentityClient } = await import("@/modules/auth");
+    const userMap = await IdentityClient.getUsersMap(userIds);
+    const siteOwnerMap = new Map();
+    for (const su of siteUsers) {
+        const u = userMap[su.userId];
+        if (u) {
+            siteOwnerMap.set(su.siteId, u);
+        }
+    }
+
     const siteMap = new Map(sites.map(s => [s.id, s]));
 
     const subscriptions = rawSubscriptions
-        .map(sub => ({
-            ...sub,
-            site: siteMap.get(sub.siteId) || null
-        }))
+        .map(sub => {
+            const site = siteMap.get(sub.siteId);
+            if (!site) return null;
+            const owner = siteOwnerMap.get(sub.siteId);
+            return {
+                ...sub,
+                site: {
+                    ...site,
+                    users: owner ? [owner] : []
+                }
+            };
+        })
         .filter(sub => sub.site !== null);
 
     const serializedSubscriptions = JSON.parse(JSON.stringify(subscriptions));

@@ -18,16 +18,17 @@ export async function POST(req: Request) {
         }
 
         // Verify that the logged-in user belongs to the site
-        const site = await db.site.findFirst({
-            where: {
-                id: siteId,
-                users: {
-                    some: { id: session.user.id }
-                }
-            }
+        const site = await db.site.findUnique({
+            where: { id: siteId }
         });
 
         if (!site) {
+            return new NextResponse("Not Found", { status: 404 });
+        }
+
+        const { TenantClient } = await import("@/modules/tenant");
+        const hasAccess = await TenantClient.verifyUserSiteAccess(session.user.id, siteId);
+        if (!hasAccess) {
             return new NextResponse("Forbidden", { status: 403 });
         }
 

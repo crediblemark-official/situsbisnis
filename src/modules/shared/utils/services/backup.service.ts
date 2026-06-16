@@ -111,19 +111,17 @@ export async function exportBackupData(): Promise<BackupData> {
             db.platformSettings.findMany()
         ]);
 
-        // Fetch sites with their implicit many-to-many users
-        const sites = await db.site.findMany({
-            include: {
-                users: {
-                    select: { id: true }
-                }
-            }
+        // Fetch sites
+        const sites = await db.site.findMany();
+        // Fetch all siteUsers mappings
+        const allSiteUsers = await db.siteUser.findMany({
+            select: { siteId: true, userId: true }
         });
         const formattedSites = sites.map(site => {
-            const { users: linkedUsers, ...siteFields } = site;
+            const linkedUsers = allSiteUsers.filter(su => su.siteId === site.id);
             return {
-                ...siteFields,
-                userIds: linkedUsers.map(u => u.id)
+                ...site,
+                userIds: linkedUsers.map(u => u.userId)
             };
         });
 
@@ -355,29 +353,33 @@ export async function importBackupData(backupData: BackupData, currentAdminId?: 
             }
         }
 
-        // 7. Sites & Connect userIds to '_SiteToUser' join table
+        // 7. Sites & Connect userIds to 'siteUsers' link table
         if (d.sites && d.sites.length > 0) {
             for (const site of d.sites) {
                 const { userIds, ...siteFields } = site;
-                // Only connect userIds that actually exist in database
-                let validUserIds: string[] = [];
+                // Create site first
+                const createdSite = await db.site.create({
+                    data: siteFields
+                });
+
+                // Create siteUsers links
                 if (userIds && Array.isArray(userIds) && userIds.length > 0) {
                     const mappedUserIds = userIds.map(id => userIdMap.get(id) || id);
                     const existingUsers = await db.user.findMany({
                         where: { id: { in: mappedUserIds } },
                         select: { id: true }
                     });
-                    validUserIds = existingUsers.map(u => u.id);
-                }
-
-                await db.site.create({
-                    data: {
-                        ...siteFields,
-                        users: validUserIds.length > 0 ? {
-                            connect: validUserIds.map(id => ({ id }))
-                        } : undefined
+                    
+                    for (const u of existingUsers) {
+                        await db.siteUser.create({
+                            data: {
+                                siteId: createdSite.id,
+                                userId: u.id,
+                                role: "owner" // Default backup role
+                            }
+                        });
                     }
-                });
+                }
             }
         }
 

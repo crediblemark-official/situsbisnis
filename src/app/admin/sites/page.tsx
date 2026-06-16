@@ -5,7 +5,7 @@ import SiteList from "./SiteList";
 export const dynamic = "force-dynamic";
 
 export default async function AdminSitesPage() {
-    const rawSites = await db.site.findMany({
+    const dbSites = await db.site.findMany({
         orderBy: { createdAt: "desc" },
         where: {
             NOT: { subdomain: "admin" }
@@ -15,10 +15,18 @@ export default async function AdminSitesPage() {
             name: true,
             subdomain: true,
             customDomain: true,
-            createdAt: true,
-            users: { select: { name: true, email: true }, take: 1 }
+            createdAt: true
         }
     });
+
+    const { IdentityClient } = await import("@/lib/modules/identity/client");
+    const rawSites = await Promise.all(dbSites.map(async (site) => {
+        const owner = await IdentityClient.getSiteOwner(site.id);
+        return {
+            ...site,
+            users: owner ? [{ name: owner.name, email: owner.email }] : []
+        };
+    }));
 
     const sites = await Promise.all(rawSites.map(async (site) => {
         const subs = await db.subscription.findMany({

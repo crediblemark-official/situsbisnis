@@ -15,15 +15,13 @@ export default async function HistoryBillPage() {
     if (!siteId) {
         const session = await getServerSession(authOptions);
         if (session?.user?.id) {
-            const firstUserSite = await db.site.findFirst({
+            const firstSiteLink = await db.siteUser.findFirst({
                 where: {
-                    users: {
-                        some: { id: session.user.id }
-                    }
+                    userId: session.user.id
                 },
-                select: { id: true }
+                select: { siteId: true }
             });
-            siteId = firstUserSite?.id || null;
+            siteId = firstSiteLink?.siteId || null;
         }
     }
 

@@ -33,10 +33,15 @@ export default async function FinanceDashboardPage() {
     if (!user) redirect("/login");
 
     // 2. Query all sites owned by this user along with their payment settings
-    const userSites = await db.site.findMany({
-        where: { users: { some: { id: userId } } },
-        include: { paymentSettings: true }
+    const siteLinks = await db.siteUser.findMany({
+        where: { userId },
+        select: {
+            site: {
+                include: { paymentSettings: true }
+            }
+        }
     });
+    const userSites = siteLinks.map(link => link.site);
 
     // 3. Filter sites that are using the platform's payment gateway fallback
     const fallbackSites = userSites.filter(site => {

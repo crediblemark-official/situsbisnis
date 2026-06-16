@@ -2,7 +2,9 @@ import {
     getSiteOwnerInternal, 
     getUserByIdInternal, 
     getUsersMapInternal, 
-    awardAffiliateCommissionInternal 
+    awardAffiliateCommissionInternal,
+    requestAffiliateWithdrawalInternal,
+    checkAffiliateStatusInternal
 } from "./actions";
 
 export interface UserDTO {
@@ -32,5 +34,7 @@ export const IdentityClient = {
     getSiteOwner: getSiteOwnerInternal,
     getUserById: getUserByIdInternal,
     getUsersMap: getUsersMapInternal,
-    awardAffiliateCommission: awardAffiliateCommissionInternal
+    awardAffiliateCommission: awardAffiliateCommissionInternal,
+    requestAffiliateWithdrawal: requestAffiliateWithdrawalInternal,
+    checkAffiliateStatus: checkAffiliateStatusInternal
 };

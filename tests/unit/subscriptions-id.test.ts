@@ -4,6 +4,7 @@ import { db } from '@/lib/core/db';
 import { getApiContext } from '@/lib/api/utils';
 import { sendWhatsAppNotification } from '@/lib/services/whatsapp';
 import { sendSubscriptionCancelledEmail, sendFollowupEmail } from '@/lib/services/email';
+import { IdentityClient } from '@/modules/auth';
 
 vi.mock('@/lib/core/db', () => ({
   db: {
@@ -33,6 +34,12 @@ vi.mock('@/lib/services/whatsapp', () => ({
 vi.mock('@/lib/services/email', () => ({
   sendSubscriptionCancelledEmail: vi.fn().mockResolvedValue({ success: true }),
   sendFollowupEmail: vi.fn().mockResolvedValue({ success: true }),
+}));
+
+vi.mock('@/modules/auth', () => ({
+  IdentityClient: {
+    getSiteOwner: vi.fn(),
+  }
 }));
 
 describe('Subscription Admin API Route (PATCH /api/admin/subscriptions/[id])', () => {
@@ -85,6 +92,7 @@ describe('Subscription Admin API Route (PATCH /api/admin/subscriptions/[id])', (
         name: 'Free Site',
         users: []
       } as any);
+      vi.mocked(IdentityClient.getSiteOwner).mockResolvedValue(null);
       vi.mocked(db.plan.findFirst).mockResolvedValue({ id: 'pro-plan-id', name: 'Pro' } as any);
       vi.mocked(db.subscription.update).mockResolvedValue({
         id: 'sub-1',
@@ -132,6 +140,7 @@ describe('Subscription Admin API Route (PATCH /api/admin/subscriptions/[id])', (
         name: 'Pro Site',
         users: []
       } as any);
+      vi.mocked(IdentityClient.getSiteOwner).mockResolvedValue(null);
       vi.mocked(db.subscription.update).mockResolvedValue({
         id: 'sub-2',
         trialEndsAt: new Date(baseDate.getTime() + 7 * 24 * 60 * 60 * 1000),
@@ -171,6 +180,12 @@ describe('Subscription Admin API Route (PATCH /api/admin/subscriptions/[id])', (
         name: 'My Site',
         users: [{ id: 'user-1', name: 'John Doe', email: 'john@example.com' }],
       } as any);
+      vi.mocked(IdentityClient.getSiteOwner).mockResolvedValue({
+        id: 'user-1',
+        name: 'John Doe',
+        email: 'john@example.com',
+        referredById: null
+      });
       vi.mocked(db.subscription.update).mockResolvedValue({} as any);
 
       const req = new Request('http://localhost/api/admin/subscriptions/sub-1', {
@@ -207,6 +222,7 @@ describe('Subscription Admin API Route (PATCH /api/admin/subscriptions/[id])', (
         id: 'site-1',
         users: [],
       } as any);
+      vi.mocked(IdentityClient.getSiteOwner).mockResolvedValue(null);
       vi.mocked(db.subscription.update).mockResolvedValue({
         id: 'sub-1',
         plan: { name: 'Enterprise' },
@@ -241,6 +257,7 @@ describe('Subscription Admin API Route (PATCH /api/admin/subscriptions/[id])', (
         id: 'site-1',
         users: [],
       } as any);
+      vi.mocked(IdentityClient.getSiteOwner).mockResolvedValue(null);
       vi.mocked(sendWhatsAppNotification).mockResolvedValue({ success: true, result: 'wa_sent_id' as any });
 
       const req = new Request('http://localhost/api/admin/subscriptions/sub-1', {
@@ -268,6 +285,12 @@ describe('Subscription Admin API Route (PATCH /api/admin/subscriptions/[id])', (
         id: 'site-1',
         users: [{ id: 'user-1', name: 'John Owner' }],
       } as any);
+      vi.mocked(IdentityClient.getSiteOwner).mockResolvedValue({
+        id: 'user-1',
+        name: 'John Owner',
+        email: 'owner@site.com',
+        referredById: null
+      });
       vi.mocked(sendFollowupEmail).mockResolvedValue({ success: true, id: 'email_sent_id' });
 
       const req = new Request('http://localhost/api/admin/subscriptions/sub-1', {

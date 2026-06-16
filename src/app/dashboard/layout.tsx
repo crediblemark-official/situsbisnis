@@ -42,9 +42,9 @@ export default async function DashboardLayout({
 
     // Only check for onboarding if no sites exist
     if (!siteId && session.user.role !== "admin") {
-        const siteCount = await db.site.count({
+        const siteCount = await db.siteUser.count({
             where: {
-                users: { some: { id: session.user.id } }
+                userId: session.user.id
             }
         });
 
@@ -62,23 +62,28 @@ export default async function DashboardLayout({
 
     // Verify that the logged-in user belongs to this site (unless they are platform admin)
     if (siteId && session.user.role !== "admin") {
-        const isUserLinked = await db.site.count({
+        const isUserLinked = await db.siteUser.count({
             where: {
-                id: siteId,
-                users: { some: { id: session.user.id } }
+                siteId: siteId,
+                userId: session.user.id
             }
         });
 
         if (isUserLinked === 0) {
             // Find if user is associated with any other site(s)
-            const firstUserSite = await db.site.findFirst({
+            const firstSiteLink = await db.siteUser.findFirst({
                 where: {
-                    users: { some: { id: session.user.id } }
+                    userId: session.user.id
                 },
                 select: {
-                    subdomain: true
+                    site: {
+                        select: {
+                            subdomain: true
+                        }
+                    }
                 }
             });
+            const firstUserSite = firstSiteLink?.site;
 
             const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
             const currentRootDomain = host.includes("localhost") ? "localhost:3000" : (process.env.NEXT_PUBLIC_ROOT_DOMAIN || "localhost:3000");

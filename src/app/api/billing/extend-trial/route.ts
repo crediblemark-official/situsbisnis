@@ -12,17 +12,21 @@ export async function POST(req: Request) {
         if (!siteId) return apiError("Site ID required", 400);
 
         // Verify that the logged-in user belongs to the site (or is admin)
-        const site = await db.site.findFirst({
-            where: {
-                id: siteId,
-                users: {
-                    some: { id: (session as any).user.id }
-                }
-            }
+        const site = await db.site.findUnique({
+            where: { id: siteId }
         });
 
-        if (!site && (session as any).user.role !== "admin") {
-            return apiError("Forbidden", 403);
+        if (!site) {
+            return apiError("Site not found", 404);
+        }
+
+        const isAdmin = (session as any).user.role === "admin";
+        if (!isAdmin) {
+            const { TenantClient } = await import("@/modules/tenant");
+            const hasAccess = await TenantClient.verifyUserSiteAccess((session as any).user.id, siteId);
+            if (!hasAccess) {
+                return apiError("Forbidden", 403);
+            }
         }
 
         const sub = await db.subscription.findFirst({
@@ -51,9 +55,8 @@ export async function POST(req: Request) {
         revalidateTag(`site-${siteId}`, "default");
 
         // Send email notification in background
-        const siteOwner = await db.user.findFirst({
-            where: { sites: { some: { id: siteId } } }
-        });
+        const { IdentityClient } = await import("@/modules/auth");
+        const siteOwner = await IdentityClient.getSiteOwner(siteId);
 
         if (siteOwner && siteOwner.email) {
             const { sendTrialExtendedEmail } = await import("@/lib/services/email");

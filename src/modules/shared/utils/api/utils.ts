@@ -42,10 +42,10 @@ export async function getApiContext(requiredRoles?: Role[], options: { isPublic?
     if (siteId && session && (session.user as any).role !== "admin" && !isPublic) {
         const userId = (session.user as any).id as string;
         const isUserLinkedToSite = await unstable_cache(
-            async () => db.site.count({
+            async () => db.siteUser.count({
                 where: {
-                    id: siteId,
-                    users: { some: { id: userId } }
+                    siteId,
+                    userId
                 }
             }),
             [`site-user-link-${siteId}-${userId}`],

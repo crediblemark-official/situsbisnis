@@ -1,92 +1,54 @@
-import { db } from "@/modules/shared/core/db";
+import * as authService from "./services/auth.service";
 import { SiteOwnerInfo, AwardCommissionDTO, UserDTO } from "./index";
 
 /**
- * Mengambil data pemilik situs berdasarkan siteId.
+ * Server Actions / Wrapper internal untuk mengambil owner site.
  */
 export async function getSiteOwnerInternal(siteId: string): Promise<SiteOwnerInfo | null> {
-    const user = await db.user.findFirst({
-        where: {
-            sites: {
-                some: { id: siteId }
-            }
-        },
-        select: {
-            id: true,
-            email: true,
-            name: true,
-            referredById: true
-        }
-    });
-    return user;
+    return authService.getSiteOwner(siteId);
 }
 
 /**
- * Mengambil data dasar user berdasarkan ID.
+ * Server Actions / Wrapper internal untuk mengambil data user berdasarkan ID.
  */
 export async function getUserByIdInternal(userId: string): Promise<UserDTO | null> {
-    const user = await db.user.findUnique({
-        where: { id: userId },
-        select: {
-            id: true,
-            name: true,
-            email: true,
-            image: true,
-            role: true
-        }
-    });
-    return user as UserDTO | null;
+    return authService.getUserById(userId);
 }
 
 /**
- * Mengambil peta informasi user berdasarkan daftar userId.
+ * Server Actions / Wrapper internal untuk mengambil data user secara massal.
  */
 export async function getUsersMapInternal(userIds: string[]): Promise<Record<string, UserDTO>> {
-    if (userIds.length === 0) return {};
-
-    const users = await db.user.findMany({
-        where: { id: { in: userIds } },
-        select: {
-            id: true,
-            name: true,
-            email: true,
-            image: true,
-            role: true
-        }
-    });
-
-    const resultMap: Record<string, UserDTO> = {};
-    users.forEach(u => {
-        resultMap[u.id] = u as UserDTO;
-    });
-
-    return resultMap;
+    return authService.getUsersMap(userIds);
 }
 
 /**
- * Mengalokasikan komisi afiliasi kepada referrer user.
+ * Server Actions / Wrapper internal untuk mengalokasikan komisi afiliasi.
  */
 export async function awardAffiliateCommissionInternal(
     dbClient: any, 
     data: AwardCommissionDTO
 ): Promise<void> {
-    const client = dbClient || db;
-    
-    await client.commission.create({
-        data: {
-            userId: data.userId,
-            amount: data.amount,
-            transactionId: data.transactionId,
-            description: data.description
-        }
-    });
+    return authService.awardAffiliateCommission(dbClient, data);
+}
 
-    await client.user.update({
-        where: { id: data.userId },
-        data: {
-            affiliateBalance: {
-                increment: data.amount
-            }
-        }
-    });
+/**
+ * Server Actions / Wrapper internal untuk memproses penarikan saldo afiliasi.
+ */
+export async function requestAffiliateWithdrawalInternal(
+    userId: string,
+    amount: number,
+    bankName: string,
+    accountNumber: string,
+    accountName: string,
+    notes?: string
+) {
+    return authService.requestAffiliateWithdrawal(userId, amount, bankName, accountNumber, accountName, notes);
+}
+
+/**
+ * Server Actions / Wrapper internal untuk memverifikasi saldo dan profil afiliasi.
+ */
+export async function checkAffiliateStatusInternal(userId: string) {
+    return authService.checkAffiliateStatus(userId);
 }

@@ -22,17 +22,23 @@ export async function POST(req: Request) {
         const isAdmin = (session.user as any).role === "admin";
 
         // Verify that the logged-in user belongs to the site (or is admin)
-        const site = await db.site.findFirst({
-            where: isAdmin ? { id: siteId } : {
-                id: siteId,
-                users: {
-                    some: { id: session.user.id }
-                }
-            },
-            include: {
-                users: true
-            }
+        const site = await db.site.findUnique({
+            where: { id: siteId }
         });
+
+        if (!site) {
+            console.warn(`[UPGRADE] Site not found! Site '${siteId}'`);
+            return new NextResponse("Forbidden", { status: 403 });
+        }
+
+        if (!isAdmin) {
+            const { TenantClient } = await import("@/modules/tenant");
+            const hasAccess = await TenantClient.verifyUserSiteAccess(session.user.id, siteId);
+            if (!hasAccess) {
+                console.warn(`[UPGRADE] Access verification failed! User '${session.user.id}' has no access to site '${siteId}'`);
+                return new NextResponse("Forbidden", { status: 403 });
+            }
+        }
 
         if (!site) {
             console.warn(`[UPGRADE] Site verification failed! Site '${siteId}' not found or user '${session.user.id}' is not associated.`);
@@ -130,7 +136,8 @@ export async function POST(req: Request) {
             totalAmount = Math.max(0, totalAmount - discountAmount);
 
             // Automatically associate the user with the affiliate if user has no referrer yet
-            const siteOwner = site.users?.[0];
+            const { IdentityClient } = await import("@/modules/auth");
+            const siteOwner = await IdentityClient.getSiteOwner(siteId);
             if (appliedCoupon.affiliateId && siteOwner && !siteOwner.referredById && siteOwner.id !== appliedCoupon.affiliateId) {
                 await db.user.update({
                     where: { id: siteOwner.id },

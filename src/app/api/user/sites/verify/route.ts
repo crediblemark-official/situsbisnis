@@ -27,16 +27,21 @@ export async function POST(req: Request) {
         const { siteId, domain } = parsed.data;
 
         // Verify the user owns this site
-        const siteOwner = await db.site.findFirst({
+        const siteUserLink = await db.siteUser.findFirst({
             where: {
-                id: siteId,
-                users: { some: { id: userId } }
+                siteId,
+                userId,
+                role: "owner"
             }
         });
 
-        if (!siteOwner) {
+        if (!siteUserLink) {
             return apiError("Site not found or access denied", 404);
         }
+
+        const siteOwner = await db.site.findUnique({
+            where: { id: siteId }
+        });
 
         // Verify plan allows custom domain
         const subscription = await db.subscription.findFirst({

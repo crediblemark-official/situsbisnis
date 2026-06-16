@@ -4,6 +4,8 @@ import { POST as upgradePlan } from '@/app/api/billing/upgrade/route';
 import { POST as updateTransaction } from '@/app/api/admin/transactions/update/route';
 import { db } from '@/lib/core/db';
 import { getServerSession } from 'next-auth';
+import { IdentityClient } from '@/modules/auth';
+import { TenantClient } from '@/modules/tenant';
 
 vi.mock('@/lib/core/db', () => ({
   db: {
@@ -21,6 +23,10 @@ vi.mock('@/lib/core/db', () => ({
       findFirst: vi.fn(),
       findUnique: vi.fn(),
     },
+    siteUser: {
+      findFirst: vi.fn(),
+      findMany: vi.fn(),
+    },
     paymentTransaction: {
       findUnique: vi.fn(),
       findFirst: vi.fn(),
@@ -32,6 +38,7 @@ vi.mock('@/lib/core/db', () => ({
     user: {
       update: vi.fn(),
       findFirst: vi.fn(),
+      findUnique: vi.fn(),
     },
     subscription: {
       findFirst: vi.fn(),
@@ -45,6 +52,20 @@ vi.mock('@/lib/core/db', () => ({
       create: vi.fn(),
     },
   },
+}));
+
+vi.mock('@/modules/auth', () => ({
+  IdentityClient: {
+    getSiteOwner: vi.fn(),
+  }
+}));
+
+vi.mock('@/modules/tenant', () => ({
+  TenantClient: {
+    verifyUserSiteAccess: vi.fn(),
+    getSiteInfo: vi.fn(),
+    getSiteContact: vi.fn(),
+  }
 }));
 
 vi.mock('next-auth', () => ({
@@ -176,10 +197,18 @@ describe('Coupon Discount System API Routes', () => {
     it('should apply discount and auto-associate affiliate on upgrade request', async () => {
       vi.mocked(getServerSession).mockResolvedValue({ user: { id: 'user-1', role: 'user' } } as any);
 
-      vi.mocked(db.site.findFirst).mockResolvedValue({
+      vi.mocked(db.site.findUnique).mockResolvedValue({
         id: 'site-1',
         name: 'Situs Budi',
-        users: [{ id: 'user-1', referredById: null }],
+        customDomain: null,
+      } as any);
+
+      vi.mocked(TenantClient.verifyUserSiteAccess).mockResolvedValue(true);
+      vi.mocked(IdentityClient.getSiteOwner).mockResolvedValue({
+        id: 'user-1',
+        name: 'Budi',
+        email: 'budi@example.com',
+        referredById: null
       } as any);
 
       vi.mocked(db.plan.findUnique).mockResolvedValue({
@@ -256,7 +285,8 @@ describe('Coupon Discount System API Routes', () => {
       } as any);
 
       vi.mocked(db.subscription.findFirst).mockResolvedValue(null);
-      vi.mocked(db.user.findFirst).mockResolvedValue({
+      vi.mocked(db.siteUser.findFirst).mockResolvedValue({ userId: 'user-1' } as any);
+      vi.mocked(db.user.findUnique).mockResolvedValue({
         id: 'user-1',
         referredById: 'affiliate-bob'
       } as any);

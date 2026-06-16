@@ -116,8 +116,7 @@ export const DomainService = {
             // 2. Sync with Database
             const updatedSite = await db.site.update({
                 where: { id: siteId },
-                data: { customDomainVerified: isVerified },
-                include: { users: true }
+                data: { customDomainVerified: isVerified }
             });
 
             if (isVerified) {
@@ -127,7 +126,8 @@ export const DomainService = {
                 });
 
                 // Send email notification in background
-                const siteOwner = updatedSite?.users?.[0];
+                const { IdentityClient } = await import("@/lib/modules/identity/client");
+                const siteOwner = await IdentityClient.getSiteOwner(siteId);
                 if (siteOwner && siteOwner.email) {
                     const { sendDomainVerifiedEmail } = await import("@/lib/services/email");
                     sendDomainVerifiedEmail({

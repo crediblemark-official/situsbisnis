@@ -11,13 +11,12 @@ export default async function OnboardingLayout({
     const session = await getServerSession(authOptions);
     if (!session) redirect("/login");
 
-    // Check resource limits
-    const userSites = await db.site.findMany({
-        where: { users: { some: { id: session.user.id } } },
-        select: { id: true }
+    const userSites = await db.siteUser.findMany({
+        where: { userId: session.user.id },
+        select: { siteId: true }
     });
     const sitesCount = userSites.length;
-    const siteIds = userSites.map(s => s.id);
+    const siteIds = userSites.map(s => s.siteId);
 
     const activeSubscriptions = await db.subscription.findMany({
         where: { siteId: { in: siteIds }, status: "active" },

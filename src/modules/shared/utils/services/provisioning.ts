@@ -17,10 +17,16 @@ export async function provisionSite(userId: string, siteName: string, subdomain:
         const site = await tx.site.create({
             data: {
                 name: siteName,
-                subdomain: subdomain.toLowerCase().trim(),
-                users: {
-                    connect: { id: userId }
-                }
+                subdomain: subdomain.toLowerCase().trim()
+            }
+        });
+
+        // 2b. Associate User to Site via SiteUser
+        await tx.siteUser.create({
+            data: {
+                siteId: site.id,
+                userId: userId,
+                role: "owner"
             }
         });
 

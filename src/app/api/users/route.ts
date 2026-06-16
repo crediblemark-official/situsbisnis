@@ -39,11 +39,15 @@ export async function GET() {
                 }
             });
         } else {
+            const siteUsers = await db.siteUser.findMany({
+                where: { siteId },
+                select: { userId: true }
+            });
+            const userIds = siteUsers.map(su => su.userId);
+
             rawUsers = await db.user.findMany({
                 where: {
-                    sites: {
-                        some: { id: siteId }
-                    },
+                    id: { in: userIds },
                     role: { not: "admin" }
                 },
                 select: {
@@ -106,13 +110,19 @@ export async function POST(req: Request) {
 
         if (user) {
             if (siteId) {
-                await db.site.update({
-                    where: { id: siteId },
-                    data: {
-                        users: {
-                            connect: { id: user.id }
+                await db.siteUser.upsert({
+                    where: {
+                        siteId_userId: {
+                            siteId,
+                            userId: user.id
                         }
-                    }
+                    },
+                    create: {
+                        siteId,
+                        userId: user.id,
+                        role: "editor"
+                    },
+                    update: {}
                 });
             }
         } else {
@@ -123,12 +133,19 @@ export async function POST(req: Request) {
                     email,
                     password: hashedPassword,
                     role: (role as Role) || Role.user,
-                    image: `https://ui-avatars.com/api/?name=${encodeURIComponent(name || email)}&background=random`,
-                    sites: siteId ? {
-                        connect: { id: siteId }
-                    } : undefined
+                    image: `https://ui-avatars.com/api/?name=${encodeURIComponent(name || email)}&background=random`
                 }
             });
+
+            if (siteId) {
+                await db.siteUser.create({
+                    data: {
+                        siteId,
+                        userId: user.id,
+                        role: "editor"
+                    }
+                });
+            }
         }
 
         return apiResponse({ success: true, user });

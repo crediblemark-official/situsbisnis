@@ -74,38 +74,9 @@ export async function POST(req: Request) {
         console.log(`[DUITKU_ORDER_CALLBACK] Verified callback for orderId: '${actualOrderId}' (raw: '${merchantOrderId}'), status: '${verification.status}'`);
 
         if (verification.status === "paid") {
-            // Use database transaction for atomic update of order status and owner balance credit
-            await db.$transaction(async (tx) => {
-                // 1. Update Order Payment Status
-                await tx.order.update({
-                    where: { id: actualOrderId },
-                    data: {
-                        paymentStatus: "paid",
-                        status: "processing" // transition order general status to processing
-                    }
-                });
-
-                // 2. If this site used the platform's payment gateway fallback, credit the owner's balance
-                if (!paymentSettings?.duitkuMerchantCode || !paymentSettings?.duitkuApiKey) {
-                    const site = await tx.site.findUnique({
-                        where: { id: order.siteId },
-                        include: { users: { select: { id: true } } }
-                    });
-
-                    if (site?.users && site.users.length > 0) {
-                        const ownerId = site.users[0].id;
-                        await tx.user.update({
-                            where: { id: ownerId },
-                            data: {
-                                affiliateBalance: {
-                                    increment: Number(order.total)
-                                }
-                            }
-                        });
-                        console.log(`[DUITKU_ORDER_CALLBACK] Platform fallback payment: Credited ${order.total} to owner '${ownerId}' balance.`);
-                    }
-                }
-            });
+            const { OrderClient } = await import("@/modules/order");
+            const creditOwner = !paymentSettings?.duitkuMerchantCode || !paymentSettings?.duitkuApiKey;
+            await OrderClient.processOrderPaymentCallback(actualOrderId, order.siteId, Number(order.total), creditOwner);
             console.log(`[DUITKU_ORDER_CALLBACK] Order '${actualOrderId}' paymentStatus updated to paid and owner balance credited.`);
         } else {
             console.info(`[DUITKU_ORDER_CALLBACK] Callback received but payment not completed (resultCode: ${resultCode})`);

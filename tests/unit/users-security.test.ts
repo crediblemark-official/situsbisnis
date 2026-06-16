@@ -15,6 +15,12 @@ vi.mock('@/lib/core/db', () => ({
     site: {
       update: vi.fn(),
     },
+    siteUser: {
+      findMany: vi.fn(),
+      findFirst: vi.fn(),
+      create: vi.fn(),
+      upsert: vi.fn(),
+    },
   },
 }));
 
@@ -78,7 +84,7 @@ describe('User Security - Privilege Escalation', () => {
       // Target user is currently a regular user
       (db.user.findUnique as any).mockResolvedValue({ id: 'user-id', role: 'user' });
       // Belonging check passes
-      (db.user.findFirst as any).mockResolvedValue({ id: 'user-id' });
+      (db.siteUser.findFirst as any).mockResolvedValue({ id: 'user-id' });
 
       const req = new Request('http://localhost/api/users/user-id', { method: 'PATCH' });
       const response: any = await updateUser(req, { params: Promise.resolve({ id: 'user-id' }) });
@@ -99,7 +105,7 @@ describe('User Security - Privilege Escalation', () => {
         // Target user is already an admin
         (db.user.findUnique as any).mockResolvedValue({ id: 'admin-id', role: 'admin' });
         // Belonging check passes (admin might be assigned to this site)
-        (db.user.findFirst as any).mockResolvedValue({ id: 'admin-id' });
+        (db.siteUser.findFirst as any).mockResolvedValue({ id: 'admin-id' });
 
         const req = new Request('http://localhost/api/users/admin-id', { method: 'PATCH' });
         const response: any = await updateUser(req, { params: Promise.resolve({ id: 'admin-id' }) });

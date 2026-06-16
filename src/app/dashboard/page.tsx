@@ -48,7 +48,7 @@ async function getStats(siteId: string | null) {
             mediaSize,
             recentOrdersRaw
         ] = await Promise.all([
-            db.user.count({ where: { sites: { some: { id: siteId } } } }),
+            db.siteUser.count({ where: { siteId } }),
             db.contactSubmission.count({ where: { siteId } }),
             db.siteStatistics.findUnique({ where: { siteId } }),
             db.mediaItem.aggregate({ _sum: { size: true }, where: { siteId } }),
