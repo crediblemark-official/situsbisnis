@@ -37,46 +37,51 @@ bun dev
 
 ---
 
-## 🏗️ Architecture & Standards
+## 🏗️ Arsitektur & Standar (Modular Monolith)
+
+Aplikasi ini menggunakan pendekatan arsitektur **Modular Monolith** dengan batas logis (logical boundaries) yang ketat antar domain bisnis. Komunikasi lintas modul dibatasi dan hanya diperbolehkan melalui kontrak publik (`index.ts`) dari masing-masing modul. Keterikatan fisik database (foreign keys & join lintas modul) telah dihilangkan demi fleksibilitas pemeliharaan dan skalabilitas.
 
 ### Path Aliases
 
-We use `@/*` aliases for all internal imports to maintain a clean and flat codebase.
+Kami menggunakan alias `@/*` di `tsconfig.json` untuk impor modular dan kode bersama (shared):
 
-- `@/lib/*`: Core logic, services, and settings.
-- `@/components/*`: Reusable UI and dashboard components.
-- `@/hooks/*`: Custom React hooks.
-
-### Magic Edit Mode
-
-Every public page can be edited by simply appending `/edit` to the URL. This is handled by a custom `proxy.ts` layer that rewrites requests to the `app/credbuild/` engine.
-
-### Premium Matrix UI
-
-The dashboard follows a **High-Density UI** standard:
-
-- **Ergonomics**: 5px border radius (rounded-md) and 10px padding (p-2.5) for all interactive elements.
-- **Visuals**: Neutral-dark aesthetics with Lucide icons for quick scanning.
-- **Safety**: Destructive actions are always gated by a high-fidelity `ConfirmationModal`.
+- `@/modules/auth/*`: Modul autentikasi, akun, NextAuth
+- `@/modules/billing/*`: Modul langganan SaaS, transaksi, pembayaran
+- `@/modules/catalog/*`: Modul produk, kupon, manajemen katalog
+- `@/modules/content/*`: Modul halaman tiptap, postingan blog, testimonial, media
+- `@/modules/order/*`: Modul pesanan e-commerce
+- `@/modules/tenant/*`: Modul situs tenant, domain kustom
+- `@/shared/*`: Kode bersama global (ui, utils, hooks, themes, types, core)
 
 ---
 
-## 🏗️ Project Structure
+## 🏗️ Struktur Proyek
 
 ```
-1001_WEB/
-├── app/                    # Next.js App Router
-│   ├── (site)/            # Public site pages (blogs, shop, etc)
-│   ├── dashboard/         # Premium Admin dashboard
-│   ├── api/              # RESTful CRUD API
-│   └── credbuild/        # Visual editor engine
-├── components/
-│   ├── ui/              # Reusable "Premium Matrix" components
-│   ├── dashboard/       # Specialized dashboard blocks
-│   └── credbuild/       # Visual builder blocks
-├── lib/                  # Services, Settings, and API Context
-├── themes/              # Global theme layouts (default, luxury)
-└── tests/               # Vitest unit & integration tests
+SitusBisnis-migration/
+├── prisma/                 # Skema database ter-decouple (tanpa relasi fisik lintas modul)
+├── src/
+│   ├── app/                # Rute halaman dan API endpoints (Next.js App Router)
+│   │   ├── (site)/         # Rute publik (blog, checkout, success, dll.)
+│   │   ├── api/            # RESTful API endpoints
+│   │   └── dashboard/      # Premium Admin dashboard
+│   │
+│   └── modules/            # Batas Logis (Logical Boundaries) Modular Monolith
+│       ├── auth/           # Fitur login, akun, NextAuth
+│       │   ├── actions.ts  # Logika internal (Server Actions / Backend)
+│       │   └── index.ts    # Gerbang Kontrak Publik (Facade / Public API)
+│       │
+│       ├── billing/        # Fitur langganan SaaS dan pembayaran
+│       ├── catalog/        # Fitur produk dan kupon
+│       ├── content/        # Fitur blog post, tiptap, media
+│       ├── order/          # Fitur pesanan e-commerce
+│       ├── tenant/         # Fitur subdomain & domain kustom
+│       └── shared/         # Infrastruktur dan utilitas bersama (global)
+│           ├── core/       # Engine builder utama CredBuild
+│           ├── ui/         # Komponen UI global (Premium Matrix)
+│           ├── utils/      # Utilitas/helpers pembantu global
+│           ├── hooks/      # Custom React hooks global
+│           └── themes/     # Tata letak tema global (default, luxury)
 ```
 
 ---
@@ -157,20 +162,27 @@ bun vitest tests/unit/currency.test.ts
 
 Private - © 2026 Crediblemark
 
+## 📚 Dokumentasi Proyek
+
+Seluruh dokumentasi teknis dan panduan operasional proyek telah dikelompokkan ke dalam folder [docs/](file:///media/rasyiqi/PROJECT/credibuild-project/SitusBisnis-migration/docs/):
+
+### 🏗️ Arsitektur & Keputusan
+- [Tinjauan Arsitektur (Bahasa Indonesia)](file:///media/rasyiqi/PROJECT/credibuild-project/SitusBisnis-migration/docs/ARCHITECTURE.id.md) | [Architecture Overview (English)](file:///media/rasyiqi/PROJECT/credibuild-project/SitusBisnis-migration/docs/ARCHITECTURE.md)
+- [Panduan Arsitektur Modular Monolith (Bahasa Indonesia)](file:///media/rasyiqi/PROJECT/credibuild-project/SitusBisnis-migration/docs/MODULAR_MONOLITH.id.md)
+- [Architecture Decision Records (ADR)](file:///media/rasyiqi/PROJECT/credibuild-project/SitusBisnis-migration/docs/ARCHITECTURE_DECISIONS.md)
+
+### 🚀 Instalasi & Deployment
+- [Panduan Instalasi (Bahasa Indonesia)](file:///media/rasyiqi/PROJECT/credibuild-project/SitusBisnis-migration/docs/INSTALLATION.id.md) | [Installation Guide (English)](file:///media/rasyiqi/PROJECT/credibuild-project/SitusBisnis-migration/docs/INSTALLATION.md)
+- [Panduan Deployment (Bahasa Indonesia)](file:///media/rasyiqi/PROJECT/credibuild-project/SitusBisnis-migration/docs/DEPLOYMENT.id.md) | [Deployment Guide (English)](file:///media/rasyiqi/PROJECT/credibuild-project/SitusBisnis-migration/docs/DEPLOYMENT.md)
+- [Dokploy Deployment Guide (Bahasa Indonesia)](file:///media/rasyiqi/PROJECT/credibuild-project/SitusBisnis-migration/docs/dokploy-deployment-guide.md)
+- [Operations Runbook (English)](file:///media/rasyiqi/PROJECT/credibuild-project/SitusBisnis-migration/docs/RUNBOOK.md)
+
+### 🔧 Standar & Prosedur
+- [Panduan Pengujian / Testing](file:///media/rasyiqi/PROJECT/credibuild-project/SitusBisnis-migration/docs/TESTING.md)
+- [Panduan Berkontribusi / Contributing](file:///media/rasyiqi/PROJECT/credibuild-project/SitusBisnis-migration/docs/CONTRIBUTING.md)
+- [Kebijakan Keamanan / Security](file:///media/rasyiqi/PROJECT/credibuild-project/SitusBisnis-migration/docs/SECURITY.md)
+- [Changelog Proyek](file:///media/rasyiqi/PROJECT/credibuild-project/SitusBisnis-migration/docs/CHANGELOG.md)
+
 ---
 
-## 📚 Related Documentation
-
-- [API Migration Plan](./api-migration-plan.md) - RESTful migration status
-- [Code Analysis](./bug2.md) - Full codebase review
-- [Architecture](./bug3.md) - Senior architect review
-- [A+ Action Items](./bug4.md) - Quality improvements
-- [API Analysis](./bug5.md) - API routes audit
-
----
-
-_Last Updated: May 2026_
-
----
-
-_Last Updated: May 2026_
+_Terakhir Diperbarui: Juni 2026_

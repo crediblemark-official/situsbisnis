@@ -35,9 +35,14 @@ The core data model revolves around:
 ---
 
 ## Directory Structure
-- `/app`: Next.js App Router (Routes and APIs).
-- `/components`: UI components.
-- `/packages/core`: The core CredBuild builder engine.
-- `/lib`: Shared utilities (Database, Env management).
-- `/prisma`: Schema and migrations.
-- `/scripts`: One-off maintenance scripts.
+- `/src/app`: Page routing and API endpoints (Next.js App Router).
+- `/src/modules`: Logical Boundaries folder containing domain business modules:
+  - `auth`: Authentication, account, NextAuth
+  - `billing`: SaaS subscriptions, transactions, payment processing
+  - `catalog`: Products, coupons, catalog management
+  - `content`: Blog posts, tiptap editor, media, testimonials
+  - `order`: E-commerce shopping and orders
+  - `tenant`: Tenant sites, custom domains
+  - `shared`: Shared utilities, UI components, hooks, and core visual builder engine.
+- `/prisma`: Decoupled database schema (without physical cross-module relations).
+- `/tests`: Unit testing (Vitest) and E2E testing (Playwright).

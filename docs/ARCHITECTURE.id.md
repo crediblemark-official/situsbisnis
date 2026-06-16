@@ -35,9 +35,14 @@ Model data inti berpusat pada:
 ---
 
 ## Struktur Direktori
-- `/app`: Next.js App Router (Route dan API).
-- `/components`: Komponen UI.
-- `/packages/core`: Engine builder utama CredBuild.
-- `/lib`: Utilitas bersama (Database, manajemen Env).
-- `/prisma`: Skema dan migrasi.
-- `/scripts`: Script pemeliharaan berkala.
+- `/src/app`: Rute halaman dan API (Next.js App Router).
+- `/src/modules`: Folder batas logis (Logical Boundaries) berisi modul-modul domain bisnis:
+  - `auth`: Fitur login, akun, NextAuth
+  - `billing`: Fitur langganan SaaS, transaksi, pembayaran
+  - `catalog`: Fitur produk, kupon, manajemen katalog
+  - `content`: Fitur postingan blog, tiptap editor, media, testimonial
+  - `order`: Fitur pembelian dan pesanan e-commerce
+  - `tenant`: Fitur situs tenant, domain kustom
+  - `shared`: Utilitas, komponen UI, hooks, core engine visual builder yang dipakai bersama.
+- `/prisma`: Skema database ter-decouple (tanpa relasi fisik lintas modul).
+- `/tests`: Script pengujian unit (Vitest) dan end-to-end (Playwright).

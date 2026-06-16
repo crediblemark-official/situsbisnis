@@ -143,3 +143,25 @@ Production errors need to be tracked, grouped, and alerted.
 - **Positive:** Real-time error tracking, user impact analysis, performance monitoring
 - **Negative:** External dependency, cost at scale
 - **Risk:** PII leakage if not configured correctly (maskAllText enabled)
+
+---
+
+## ADR-008: Modular Monolith Architecture with Decoupled DB Schemas
+
+**Status:** Accepted  
+**Date:** 2026-06-16
+
+### Context
+Aplikasi bertumbuh dengan cepat dan integrasi database lintas modul (seperti relasi fisik prisma `@relation` antara `Post` ke `User`, `OrderItem` ke `Product`, dll.) menyebabkan ketergantungan yang sangat erat (high coupling). Ini menyulitkan pengujian unit terisolasi dan mempersulit potensi ekstraksi layanan ke microservices di masa mendatang.
+
+### Decision
+- Restrukturisasi seluruh kode fungsional menjadi modul-modul terisolasi di bawah `/src/modules` (`auth`, `billing`, `catalog`, `content`, `order`, `tenant`).
+- Semua kode infrastruktur, ui global, tema, hooks, utilitas dipusatkan di bawah `/src/modules/shared`.
+- Lakukan isolasi batas logis melalui gerbang kontrak tunggal `index.ts` (Facade) di setiap modul domain. Seluruh detail implementasi internal disimpan di `actions.ts`.
+- Menerapkan linter arsitektur otomatis (`dependency-cruiser`) untuk melarang impor internal lintas modul secara langsung.
+- Hilangkan seluruh relasi fisik database (`@relation`) Prisma ORM lintas modul dan ganti dengan query in-memory menggunakan Facade Client modul (misalnya `CatalogClient.getProductsMap`).
+
+### Consequences
+- **Positive:** Batas logis domain bisnis yang jelas, kemudahan pemeliharaan kode, pemisahan database modular yang memungkinkan migrasi ke microservices tanpa mengubah modul pemanggil.
+- **Negative:** Kueri database in-memory mungkin membutuhkan optimasi fetch massal (bulk fetching) untuk menghindari masalah N+1.
+- **Risk:** Pengembang harus disiplin menggunakan Facade Client (`index.ts`) dan dilarang mengimpor file internal modul lain secara langsung.
