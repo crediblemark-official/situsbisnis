@@ -1,4 +1,6 @@
 import * as billingRepo from "../repositories/billing.repository";
+import * as planRepo from "../repositories/plan.repository";
+import * as subscriptionRepo from "../repositories/subscription.repository";
 import { unstable_cache } from "next/cache";
 import { TenantClient } from "@/lib/modules/tenant/client";
 import { IdentityClient } from "@/lib/modules/identity/client";
@@ -11,7 +13,7 @@ export async function getPricingPlans(): Promise<PricingPlanDTO[]> {
     return unstable_cache(
         async () => {
             try {
-                const dbPlans = await billingRepo.findPricingPlans();
+                const dbPlans = await planRepo.findPricingPlans();
                 const mainDomain = process.env.NEXT_PUBLIC_APP_URL || "SitusBisnis.com";
                 const cleanDomain = mainDomain.replace(/^https?:\/\//, "").replace(/\/$/, "");
 
@@ -95,7 +97,7 @@ export async function getPricingPlans(): Promise<PricingPlanDTO[]> {
 export async function getActivePlanNamesForSites(siteIds: string[]): Promise<Record<string, string>> {
     if (siteIds.length === 0) return {};
     try {
-        const subscriptions = await billingRepo.findActivePlanNamesForSites(siteIds);
+        const subscriptions = await subscriptionRepo.findActivePlanNamesForSites(siteIds);
         const resultMap: Record<string, string> = {};
         subscriptions.forEach(sub => {
             resultMap[sub.siteId] = sub.plan.name;
@@ -126,7 +128,7 @@ export async function extendTrial(userId: string, userRole: string, siteId: stri
         }
     }
 
-    const sub = await billingRepo.findLatestSubscriptionAnyStatus(siteId);
+    const sub = await subscriptionRepo.findLatestSubscriptionAnyStatus(siteId);
 
     if (!sub) throw new Error("No subscription found");
     if (sub.trialExtended) throw new Error("Trial already extended");
@@ -135,7 +137,7 @@ export async function extendTrial(userId: string, userRole: string, siteId: stri
     const newEndDate = new Date(sub.trialEndsAt);
     newEndDate.setDate(newEndDate.getDate() + 7);
 
-    await billingRepo.updateSubscriptionTrial(sub.id, {
+    await subscriptionRepo.updateSubscriptionTrial(sub.id, {
         trialEndsAt: newEndDate,
         trialExtended: true
     });
@@ -180,21 +182,21 @@ export async function extendTrial(userId: string, userRole: string, siteId: stri
  * Mengambil daftar seluruh paket langganan (untuk admin).
  */
 export async function getAllPlans() {
-    return billingRepo.findAllPlans();
+    return planRepo.findAllPlans();
 }
 
 /**
  * Mengambil detail satu subscription beserta paket langganannya.
  */
 export async function getSubscriptionDetail(subId: string) {
-    return billingRepo.findSubscriptionById(subId);
+    return subscriptionRepo.findSubscriptionById(subId);
 }
 
 /**
  * Memperpanjang masa aktif subscription (admin).
  */
 export async function extendSubscription(subId: string, days: number) {
-    const sub = await billingRepo.findSubscriptionById(subId);
+    const sub = await subscriptionRepo.findSubscriptionById(subId);
     if (!sub) {
         throw new Error("NOT_FOUND");
     }
@@ -205,7 +207,7 @@ export async function extendSubscription(subId: string, days: number) {
 
     // Jika paket saat ini adalah "Free", upgrade ke "Pro" untuk periode perpanjangan
     if (sub.plan.name.toLowerCase() === "free") {
-        const proPlan = await billingRepo.findPlanByName("Pro");
+        const proPlan = await planRepo.findPlanByName("Pro");
         if (proPlan) {
             updateData.planId = proPlan.id;
         }
@@ -223,7 +225,7 @@ export async function extendSubscription(subId: string, days: number) {
         }
     }
 
-    const updated = await billingRepo.updateSubscription(subId, updateData);
+    const updated = await subscriptionRepo.updateSubscription(subId, updateData);
 
     return {
         success: true,
@@ -247,12 +249,12 @@ export async function extendSubscription(subId: string, days: number) {
  * Membatalkan subscription (admin).
  */
 export async function cancelSubscription(subId: string) {
-    const sub = await billingRepo.findSubscriptionById(subId);
+    const sub = await subscriptionRepo.findSubscriptionById(subId);
     if (!sub) {
         throw new Error("NOT_FOUND");
     }
 
-    await billingRepo.updateSubscriptionStatusOnly(subId, "cancelled");
+    await subscriptionRepo.updateSubscriptionStatusOnly(subId, "cancelled");
 
     // Kirim email pembatalan
     try {
@@ -274,17 +276,16 @@ export async function cancelSubscription(subId: string) {
     return { success: true, message: "Subscription cancelled" };
 }
 
-
 /**
  * Memperbarui paket langganan subscription (admin).
  */
 export async function updateSubscriptionPlan(subId: string, planId: string) {
-    const sub = await billingRepo.findSubscriptionById(subId);
+    const sub = await subscriptionRepo.findSubscriptionById(subId);
     if (!sub) {
         throw new Error("NOT_FOUND");
     }
 
-    const updated = await billingRepo.updateSubscription(subId, {
+    const updated = await subscriptionRepo.updateSubscription(subId, {
         planId,
         status: "active"
     });

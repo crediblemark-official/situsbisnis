@@ -1,4 +1,5 @@
-import * as billingRepo from "../repositories/billing.repository";
+import * as planRepo from "../repositories/plan.repository";
+import * as subscriptionRepo from "../repositories/subscription.repository";
 
 /**
  * Mengambil konteks billing untuk halaman settings situs:
@@ -7,8 +8,8 @@ import * as billingRepo from "../repositories/billing.repository";
  */
 export async function getSiteSettingsBillingContext(siteId: string) {
     const [subscription, allPlans] = await Promise.all([
-        billingRepo.findActiveSubscription(siteId),
-        billingRepo.findAllPlans()
+        subscriptionRepo.findActiveSubscription(siteId),
+        planRepo.findAllPlans()
     ]);
 
     const plan = subscription?.plan as any;

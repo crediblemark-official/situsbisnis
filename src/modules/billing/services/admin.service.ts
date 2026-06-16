@@ -1,19 +1,20 @@
-import * as billingRepo from "../repositories/billing.repository";
+import * as planRepo from "../repositories/plan.repository";
+import * as subscriptionRepo from "../repositories/subscription.repository";
 
 /**
  * Mengubah subscription situs ke paket Free (admin only).
  * Menonaktifkan semua subscription aktif lalu membuat subscription Free baru.
  */
 export async function setSiteToFreePlan(siteId: string): Promise<void> {
-    const freePlan = await billingRepo.findPlanByName("Free");
+    const freePlan = await planRepo.findPlanByName("Free");
     if (!freePlan) throw new Error("FREE_PLAN_NOT_FOUND");
 
     // Nonaktifkan semua subscription aktif
-    await billingRepo.cancelAllSubscriptions(null, siteId);
+    await subscriptionRepo.cancelAllSubscriptions(null, siteId);
 
     // Buat subscription Free baru
     const now = new Date();
-    await billingRepo.createSubscription(null, {
+    await subscriptionRepo.createSubscription(null, {
         siteId,
         planId: freePlan.id,
         status: "active",
@@ -28,7 +29,7 @@ export async function setSiteToFreePlan(siteId: string): Promise<void> {
  * Melempar error jika tidak ada subscription, bukan trial, atau trial sudah pernah diperpanjang.
  */
 export async function extendSiteTrial(siteId: string, days: number): Promise<{ newEndDate: Date }> {
-    const sub = await billingRepo.findLatestSubscriptionAnyStatus(siteId);
+    const sub = await subscriptionRepo.findLatestSubscriptionAnyStatus(siteId);
 
     if (!sub) throw new Error("NO_SUBSCRIPTION");
     if ((sub as any).trialExtended) throw new Error("TRIAL_ALREADY_EXTENDED");
@@ -37,7 +38,7 @@ export async function extendSiteTrial(siteId: string, days: number): Promise<{ n
     const newEndDate = new Date((sub as any).trialEndsAt);
     newEndDate.setDate(newEndDate.getDate() + days);
 
-    await billingRepo.updateSubscription(sub.id, {
+    await subscriptionRepo.updateSubscription(sub.id, {
         trialEndsAt: newEndDate,
         trialExtended: true
     });

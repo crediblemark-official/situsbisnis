@@ -1,4 +1,4 @@
-import * as billingRepo from "../repositories/billing.repository";
+import * as subscriptionRepo from "../repositories/subscription.repository";
 
 import { ContentClient } from "@/lib/modules/content/client";
 import { CatalogClient } from "@/lib/modules/catalog/client";
@@ -50,7 +50,7 @@ const LIMIT_CONFIG: Record<LimitType, {
  * Memverifikasi apakah suatu situs melampaui limitasi paket langganannya.
  */
 export async function checkSiteLimit(siteId: string, type: LimitType): Promise<LimitCheckResult> {
-    const subscription = await billingRepo.findActiveSubscription(siteId);
+    const subscription = await subscriptionRepo.findActiveSubscription(siteId);
 
     if (!subscription || !subscription.plan) {
         return {
@@ -99,7 +99,7 @@ export async function checkUserSitesLimit(siteIds: string[], currentSiteCount: n
     planName?: string;
     maxSitesAllowed?: number;
 }> {
-    const subscription = await billingRepo.findActiveSubscriptionBySiteIds(siteIds);
+    const subscription = await subscriptionRepo.findActiveSubscriptionBySiteIds(siteIds);
 
     const planLimit = subscription?.plan?.maxSites ?? 1;
     const addonSlots = (subscription as any)?.addonSlots ?? 0;

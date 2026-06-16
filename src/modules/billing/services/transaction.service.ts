@@ -1,5 +1,8 @@
 import { db } from "@/modules/shared/core/db";
 import * as billingRepo from "../repositories/billing.repository";
+import * as transactionRepo from "../repositories/transaction.repository";
+import * as subscriptionRepo from "../repositories/subscription.repository";
+import * as couponRepo from "../repositories/coupon.repository";
 import { TenantClient } from "@/lib/modules/tenant/client";
 import { IdentityClient } from "@/lib/modules/identity/client";
 import { sendWhatsAppNotification } from "@/lib/services/whatsapp";
@@ -9,7 +12,7 @@ import { sendWhatsAppNotification } from "@/lib/services/whatsapp";
  */
 export async function processApprovedTransaction(transactionId: string) {
     const updatedTx = await db.$transaction(async (tx) => {
-        const currentTx = await billingRepo.findTransactionById(tx, transactionId);
+        const currentTx = await transactionRepo.findTransactionById(tx, transactionId);
         if (!currentTx) {
             throw new Error("TRANSACTION_NOT_FOUND");
         }
@@ -17,10 +20,10 @@ export async function processApprovedTransaction(transactionId: string) {
             throw new Error("ALREADY_PROCESSED");
         }
 
-        const updated = await billingRepo.updateTransactionStatus(tx, transactionId, "approved");
+        const updated = await transactionRepo.updateTransactionStatus(tx, transactionId, "approved");
 
         if (updated.couponId) {
-            await billingRepo.incrementCouponUses(tx, updated.couponId);
+            await couponRepo.incrementCouponUses(tx, updated.couponId);
         }
 
         const siteOwner = await IdentityClient.getSiteOwner(updated.siteId);
@@ -29,7 +32,7 @@ export async function processApprovedTransaction(transactionId: string) {
         if (siteOwner && siteOwner.referredById) {
             const platformSettings = await billingRepo.findPlatformSettings(tx);
             const isRecurringEnabled = platformSettings?.affiliateRecurringCommission ?? false;
-            const approvedTxCount = await billingRepo.countApprovedTransactions(tx, updated.siteId);
+            const approvedTxCount = await transactionRepo.countApprovedTransactions(tx, updated.siteId);
 
             let shouldAwardCommission = true;
             if (!isRecurringEnabled) {
@@ -58,15 +61,15 @@ export async function processApprovedTransaction(transactionId: string) {
         }
 
         if (updated.addonType === "site_slot") {
-            const existingSub = await billingRepo.findLatestSubscription(tx, updated.siteId);
+            const existingSub = await subscriptionRepo.findLatestSubscription(tx, updated.siteId);
             if (existingSub) {
-                await billingRepo.updateSubscriptionAddonSlots(tx, existingSub.id, updated.addonQuantity || 0);
+                await subscriptionRepo.updateSubscriptionAddonSlots(tx, existingSub.id, updated.addonQuantity || 0);
             }
         } else {
-            const activeSubBeforeUpgrade = await billingRepo.findLatestSubscription(tx, updated.siteId);
+            const activeSubBeforeUpgrade = await subscriptionRepo.findLatestSubscription(tx, updated.siteId);
             const carryOverSlots = activeSubBeforeUpgrade?.addonSlots || 0;
 
-            await billingRepo.cancelAllSubscriptions(tx, updated.siteId);
+            await subscriptionRepo.cancelAllSubscriptions(tx, updated.siteId);
 
             const now = new Date();
             const endDate = new Date(now);
@@ -76,14 +79,14 @@ export async function processApprovedTransaction(transactionId: string) {
                 endDate.setMonth(endDate.getMonth() + 1);
             }
 
-            const existingSubOfThisPlan = await billingRepo.findSubscriptionBySiteAndPlan(tx, updated.siteId, updated.planId);
+            const existingSubOfThisPlan = await subscriptionRepo.findSubscriptionBySiteAndPlan(tx, updated.siteId, updated.planId);
             if (existingSubOfThisPlan) {
-                await billingRepo.activateExistingSubscription(tx, existingSubOfThisPlan.id, {
+                await subscriptionRepo.activateExistingSubscription(tx, existingSubOfThisPlan.id, {
                     endDate,
                     addonSlots: Math.max(existingSubOfThisPlan.addonSlots, carryOverSlots)
                 });
             } else {
-                await billingRepo.createSubscription(tx, {
+                await subscriptionRepo.createSubscription(tx, {
                     siteId: updated.siteId,
                     planId: updated.planId,
                     status: "active",
@@ -112,7 +115,7 @@ export async function processApprovedTransaction(transactionId: string) {
             try {
                 const siteContact = await TenantClient.getSiteContact(updatedTx.siteId);
                 const siteInfo = await TenantClient.getSiteInfo(updatedTx.siteId);
-                const activeSub = await billingRepo.findActiveSubscription(updatedTx.siteId);
+                const activeSub = await subscriptionRepo.findActiveSubscription(updatedTx.siteId);
 
                 const formattedEndDate = activeSub?.endDate
                     ? new Date(activeSub.endDate).toLocaleDateString("id-ID", {
@@ -171,14 +174,14 @@ export async function processApprovedTransaction(transactionId: string) {
  */
 export async function updateTransactionStatus(transactionId: string, status: string) {
     return db.$transaction(async (tx) => {
-        const currentTx = await billingRepo.findTransactionById(tx, transactionId);
+        const currentTx = await transactionRepo.findTransactionById(tx, transactionId);
         if (!currentTx) {
             throw new Error("TRANSACTION_NOT_FOUND");
         }
         if (currentTx.status !== "pending") {
             throw new Error("ALREADY_PROCESSED");
         }
-        return billingRepo.updateTransactionStatus(tx, transactionId, status as any);
+        return transactionRepo.updateTransactionStatus(tx, transactionId, status as any);
     });
 }
 
@@ -190,7 +193,7 @@ export async function cancelTransaction(userId: string, transactionId: string) {
         throw new Error("Missing transactionId");
     }
 
-    const tx = await billingRepo.findTransactionById(null, transactionId);
+    const tx = await transactionRepo.findTransactionById(null, transactionId);
     if (!tx) {
         throw new Error("Transaction not found");
     }
@@ -206,7 +209,7 @@ export async function cancelTransaction(userId: string, transactionId: string) {
         throw new Error("Hanya transaksi tertunda yang dapat dibatalkan.");
     }
 
-    await billingRepo.deleteTransaction(transactionId);
+    await transactionRepo.deleteTransaction(transactionId);
     return { success: true };
 }
 
@@ -224,7 +227,7 @@ export async function confirmManualPayment(
         throw new Error("Missing transaction ID");
     }
 
-    const existingTransaction = await billingRepo.findTransactionById(null, transactionId);
+    const existingTransaction = await transactionRepo.findTransactionById(null, transactionId);
     if (!existingTransaction) {
         throw new Error("Transaction not found");
     }
@@ -236,7 +239,7 @@ export async function confirmManualPayment(
         throw new Error("Forbidden");
     }
 
-    const transaction = await billingRepo.updateTransactionConfirmDetails(transactionId, {
+    const transaction = await transactionRepo.updateTransactionConfirmDetails(transactionId, {
         notes,
         proofOfPayment
     });

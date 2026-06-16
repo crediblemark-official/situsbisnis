@@ -1,4 +1,8 @@
 import * as billingRepo from "../repositories/billing.repository";
+import * as subscriptionRepo from "../repositories/subscription.repository";
+import * as transactionRepo from "../repositories/transaction.repository";
+import * as couponRepo from "../repositories/coupon.repository";
+import * as planRepo from "../repositories/plan.repository";
 import { TenantClient } from "@/lib/modules/tenant/client";
 import { IdentityClient } from "@/lib/modules/identity/client";
 
@@ -25,7 +29,7 @@ export async function buySlot(
         throw new Error("Forbidden");
     }
 
-    const subscription = await billingRepo.findActiveSubscription(siteId);
+    const subscription = await subscriptionRepo.findActiveSubscription(siteId);
 
     if (!subscription || !subscription.plan) {
         throw new Error("Active subscription not found");
@@ -40,14 +44,14 @@ export async function buySlot(
 
     const totalAmount = addonPrice * quantity;
 
-    const pendingWithProof = await billingRepo.findPendingTransactionWithProof(siteId);
+    const pendingWithProof = await transactionRepo.findPendingTransactionWithProof(siteId);
     if (pendingWithProof) {
         throw new Error("Anda memiliki transaksi tertunda yang sedang diverifikasi admin. Harap tunggu persetujuan.");
     }
 
-    await billingRepo.deletePendingTransactionsWithoutProof(siteId);
+    await transactionRepo.deletePendingTransactionsWithoutProof(siteId);
 
-    let transaction = await billingRepo.createPendingTransaction({
+    let transaction = await transactionRepo.createPendingTransaction({
         siteId,
         planId: subscription.planId,
         amount: totalAmount,
@@ -81,7 +85,7 @@ export async function buySlot(
                 });
 
                 if (invoice.success && invoice.paymentUrl) {
-                    transaction = await billingRepo.updateTransactionPaymentDetails(transaction.id, {
+                    transaction = await transactionRepo.updateTransactionPaymentDetails(transaction.id, {
                         paymentUrl: invoice.paymentUrl,
                         paymentReference: invoice.reference,
                         paymentMethod: "duitku"
@@ -111,7 +115,7 @@ export async function initializeCheckoutPayment(
         throw new Error("transactionId and paymentMethod are required");
     }
 
-    const transaction = await billingRepo.findTransactionById(null, transactionId);
+    const transaction = await transactionRepo.findTransactionById(null, transactionId);
     if (!transaction) {
         throw new Error("Transaction not found");
     }
@@ -168,7 +172,7 @@ export async function initializeCheckoutPayment(
         merchantOrderId: uniqueDuitkuId
     };
 
-    const updatedTransaction = await billingRepo.updateTransactionPaymentDetails(transaction.id, {
+    const updatedTransaction = await transactionRepo.updateTransactionPaymentDetails(transaction.id, {
         paymentUrl: `custom:${JSON.stringify(customPayload)}`,
         paymentReference: invoice.reference,
         paymentMethod: "duitku"
@@ -214,14 +218,14 @@ export async function upgradePlan(
         }
     }
 
-    const plan = await billingRepo.findPlanById(planId);
+    const plan = await planRepo.findPlanById(planId);
     if (!plan) {
         throw new Error("Plan not found");
     }
 
     let totalAmount = Number(plan.price);
 
-    const existingSub = await billingRepo.findLatestSubscription(null, siteId);
+    const existingSub = await subscriptionRepo.findLatestSubscription(null, siteId);
 
     const now = new Date();
     const isCurrentlyInTrial = existingSub && existingSub.trialEndsAt && existingSub.trialEndsAt > now;
@@ -232,17 +236,17 @@ export async function upgradePlan(
         totalAmount += (existingSub.addonSlots * addonPrice);
     }
 
-    const pendingWithProof = await billingRepo.findPendingTransactionWithProof(siteId);
+    const pendingWithProof = await transactionRepo.findPendingTransactionWithProof(siteId);
     if (pendingWithProof) {
         throw new Error("Anda memiliki transaksi tertunda yang sedang diverifikasi admin. Harap tunggu persetujuan.");
     }
 
-    await billingRepo.deletePendingTransactionsWithoutProof(siteId);
+    await transactionRepo.deletePendingTransactionsWithoutProof(siteId);
 
     let appliedCoupon = null;
     if (couponCode) {
         const formattedCode = couponCode.trim().toUpperCase();
-        const coupon = await billingRepo.findCouponByCode(formattedCode);
+        const coupon = await couponRepo.findCouponByCode(formattedCode);
 
         if (coupon && coupon.isActive) {
             const notExpired = !coupon.expiryDate || new Date(coupon.expiryDate) >= now;
@@ -269,7 +273,7 @@ export async function upgradePlan(
         }
     }
 
-    let transaction = await billingRepo.createUpgradeTransaction({
+    let transaction = await transactionRepo.createUpgradeTransaction({
         siteId,
         planId,
         amount: totalAmount,
@@ -302,7 +306,7 @@ export async function upgradePlan(
                 });
 
                 if (invoice.success && invoice.paymentUrl) {
-                    transaction = await billingRepo.updateTransactionPaymentDetails(transaction.id, {
+                    transaction = await transactionRepo.updateTransactionPaymentDetails(transaction.id, {
                         paymentUrl: invoice.paymentUrl,
                         paymentReference: invoice.reference,
                         paymentMethod: "duitku"

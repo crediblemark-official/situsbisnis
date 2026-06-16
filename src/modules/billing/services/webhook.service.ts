@@ -1,4 +1,5 @@
 import * as billingRepo from "../repositories/billing.repository";
+import * as transactionRepo from "../repositories/transaction.repository";
 import { IdentityClient } from "@/lib/modules/identity/client";
 import { processApprovedTransaction } from "./transaction.service";
 
@@ -10,7 +11,7 @@ export async function checkTransactionStatus(userId: string, userRole: string, t
         throw new Error("transactionId is required");
     }
 
-    const transaction = await billingRepo.findTransactionById(null, transactionId);
+    const transaction = await transactionRepo.findTransactionById(null, transactionId);
     if (!transaction) {
         throw new Error("Transaction not found");
     }

@@ -1,4 +1,5 @@
 import * as billingRepo from "../repositories/billing.repository";
+import * as planRepo from "../repositories/plan.repository";
 
 export interface PlanUpdateData {
     id?: string;
@@ -97,9 +98,9 @@ export async function upsertPlans(plans: PlanUpdateData[]): Promise<void> {
         };
 
         if (plan.id && !plan.id.startsWith("new-")) {
-            await billingRepo.updatePlan(plan.id, planData);
+            await planRepo.updatePlan(plan.id, planData);
         } else {
-            await billingRepo.createPlan(planData);
+            await planRepo.createPlan(planData);
         }
     }
 }

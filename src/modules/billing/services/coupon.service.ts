@@ -1,4 +1,5 @@
-import * as billingRepo from "../repositories/billing.repository";
+import * as couponRepo from "../repositories/coupon.repository";
+import * as planRepo from "../repositories/plan.repository";
 import { IdentityClient } from "@/lib/modules/identity/client";
 
 /**
@@ -10,7 +11,7 @@ export async function validateCoupon(code: string, planId?: string) {
     }
 
     const formattedCode = code.trim().toUpperCase();
-    const coupon = await billingRepo.findCouponByCode(formattedCode);
+    const coupon = await couponRepo.findCouponByCode(formattedCode);
 
     if (!coupon) {
         throw new Error("Kupon tidak ditemukan.");
@@ -31,7 +32,7 @@ export async function validateCoupon(code: string, planId?: string) {
 
     let planPrice = 0;
     if (planId) {
-        const plan = await billingRepo.findPlanById(planId);
+        const plan = await planRepo.findPlanById(planId);
         if (plan) {
             planPrice = Number(plan.price);
         }
@@ -65,7 +66,7 @@ export async function validateCoupon(code: string, planId?: string) {
  * Mengambil daftar seluruh kupon beserta detail afiliasinya (admin).
  */
 export async function getAllCoupons() {
-    const rawCoupons = await billingRepo.findAllCoupons();
+    const rawCoupons = await couponRepo.findAllCoupons();
     const affiliateIds = Array.from(new Set(rawCoupons.map(c => c.affiliateId).filter(Boolean))) as string[];
     const usersMap = await IdentityClient.getUsersMap(affiliateIds);
 
@@ -86,13 +87,13 @@ export async function createCoupon(body: any) {
     }
 
     const formattedCode = code.trim().toUpperCase();
-    const existingCoupon = await billingRepo.findCouponByCode(formattedCode);
+    const existingCoupon = await couponRepo.findCouponByCode(formattedCode);
 
     if (existingCoupon) {
         throw new Error("DUPLICATE_CODE");
     }
 
-    const coupon = await billingRepo.createCoupon({
+    const coupon = await couponRepo.createCoupon({
         code: formattedCode,
         discountType,
         discountValue: parseFloat(discountValue),
@@ -119,7 +120,7 @@ export async function createCoupon(body: any) {
 export async function updateCoupon(couponId: string, body: any) {
     const { code, discountType, discountValue, affiliateId, expiryDate, maxUses, isActive } = body;
 
-    const existingCoupon = await billingRepo.findCouponById(couponId);
+    const existingCoupon = await couponRepo.findCouponById(couponId);
     if (!existingCoupon) {
         throw new Error("NOT_FOUND");
     }
@@ -128,7 +129,7 @@ export async function updateCoupon(couponId: string, body: any) {
     if (code !== undefined) {
         const formattedCode = code.trim().toUpperCase();
         if (formattedCode !== existingCoupon.code) {
-            const isDuplicate = await billingRepo.findCouponByCode(formattedCode);
+            const isDuplicate = await couponRepo.findCouponByCode(formattedCode);
             if (isDuplicate) {
                 throw new Error("DUPLICATE_CODE");
             }
@@ -143,7 +144,7 @@ export async function updateCoupon(couponId: string, body: any) {
     if (maxUses !== undefined) updateData.maxUses = maxUses ? parseInt(maxUses) : null;
     if (isActive !== undefined) updateData.isActive = isActive;
 
-    const updatedCoupon = await billingRepo.updateCoupon(couponId, updateData);
+    const updatedCoupon = await couponRepo.updateCoupon(couponId, updateData);
 
     let affiliate = null;
     if (updatedCoupon.affiliateId) {
@@ -160,10 +161,10 @@ export async function updateCoupon(couponId: string, body: any) {
  * Menghapus kupon (admin).
  */
 export async function deleteCoupon(couponId: string) {
-    const existingCoupon = await billingRepo.findCouponById(couponId);
+    const existingCoupon = await couponRepo.findCouponById(couponId);
     if (!existingCoupon) {
         throw new Error("NOT_FOUND");
     }
-    await billingRepo.deleteCoupon(couponId);
+    await couponRepo.deleteCoupon(couponId);
     return { success: true };
 }
