@@ -1,6 +1,5 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { provisionSite } from "@/lib/services/provisioning";
 import { apiResponse, apiError } from "@/lib/api/utils";
 import { TenantClient } from "@/modules/tenant";
 import { BillingClient } from "@/modules/billing";
@@ -49,8 +48,8 @@ export async function POST(req: Request) {
             return apiError(limitCheck.message || "Batas situs tercapai", 403);
         }
 
-        // 4. Provision site baru
-        const site = await provisionSite(session.user.id, siteName, normalizedSubdomain);
+        // 4. Provision site baru via TenantClient
+        const site = await TenantClient.provisionSite(session.user.id, siteName, normalizedSubdomain);
 
         return apiResponse({ success: true, site });
 

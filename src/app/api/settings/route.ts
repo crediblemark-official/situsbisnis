@@ -1,4 +1,3 @@
-import { getSiteSettings, updateSiteSettings } from "@/lib/settings/site";
 import { getApiContext, apiResponse, apiError, validateBody } from "@/lib/api/utils";
 import { z } from "zod";
 import { BillingClient } from "@/modules/billing";
@@ -65,7 +64,6 @@ const settingsSchema = z.object({
     enabledTaxonomies: z.boolean().optional().nullable(),
     enabledInbox: z.boolean().optional().nullable(),
     enabledCustomers: z.boolean().optional().nullable(),
-    // Tambahkan konfigurasi mata uang global toko
     currency: z.string().optional().nullable(),
 });
 
@@ -76,7 +74,7 @@ const settingsSchema = z.object({
 export async function GET() {
     try {
         const { session, siteId } = await getApiContext(undefined, { requireSite: false, isPublic: true });
-        const settings = await getSiteSettings(siteId || undefined);
+        const settings = await TenantClient.getSiteSettings(siteId || undefined);
 
         if (session && siteId) {
             const [domainInfo, billingContext] = await Promise.all([
@@ -115,7 +113,7 @@ async function handleUpdate(req: Request) {
 
         const { customDomain: _, ...settingsData } = data;
 
-        const updatedSettings = await updateSiteSettings(settingsData, siteId);
+        const updatedSettings = await TenantClient.updateSiteSettings(settingsData, siteId);
 
         // Ambil customDomain terkini untuk response
         const domainInfo = await TenantClient.getSiteDomainInfo(siteId);

@@ -1,4 +1,4 @@
-import { updateMenu } from "@/lib/content/menus";
+import { ContentClient } from "@/modules/content";
 import { getApiContext, apiResponse, apiError, validateBody } from "@/lib/api/utils";
 import { z } from "zod";
 
@@ -15,8 +15,8 @@ const menuUpdateSchema = z.object({
 
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
-        const { error, status } = await getApiContext(["admin", "editor", "owner"]);
-        if (error) return apiError(error, status);
+        const { siteId, error, status } = await getApiContext(["admin", "editor", "owner"]);
+        if (error || !siteId) return apiError(error || "Unauthorized", status);
 
         const { id: slug } = await params;
         if (!slug) return apiError("Slug required", 400);
@@ -26,7 +26,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 
         const { items } = data;
 
-        const updated = await updateMenu(slug, items);
+        const updated = await ContentClient.updateMenu(slug, items, siteId);
         return apiResponse(updated);
     } catch (error) {
         console.error("Error updating menu:", error);

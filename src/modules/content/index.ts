@@ -18,7 +18,9 @@ import {
     deleteMediaFolderInternal,
     searchAllInternal,
     getCredBuildPageInternal,
-    saveCredBuildPageInternal
+    saveCredBuildPageInternal,
+    getMenuInternal,
+    updateMenuInternal
 } from "./actions";
 
 // Facade / Client kontrak publik
@@ -42,7 +44,7 @@ export const ContentClient = {
     deleteMediaFolder: deleteMediaFolderInternal,
     searchAll: searchAllInternal,
     getCredBuildPage: getCredBuildPageInternal,
-    saveCredBuildPage: saveCredBuildPageInternal
+    saveCredBuildPage: saveCredBuildPageInternal,
+    getMenu: getMenuInternal,
+    updateMenu: updateMenuInternal
 };
-
-

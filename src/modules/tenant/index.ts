@@ -14,7 +14,13 @@ import {
     savePaymentSettingsInternal,
     getSiteDomainInfoInternal,
     getOrIncrementViewsInternal,
-    pingDatabaseInternal
+    pingDatabaseInternal,
+    registerDomainInternal,
+    verifyDomainInternal,
+    removeDomainInternal,
+    getSiteSettingsInternal,
+    updateSiteSettingsInternal,
+    provisionSiteInternal
 } from "./actions";
 
 export interface SiteInfo {
@@ -47,6 +53,7 @@ export const TenantClient = {
     checkSubdomainAvailability: checkSubdomainAvailabilityInternal,
     getUserSiteCount: getUserSiteCountInternal,
     deleteSite: deleteSiteInternal,
+    provisionSite: provisionSiteInternal,
 
     // Contact form
     createContactSubmission: createContactSubmissionInternal,
@@ -59,5 +66,14 @@ export const TenantClient = {
     getOrIncrementViews: getOrIncrementViewsInternal,
 
     // Database health checks
-    pingDatabase: pingDatabaseInternal
+    pingDatabase: pingDatabaseInternal,
+
+    // Custom Domain settings
+    registerDomain: registerDomainInternal,
+    verifyDomain: verifyDomainInternal,
+    removeDomain: removeDomainInternal,
+
+    // Site settings
+    getSiteSettings: getSiteSettingsInternal,
+    updateSiteSettings: updateSiteSettingsInternal
 };

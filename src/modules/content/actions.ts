@@ -1,4 +1,7 @@
 import * as contentService from "./services/content.service";
+import * as mediaService from "./services/media.service";
+import * as searchService from "./services/search.service";
+import * as menuService from "./services/menu.service";
 
 /**
  * Menghitung jumlah artikel/post di suatu situs.
@@ -78,9 +81,6 @@ export async function updateTermInternal(termId: string, siteId: string, data: a
 }
 
 // Media & Folders Actions
-import * as mediaService from "./services/media.service";
-import * as searchService from "./services/search.service";
-
 export async function getMediaListInternal(siteId: string, folderId: string | null, page: number, limit: number) {
     return mediaService.getMediaList(siteId, folderId, page, limit);
 }
@@ -117,3 +117,11 @@ export async function saveCredBuildPageInternal(siteId: string, path: string, da
     return contentService.saveCredBuildPage(siteId, path, data);
 }
 
+// Menu Actions
+export async function getMenuInternal(slug: string, siteId: string) {
+    return menuService.getMenu(slug, siteId);
+}
+
+export async function updateMenuInternal(slug: string, items: any[], siteId: string) {
+    return menuService.updateMenu(slug, items, siteId);
+}

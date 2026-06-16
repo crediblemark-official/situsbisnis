@@ -1,6 +1,6 @@
 import { getApiContext, apiResponse, apiError, validateBody } from "@/lib/api/utils";
 import { getSubscription } from "@/lib/domains/tenant";
-import { DomainService } from "@/lib/services/domain.service";
+import { TenantClient } from "@/modules/tenant";
 import { z } from "zod";
 
 const domainSchema = z.object({
@@ -29,8 +29,8 @@ export async function POST(req: Request) {
 
         const { domain } = data;
 
-        // Use the DomainService to handle the heavy lifting
-        const result = await DomainService.verifyDomain(siteId, domain);
+        // Panggil TenantClient
+        const result = await TenantClient.verifyDomain(siteId, domain);
 
         if (result.status === "error") {
             return apiError(result.message, 400, result.details);
