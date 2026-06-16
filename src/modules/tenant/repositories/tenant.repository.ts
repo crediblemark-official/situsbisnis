@@ -16,6 +16,19 @@ export async function getSiteById(siteId: string) {
 }
 
 /**
+ * Mengambil informasi domain custom (status verifikasi) untuk suatu situs.
+ */
+export async function getSiteDomainInfo(siteId: string) {
+    return db.site.findUnique({
+        where: { id: siteId },
+        select: {
+            customDomain: true,
+            customDomainVerified: true
+        }
+    });
+}
+
+/**
  * Mengambil informasi kontak WhatsApp dan Telepon dari pengaturan situs.
  */
 export async function getSiteContactSettings(siteId: string) {

@@ -533,5 +533,84 @@ export async function createUpgradeTransaction(data: {
     });
 }
 
+/**
+ * Memperbarui data plan berdasarkan ID.
+ */
+export async function updatePlan(id: string, data: Record<string, unknown>) {
+    return db.plan.update({
+        where: { id },
+        data: data as any
+    });
+}
 
+/**
+ * Membuat plan baru.
+ */
+export async function createPlan(data: Record<string, unknown>) {
+    return db.plan.create({
+        data: data as any
+    });
+}
 
+/**
+ * Upsert platform settings (untuk update konfigurasi storage, AI, dsb).
+ */
+export async function upsertPlatformSettings(data: Record<string, unknown>) {
+    return db.platformSettings.upsert({
+        where: { id: "global" },
+        update: data as any,
+        create: { id: "global", ...(data as any) }
+    });
+}
+
+/**
+ * Menghapus semua payment methods untuk siteId tertentu.
+ */
+export async function deletePaymentMethodsBySite(siteId: string) {
+    return db.paymentSettings.deleteMany({ where: { siteId } });
+}
+
+/**
+ * Membuat payment methods dalam jumlah banyak.
+ */
+export async function bulkCreatePaymentMethods(data: Array<{
+    bankName: string;
+    accountNumber: string;
+    accountHolder: string;
+    instructions?: string | null;
+    siteId: string;
+}>) {
+    return db.paymentSettings.createMany({ data });
+}
+
+/**
+ * Mencari situs admin berdasarkan subdomain "admin".
+ */
+export async function findAdminSite() {
+    return db.site.findUnique({ where: { subdomain: "admin" } });
+}
+
+/**
+ * Update pengaturan situs admin (nama, siteSettings).
+ */
+export async function updateAdminSiteSettings(adminSiteId: string, data: {
+    siteName?: string;
+    contactEmail?: string;
+    contactPhone?: string;
+    whatsappNumber?: string;
+    footerAddress?: string;
+    allowRegistration?: boolean;
+}) {
+    return db.site.update({
+        where: { id: adminSiteId },
+        data: {
+            name: data.siteName,
+            siteSettings: {
+                upsert: {
+                    create: data as any,
+                    update: data as any
+                }
+            }
+        }
+    });
+}

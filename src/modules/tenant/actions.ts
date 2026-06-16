@@ -11,6 +11,13 @@ export async function getSiteInfoInternal(siteId: string): Promise<SiteInfo | nu
 }
 
 /**
+ * Server Actions / Wrapper internal untuk mengambil info domain custom situs.
+ */
+export async function getSiteDomainInfoInternal(siteId: string) {
+    return tenantService.getSiteDomainInfo(siteId);
+}
+
+/**
  * Server Actions / Wrapper internal untuk mengambil kontak site.
  */
 export async function getSiteContactInternal(siteId: string): Promise<SiteContactInfo | null> {

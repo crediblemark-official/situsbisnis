@@ -13,3 +13,10 @@ export async function countProductsInternal(siteId: string): Promise<number> {
 export async function getProductsMapInternal(productIds: string[]): Promise<Record<string, any>> {
     return catalogService.getProductsMap(productIds);
 }
+
+/**
+ * Mencari produk di suatu situs.
+ */
+export async function searchProductsInternal(siteId: string, q: string, limit = 5) {
+    return catalogService.searchProducts(siteId, q, limit);
+}

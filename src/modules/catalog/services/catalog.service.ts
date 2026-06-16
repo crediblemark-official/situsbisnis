@@ -21,3 +21,11 @@ export async function getProductsMap(productIds: string[]): Promise<Record<strin
 
     return resultMap;
 }
+
+/**
+ * Mencari produk aktif di suatu situs berdasarkan kata kunci.
+ */
+export async function searchProducts(siteId: string, q: string, limit = 5) {
+    return catalogRepo.searchProducts(siteId, q, limit);
+}
+

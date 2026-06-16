@@ -3,6 +3,9 @@ import * as limitService from "./services/limit.service";
 import * as couponService from "./services/coupon.service";
 import * as checkoutService from "./services/checkout.service";
 import * as withdrawalService from "./services/withdrawal.service";
+import * as settingsService from "./services/settings.service";
+import * as adminService from "./services/admin.service";
+import * as platformService from "./services/platform.service";
 import { LimitType } from "./index";
 
 export async function getPricingPlans() {
@@ -115,4 +118,36 @@ export async function processWithdrawalStatus(withdrawalId: string, status: stri
 
 export async function checkUserSitesLimit(siteIds: string[], currentSiteCount: number) {
     return limitService.checkUserSitesLimit(siteIds, currentSiteCount);
+}
+
+export async function getSiteSettingsBillingContext(siteId: string) {
+    return settingsService.getSiteSettingsBillingContext(siteId);
+}
+
+export async function setSiteToFreePlan(siteId: string): Promise<void> {
+    return adminService.setSiteToFreePlan(siteId);
+}
+
+export async function extendSiteTrial(siteId: string, days: number) {
+    return adminService.extendSiteTrial(siteId, days);
+}
+
+export async function upsertPlans(plans: platformService.PlanUpdateData[]) {
+    return platformService.upsertPlans(plans);
+}
+
+export async function updatePlatformSettings(data: platformService.PlatformSettingsData) {
+    return platformService.updatePlatformSettings(data);
+}
+
+export async function updateAdminPaymentMethods(adminSiteId: string, methods: platformService.PaymentMethodData[]) {
+    return platformService.updateAdminPaymentMethods(adminSiteId, methods);
+}
+
+export async function getAdminSite() {
+    return platformService.getAdminSite();
+}
+
+export async function updateAdminSiteBranding(adminSiteId: string, data: Parameters<typeof platformService.updateAdminSiteBranding>[1]) {
+    return platformService.updateAdminSiteBranding(adminSiteId, data);
 }

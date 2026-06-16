@@ -1,7 +1,8 @@
 import { getSiteSettings, updateSiteSettings } from "@/lib/settings/site";
 import { getApiContext, apiResponse, apiError, validateBody } from "@/lib/api/utils";
 import { z } from "zod";
-import { db } from "@/lib/core/db";
+import { BillingClient } from "@/modules/billing";
+import { TenantClient } from "@/modules/tenant";
 
 export const dynamic = "force-dynamic";
 
@@ -68,53 +69,35 @@ const settingsSchema = z.object({
     currency: z.string().optional().nullable(),
 });
 
+/**
+ * GET /api/settings
+ * Mengambil pengaturan situs beserta informasi billing dan domain.
+ */
 export async function GET() {
     try {
         const { session, siteId } = await getApiContext(undefined, { requireSite: false, isPublic: true });
         const settings = await getSiteSettings(siteId || undefined);
-        if (session && siteId) {
-            const [site, subscription, allPlans] = await Promise.all([
-                db.site.findUnique({
-                    where: { id: siteId },
-                    select: { customDomain: true, customDomainVerified: true }
-                }),
-                db.subscription.findFirst({
-                    where: { siteId, status: "active" },
-                    include: { plan: true },
-                    orderBy: { createdAt: "desc" }
-                }),
-                db.plan.findMany({
-                    orderBy: { price: "asc" }
-                })
-            ]);
 
-            const activePlanName = subscription?.plan?.name || allPlans.find(p => Number(p.price) === 0)?.name || "Free";
-            const activePlanPrice = subscription?.plan?.price ? Number(subscription.plan.price) : 0;
+        if (session && siteId) {
+            const [domainInfo, billingContext] = await Promise.all([
+                TenantClient.getSiteDomainInfo(siteId),
+                BillingClient.getSiteSettingsBillingContext(siteId)
+            ]);
 
             return apiResponse({ 
                 ...settings, 
-                customDomain: site?.customDomain,
-                customDomainVerified: site?.customDomainVerified,
-                plan: activePlanName,
-                isTrial: subscription?.trialEndsAt ? new Date(subscription.trialEndsAt) > new Date() : false,
-                trialEndsAt: subscription?.trialEndsAt,
-                planPrice: activePlanPrice,
-                allPlans: allPlans.map(p => ({
-                    id: p.id,
-                    name: p.name,
-                    price: Number(p.price)
-                })),
-                planFeatures: {
-                    ...(subscription?.plan?.features as any || {}),
-                    maxPosts: subscription?.plan?.maxPosts,
-                    maxAssets: subscription?.plan?.maxAssets,
-                    maxProducts: subscription?.plan?.maxProducts,
-                    maxTestimonials: subscription?.plan?.maxTestimonials,
-                    maxOrders: subscription?.plan?.maxOrders,
-                },
-                maxSites: subscription?.plan?.maxSites || 1
+                customDomain: domainInfo?.customDomain,
+                customDomainVerified: domainInfo?.customDomainVerified,
+                plan: billingContext.activePlanName,
+                isTrial: billingContext.isTrial,
+                trialEndsAt: billingContext.trialEndsAt,
+                planPrice: billingContext.activePlanPrice,
+                allPlans: billingContext.allPlans,
+                planFeatures: billingContext.planFeatures,
+                maxSites: billingContext.maxSites
             });
         }
+
         return apiResponse(settings);
     } catch (error) {
         console.error("Error fetching settings:", error);
@@ -134,13 +117,10 @@ async function handleUpdate(req: Request) {
 
         const updatedSettings = await updateSiteSettings(settingsData, siteId);
 
-        // Fetch current custom domain directly from DB for settings response payload
-        const currentSite = await db.site.findUnique({
-            where: { id: siteId },
-            select: { customDomain: true }
-        });
+        // Ambil customDomain terkini untuk response
+        const domainInfo = await TenantClient.getSiteDomainInfo(siteId);
 
-        return apiResponse({ ...updatedSettings, customDomain: currentSite?.customDomain });
+        return apiResponse({ ...updatedSettings, customDomain: domainInfo?.customDomain });
     } catch (error) {
         console.error("Error updating settings:", error);
         return apiError("Failed to update settings");

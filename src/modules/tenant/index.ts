@@ -11,7 +11,8 @@ import {
     getSiteDetailInternal,
     createContactSubmissionInternal,
     getContactSubmissionsInternal,
-    savePaymentSettingsInternal
+    savePaymentSettingsInternal,
+    getSiteDomainInfoInternal
 } from "./actions";
 
 export interface SiteInfo {
@@ -32,6 +33,7 @@ export const TenantClient = {
     getSiteInfo: getSiteInfoInternal,
     getSiteContact: getSiteContactInternal,
     getSiteDetail: getSiteDetailInternal,
+    getSiteDomainInfo: getSiteDomainInfoInternal,
 
     // User-Site access
     verifyUserSiteAccess: verifyUserSiteAccessInternal,

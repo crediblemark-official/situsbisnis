@@ -1,5 +1,5 @@
 import * as contentRepo from "../repositories/content.repository";
-import * as catalogRepo from "@/modules/catalog/repositories/catalog.repository";
+import { CatalogClient } from "@/modules/catalog";
 
 export interface SearchResultItem {
     id: string;
@@ -19,7 +19,7 @@ export async function searchAll(siteId: string, q: string): Promise<SearchResult
     const [posts, pages, products] = await Promise.all([
         contentRepo.searchPosts(siteId, q),
         contentRepo.searchPages(siteId, q),
-        catalogRepo.searchProducts(siteId, q)
+        CatalogClient.searchProducts(siteId, q)
     ]);
 
     return [

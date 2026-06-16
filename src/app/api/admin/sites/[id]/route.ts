@@ -1,107 +1,93 @@
-import { db } from "@/lib/core/db";
 import { getApiContext, apiResponse, apiError } from "@/lib/api/utils";
+import { TenantClient } from "@/modules/tenant";
+import { BillingClient } from "@/modules/billing";
+import { IdentityClient } from "@/modules/auth";
 
+/**
+ * DELETE /api/admin/sites/[id]
+ * Menghapus site beserta semua data yang terhubung (admin only).
+ */
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
-        const { session: _session, error, status } = await getApiContext(["admin"]);
+        const { error, status } = await getApiContext(["admin"]);
         if (error) return apiError(error, status);
 
         const { id } = await params;
         if (!id) return apiError("Site ID required", 400);
 
-        const site = await db.site.findUnique({ where: { id } });
-        if (!site) return apiError("Site not found", 404);
-
-        if (site.subdomain === "admin") {
-            return apiError("Cannot delete the platform admin site", 400);
+        try {
+            await TenantClient.deleteSite(id);
+            return apiResponse({ success: true, message: "Site deleted successfully" });
+        } catch (serviceError: any) {
+            const msg = serviceError?.message || "";
+            if (msg === "SITE_NOT_FOUND") return apiError("Site not found", 404);
+            if (msg === "CANNOT_DELETE_ADMIN") return apiError("Cannot delete the platform admin site", 400);
+            throw serviceError;
         }
-
-        // Delete all OrderItems belonging to the site's orders first to satisfy foreign key RESTRICT constraints
-        await db.orderItem.deleteMany({
-            where: {
-                order: {
-                    siteId: id
-                }
-            }
-        });
-
-        await db.site.delete({ where: { id } });
-
-        return apiResponse({ success: true, message: "Site deleted successfully" });
     } catch (e) {
         console.error("Delete Site Error:", e);
         return apiError("Failed to delete site");
     }
 }
 
+/**
+ * PATCH /api/admin/sites/[id]
+ * Menjalankan aksi manajemen pada site:
+ * - set_free: Downgrade ke paket Free
+ * - extend_trial: Perpanjang masa trial 7 hari
+ */
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
-        const { session: _session, error, status } = await getApiContext(["admin"]);
+        const { error, status } = await getApiContext(["admin"]);
         if (error) return apiError(error, status);
 
         const { id } = await params;
         const body = await req.json();
         const { action } = body;
 
-        const site = await db.site.findUnique({ 
-            where: { id }
-        });
-        if (!site) return apiError("Site not found", 404);
+        // Ambil detail site untuk validasi dan email
+        let site;
+        try {
+            site = await TenantClient.getSiteDetail(id);
+        } catch (serviceError: any) {
+            if (serviceError?.message === "SITE_NOT_FOUND") return apiError("Site not found", 404);
+            throw serviceError;
+        }
 
         if (action === "set_free") {
-            const freePlan = await db.plan.findFirst({ where: { name: { contains: "Free", mode: "insensitive" } } });
-            if (!freePlan) return apiError("Free plan not found in database", 404);
-
-            // Deactivate all previous active subscriptions
-            await db.subscription.updateMany({
-                where: { siteId: id, status: "active" },
-                data: { status: "cancelled" }
-            });
-
-            await db.subscription.create({
-                data: {
-                    siteId: id,
-                    planId: freePlan.id,
-                    status: "active",
-                    trialEndsAt: null, // Free plan has no trial
+            try {
+                await BillingClient.setSiteToFreePlan(id);
+            } catch (serviceError: any) {
+                if (serviceError?.message === "FREE_PLAN_NOT_FOUND") {
+                    return apiError("Free plan not found in database", 404);
                 }
-            });
+                throw serviceError;
+            }
 
-            // Invalidate cache
             const { revalidateTag } = await import("next/cache");
-            revalidateTag(`site-${id}`, "default");
+            revalidateTag(`site-${id}`, "default" as any);
 
             return apiResponse({ success: true, message: "Site set to Free plan" });
         }
 
         if (action === "extend_trial") {
-            const sub = await db.subscription.findFirst({
-                where: { siteId: id },
-                orderBy: { createdAt: "desc" }
-            });
-            if (!sub) return apiError("No subscription found", 404);
-            if (sub.trialExtended) return apiError("Trial already extended", 400);
-            if (!sub.trialEndsAt) return apiError("This is not a trial subscription", 400);
+            let newEndDate: Date;
+            try {
+                const result = await BillingClient.extendSiteTrial(id, 7);
+                newEndDate = result.newEndDate;
+            } catch (serviceError: any) {
+                const msg = serviceError?.message || "";
+                if (msg === "NO_SUBSCRIPTION") return apiError("No subscription found", 404);
+                if (msg === "TRIAL_ALREADY_EXTENDED") return apiError("Trial already extended", 400);
+                if (msg === "NOT_A_TRIAL") return apiError("This is not a trial subscription", 400);
+                throw serviceError;
+            }
 
-            const newEndDate = new Date(sub.trialEndsAt);
-            newEndDate.setDate(newEndDate.getDate() + 7);
-
-            await db.subscription.update({
-                where: { id: sub.id },
-                data: {
-                    trialEndsAt: newEndDate,
-                    trialExtended: true
-                }
-            });
-
-            // Invalidate cache
             const { revalidateTag } = await import("next/cache");
-            revalidateTag(`site-${id}`, "default");
+            revalidateTag(`site-${id}`, "default" as any);
 
-            // Send email notification in background
-            const { IdentityClient } = await import("@/modules/auth");
+            // Kirim email notifikasi ke pemilik site (fire and forget)
             const siteOwner = await IdentityClient.getSiteOwner(id);
-
             if (siteOwner && siteOwner.email) {
                 const { sendTrialExtendedEmail } = await import("@/lib/services/email");
                 const formattedEndDate = newEndDate.toLocaleDateString("id-ID", {

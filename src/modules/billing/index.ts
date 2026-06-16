@@ -26,7 +26,15 @@ import {
     updateCoupon,
     deleteCoupon,
     processWithdrawalStatus,
-    checkUserSitesLimit
+    checkUserSitesLimit,
+    getSiteSettingsBillingContext,
+    setSiteToFreePlan,
+    extendSiteTrial,
+    upsertPlans,
+    updatePlatformSettings,
+    updateAdminPaymentMethods,
+    getAdminSite,
+    updateAdminSiteBranding
 } from "./actions";
 
 export type LimitType = "maxPosts" | "maxProducts" | "maxOrders" | "maxTestimonials" | "maxAssets";
@@ -86,7 +94,15 @@ export const BillingClient = {
     updateCoupon,
     deleteCoupon,
     processWithdrawalStatus,
-    checkUserSitesLimit
+    checkUserSitesLimit,
+    getSiteSettingsBillingContext,
+    setSiteToFreePlan,
+    extendSiteTrial,
+    upsertPlans,
+    updatePlatformSettings,
+    updateAdminPaymentMethods,
+    getAdminSite,
+    updateAdminSiteBranding
 };
 
 

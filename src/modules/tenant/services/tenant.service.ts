@@ -9,6 +9,13 @@ export async function getSiteInfo(siteId: string): Promise<SiteInfo | null> {
 }
 
 /**
+ * Mendapatkan informasi domain custom situs.
+ */
+export async function getSiteDomainInfo(siteId: string) {
+    return tenantRepo.getSiteDomainInfo(siteId);
+}
+
+/**
  * Mendapatkan detail kontak situs.
  */
 export async function getSiteContact(siteId: string): Promise<SiteContactInfo | null> {
