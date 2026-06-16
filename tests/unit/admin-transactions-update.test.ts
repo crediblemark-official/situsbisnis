@@ -38,7 +38,31 @@ vi.mock('@/lib/core/db', () => ({
     site: {
       findUnique: vi.fn(),
     },
+    eventOutbox: {
+      create: vi.fn(({ data }) => Promise.resolve({
+        id: 'outbox-1',
+        eventName: data.eventName,
+        payload: data.payload,
+        sourceModule: data.sourceModule,
+        status: data.status || 'pending'
+      })),
+      update: vi.fn(),
+    },
   },
+}));
+
+vi.mock('@/modules/shared/core/event-bus', () => ({
+  eventBus: {
+    publish: vi.fn(async (channel, data) => {
+      if (channel === 'affiliate.commission.awarded') {
+        const { awardAffiliateCommissionInternal } = await import('@/modules/auth/controllers/auth.controller');
+        await awardAffiliateCommissionInternal(db, data);
+      }
+    }),
+    subscribe: vi.fn(),
+    init: vi.fn(),
+    disconnect: vi.fn(),
+  }
 }));
 
 vi.mock('next-auth', () => ({

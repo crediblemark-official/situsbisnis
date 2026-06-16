@@ -6,11 +6,14 @@ import * as couponRepo from "../repositories/coupon.repository";
 import { TenantClient } from "@/modules/tenant";
 import { IdentityClient } from "@/modules/auth";
 import { sendWhatsAppNotification } from "@/lib/services/whatsapp";
+import { eventBus } from "@/modules/shared/core/event-bus";
 
 /**
  * Memproses transaksi yang disetujui (aktivasi paket/addon slots).
  */
 export async function processApprovedTransaction(transactionId: string) {
+    let outboxEvent: any = null;
+
     const updatedTx = await db.$transaction(async (tx) => {
         const currentTx = await transactionRepo.findTransactionById(tx, transactionId);
         if (!currentTx) {
@@ -51,11 +54,18 @@ export async function processApprovedTransaction(transactionId: string) {
                 
                 const commissionAmount = Number(updated.amount) * (ratePercentage / 100);
                 
-                await IdentityClient.awardAffiliateCommission(tx, {
-                    userId: siteOwner.referredById,
-                    amount: commissionAmount,
-                    transactionId: updated.id,
-                    description: `Komisi pembayaran dari situs ${siteInfo?.name || "website"}`
+                outboxEvent = await tx.eventOutbox.create({
+                    data: {
+                        eventName: "affiliate.commission.awarded",
+                        payload: {
+                            transactionId: updated.id,
+                            userId: siteOwner.referredById,
+                            amount: commissionAmount,
+                            description: `Komisi pembayaran dari situs ${siteInfo?.name || "website"}`
+                        },
+                        sourceModule: "billing",
+                        status: "pending"
+                    }
                 });
             }
         }
@@ -102,6 +112,28 @@ export async function processApprovedTransaction(transactionId: string) {
         maxWait: 15000,
         timeout: 45000,
     });
+
+    if (outboxEvent) {
+        try {
+            await eventBus.publish(outboxEvent.eventName, outboxEvent.payload, outboxEvent.sourceModule);
+            await db.eventOutbox.update({
+                where: { id: outboxEvent.id },
+                data: {
+                    status: "published",
+                    publishedAt: new Date()
+                }
+            });
+        } catch (publishError: any) {
+            console.error(`[Outbox Error] Gagal mempublikasikan outbox ${outboxEvent.id}:`, publishError);
+            await db.eventOutbox.update({
+                where: { id: outboxEvent.id },
+                data: {
+                    status: "failed",
+                    error: publishError.message || String(publishError)
+                }
+            });
+        }
+    }
 
     if (updatedTx && updatedTx.status === "approved") {
         try {

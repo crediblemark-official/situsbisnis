@@ -658,3 +658,23 @@ enum WithdrawalStatus {
   approved
   rejected
 }
+
+model EventOutbox {
+  id           String      @id @default(cuid())
+  eventName    String
+  payload      Json
+  sourceModule String
+  status       EventStatus @default(pending)
+  createdAt    DateTime    @default(now())
+  publishedAt  DateTime?
+  retryCount   Int         @default(0)
+  error        String?
+
+  @@index([status])
+}
+
+enum EventStatus {
+  pending
+  published
+  failed
+}
