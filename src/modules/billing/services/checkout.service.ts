@@ -1,200 +1,8 @@
 import { db } from "@/modules/shared/core/db";
-import { unstable_cache } from "next/cache";
 import * as billingRepo from "../repositories/billing.repository";
-import { ContentClient } from "@/lib/modules/content/client";
-import { CatalogClient } from "@/lib/modules/catalog/client";
-import { OrderClient } from "@/lib/modules/order/client";
-import { sendWhatsAppNotification } from "@/lib/services/whatsapp";
 import { TenantClient } from "@/lib/modules/tenant/client";
 import { IdentityClient } from "@/lib/modules/identity/client";
-import { LimitType, LimitCheckResult, PricingPlanDTO } from "../index";
-
-const LIMIT_CONFIG: Record<LimitType, {
-    field: string;
-    label: string;
-    dependency?: string;
-    countFn: (siteId: string) => Promise<number>;
-}> = {
-    maxPosts: {
-        field: "maxPosts",
-        label: "posts",
-        dependency: "hasBlog",
-        countFn: (siteId) => ContentClient.countPosts(siteId)
-    },
-    maxProducts: {
-        field: "maxProducts",
-        label: "products",
-        dependency: "hasProducts",
-        countFn: (siteId) => CatalogClient.countProducts(siteId)
-    },
-    maxOrders: {
-        field: "maxOrders",
-        label: "orders",
-        dependency: "hasOrders",
-        countFn: (siteId) => OrderClient.countOrders(siteId)
-    },
-    maxTestimonials: {
-        field: "maxTestimonials",
-        label: "testimonials",
-        dependency: "hasTestimonials",
-        countFn: (siteId) => ContentClient.countTestimonials(siteId)
-    },
-    maxAssets: {
-        field: "maxAssets",
-        label: "MB storage",
-        dependency: "hasGallery", 
-        countFn: async (siteId) => {
-            const bytes = await ContentClient.getMediaSize(siteId);
-            return bytes / (1024 * 1024);
-        }
-    }
-};
-
-/**
- * Mengambil paket harga untuk ditampilkan ke landing page dengan caching.
- */
-export async function getPricingPlans(): Promise<PricingPlanDTO[]> {
-    return unstable_cache(
-        async () => {
-            try {
-                const dbPlans = await billingRepo.findPricingPlans();
-                const mainDomain = process.env.NEXT_PUBLIC_APP_URL || "SitusBisnis.com";
-                const cleanDomain = mainDomain.replace(/^https?:\/\//, "").replace(/\/$/, "");
-
-                const formatPrice = (price: any) => {
-                    return new Intl.NumberFormat('id-ID').format(Number(price));
-                };
-
-                return dbPlans.map((plan: any) => {
-                    const coreFeatures: string[] = [];
-                    const limits: { label: string; value: string }[] = [];
-                    const planFeatures = plan.features as any || {};
-
-                    if (plan.maxSites === 1) limits.push({ label: "Jumlah Website", value: "1 Website" });
-                    else if (plan.maxSites === -1) limits.push({ label: "Jumlah Website", value: "Sepuasnya" });
-                    else limits.push({ label: "Jumlah Website", value: `${plan.maxSites} Website` });
-
-                    if (planFeatures.hasCustomDomain) coreFeatures.push("Bisa Pakai Domain Sendiri (.com/.id)");
-                    else coreFeatures.push(`Alamat Web Bawaan (.${cleanDomain})`);
-
-                    const quotaMapping = [
-                        { key: "maxProducts", label: "Maksimal Produk", featureKey: "hasProducts" },
-                        { key: "maxPosts", label: "Maksimal Artikel/Blog", featureKey: "hasBlog" },
-                        { key: "maxAssets", label: "Maksimal Upload Foto", featureKey: "hasGallery" },
-                        { key: "maxOrders", label: "Maksimal Transaksi", featureKey: "hasOrders" },
-                        { key: "maxTestimonials", label: "Maksimal Testimoni", featureKey: "hasTestimonials" },
-                    ];
-
-                    quotaMapping.forEach(q => {
-                        if (planFeatures[q.featureKey]) {
-                            const val = plan[q.key];
-                            limits.push({
-                                label: q.label,
-                                value: val === -1 ? "Sepuasnya" : `${val} Item`
-                            });
-                        }
-                    });
-
-                    if (planFeatures.hasCart) coreFeatures.push("Fitur Toko Online (Keranjang)");
-                    if (planFeatures.hasPortfolio) coreFeatures.push("Galeri & Portofolio Karya");
-                    if (planFeatures.hasInbox) coreFeatures.push("Kotak Pesan Masuk (Inbox)");
-                    if (planFeatures.hasTaxonomies) coreFeatures.push("Bebas Buat Kategori/Label");
-
-                    let color = "blue";
-                    if (plan.price > 0) color = "emerald";
-                    if (plan.price > 100000) color = "indigo";
-
-                    return {
-                        id: plan.id,
-                        name: plan.name,
-                        description: plan.description,
-                        price: Number(plan.price),
-                        priceYearly: plan.priceYearly ? Number(plan.priceYearly) : null,
-                        originalPrice: plan.originalPrice ? Number(plan.originalPrice) : 0,
-                        originalPriceYearly: plan.originalPriceYearly ? Number(plan.originalPriceYearly) : 0,
-                        interval: plan.interval,
-                        trialDays: plan.trialDays || 0,
-                        color,
-                        displayPrice: formatPrice(plan.price),
-                        displayPriceYearly: plan.priceYearly ? formatPrice(plan.priceYearly) : null,
-                        displayOriginalPrice: plan.originalPrice ? formatPrice(plan.originalPrice) : null,
-                        displayOriginalPriceYearly: plan.originalPriceYearly ? formatPrice(plan.originalPriceYearly) : null,
-                        coreFeatures,
-                        limits,
-                        addonPrice: planFeatures.addonSitePrice ? formatPrice(planFeatures.addonSitePrice) : null,
-                        addonBilling: plan.addonSiteBilling === 'recurring' ? '/bulan' : ' (Sekali bayar)'
-                    };
-                });
-            } catch (e) {
-                console.error("[getPricingPlans] Failed to fetch landing page plans:", e);
-                return [];
-            }
-        },
-        ["pricing-plans-cache"],
-        { revalidate: 3600, tags: ["pricing-plans"] }
-    )();
-}
-
-/**
- * Mengambil nama paket aktif untuk daftar ID situs.
- */
-export async function getActivePlanNamesForSites(siteIds: string[]): Promise<Record<string, string>> {
-    if (siteIds.length === 0) return {};
-    try {
-        const subscriptions = await billingRepo.findActivePlanNamesForSites(siteIds);
-        const resultMap: Record<string, string> = {};
-        subscriptions.forEach(sub => {
-            resultMap[sub.siteId] = sub.plan.name;
-        });
-        return resultMap;
-    } catch (error) {
-        console.error("[getActivePlanNamesForSites] Failed:", error);
-        return {};
-    }
-}
-
-/**
- * Memverifikasi apakah suatu situs melampaui limitasi paket langganannya.
- */
-export async function checkSiteLimit(siteId: string, type: LimitType): Promise<LimitCheckResult> {
-    const subscription = await billingRepo.findActiveSubscription(siteId);
-
-    if (!subscription || !subscription.plan) {
-        return {
-            allowed: false,
-            message: "No active subscription found. Please select a plan in the billing dashboard."
-        };
-    }
-
-    const plan = subscription.plan;
-    const config = LIMIT_CONFIG[type];
-
-    if (config.dependency) {
-        const features = (plan.features as any) || {};
-        const isEnabled = features[config.dependency] === true;
-        if (!isEnabled) {
-            return {
-                allowed: false,
-                message: `Feature Disabled: The ${config.label} module is not included in your current plan. Please upgrade to unlock this feature.`
-            };
-        }
-    }
-
-    const limit = (plan as any)[config.field] ?? -1;
-    if (limit === -1) {
-        return { allowed: true };
-    }
-
-    const count = await config.countFn(siteId);
-    if (count >= limit) {
-        return {
-            allowed: false,
-            message: `Resource Limit Exceeded: Your ${plan.name} plan is capped at ${limit} ${config.label}. Upgrade your plan in the billing tab to unlock more.`
-        };
-    }
-
-    return { allowed: true };
-}
+import { sendWhatsAppNotification } from "@/lib/services/whatsapp";
 
 /**
  * Memproses transaksi yang disetujui (aktivasi paket/addon slots).
@@ -375,66 +183,6 @@ export async function updateTransactionStatus(transactionId: string, status: str
 }
 
 /**
- * Memvalidasi kupon diskon dan menghitung harga akhirnya.
- */
-export async function validateCoupon(code: string, planId?: string) {
-    if (!code) {
-        throw new Error("Kode kupon wajib diisi.");
-    }
-
-    const formattedCode = code.trim().toUpperCase();
-    const coupon = await billingRepo.findCouponByCode(formattedCode);
-
-    if (!coupon) {
-        throw new Error("Kupon tidak ditemukan.");
-    }
-
-    if (!coupon.isActive) {
-        throw new Error("Kupon sudah tidak aktif.");
-    }
-
-    const now = new Date();
-    if (coupon.expiryDate && new Date(coupon.expiryDate) < now) {
-        throw new Error("Kupon sudah kedaluwarsa.");
-    }
-
-    if (coupon.maxUses !== null && coupon.usedCount >= coupon.maxUses) {
-        throw new Error("Batas pemakaian kupon telah tercapai.");
-    }
-
-    let planPrice = 0;
-    if (planId) {
-        const plan = await billingRepo.findPlanById(planId);
-        if (plan) {
-            planPrice = Number(plan.price);
-        }
-    }
-
-    let discountAmount = 0;
-    if (coupon.discountType === "percentage") {
-        discountAmount = planPrice * (Number(coupon.discountValue) / 100);
-    } else {
-        discountAmount = Number(coupon.discountValue);
-    }
-
-    const finalPrice = Math.max(0, planPrice - discountAmount);
-
-    return {
-        valid: true,
-        coupon: {
-            id: coupon.id,
-            code: coupon.code,
-            discountType: coupon.discountType,
-            discountValue: Number(coupon.discountValue),
-            affiliateId: coupon.affiliateId
-        },
-        originalPrice: planPrice,
-        discountAmount,
-        finalPrice
-    };
-}
-
-/**
  * Membeli slot situs tambahan untuk tenant.
  */
 export async function buySlot(
@@ -457,10 +205,7 @@ export async function buySlot(
         throw new Error("Forbidden");
     }
 
-    const subscription = await db.subscription.findFirst({
-        where: { siteId, status: "active" },
-        include: { plan: true }
-    });
+    const subscription = await billingRepo.findActiveSubscription(siteId);
 
     if (!subscription || !subscription.plan) {
         throw new Error("Active subscription not found");
@@ -775,78 +520,6 @@ export async function confirmManualPayment(
 }
 
 /**
- * Memperpanjang masa uji coba (trial) gratis selama 7 hari.
- */
-export async function extendTrial(userId: string, userRole: string, siteId: string) {
-    if (!siteId) throw new Error("Site ID required");
-
-    const site = await billingRepo.findSiteById(siteId);
-    if (!site) {
-        throw new Error("Site not found");
-    }
-
-    const isAdmin = userRole === "admin";
-    if (!isAdmin) {
-        const hasAccess = await TenantClient.verifyUserSiteAccess(userId, siteId);
-        if (!hasAccess) {
-            throw new Error("Forbidden");
-        }
-    }
-
-    const sub = await db.subscription.findFirst({
-        where: { siteId },
-        orderBy: { createdAt: "desc" }
-    });
-
-    if (!sub) throw new Error("No subscription found");
-    if (sub.trialExtended) throw new Error("Trial already extended");
-    if (!sub.trialEndsAt) throw new Error("This is not a trial subscription");
-
-    const newEndDate = new Date(sub.trialEndsAt);
-    newEndDate.setDate(newEndDate.getDate() + 7);
-
-    await billingRepo.updateSubscriptionTrial(sub.id, {
-        trialEndsAt: newEndDate,
-        trialExtended: true
-    });
-
-    try {
-        const { revalidateTag } = await import("next/cache");
-        revalidateTag(`site-${siteId}`, "default");
-    } catch (e) {
-        console.error("Failed to revalidate subscription cache:", e);
-    }
-
-    (async () => {
-        try {
-            const siteOwner = await IdentityClient.getSiteOwner(siteId);
-            if (siteOwner && siteOwner.email) {
-                const { sendTrialExtendedEmail } = await import("@/lib/services/email");
-                const formattedEndDate = newEndDate.toLocaleDateString("id-ID", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric"
-                });
-                await sendTrialExtendedEmail({
-                    toEmail: siteOwner.email,
-                    userName: siteOwner.name || "Pengguna",
-                    siteName: site?.name || "Website Anda",
-                    days: 7,
-                    newEndDate: formattedEndDate
-                });
-            }
-        } catch (err) {
-            console.error("[EXTEND_TRIAL_EMAIL_ERROR] Failed to send email:", err);
-        }
-    })();
-
-    return {
-        success: true,
-        message: "Trial extended successfully by 7 days."
-    };
-}
-
-/**
  * Mengambil daftar metode pembayaran yang tersedia dari gateway.
  */
 export async function getPaymentMethods(amount: number) {
@@ -960,15 +633,12 @@ export async function upgradePlan(
         }
     }
 
-    let transaction = await db.paymentTransaction.create({
-        data: {
-            siteId,
-            planId,
-            amount: totalAmount,
-            status: "pending",
-            couponId: appliedCoupon ? appliedCoupon.id : null,
-            paymentMethod: paymentMethod,
-        }
+    let transaction = await billingRepo.createUpgradeTransaction({
+        siteId,
+        planId,
+        amount: totalAmount,
+        couponId: appliedCoupon ? appliedCoupon.id : null,
+        paymentMethod: paymentMethod
     });
 
     try {
@@ -1017,7 +687,7 @@ export async function upgradePlan(
  * Memproses callback webhook dari Duitku.
  */
 export async function processDuitkuWebhook(body: Record<string, any>) {
-    const { merchantCode, amount, merchantOrderId, signature, resultCode } = body;
+    const { merchantCode, amount, merchantOrderId, signature } = body;
 
     if (!merchantCode || !amount || !merchantOrderId || !signature) {
         throw new Error("Missing parameters");
@@ -1048,3 +718,41 @@ export async function processDuitkuWebhook(body: Record<string, any>) {
     return { success: true };
 }
 
+/**
+ * Mengirim notifikasi follow-up melalui WhatsApp (admin).
+ */
+export async function followupWhatsApp(phone: string, message: string) {
+    if (!phone || !message) {
+        throw new Error("Phone and message are required");
+    }
+    const result = await sendWhatsAppNotification(phone, message);
+    if (!result.success) {
+        throw new Error(result.error || "Failed to send WhatsApp follow-up");
+    }
+    return { success: true, message: "WhatsApp follow-up sent successfully", result: result.result };
+}
+
+/**
+ * Mengirim notifikasi follow-up melalui Email (admin).
+ */
+export async function followupEmail(email: string, message: string, siteId: string) {
+    if (!email || !message) {
+        throw new Error("Email and message are required");
+    }
+    const siteOwner = siteId ? await IdentityClient.getSiteOwner(siteId) : null;
+    const userName = siteOwner?.name || "Pengguna";
+
+    const { sendFollowupEmail } = await import("@/lib/services/email");
+    const result = await sendFollowupEmail({
+        toEmail: email,
+        userName,
+        subject: `Pesan Penting Terkait Layanan Website Anda di SitusBisnis`,
+        message
+    });
+
+    if (!result.success) {
+        throw new Error(result.error || "Failed to send email follow-up");
+    }
+
+    return { success: true, message: "Email follow-up sent successfully", result: result.id };
+}

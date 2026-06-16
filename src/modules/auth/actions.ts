@@ -61,6 +61,14 @@ export async function updateUserReferrerInternal(userId: string, referredById: s
 }
 
 /**
+ * Memeriksa keberadaan kode referral.
+ */
+export async function checkReferralCodeInternal(code: string): Promise<{ exists: boolean; name?: string | null }> {
+    return authService.checkReferralCode(code);
+}
+
+
+/**
  * Registrasi user baru (SaaS onboarding).
  */
 export async function registerUserInternal(body: any, referralCodeFromCookie?: string) {

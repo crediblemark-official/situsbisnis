@@ -15,7 +15,8 @@ import {
     deleteUserByAdminInternal,
     getUserSitesInternal,
     updateSiteCustomDomainInternal,
-    verifySiteCustomDomainInternal
+    verifySiteCustomDomainInternal,
+    checkReferralCodeInternal
 } from "./actions";
 
 export interface UserDTO {
@@ -58,7 +59,9 @@ export const IdentityClient = {
     deleteUserByAdmin: deleteUserByAdminInternal,
     getUserSites: getUserSitesInternal,
     updateSiteCustomDomain: updateSiteCustomDomainInternal,
-    verifySiteCustomDomain: verifySiteCustomDomainInternal
+    verifySiteCustomDomain: verifySiteCustomDomainInternal,
+    checkReferralCode: checkReferralCodeInternal
 };
+
 
 

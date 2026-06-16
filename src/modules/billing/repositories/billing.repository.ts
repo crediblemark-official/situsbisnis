@@ -128,6 +128,17 @@ export async function findLatestSubscription(tx, siteId: string) {
 }
 
 /**
+ * Mengambil subscription terbaru tanpa mempedulikan status.
+ */
+export async function findLatestSubscriptionAnyStatus(siteId: string) {
+    return db.subscription.findFirst({
+        where: { siteId },
+        orderBy: { createdAt: "desc" }
+    });
+}
+
+
+/**
  * Memperbarui jumlah addon slots pada subscription.
  */
 export async function updateSubscriptionAddonSlots(tx, subId: string, quantity: number) {
@@ -341,4 +352,175 @@ export async function updateSubscriptionTrial(id: string, data: {
         }
     });
 }
+
+/**
+ * Mengambil semua paket (plans) terurut berdasarkan harga.
+ */
+export async function findAllPlans() {
+    return db.plan.findMany({
+        orderBy: { price: 'asc' },
+        select: {
+            id: true,
+            name: true,
+            price: true,
+            priceYearly: true,
+            interval: true,
+            trialDays: true,
+            maxSites: true,
+            maxPosts: true,
+            maxProducts: true,
+            addonSiteBilling: true,
+            features: true
+        }
+    });
+}
+
+/**
+ * Mengambil satu plan berdasarkan nama (case-insensitive).
+ */
+export async function findPlanByName(name: string) {
+    return db.plan.findFirst({
+        where: { name: { equals: name, mode: "insensitive" } }
+    });
+}
+
+/**
+ * Mengambil subscription berdasarkan ID.
+ */
+export async function findSubscriptionById(id: string) {
+    return db.subscription.findUnique({
+        where: { id },
+        include: { plan: true }
+    });
+}
+
+/**
+ * Memperbarui data subscription.
+ */
+export async function updateSubscription(id: string, data: any) {
+    return db.subscription.update({
+        where: { id },
+        data,
+        include: { plan: true }
+    });
+}
+
+/**
+ * Memperbarui status subscription saja tanpa relasi plan.
+ */
+export async function updateSubscriptionStatusOnly(id: string, status: string) {
+    return db.subscription.update({
+        where: { id },
+        data: { status }
+    });
+}
+
+
+/**
+ * Mengambil seluruh data kupon yang terurut berdasarkan tanggal dibuat.
+ */
+export async function findAllCoupons() {
+    return db.coupon.findMany({
+        orderBy: {
+            createdAt: "desc"
+        }
+    });
+}
+
+/**
+ * Membuat kupon baru.
+ */
+export async function createCoupon(data: any) {
+    return db.coupon.create({
+        data
+    });
+}
+
+/**
+ * Mencari kupon berdasarkan ID.
+ */
+export async function findCouponById(id: string) {
+    return db.coupon.findUnique({
+        where: { id }
+    });
+}
+
+/**
+ * Memperbarui kupon.
+ */
+export async function updateCoupon(id: string, data: any) {
+    return db.coupon.update({
+        where: { id },
+        data
+    });
+}
+
+/**
+ * Menghapus kupon.
+ */
+export async function deleteCoupon(id: string) {
+    return db.coupon.delete({
+        where: { id }
+    });
+}
+
+/**
+ * Mencari request penarikan saldo (withdrawal) berdasarkan ID.
+ */
+export async function findWithdrawalById(id: string) {
+    return db.withdrawal.findUnique({
+        where: { id }
+    });
+}
+
+/**
+ * Memperbarui data penarikan saldo (withdrawal).
+ */
+export async function updateWithdrawal(tx, id: string, data: any) {
+    const client = tx || db;
+    return client.withdrawal.update({
+        where: { id },
+        data,
+        include: { user: true }
+    });
+}
+
+/**
+ * Mengembalikan dana (affiliateBalance increment) kepada user.
+ */
+export async function incrementUserBalance(tx, userId: string, amount: number) {
+    const client = tx || db;
+    return client.user.update({
+        where: { id: userId },
+        data: {
+            affiliateBalance: {
+                increment: amount
+            }
+        }
+    });
+}
+
+/**
+ * Membuat transaksi upgrade paket premium.
+ */
+export async function createUpgradeTransaction(data: {
+    siteId: string;
+    planId: string;
+    amount: number;
+    couponId: string | null;
+    paymentMethod: string;
+}) {
+    return db.paymentTransaction.create({
+        data: {
+            siteId: data.siteId,
+            planId: data.planId,
+            amount: data.amount,
+            status: "pending",
+            couponId: data.couponId,
+            paymentMethod: data.paymentMethod
+        }
+    });
+}
+
+
 

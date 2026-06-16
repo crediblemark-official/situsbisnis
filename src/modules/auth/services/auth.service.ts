@@ -126,6 +126,18 @@ export async function updateUserReferrer(userId: string, referredById: string): 
 }
 
 /**
+ * Memeriksa keberadaan kode referral.
+ */
+export async function checkReferralCode(code: string): Promise<{ exists: boolean; name?: string | null }> {
+    const user = await userRepo.findUserByReferralCode(code);
+    if (!user) {
+        return { exists: false };
+    }
+    return { exists: true, name: user.name };
+}
+
+
+/**
  * Registrasi user baru (SaaS onboarding).
  */
 export async function registerUser(body: any, referralCodeFromCookie?: string) {

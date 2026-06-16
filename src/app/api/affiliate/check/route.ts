@@ -1,4 +1,4 @@
-import { db } from "@/lib/core/db";
+import { IdentityClient } from "@/modules/auth";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
@@ -10,18 +10,16 @@ export async function GET(req: Request) {
             return new NextResponse("Code is required", { status: 400 });
         }
 
-        const user = await db.user.findUnique({
-            where: { referralCode: code },
-            select: { name: true }
-        });
+        const result = await IdentityClient.checkReferralCode(code);
 
-        if (!user) {
+        if (!result.exists) {
             return NextResponse.json({ exists: false });
         }
 
-        return NextResponse.json({ exists: true, name: user.name });
+        return NextResponse.json({ exists: true, name: result.name });
     } catch (error) {
         console.error("[AFFILIATE_CHECK]", error);
         return new NextResponse("Internal Error", { status: 500 });
     }
 }
+

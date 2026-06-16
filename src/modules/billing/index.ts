@@ -13,7 +13,19 @@ import {
     extendTrial,
     getPaymentMethods,
     upgradePlan,
-    processDuitkuWebhook
+    processDuitkuWebhook,
+    getAllPlans,
+    getSubscriptionDetail,
+    extendSubscription,
+    cancelSubscription,
+    updateSubscriptionPlan,
+    followupWhatsApp,
+    followupEmail,
+    getAllCoupons,
+    createCoupon,
+    updateCoupon,
+    deleteCoupon,
+    processWithdrawalStatus
 } from "./actions";
 
 export type LimitType = "maxPosts" | "maxProducts" | "maxOrders" | "maxTestimonials" | "maxAssets";
@@ -60,6 +72,19 @@ export const BillingClient = {
     extendTrial,
     getPaymentMethods,
     upgradePlan,
-    processDuitkuWebhook
+    processDuitkuWebhook,
+    getAllPlans,
+    getSubscriptionDetail,
+    extendSubscription,
+    cancelSubscription,
+    updateSubscriptionPlan,
+    followupWhatsApp,
+    followupEmail,
+    getAllCoupons,
+    createCoupon,
+    updateCoupon,
+    deleteCoupon,
+    processWithdrawalStatus
 };
+
 
