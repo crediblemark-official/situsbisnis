@@ -18,10 +18,7 @@ const nextConfig = {
     formats: ['image/avif', 'image/webp'],
     localPatterns: [
       {
-        pathname: '/api/media/**',
-      },
-      {
-        pathname: '/assets/**',
+        pathname: '/**',
       },
     ],
     remotePatterns: [

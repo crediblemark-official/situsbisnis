@@ -41,7 +41,14 @@ export async function GET(req: NextRequest) {
 
     // 0. Security Check
     const settings = await getR2Settings();
-    const allowedDomains = ["file.situsbisnis.com"];
+    const allowedDomains = [
+        "file.situsbisnis.com",
+        "images.unsplash.com",
+        "via.placeholder.com",
+        "placehold.co",
+        "i.pravatar.cc",
+        "ui-avatars.com"
+    ];
     if (settings.publicDomain) {
         const domainOnly = settings.publicDomain.replace(/^https?:\/\//, "").split("/")[0];
         if (domainOnly) {
