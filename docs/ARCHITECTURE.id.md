@@ -36,22 +36,23 @@ Model data inti berpusat pada:
 
 ## Struktur Direktori
 - `/src/app`: Rute halaman dan API (Next.js App Router).
-- `/src/modules`: Folder batas logis (Logical Boundaries) berisi modul-modul domain bisnis:
-  - `auth`: Fitur login, akun, NextAuth
-  - `billing`: Fitur langganan SaaS, transaksi, pembayaran
-  - `catalog`: Fitur produk, kupon, manajemen katalog
-  - `content`: Fitur postingan blog, tiptap editor, media, testimonial
-  - `order`: Fitur pembelian dan pesanan e-commerce
-  - `tenant`: Fitur situs tenant, domain kustom
-  - `shared`: Utilitas, komponen UI, hooks, core engine visual builder yang dipakai bersama.
+- `/src/modules`: Folder batas logis (Logical Boundaries) berisi modul-modul domain bisnis. Setiap modul memiliki folder `ui` sendiri untuk komponen UI spesifik fitur bisnisnya:
+  - `auth`: Fitur login, akun, NextAuth (serta UI manajemen user, kupon, transaksi admin)
+  - `billing`: Fitur langganan SaaS, transaksi, pembayaran (serta UI billing & langganan dashboard)
+  - `catalog`: Fitur produk, kupon, manajemen katalog (serta UI toko, product details & dashboard produk)
+  - `content`: Fitur postingan blog, tiptap editor, media, testimonial (serta UI editor tiptap, blog share, & media dashboard)
+  - `order`: Fitur pembelian dan pesanan e-commerce (serta UI checkout dashboard & subsite)
+  - `tenant`: Fitur situs tenant, domain kustom (serta UI setting, backup & info expired site)
+  - `shared`: Utilitas, hooks, core engine visual builder yang dipakai bersama. Khusus untuk `shared/ui/ui` hanya berisi komponen atomik dasar (Button, Input, Badge, Dialog, dsb).
 - `/prisma`: Skema database ter-decouple (tanpa relasi fisik lintas modul).
 - `/tests`: Script pengujian unit (Vitest) dan end-to-end (Playwright).
 
 ---
 
 ## Arsitektur Berlapis (Layered Architecture)
-Setiap modul di bawah `/src/modules` (selain `shared`) mengadopsi empat lapisan demi pemisahan tanggung jawab yang jelas:
-1. **Facade Layer (`index.ts`)**: Titik masuk resmi modul (misal `CatalogClient`). Hanya memanggil `actions.ts`.
-2. **Action Layer (`actions.ts`)**: Menerima input, memproses otentikasi dasar/konteks sesi Next.js, dan mendelegasikan ke *Service*.
-3. **Service Layer (`services/*.service.ts`)**: Tempat semua logika bisnis divalidasi dan diolah.
+Setiap modul di bawah `/src/modules` (selain `shared`) mengadopsi struktur berlapis demi pemisahan tanggung jawab yang jelas dan modularitas maksimal:
+1. **Facade Layer (`index.ts`)**: Titik masuk resmi kontrak modul untuk modul luar (misal `CatalogClient`). Lapisan ini mengekspos logic service melalui controller/handler internal.
+2. **Action Layer (`actions.ts` jika ada)**: Menerima input, memproses otentikasi dasar/konteks sesi Next.js, dan mendelegasikan ke *Service*.
+3. **Service Layer (`services/*.service.ts`)**: Tempat semua logika bisnis divalidasi dan diolah secara granular.
 4. **Repository Layer (`repositories/*.repository.ts`)**: Satu-satunya bagian dalam modul yang diperbolehkan melakukan pemanggilan langsung ke database (`db`).
+5. **Presentation Layer (`ui/` subfolder)**: Komponen antarmuka pengguna (React/Next.js) yang khusus melayani fitur di dalam modul bersangkutan. Pemisahan UI ini di tingkat folder mencegah terjadinya circular dependencies dan masalah bundling server-side dependency (seperti `ioredis`) ke client-side.

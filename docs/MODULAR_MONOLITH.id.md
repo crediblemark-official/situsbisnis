@@ -78,6 +78,7 @@ Setiap modul domain bisnis (seperti `auth`, `tenant`, `billing`, `order`, `catal
 2. **Action Layer (`actions.ts` / Server Actions)**: Lapisan interaksi pembungkus yang menerima input pengguna, menangani request Next.js, dan memanggil Service.
 3. **Service Layer (`services/*.service.ts`)**: Lapisan logika bisnis utama (validasi aturan bisnis, kalkulasi data, integrasi pihak ketiga).
 4. **Repository Layer (`repositories/*.repository.ts`)**: Lapisan akses data yang berinteraksi langsung dengan database lewat Prisma Client (`db`).
+5. **Presentation Layer (`ui/` subfolder)**: Komponen UI React/Next.js khusus domain bisnis tersebut. Pemisahan antarmuka pengguna secara modular di bawah masing-masing modul (bukan ditumpuk di `shared/ui`) membatasi dampak dependency leak (misalnya, mencegah module server-side terikat ke client bundler).
 
 ---
 
