@@ -1,5 +1,6 @@
 import * as billingRepo from "../repositories/billing.repository";
 import { db } from "@/modules/shared/core/db";
+import { eventBus } from "@/modules/shared/core/event-bus";
 
 /**
  * Memproses perubahan status penarikan saldo (withdrawal) oleh admin (approve/reject).
@@ -33,7 +34,6 @@ export async function processWithdrawalStatus(withdrawalId: string, status: stri
     // Kirim email notifikasi status
     if (result && result.user && result.user.email) {
         try {
-            const { sendWithdrawalStatusEmail } = await import("@/modules/tenant/services/email.service");
             const formattedAmount = new Intl.NumberFormat("id-ID", {
                 style: "currency",
                 currency: "IDR",
@@ -42,13 +42,16 @@ export async function processWithdrawalStatus(withdrawalId: string, status: stri
 
             const bankDetails = `${result.bankName} - ${result.accountNumber} (a/n ${result.accountName})`;
 
-            await sendWithdrawalStatusEmail({
-                toEmail: result.user.email,
-                userName: result.user.name || "Pengguna",
-                amount: formattedAmount,
-                status: result.status as any,
-                bankDetails
-            });
+            await eventBus.publish("notification.email.send", {
+                template: "withdrawalStatus",
+                payload: {
+                    toEmail: result.user.email,
+                    userName: result.user.name || "Pengguna",
+                    amount: formattedAmount,
+                    status: result.status as any,
+                    bankDetails
+                }
+            }, "billing");
         } catch (err) {
             console.error("[WITHDRAWAL_EMAIL_ERROR] Failed to send email:", err);
         }

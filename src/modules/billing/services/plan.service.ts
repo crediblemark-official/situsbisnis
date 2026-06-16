@@ -152,19 +152,21 @@ export async function extendTrial(userId: string, userRole: string, siteId: stri
         try {
             const siteOwner = await eventBus.request<any, any>("request.auth.getSiteOwner", { siteId });
             if (siteOwner && siteOwner.email) {
-                const { sendTrialExtendedEmail } = await import("@/modules/tenant/services/email.service");
                 const formattedEndDate = newEndDate.toLocaleDateString("id-ID", {
                     day: "numeric",
                     month: "long",
                     year: "numeric"
                 });
-                await sendTrialExtendedEmail({
-                    toEmail: siteOwner.email,
-                    userName: siteOwner.name || "Pengguna",
-                    siteName: site?.name || "Website Anda",
-                    days: 7,
-                    newEndDate: formattedEndDate
-                });
+                await eventBus.publish("notification.email.send", {
+                    template: "trialExtended",
+                    payload: {
+                        toEmail: siteOwner.email,
+                        userName: siteOwner.name || "Pengguna",
+                        siteName: site?.name || "Website Anda",
+                        days: 7,
+                        newEndDate: formattedEndDate
+                    }
+                }, "billing");
             }
         } catch (err) {
             console.error("[EXTEND_TRIAL_EMAIL_ERROR] Failed to send email:", err);
@@ -267,13 +269,15 @@ export async function cancelSubscription(subId: string) {
         const site = await billingRepo.findSiteById(sub.siteId);
         const siteOwner = site ? await eventBus.request<any, any>("request.auth.getSiteOwner", { siteId: site.id }) : null;
         if (siteOwner && siteOwner.email) {
-            const { sendSubscriptionCancelledEmail } = await import("@/modules/tenant/services/email.service");
-            await sendSubscriptionCancelledEmail({
-                toEmail: siteOwner.email,
-                userName: siteOwner.name || "Pengguna",
-                siteName: site?.name || "Situs",
-                planName: sub.plan.name
-            });
+            await eventBus.publish("notification.email.send", {
+                template: "subscriptionCancelled",
+                payload: {
+                    toEmail: siteOwner.email,
+                    userName: siteOwner.name || "Pengguna",
+                    siteName: site?.name || "Situs",
+                    planName: sub.plan.name
+                }
+            }, "billing");
         }
     } catch (err) {
         console.error("[CANCEL_EMAIL_ERROR] Failed to send email:", err);

@@ -21,7 +21,7 @@ import {
     Bot,
     Wallet
 } from "lucide-react";
-import { SiteSettings } from "@/modules/tenant/services/site-settings.service";
+import { SiteSettings } from "@/types/site-settings";
 
 interface NavItemConfig {
     href: string;

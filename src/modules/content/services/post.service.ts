@@ -1,5 +1,5 @@
 import * as contentRepo from "../repositories/content.repository";
-import { IdentityClient } from "@/modules/auth";
+import { eventBus } from "@/modules/shared/core/event-bus";
 
 /**
  * Mengambil detail artikel (post) berdasarkan slug di suatu situs.
@@ -10,7 +10,10 @@ export async function getPost(slug: string, siteId: string) {
 
     let authorName = null;
     if (post.authorId) {
-        const author = await IdentityClient.getUserById(post.authorId);
+        const author = await eventBus.request<{ userId: string }, { name: string | null } | null>(
+            "request.auth.getUserById",
+            { userId: post.authorId }
+        );
         authorName = author?.name || null;
     }
 

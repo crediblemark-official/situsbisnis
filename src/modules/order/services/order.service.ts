@@ -1,4 +1,5 @@
 import * as orderRepo from "../repositories/order.repository";
+import { eventBus } from "@/modules/shared/core/event-bus";
 
 /**
  * Menghitung jumlah pesanan di suatu situs.
@@ -46,9 +47,8 @@ export async function getOrderDetail(orderId: string, siteId: string) {
         throw new Error("Order not found");
     }
 
-    const { CatalogClient } = await import("@/modules/catalog");
     const productIds = order.items.map(item => item.productId);
-    const productsMap = await CatalogClient.getProductsMap(productIds);
+    const productsMap = await eventBus.request<any, Record<string, any>>("request.catalog.getProductsMap", { productIds });
 
     const decoratedItems = order.items.map(item => ({
         ...item,

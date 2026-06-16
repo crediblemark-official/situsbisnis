@@ -118,4 +118,57 @@ export async function initTenantListeners() {
       return verifyUserSiteAccess(data.userId, data.siteId);
     }
   );
+
+  // Subscriber untuk notifikasi email dari modul lain
+  await eventBus.subscribe("notification.email.send", async (data: any) => {
+    const { template, payload } = data;
+    try {
+      console.log(`[TenantListener] Memproses kirim email template: ${template}`);
+      const emailService = await import("../services/email.service");
+      
+      switch (template) {
+        case "welcome":
+          await emailService.sendWelcomeEmail(payload.toEmail, payload.userName, payload.siteName);
+          break;
+        case "withdrawalStatus":
+          await emailService.sendWithdrawalStatusEmail({
+            toEmail: payload.toEmail,
+            userName: payload.userName,
+            amount: payload.amount,
+            status: payload.status,
+            bankDetails: payload.bankDetails
+          });
+          break;
+        case "followup":
+          await emailService.sendFollowupEmail({
+            toEmail: payload.toEmail,
+            userName: payload.userName,
+            subject: payload.subject,
+            message: payload.message
+          });
+          break;
+        case "trialExtended":
+          await emailService.sendTrialExtendedEmail({
+            toEmail: payload.toEmail,
+            userName: payload.userName,
+            siteName: payload.siteName,
+            days: payload.days,
+            newEndDate: payload.newEndDate
+          });
+          break;
+        case "subscriptionCancelled":
+          await emailService.sendSubscriptionCancelledEmail({
+            toEmail: payload.toEmail,
+            userName: payload.userName,
+            siteName: payload.siteName,
+            planName: payload.planName
+          });
+          break;
+        default:
+          console.warn(`[TenantListener Warning] Template email tidak dikenal: ${template}`);
+      }
+    } catch (error) {
+      console.error(`[TenantListener Error] Gagal memproses kirim email template ${template}:`, error);
+    }
+  });
 }

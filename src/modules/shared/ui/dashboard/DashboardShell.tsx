@@ -11,7 +11,7 @@ import {
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import StoreSwitcher from "./StoreSwitcher";
-import { SiteSettings } from "@/modules/tenant/services/site-settings.service";
+import { SiteSettings } from "@/types/site-settings";
 import ThemeToggle from "./ThemeToggle";
 import { getNavConfig } from "./nav-config";
 import { ProfileDropdown } from "./ProfileDropdown";

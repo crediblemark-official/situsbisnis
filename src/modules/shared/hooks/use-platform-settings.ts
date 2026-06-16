@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { SiteSettings } from "@/modules/tenant/services/site-settings.service";
+import { SiteSettings } from "@/types/site-settings";
 
 export function usePlatformSettings() {
     const [settings, setSettings] = useState<SiteSettings | null>(null);

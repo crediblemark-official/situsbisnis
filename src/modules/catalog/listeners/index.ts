@@ -31,4 +31,22 @@ export async function initCatalogListeners() {
       return null;
     }
   });
+
+  await eventBus.reply("request.catalog.searchProducts", async (data: { siteId: string; q: string; limit?: number }) => {
+    try {
+      return await catalogService.searchProducts(data.siteId, data.q, data.limit);
+    } catch (e) {
+      console.error(`[CatalogListener] Gagal mencari produk untuk site ${data.siteId}:`, e);
+      return [];
+    }
+  });
+
+  await eventBus.reply("request.catalog.getProductsMap", async (data: { productIds: string[] }) => {
+    try {
+      return await catalogService.getProductsMap(data.productIds);
+    } catch (e) {
+      console.error(`[CatalogListener] Gagal memuat map produk untuk IDs ${data.productIds}:`, e);
+      return {};
+    }
+  });
 }

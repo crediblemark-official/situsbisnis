@@ -37,9 +37,15 @@ export interface PaymentCompletedEvent {
   couponId: string | null;
 }
 
+export interface SendEmailEvent {
+  template: "welcome" | "withdrawalStatus" | "followup" | "trialExtended" | "subscriptionCancelled";
+  payload: any;
+}
+
 // ─── Event Map ──────────────────────────────────────
 export interface EventMap {
   'user.registered': UserRegisteredEvent;
   'affiliate.commission.awarded': AffiliateCommissionAwardedEvent;
   'billing.payment.completed': PaymentCompletedEvent;
+  'notification.email.send': SendEmailEvent;
 }

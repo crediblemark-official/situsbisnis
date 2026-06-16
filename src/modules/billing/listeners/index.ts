@@ -18,4 +18,18 @@ export function initBillingListeners() {
             }
         }
     );
+
+    // Reply listener untuk mengambil subscription aktif
+    eventBus.reply<{ siteId: string }, any>(
+        "request.billing.getActiveSubscription",
+        async (data) => {
+            try {
+                const planService = await import("../services/plan.service");
+                return await planService.getActiveSubscription(data.siteId);
+            } catch (err) {
+                console.error("[BillingListener] Gagal mengambil subscription aktif:", err);
+                return null;
+            }
+        }
+    );
 }

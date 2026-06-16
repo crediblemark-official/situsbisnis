@@ -1,7 +1,7 @@
 import * as contentRepo from "../repositories/content.repository";
 import * as mediaRepo from "../repositories/media.repository";
 import { uploadToR2, deleteFromR2 } from "@/lib/media/r2";
-import { BillingClient } from "@/modules/billing";
+import { eventBus } from "@/modules/shared/core/event-bus";
 import sharp from "sharp";
 import path from "path";
 
@@ -10,16 +10,12 @@ import path from "path";
  */
 export async function getMediaList(siteId: string, folderId: string | null, page: number, limit: number) {
     const skip = (page - 1) * limit;
-    const whereCondition = {
-        siteId,
-        folderId: folderId === "root" ? null : folderId
-    };
 
     const [items, total, totalBytes, subscription] = await Promise.all([
         mediaRepo.findMediaItems(siteId, folderId, limit, skip),
         mediaRepo.countMediaItems(siteId),
         contentRepo.sumMediaSize(siteId),
-        BillingClient.getActiveSubscription(siteId)
+        eventBus.request<{ siteId: string }, any>("request.billing.getActiveSubscription", { siteId })
     ]);
 
     const plan = subscription?.plan as any;
@@ -49,7 +45,10 @@ export async function uploadMedia(siteId: string, file: File, folderId: string |
     if (!file) throw new Error("FILE_REQUIRED");
 
     // 1. Check Max Assets Limit
-    const limitCheck = await BillingClient.checkSiteLimit(siteId, "maxAssets");
+    const limitCheck = await eventBus.request<{ siteId: string; limitType: string }, { allowed: boolean; message?: string }>(
+        "request.billing.checkLimit",
+        { siteId, limitType: "maxAssets" }
+    );
     if (!limitCheck.allowed) {
         throw new Error(limitCheck.message || "QUOTA_FULL");
     }

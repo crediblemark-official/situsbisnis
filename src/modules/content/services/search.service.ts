@@ -1,5 +1,5 @@
 import * as contentRepo from "../repositories/content.repository";
-import { CatalogClient } from "@/modules/catalog";
+import { eventBus } from "@/modules/shared/core/event-bus";
 
 export interface SearchResultItem {
     id: string;
@@ -19,7 +19,7 @@ export async function searchAll(siteId: string, q: string): Promise<SearchResult
     const [posts, pages, products] = await Promise.all([
         contentRepo.searchPosts(siteId, q),
         contentRepo.searchPages(siteId, q),
-        CatalogClient.searchProducts(siteId, q)
+        eventBus.request<{ siteId: string; q: string }, any[]>("request.catalog.searchProducts", { siteId, q })
     ]);
 
     return [

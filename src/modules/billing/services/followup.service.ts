@@ -25,17 +25,15 @@ export async function followupEmail(email: string, message: string, siteId: stri
     const siteOwner = siteId ? await eventBus.request<any, any>("request.auth.getSiteOwner", { siteId }) : null;
     const userName = siteOwner?.name || "Pengguna";
 
-    const { sendFollowupEmail } = await import("@/modules/tenant/services/email.service");
-    const result = await sendFollowupEmail({
-        toEmail: email,
-        userName,
-        subject: `Pesan Penting Terkait Layanan Website Anda di SitusBisnis`,
-        message
-    });
+    await eventBus.publish("notification.email.send", {
+        template: "followup",
+        payload: {
+            toEmail: email,
+            userName,
+            subject: `Pesan Penting Terkait Layanan Website Anda di SitusBisnis`,
+            message
+        }
+    }, "billing");
 
-    if (!result.success) {
-        throw new Error(result.error || "Failed to send email follow-up");
-    }
-
-    return { success: true, message: "Email follow-up sent successfully", result: result.id };
+    return { success: true, message: "Email follow-up queued successfully" };
 }

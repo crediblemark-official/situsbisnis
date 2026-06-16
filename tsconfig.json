@@ -13,6 +13,7 @@
       "@/modules/*": ["./src/modules/*"],
       "@/components/ui/FormRichText": ["./src/modules/content/ui/editor/FormRichText"],
       "@/components/ui/FormMediaPicker": ["./src/modules/content/ui/credbuild/FormMediaPicker"],
+      "@/components/ui/GallerySection": ["./src/modules/content/ui/GallerySection"],
       "@/components/shop/*": ["./src/modules/catalog/ui/shop/*"],
       "@/components/credbuild/*": ["./src/modules/content/ui/credbuild/*"],
       "@/components/editor/*": ["./src/modules/content/ui/editor/*"],

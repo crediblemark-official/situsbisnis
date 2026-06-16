@@ -89,10 +89,14 @@ export async function registerUser(body: any, referralCodeFromCookie?: string) {
     });
 
     if (user.email) {
-        const { sendWelcomeEmail } = await import("@/modules/tenant/services/email.service");
-        sendWelcomeEmail(user.email, user.name || "Pengguna", "SitusBisnis").catch(err => {
-            console.error("[WELCOME_EMAIL_ERROR] Failed to send welcome email:", err);
-        });
+        eventBus.publish("notification.email.send", {
+            template: "welcome",
+            payload: {
+                toEmail: user.email,
+                userName: user.name || "Pengguna",
+                siteName: "SitusBisnis"
+            }
+        }, "auth");
     }
 
     return {

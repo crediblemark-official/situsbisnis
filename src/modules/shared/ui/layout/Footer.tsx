@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { LazyLink as Link } from "@/components/ui/LazyLink";
 import Image from "next/image";
 import { Eye, Share2, Facebook, Instagram, Twitter, Linkedin, MessageCircle, Send, Youtube, Music } from "lucide-react";
-import { SiteSettings } from "@/modules/tenant/services/site-settings.service";
+import { SiteSettings } from "@/types/site-settings";
 
 
 interface FooterProps {
