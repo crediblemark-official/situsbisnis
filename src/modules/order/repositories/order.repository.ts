@@ -10,6 +10,23 @@ export async function countOrders(siteId: string): Promise<number> {
 }
 
 /**
+ * Mengambil pesanan terbaru untuk suatu situs.
+ */
+export async function findRecentOrders(siteId: string, limit: number) {
+    return db.order.findMany({
+        where: { siteId },
+        orderBy: { createdAt: 'desc' },
+        take: limit,
+        select: {
+            id: true,
+            customerName: true,
+            total: true,
+            createdAt: true,
+        }
+    });
+}
+
+/**
  * Mencari pesanan berdasarkan ID beserta item dan situsnya.
  */
 export async function findOrderById(orderId: string) {
@@ -176,5 +193,35 @@ export async function updateOrderFulfillment(id: string, data: { paymentStatus?:
         where: { id },
         data
     });
+}
+
+/**
+ * Mencari pesanan dengan filter, sorting, pagination, dan seleksi kolom spesifik.
+ */
+export async function findOrders(where: any, skip: number, take: number) {
+    return db.order.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take,
+        select: {
+            id: true,
+            customerName: true,
+            customerEmail: true,
+            total: true,
+            status: true,
+            paymentStatus: true,
+            createdAt: true,
+            siteId: true,
+            paymentMethod: true,
+        }
+    });
+}
+
+/**
+ * Menghitung total pesanan dengan filter tertentu.
+ */
+export async function countOrdersWithFilter(where: any) {
+    return db.order.count({ where });
 }
 

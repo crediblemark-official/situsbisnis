@@ -11,6 +11,7 @@ import {
     getSiteDetailInternal,
     createContactSubmissionInternal,
     getContactSubmissionsInternal,
+    countContactSubmissionsInternal,
     savePaymentSettingsInternal,
     getSiteDomainInfoInternal,
     getOrIncrementViewsInternal,
@@ -64,6 +65,7 @@ export const TenantClient = {
     // Contact form
     createContactSubmission: createContactSubmissionInternal,
     getContactSubmissions: getContactSubmissionsInternal,
+    countContactSubmissions: countContactSubmissionsInternal,
 
     // Payment settings
     savePaymentSettings: savePaymentSettingsInternal,

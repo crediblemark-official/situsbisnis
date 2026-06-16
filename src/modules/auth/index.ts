@@ -16,7 +16,8 @@ import {
     getUserSitesInternal,
     updateSiteCustomDomainInternal,
     verifySiteCustomDomainInternal,
-    checkReferralCodeInternal
+    checkReferralCodeInternal,
+    getAdminUsersContextInternal
 } from "./controllers/auth.controller";
 
 export interface UserDTO {
@@ -54,6 +55,7 @@ export const IdentityClient = {
     verifyBridgeToken: verifyBridgeTokenInternal,
     updateUserProfile: updateUserProfileInternal,
     getUsers: getUsersInternal,
+    getAdminUsersContext: getAdminUsersContextInternal,
     createUserByAdmin: createUserByAdminInternal,
     updateUserByAdmin: updateUserByAdminInternal,
     deleteUserByAdmin: deleteUserByAdminInternal,

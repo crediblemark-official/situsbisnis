@@ -1,56 +1,12 @@
 import React from "react";
-import { db } from "@/lib/core/db";
 import SettingsForm from "./SettingsForm";
+import { BillingClient } from "@/modules/billing";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminSettingsPage() {
     // We assume the site with subdomain 'admin' is the platform's control site
-    const adminSite = await db.site.findUnique({
-        where: { subdomain: "admin" },
-        include: {
-            siteSettings: {
-                select: {
-                    siteName: true,
-                    contactEmail: true,
-                    contactPhone: true,
-                    whatsappNumber: true,
-                    footerAddress: true,
-                    allowRegistration: true
-                }
-            },
-            paymentSettings: true
-        }
-    });
-
-    const plans = await db.plan.findMany({
-        orderBy: { price: "asc" },
-        select: {
-            id: true,
-            name: true,
-            description: true,
-            price: true,
-            priceYearly: true,
-            originalPrice: true,
-            originalPriceYearly: true,
-            trialDays: true,
-            interval: true,
-            features: true,
-            maxPosts: true,
-            maxProducts: true,
-            maxAssets: true,
-            maxTestimonials: true,
-            maxOrders: true,
-            maxSites: true,
-            showInPricing: true,
-            createdAt: true,
-            updatedAt: true
-        }
-    });
-
-    const platformSettings = await db.platformSettings.findUnique({
-        where: { id: "global" }
-    });
+    const { adminSite, plans, platformSettings } = await BillingClient.getAdminSettingsContext();
 
     const data = {
         siteName: adminSite?.siteSettings?.siteName || adminSite?.name || "My Platform",
@@ -85,10 +41,10 @@ export default async function AdminSettingsPage() {
             const features = (p.features as any) || {};
             return {
                 ...p,
-                price: p.price.toNumber(),
-                priceYearly: (p as any).priceYearly ? (p as any).priceYearly.toNumber() : null,
-                originalPrice: (p as any).originalPrice ? (p as any).originalPrice.toNumber() : 0,
-                originalPriceYearly: (p as any).originalPriceYearly ? (p as any).originalPriceYearly.toNumber() : 0,
+                price: Number(p.price),
+                priceYearly: (p as any).priceYearly ? Number((p as any).priceYearly) : null,
+                originalPrice: (p as any).originalPrice ? Number((p as any).originalPrice) : 0,
+                originalPriceYearly: (p as any).originalPriceYearly ? Number((p as any).originalPriceYearly) : 0,
                 createdAt: p.createdAt.toISOString(),
                 updatedAt: p.updatedAt.toISOString(),
                 showInPricing: (p as any).showInPricing,

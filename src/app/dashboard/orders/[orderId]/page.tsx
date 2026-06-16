@@ -1,5 +1,4 @@
 
-import { db } from "@/lib/core/db";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,6 +7,8 @@ import OrderStatusManager from "./OrderStatusManager";
 import { getPaymentSettings } from "@/lib/settings/payment";
 import { formatPrice } from "@/lib/billing/currency";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { OrderClient } from "@/modules/order";
+import { getSiteId } from "@/lib/domains/tenant";
 
 export default async function OrderDetailPage({
     params,
@@ -19,31 +20,25 @@ export default async function OrderDetailPage({
     const paymentSettings = await getPaymentSettings();
     const currency = paymentSettings.currency || "USD";
 
-    const order = await db.order.findUnique({
-        where: { id: orderId }
-    });
-
-    if (!order) {
+    const siteId = await getSiteId();
+    if (!siteId) {
         return notFound();
     }
 
-    // Fetch items with product details
-    const items = await db.orderItem.findMany({
-        where: { orderId: orderId }
-    });
+    let order;
+    try {
+        order = await OrderClient.getOrderDetail(orderId, siteId);
+    } catch (e) {
+        return notFound();
+    }
 
-    const { CatalogClient } = await import("@/lib/modules/catalog/client");
-    const productIds = items.map(item => item.productId);
-    const productsMap = await CatalogClient.getProductsMap(productIds);
-
-    const formattedItems = items.map(item => {
-        const product = productsMap[item.productId];
+    const formattedItems = order.items.map(item => {
         return {
             id: item.id,
             quantity: item.quantity,
             price: item.price,
-            productName: product?.name,
-            productImage: product?.images,
+            productName: item.product?.name,
+            productImage: item.product?.images,
         };
     });
 

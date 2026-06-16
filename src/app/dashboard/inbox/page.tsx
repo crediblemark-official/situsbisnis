@@ -1,15 +1,13 @@
 import React from "react";
 import { Mail, Calendar } from "lucide-react";
 
-import { db } from "@/lib/core/db";
 import { getSiteId } from "@/lib/domains/tenant";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Pagination } from "@/components/ui/Pagination";
+import { TenantClient } from "@/modules/tenant";
 
 import InboxActions from "./InboxActions";
-
-
 
 export const dynamic = 'force-dynamic';
 
@@ -25,22 +23,8 @@ export default async function InboxPage({
     const skip = (currentPage - 1) * pageSize;
 
     const [messages, total] = await Promise.all([
-        db.contactSubmission.findMany({
-            where: siteId ? { siteId } : {},
-            orderBy: { createdAt: 'desc' },
-            take: pageSize,
-            skip: skip,
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                subject: true,
-                message: true,
-                createdAt: true,
-                siteId: true,
-            }
-        }),
-        db.contactSubmission.count({ where: siteId ? { siteId } : {} })
+        TenantClient.getContactSubmissions(siteId || "", { skip, take: pageSize }),
+        TenantClient.countContactSubmissions(siteId || "")
     ]);
 
     const totalPages = Math.ceil(total / pageSize);

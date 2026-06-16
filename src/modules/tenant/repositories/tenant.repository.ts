@@ -163,10 +163,12 @@ export async function createContactSubmission(data: {
 /**
  * Mengambil daftar contact submission berdasarkan siteId.
  */
-export async function findContactSubmissions(siteId: string) {
+export async function findContactSubmissions(siteId: string, options?: { skip?: number; take?: number }) {
     return db.contactSubmission.findMany({
         where: { siteId },
         orderBy: { createdAt: 'desc' },
+        skip: options?.skip,
+        take: options?.take,
         select: {
             id: true,
             name: true,
@@ -177,6 +179,15 @@ export async function findContactSubmissions(siteId: string) {
             createdAt: true,
             siteId: true,
         }
+    });
+}
+
+/**
+ * Menghitung total contact submission berdasarkan siteId.
+ */
+export async function countContactSubmissions(siteId: string): Promise<number> {
+    return db.contactSubmission.count({
+        where: { siteId }
     });
 }
 

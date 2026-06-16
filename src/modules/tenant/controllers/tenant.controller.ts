@@ -97,8 +97,15 @@ export async function createContactSubmissionInternal(siteId: string, data: {
 /**
  * Mengambil daftar contact submission untuk suatu situs.
  */
-export async function getContactSubmissionsInternal(siteId: string) {
-    return contactService.getContactSubmissions(siteId);
+export async function getContactSubmissionsInternal(siteId: string, options?: { skip?: number; take?: number }) {
+    return contactService.getContactSubmissions(siteId, options);
+}
+
+/**
+ * Menghitung total contact submission untuk suatu situs.
+ */
+export async function countContactSubmissionsInternal(siteId: string): Promise<number> {
+    return contactService.countContactSubmissions(siteId);
 }
 
 /**

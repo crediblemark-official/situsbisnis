@@ -7,7 +7,8 @@ import { redirect } from "next/navigation";
 import { getSiteId, getSiteAccessStatus, getTenant } from "@/lib/domains/tenant";
 import { AlertCircle, CreditCard } from "lucide-react";
 import Link from "next/link";
-import { db } from "@/lib/core/db";
+import { TenantClient } from "@/modules/tenant";
+import { IdentityClient } from "@/modules/auth";
 import { generateBridgeToken } from "@/lib/api/utils";
 
 import { headers } from "next/headers";
@@ -42,11 +43,8 @@ export default async function DashboardLayout({
 
     // Only check for onboarding if no sites exist
     if (!siteId && session.user.role !== "admin") {
-        const siteCount = await db.siteUser.count({
-            where: {
-                userId: session.user.id
-            }
-        });
+        const siteCountRes = await TenantClient.getUserSiteCount(session.user.id);
+        const siteCount = siteCountRes.count;
 
         if (siteCount === 0) {
             if (pathname !== "/onboarding") {
@@ -62,27 +60,12 @@ export default async function DashboardLayout({
 
     // Verify that the logged-in user belongs to this site (unless they are platform admin)
     if (siteId && session.user.role !== "admin") {
-        const isUserLinked = await db.siteUser.count({
-            where: {
-                siteId: siteId,
-                userId: session.user.id
-            }
-        });
+        const isUserLinked = await TenantClient.verifyUserSiteAccess(session.user.id, siteId);
 
-        if (isUserLinked === 0) {
+        if (!isUserLinked) {
             // Find if user is associated with any other site(s)
-            const firstSiteLink = await db.siteUser.findFirst({
-                where: {
-                    userId: session.user.id
-                },
-                select: {
-                    site: {
-                        select: {
-                            subdomain: true
-                        }
-                    }
-                }
-            });
+            const userSitesRes = await IdentityClient.getUserSites(session.user.id);
+            const firstSiteLink = userSitesRes.sites[0];
             const firstUserSite = firstSiteLink?.site;
 
             const protocol = process.env.NODE_ENV === "production" ? "https" : "http";

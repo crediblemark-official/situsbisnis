@@ -8,6 +8,13 @@ export async function countOrders(siteId: string): Promise<number> {
 }
 
 /**
+ * Mengambil pesanan terbaru untuk suatu situs.
+ */
+export async function getRecentOrders(siteId: string, limit: number) {
+    return orderRepo.findRecentOrders(siteId, limit);
+}
+
+/**
  * Mendapatkan data pesanan berdasarkan ID.
  */
 export async function getOrderById(orderId: string) {
@@ -484,5 +491,22 @@ export async function updateOrderFulfillment(
 
     const updated = await orderRepo.updateOrderFulfillment(orderId, updateData);
     return { success: true, order: updated };
+}
+
+/**
+ * Mengambil daftar pesanan dengan filter dan pagination.
+ */
+export async function getOrders(siteId: string, options: { skip: number; take: number; customerEmail?: string }) {
+    const whereCondition: any = { siteId };
+    if (options.customerEmail) {
+        whereCondition.customerEmail = options.customerEmail;
+    }
+
+    const [orders, total] = await Promise.all([
+        orderRepo.findOrders(whereCondition, options.skip, options.take),
+        orderRepo.countOrdersWithFilter(whereCondition)
+    ]);
+
+    return { orders, total };
 }
 

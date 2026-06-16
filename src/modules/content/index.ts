@@ -18,7 +18,10 @@ import {
     deleteMediaFolderInternal,
     searchAllInternal,
     getCredBuildPageInternal,
-    saveCredBuildPageInternal
+    saveCredBuildPageInternal,
+    countMediaItemsInternal,
+    countGalleryItemsInternal,
+    countPortfolioItemsInternal
 } from "./controllers/content.controller";
 import {
     getMenuInternal,
@@ -47,6 +50,9 @@ export const ContentClient = {
     searchAll: searchAllInternal,
     getCredBuildPage: getCredBuildPageInternal,
     saveCredBuildPage: saveCredBuildPageInternal,
+    countMediaItems: countMediaItemsInternal,
+    countGalleryItems: countGalleryItemsInternal,
+    countPortfolioItems: countPortfolioItemsInternal,
     getMenu: getMenuInternal,
     updateMenu: updateMenuInternal
 };

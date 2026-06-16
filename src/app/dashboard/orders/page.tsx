@@ -1,4 +1,4 @@
-import { db } from "@/lib/core/db";
+import { OrderClient } from "@/modules/order";
 import Link from "next/link";
 import { Eye, Package, MessageSquare, CreditCard, Building2 } from "lucide-react";
 import { getServerSession } from "next-auth";
@@ -39,31 +39,12 @@ export default async function OrderListPage({
     const currency = paymentSettings.currency || "USD";
 
     const siteId = await getSiteId();
-    const whereCondition: any = { siteId };
-    if (userRole !== "admin") {
-        whereCondition.customerEmail = userEmail || "";
-    }
-
-    const [orderListRaw, total] = await Promise.all([
-        db.order.findMany({
-            where: whereCondition,
-            orderBy: { createdAt: 'desc' },
-            take: pageSize,
-            skip: skip,
-            select: {
-                id: true,
-                customerName: true,
-                customerEmail: true,
-                total: true,
-                status: true,
-                paymentStatus: true,
-                createdAt: true,
-                siteId: true,
-                paymentMethod: true,
-            }
-        }),
-        db.order.count({ where: whereCondition })
-    ]);
+    
+    const { orders: orderListRaw, total } = await OrderClient.getOrders(siteId || "", {
+        skip,
+        take: pageSize,
+        customerEmail: userRole !== "admin" ? (userEmail || undefined) : undefined
+    });
 
     const orderList = serializeOrders(orderListRaw);
     const totalPages = Math.ceil(total / pageSize);

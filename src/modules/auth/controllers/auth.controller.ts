@@ -148,3 +148,10 @@ export async function updateSiteCustomDomainInternal(userId: string, siteId: str
 export async function verifySiteCustomDomainInternal(userId: string, siteId: string, domain: string) {
     return authService.verifySiteCustomDomain(userId, siteId, domain);
 }
+
+/**
+ * Mengambil daftar user lengkap beserta referrals count untuk admin platform.
+ */
+export async function getAdminUsersContextInternal() {
+    return authService.getAdminUsersContext();
+}

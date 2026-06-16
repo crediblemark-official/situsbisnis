@@ -373,4 +373,26 @@ export async function findSiteActiveSubscription(siteId: string) {
     });
 }
 
+/**
+ * Mengambil data semua user terurut desc berdasarkan tanggal daftar (admin platform).
+ */
+export async function findAdminUsers() {
+    return db.user.findMany({
+        orderBy: {
+            createdAt: "desc"
+        },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            createdAt: true,
+            referralCode: true,
+            _count: {
+                select: { referrals: true }
+            }
+        }
+    });
+}
+
 

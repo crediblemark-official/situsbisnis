@@ -500,4 +500,11 @@ export async function verifySiteCustomDomain(userId: string, siteId: string, dom
     return result;
 }
 
+/**
+ * Mengambil daftar user lengkap beserta referrals count untuk admin platform.
+ */
+export async function getAdminUsersContext() {
+    return userRepo.findAdminUsers();
+}
+
 

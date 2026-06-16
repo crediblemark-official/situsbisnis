@@ -1,7 +1,6 @@
 import * as contentRepo from "../repositories/content.repository";
 import { uploadToR2, deleteFromR2 } from "@/lib/media/r2";
-import { BillingClient } from "@/lib/modules/billing/client";
-import { db } from "@/modules/shared/core/db"; // untuk query db.subscription jika dibutuhkan
+import { BillingClient } from "@/modules/billing";
 import sharp from "sharp";
 import path from "path";
 
@@ -19,10 +18,7 @@ export async function getMediaList(siteId: string, folderId: string | null, page
         contentRepo.findMediaItems(siteId, folderId, limit, skip),
         contentRepo.countMediaItems(siteId),
         contentRepo.sumMediaSize(siteId),
-        db.subscription.findFirst({
-            where: { siteId, status: "active" },
-            include: { plan: true }
-        })
+        BillingClient.getActiveSubscription(siteId)
     ]);
 
     const plan = subscription?.plan as any;

@@ -15,8 +15,15 @@ export async function createContactSubmission(siteId: string, data: {
 /**
  * Mengambil daftar contact submission untuk suatu situs.
  */
-export async function getContactSubmissions(siteId: string) {
-    return tenantRepo.findContactSubmissions(siteId);
+export async function getContactSubmissions(siteId: string, options?: { skip?: number; take?: number }) {
+    return tenantRepo.findContactSubmissions(siteId, options);
+}
+
+/**
+ * Menghitung total contact submission untuk suatu situs.
+ */
+export async function countContactSubmissions(siteId: string): Promise<number> {
+    return tenantRepo.countContactSubmissions(siteId);
 }
 
 /**

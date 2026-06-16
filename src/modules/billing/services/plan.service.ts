@@ -193,6 +193,13 @@ export async function getSubscriptionDetail(subId: string) {
 }
 
 /**
+ * Mengambil subscription aktif berdasarkan siteId.
+ */
+export async function getActiveSubscription(siteId: string) {
+    return subscriptionRepo.findActiveSubscription(siteId);
+}
+
+/**
  * Memperpanjang masa aktif subscription (admin).
  */
 export async function extendSubscription(subId: string, days: number) {

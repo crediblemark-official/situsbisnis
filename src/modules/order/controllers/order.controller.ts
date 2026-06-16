@@ -7,6 +7,10 @@ export async function countOrdersInternal(siteId: string): Promise<number> {
     return orderService.countOrders(siteId);
 }
 
+export async function getRecentOrdersInternal(siteId: string, limit: number) {
+    return orderService.getRecentOrders(siteId, limit);
+}
+
 /**
  * Mendapatkan data pesanan berdasarkan ID.
  */
@@ -59,4 +63,8 @@ export async function getOrderDetailInternal(orderId: string, siteId: string) {
 
 export async function updateOrderFulfillmentInternal(orderId: string, siteId: string, body: any) {
     return orderService.updateOrderFulfillment(orderId, siteId, body);
+}
+
+export async function getOrdersInternal(siteId: string, options: { skip: number; take: number; customerEmail?: string }) {
+    return orderService.getOrders(siteId, options);
 }

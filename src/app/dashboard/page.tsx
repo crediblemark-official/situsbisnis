@@ -1,7 +1,6 @@
 import React from "react";
 import { FileText, ShoppingBag, Eye, Image as ImageIcon, Plus, MessageSquare, ShieldCheck, Pencil, Store } from "lucide-react";
 import Link from "next/link";
-import { db } from "@/lib/core/db";
 import { serializeOrders } from "@/lib/content/serialize";
 import { getPaymentSettings } from "@/lib/settings/payment";
 import { formatPrice } from "@/lib/billing/currency";
@@ -11,6 +10,11 @@ import { StatCard, LibraryItem } from "@/components/ui/Stats";
 import { getSiteId } from "@/lib/domains/tenant";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { ContentClient } from "@/modules/content";
+import { CatalogClient } from "@/modules/catalog";
+import { OrderClient } from "@/modules/order";
+import { TenantClient } from "@/modules/tenant";
+import { BillingClient } from "@/modules/billing";
 
 async function getStats(siteId: string | null) {
     if (!siteId) {
@@ -23,7 +27,6 @@ async function getStats(siteId: string | null) {
     }
 
     try {
-        // Batch 1: lightweight count queries (6 connections)
         const [
             postsCount,
             productsCount,
@@ -31,38 +34,23 @@ async function getStats(siteId: string | null) {
             mediaCount,
             galleryCount,
             portfolioCount,
-        ] = await Promise.all([
-            db.post.count({ where: { siteId } }),
-            db.product.count({ where: { siteId } }),
-            db.order.count({ where: { siteId } }),
-            db.mediaItem.count({ where: { siteId } }),
-            db.galleryItem.count({ where: { siteId } }),
-            db.portfolioItem.count({ where: { siteId } }),
-        ]);
-
-        // Batch 2: remaining queries (5 connections)
-        const [
-            usersCount,
-            messagesCount,
+            userIds,
+            contactSubmissions,
             stats,
             mediaSize,
             recentOrdersRaw
         ] = await Promise.all([
-            db.siteUser.count({ where: { siteId } }),
-            db.contactSubmission.count({ where: { siteId } }),
-            db.siteStatistics.findUnique({ where: { siteId } }),
-            db.mediaItem.aggregate({ _sum: { size: true }, where: { siteId } }),
-            db.order.findMany({ 
-                where: { siteId }, 
-                orderBy: { createdAt: 'desc' }, 
-                take: 5,
-                select: {
-                    id: true,
-                    customerName: true,
-                    total: true,
-                    createdAt: true,
-                }
-            })
+            ContentClient.countPosts(siteId),
+            CatalogClient.countProducts(siteId),
+            OrderClient.countOrders(siteId),
+            ContentClient.countMediaItems(siteId),
+            ContentClient.countGalleryItems(siteId),
+            ContentClient.countPortfolioItems(siteId),
+            TenantClient.getSiteUserIds(siteId),
+            TenantClient.getContactSubmissions(siteId),
+            TenantClient.getOrIncrementViews(siteId),
+            ContentClient.getMediaSize(siteId),
+            OrderClient.getRecentOrders(siteId, 5)
         ]);
 
         return {
@@ -70,14 +58,14 @@ async function getStats(siteId: string | null) {
                 posts: postsCount,
                 products: productsCount,
                 orders: ordersCount,
-                users: usersCount,
+                users: userIds.length,
                 media: mediaCount,
                 gallery: galleryCount,
                 portfolio: portfolioCount,
-                messages: messagesCount,
+                messages: contactSubmissions.length,
             },
             views: stats?.totalViews || 0,
-            storageUsed: Number(mediaSize._sum.size || 0),
+            storageUsed: Number(mediaSize || 0),
             recentOrders: serializeOrders(recentOrdersRaw)
         };
     } catch (error) {
@@ -100,22 +88,7 @@ export default async function DashboardPage() {
     const userName = session?.user?.name || "Chipster";
     
     // Fetch Subscription to get limits
-    const subscription = await db.subscription.findFirst({
-        where: { siteId: siteId || "", status: "active" },
-        select: {
-            id: true,
-            trialEndsAt: true,
-            addonSlots: true,
-            plan: {
-                select: {
-                    maxPosts: true,
-                    maxProducts: true,
-                    maxAssets: true,
-                    name: true,
-                }
-            }
-        }
-    });
+    const subscription = siteId ? await BillingClient.getActiveSubscription(siteId) : null;
     const plan = subscription?.plan as any;
 
     const paymentSettings = await getPaymentSettings(siteId || undefined);

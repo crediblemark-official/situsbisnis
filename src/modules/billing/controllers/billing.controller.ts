@@ -79,6 +79,10 @@ export async function getSubscriptionDetail(subId: string) {
     return planService.getSubscriptionDetail(subId);
 }
 
+export async function getActiveSubscription(siteId: string) {
+    return planService.getActiveSubscription(siteId);
+}
+
 export async function extendSubscription(subId: string, days: number) {
     return planService.extendSubscription(subId, days);
 }
@@ -125,6 +129,14 @@ export async function checkUserSitesLimit(siteIds: string[], currentSiteCount: n
 
 export async function getSiteSettingsBillingContext(siteId: string) {
     return settingsService.getSiteSettingsBillingContext(siteId);
+}
+
+export async function getSubscriptionContext(siteId: string) {
+    return settingsService.getSubscriptionContext(siteId);
+}
+
+export async function getAdminSettingsContext() {
+    return settingsService.getAdminSettingsContext();
 }
 
 export async function setSiteToFreePlan(siteId: string): Promise<void> {

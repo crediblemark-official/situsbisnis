@@ -16,6 +16,27 @@ export async function countTestimonials(siteId: string): Promise<number> {
 }
 
 /**
+ * Menghitung jumlah berkas media di suatu situs.
+ */
+export async function countMediaItems(siteId: string): Promise<number> {
+    return contentRepo.countMediaItems(siteId);
+}
+
+/**
+ * Menghitung jumlah item galeri di suatu situs.
+ */
+export async function countGalleryItems(siteId: string): Promise<number> {
+    return contentRepo.countGalleryItems(siteId);
+}
+
+/**
+ * Menghitung jumlah item portofolio di suatu situs.
+ */
+export async function countPortfolioItems(siteId: string): Promise<number> {
+    return contentRepo.countPortfolioItems(siteId);
+}
+
+/**
  * Mengambil total ukuran media storage yang digunakan di suatu situs (dalam byte).
  */
 export async function getMediaSize(siteId: string): Promise<number> {

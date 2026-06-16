@@ -16,6 +16,18 @@ export async function countTestimonialsInternal(siteId: string): Promise<number>
     return contentService.countTestimonials(siteId);
 }
 
+export async function countMediaItemsInternal(siteId: string): Promise<number> {
+    return contentService.countMediaItems(siteId);
+}
+
+export async function countGalleryItemsInternal(siteId: string): Promise<number> {
+    return contentService.countGalleryItems(siteId);
+}
+
+export async function countPortfolioItemsInternal(siteId: string): Promise<number> {
+    return contentService.countPortfolioItems(siteId);
+}
+
 /**
  * Mengambil total ukuran media storage yang digunakan di suatu situs (dalam byte).
  */
