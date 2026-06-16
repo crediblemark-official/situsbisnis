@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-import { getRootDomain, getProtocol } from "./lib/domains/utils";
-import { getPremiumRedirectHtml } from "./lib/domains/templates";
-import { rateLimitMiddleware } from "./lib/core/rate-limit";
+import { getRootDomain, getProtocol } from "@/lib/domains/utils";
+import { getPremiumRedirectHtml } from "@/lib/domains/templates";
+import { rateLimitMiddleware } from "@/lib/core/rate-limit";
 
 export const config = {
   matcher: [

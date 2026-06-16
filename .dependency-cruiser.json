@@ -1,26 +1,27 @@
 {
   "forbidden": [
     {
-      "name": "no-direct-internal-imports",
-      "comment": "Mencegah satu modul mengimpor bagian internal dari modul lain secara langsung. Impor harus lewat client/kontrak.",
+      "name": "no-cross-module-internal-imports",
+      "comment": "Mencegah satu modul mengimpor file internal modul lain secara langsung. Harus lewat index.ts.",
       "severity": "error",
       "from": {
-        "path": "^modules/([^/]+)/"
+        "path": "^src/modules/([^/]+)/"
       },
       "to": {
-        "path": "^modules/([^/]+)/internal/",
-        "pathNot": "^modules/$1/"
+        "path": "^src/modules/(?!(shared)/)([^/]+)/.+",
+        "pathNot": "^src/modules/$1/|^src/modules/[^/]+/index\\.ts"
       }
     },
     {
       "name": "no-outside-internal-imports",
-      "comment": "Mencegah kode di luar folder modules (seperti app/api, components, dll.) mengimpor bagian internal modul secara langsung. Harus lewat client/kontrak.",
+      "comment": "Mencegah kode luar mengimpor file internal modul domain secara langsung. Harus lewat index.ts.",
       "severity": "error",
       "from": {
-        "pathNot": "^modules/"
+        "pathNot": "^src/modules/(auth|billing|catalog|content|order|tenant)/"
       },
       "to": {
-        "path": "^modules/[^/]+/internal/"
+        "path": "^src/modules/(auth|billing|catalog|content|order|tenant)/.+",
+        "pathNot": "^src/modules/[^/]+/index\\.ts"
       }
     }
   ],

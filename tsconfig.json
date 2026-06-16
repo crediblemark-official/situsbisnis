@@ -10,7 +10,19 @@
     "moduleResolution": "bundler",
     "paths": {
       "@/*": ["./src/*"],
-      "@/lib/modules/*": ["./modules/*"],
+      "@/modules/*": ["./src/modules/*"],
+      "@/lib/modules/identity/client": ["./src/modules/auth"],
+      "@/lib/modules/identity/types": ["./src/modules/auth"],
+      "@/lib/modules/identity/*": ["./src/modules/auth/*"],
+      "@/lib/modules/*/client": ["./src/modules/*"],
+      "@/lib/modules/*/types": ["./src/modules/*"],
+      "@/lib/modules/*": ["./src/modules/*"],
+      "@/components/*": ["./src/modules/shared/ui/*"],
+      "@/lib/*": ["./src/modules/shared/utils/*"],
+      "@/lib/core/*": ["./src/modules/shared/core/*"],
+      "@/hooks/*": ["./src/modules/shared/hooks/*"],
+      "@/themes/*": ["./src/modules/shared/themes/*"],
+      "@/types/*": ["./src/modules/shared/types/*"],
       "@crediblemark/build": ["./node_modules/@crediblemark/build"],
       "@tiptap/core": ["./node_modules/@tiptap/core"]
     }

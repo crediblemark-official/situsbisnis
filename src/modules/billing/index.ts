@@ -1,3 +1,11 @@
+import { 
+    getPricingPlans, 
+    getActivePlanNamesForSites, 
+    checkSiteLimit, 
+    processApprovedTransaction, 
+    updateTransactionStatus 
+} from "./actions";
+
 export type LimitType = "maxPosts" | "maxProducts" | "maxOrders" | "maxTestimonials" | "maxAssets";
 
 export interface LimitCheckResult {
@@ -25,3 +33,12 @@ export interface PricingPlanDTO {
     addonPrice: string | null;
     addonBilling: string;
 }
+
+// Facade / Client kontrak publik
+export const BillingClient = {
+    getPricingPlans,
+    getActivePlanNamesForSites,
+    checkSiteLimit,
+    processApprovedTransaction,
+    updateTransactionStatus
+};

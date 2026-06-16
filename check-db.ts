@@ -1,4 +1,4 @@
-import { db } from "./src/lib/core/db";
+import { db } from "./src/modules/shared/core/db";
 
 async function main() {
   const sites = await db.site.findMany({

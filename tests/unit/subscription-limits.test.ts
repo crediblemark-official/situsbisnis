@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { checkSiteLimit } from '@/lib/modules/billing/internal/services/limits';
+import { checkSiteLimit } from '@/lib/modules/billing/internal/limits';
 
 // Mock dependencies
 vi.mock('@/lib/core/db', () => ({

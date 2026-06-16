@@ -1,3 +1,10 @@
+import { 
+    getSiteOwnerInternal, 
+    getUserByIdInternal, 
+    getUsersMapInternal, 
+    awardAffiliateCommissionInternal 
+} from "./actions";
+
 export interface UserDTO {
     id: string;
     name: string | null;
@@ -19,3 +26,11 @@ export interface AwardCommissionDTO {
     transactionId: string;
     description: string;
 }
+
+// Facade / Client kontrak publik
+export const IdentityClient = {
+    getSiteOwner: getSiteOwnerInternal,
+    getUserById: getUserByIdInternal,
+    getUsersMap: getUsersMapInternal,
+    awardAffiliateCommission: awardAffiliateCommissionInternal
+};
