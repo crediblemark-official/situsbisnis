@@ -165,3 +165,25 @@ Aplikasi bertumbuh dengan cepat dan integrasi database lintas modul (seperti rel
 - **Positive:** Batas logis domain bisnis yang jelas, kemudahan pemeliharaan kode, pemisahan database modular yang memungkinkan migrasi ke microservices tanpa mengubah modul pemanggil.
 - **Negative:** Kueri database in-memory mungkin membutuhkan optimasi fetch massal (bulk fetching) untuk menghindari masalah N+1.
 - **Risk:** Pengembang harus disiplin menggunakan Facade Client (`index.ts`) dan dilarang mengimpor file internal modul lain secara langsung.
+
+---
+
+## ADR-009: Event-Driven Design (EDD) via Redis Pub/Sub for Decoupled Module Communication
+
+**Status:** Proposed  
+**Date:** 2026-06-16
+
+### Context
+Setelah memisahkan skema basis data dan menghapus relasi fisik lintas modul (ADR-008), interaksi antar-modul masih menggunakan panggilan metode sinkron langsung via Facade Client. Hal ini masih menyisakan ketergantungan waktu kompilasi (compile-time dependency) antar-modul (misalnya modul `order` harus mengetahui dan mengimpor Facade modul `billing`). Untuk mencapai pemisahan yang sepenuhnya mandiri (*fully decoupled*), komunikasi antar-modul sebaiknya menggunakan paradigma asinkron berbasis peristiwa (event-driven).
+
+### Decision
+- Mengadopsi pola **Event-Driven Design (EDD)** untuk komunikasi lintas-modul yang bersifat reaktif dan asinkron (seperti checkout pesanan, pembaruan status langganan, atau pencatatan analitik).
+- Menggunakan **Redis Pub/Sub** sebagai broker pesan (message broker) untuk menerbitkan (*publish*) dan berlangganan (*subscribe*) peristiwa (events) lintas modul.
+- Modul pengirim (misal `order`) hanya akan menerbitkan peristiwa ke topik Redis (misal `order.created`) tanpa mengetahui modul mana yang mendengarkannya.
+- Modul penerima (misal `billing`) akan berlangganan ke topik tersebut dan mengeksekusi logika bisnisnya secara independen.
+- Untuk lingkungan pengembangan lokal, kita memanfaatkan infrastruktur Redis yang sudah terintegrasi dan berjalan di Docker (port 6379).
+
+### Consequences
+- **Positive:** Penghapusan ketergantungan langsung antar-modul, memudahkan pembagian kerja tim, dan mempermudah ekstraksi modul menjadi microservices di masa mendatang (cukup mengganti Redis dengan Kafka/RabbitMQ jika diperlukan).
+- **Negative:** debugging alur proses menjadi lebih kompleks karena bersifat asinkron, dan potensi kegagalan transaksi terdistribusi harus ditangani secara hati-hati (misal menggunakan retry mechanism).
+- **Risk:** Perlunya pemantauan koneksi Redis untuk menjamin pengiriman pesan tidak terputus.
