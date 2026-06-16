@@ -19,15 +19,15 @@ Aplikasi Next.js bertenaga untuk membangun dan mengelola konten multi-tenant den
 
 ### Path Aliases
 
-Kami menggunakan alias `@/*` untuk semua import internal guna menjaga kebersihan kode.
+Kami menggunakan alias `@/*` untuk semua import internal guna menjaga kebersihan kode dan batas arsitektur.
 
-- `@/lib/*`: Logika inti, layanan (services), dan pengaturan.
-- `@/components/*`: Komponen UI dan dashboard yang dapat digunakan kembali.
+- `@/modules/*`: Batas Logis (Logical Boundaries) domain bisnis utama (auth, billing, catalog, content, order, tenant, shared) dengan Layered Architecture.
+- `@/components/*`: Komponen UI dan dashboard global yang dapat digunakan kembali.
 
 ### Keamanan & UX
 
 - **ConfirmationModal**: Setiap tindakan destruktif (seperti hapus data) diproteksi oleh modal konfirmasi premium.
-- **Site Isolation**: Seluruh query database difilter secara otomatis berdasarkan `siteId` melalui `lib/tenant.ts`.
+- **Site Isolation**: Seluruh query database diisolasi per penyewa dengan aman berbasis subdomain atau domain kustom melalui koordinasi di dalam modul `tenant`.
 
 ## Memulai
 

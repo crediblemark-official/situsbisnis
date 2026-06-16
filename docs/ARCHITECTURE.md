@@ -3,10 +3,10 @@
 1001-Web is built with a focus on modularity, security, and high performance.
 
 ## Tech Stack
-- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router with Turbopack)
 - **Visual Builder**: [CredBuild](https://build.crediblemark.com) 
 - **Database**: [Prisma ORM](https://www.prisma.io/) with PostgreSQL
-- **Styling**: Vanilla CSS with Tailwind CSS for layouts
+- **Styling**: Vanilla CSS with Tailwind CSS v4 for layouts
 - **Auth**: [NextAuth.js](https://next-auth.js.org/)
 - **Storage**: Cloudflare R2 (S3-compatible)
 
@@ -46,3 +46,12 @@ The core data model revolves around:
   - `shared`: Shared utilities, UI components, hooks, and core visual builder engine.
 - `/prisma`: Decoupled database schema (without physical cross-module relations).
 - `/tests`: Unit testing (Vitest) and E2E testing (Playwright).
+
+---
+
+## Layered Architecture
+Every module under `/src/modules` (except `shared`) adopts four layers for clear separation of concerns:
+1. **Facade Layer (`index.ts`)**: The module's official entry point (e.g., `CatalogClient`). It only invokes `actions.ts`.
+2. **Action Layer (`actions.ts`)**: Receives input, handles basic authentication/session contexts, and delegates to *Service*.
+3. **Service Layer (`services/*.service.ts`)**: Where all business logic is validated and processed.
+4. **Repository Layer (`repositories/*.repository.ts`)**: The only part of the module permitted to invoke the database client (`db`) directly.

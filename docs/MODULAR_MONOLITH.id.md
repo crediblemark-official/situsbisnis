@@ -59,13 +59,36 @@ Arsitektur ini menyediakan jalur migrasi yang efisien jika beban trafik meningka
 * **Migrasi ke Microservices:**  Saat sebuah modul (misalnya: Payment) perlu dipisahkan, pengembang hanya perlu mengganti implementasi di dalam modul klien dari panggilan kode langsung menjadi panggilan API (HTTP/gRPC). Logika bisnis pada modul lain (misalnya: Order) tidak memerlukan perubahan sama sekali.  
 * **Migrasi ke Event-Driven:**  Jika diperlukan komunikasi asinkron, implementasi kontrak dapat diubah untuk mengirim pesan melalui  *message broker*  seperti Kafka atau RabbitMQ. Modul pengirim tetap menggunakan kontrak yang sama tanpa mengetahui bahwa di balik layar data kini dikirim melalui sistem pesan.
 
-#### Menjaga Integritas Arsitektur
+#### Menjaga Integritas Arsitektur di SitusBisnis
 
-Tanpa pengawasan,  *Modular Monolith*  berisiko kembali menjadi monolit tradisional yang berantakan. Oleh karena itu, diperlukan mekanisme perlindungan:
+Tanpa pengawasan, *Modular Monolith* berisiko kembali menjadi monolit tradisional yang berantakan (*spaghetti code*). Oleh karena itu, di SitusBisnis kami menerapkan perlindungan statis:
 
-* **Architecture Testing:**  Penggunaan pustaka seperti  **ArchUnit**  (untuk Java) sangat direkomendasikan. Alat ini dapat secara otomatis memeriksa apakah ada pelanggaran batasan modul, seperti modul Order yang mencoba memanggil implementasi internal modul Product secara ilegal.  
-* **Otomasi Pengujian:**  Jika tes arsitektur mendeteksi adanya akses langsung yang melanggar kontrak, proses pembangunan aplikasi ( *build* ) akan gagal secara otomatis, memaksa pengembang untuk mengikuti struktur yang telah ditetapkan.
+* **Architecture Linter (`dependency-cruiser`)**: Kami mengonfigurasi `.dependency-cruiser.json` untuk memeriksa semua impor file di dalam `/src/modules`. Aturan utamanya adalah:
+  * Modul dilarang mengimpor file internal dari modul lain secara langsung.
+  * Komunikasi antar-modul wajib melewati **Facade Client / Pintu Gerbang Utama** di `src/modules/<nama-modul>/index.ts`.
+  * Menjalankan perintah `bun run test:architecture` di CI/CD atau lokal untuk memastikan kepatuhan 100%.
+
+---
+
+#### Struktur Layered Architecture (Arsitektur Berlapis)
+
+Setiap modul domain bisnis (seperti `auth`, `tenant`, `billing`, `order`, `catalog`, `content`) dipecah menjadi lapisan tanggung jawab tunggal (*Single Responsibility*) agar kode tetap rapi, modular, DRY, dan di bawah batas 300 baris per file:
+
+1. **Facade Layer (`index.ts`)**: Kontak publik tunggal modul (misalnya `BillingClient`, `CatalogClient`) yang diimpor oleh modul luar atau rute API.
+2. **Action Layer (`actions.ts` / Server Actions)**: Lapisan interaksi pembungkus yang menerima input pengguna, menangani request Next.js, dan memanggil Service.
+3. **Service Layer (`services/*.service.ts`)**: Lapisan logika bisnis utama (validasi aturan bisnis, kalkulasi data, integrasi pihak ketiga).
+4. **Repository Layer (`repositories/*.repository.ts`)**: Lapisan akses data yang berinteraksi langsung dengan database lewat Prisma Client (`db`).
+
+---
+
+#### Decoupling Database Fisik (Site - User)
+
+Untuk menghindari foreign key yang mengikat ketat lintas batas fisik modul:
+* Relasi langsung Many-to-Many `SiteToUser` di skema Prisma telah dihapus dan diganti dengan model tabel jembatan `SiteUser`.
+* Pengecekan data relasi lintas modul dilakukan secara *in-memory* menggunakan helper client (seperti `IdentityClient.getSiteOwner`) untuk mensimulasikan lingkungan multi-database/microservices.
+
+---
 
 #### Kesimpulan
 
-Fokus utama dalam pengembangan aplikasi seharusnya adalah pada logika bisnis.  *Modular Monolith*  memungkinkan organisasi untuk memulai dengan sederhana namun tetap memiliki fondasi yang kuat untuk skalabilitas masa depan. Dengan menerapkan batasan logis yang ketat melalui kontrak dan menghindari keterikatan database, aplikasi tetap stabil, mudah dipelihara, dan siap bertransformasi menjadi  *microservices*  saat kebutuhan bisnis benar-benar menuntutnya.  
+*Modular Monolith* dengan *Layered Architecture* di SitusBisnis memungkinkan proyek dikembangkan dengan cepat dan teratur. Pemisahan yang ketat melalui Facade dan decoupling database memastikan bahwa setiap modul siap diekstraksi menjadi *microservices* mandiri di masa mendatang jika kebutuhan skala bisnis menuntutnya.
