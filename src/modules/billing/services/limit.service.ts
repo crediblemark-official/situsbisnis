@@ -1,8 +1,8 @@
 import * as subscriptionRepo from "../repositories/subscription.repository";
 
-import { ContentClient } from "@/lib/modules/content/client";
-import { CatalogClient } from "@/lib/modules/catalog/client";
-import { OrderClient } from "@/lib/modules/order/client";
+import { ContentClient } from "@/modules/content";
+import { CatalogClient } from "@/modules/catalog";
+import { OrderClient } from "@/modules/order";
 import { LimitType, LimitCheckResult } from "../index";
 
 const LIMIT_CONFIG: Record<LimitType, {

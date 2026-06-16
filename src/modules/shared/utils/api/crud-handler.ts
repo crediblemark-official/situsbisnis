@@ -1,6 +1,6 @@
 import { db } from "@/lib/core/db";
 import { getApiContext, apiResponse, apiError, validateBody } from "@/lib/api/utils";
-import { BillingClient } from "@/lib/modules/billing/client";
+import { BillingClient } from "@/modules/billing";
 import { z } from "zod";
 import { Prisma, Role } from "@prisma/client";
 import { AppError } from "./errors";

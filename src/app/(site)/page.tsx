@@ -30,7 +30,7 @@ const SaaSLandingPage = nextDynamic(() => import("@/app/(pages)/SaaSLandingPage"
     loading: () => <div className="min-h-screen bg-background animate-pulse" />
 });
 
-import { BillingClient } from "@/lib/modules/billing/client";
+import { BillingClient } from "@/modules/billing";
 
 export async function generateMetadata(): Promise<Metadata> {
     const subdomain = await getTenant();

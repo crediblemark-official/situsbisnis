@@ -11,7 +11,7 @@ import { unstable_cache } from "next/cache";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import nextDynamic from "next/dynamic";
-import { BillingClient } from "@/lib/modules/billing/client";
+import { BillingClient } from "@/modules/billing";
 import { getPage } from "@/lib/services/content.service";
 const SaaSLandingPage = nextDynamic(() => import("@/app/(pages)/SaaSLandingPage"), {
     ssr: true,

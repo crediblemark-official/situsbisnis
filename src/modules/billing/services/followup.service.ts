@@ -1,5 +1,5 @@
 import { sendWhatsAppNotification } from "@/lib/services/whatsapp";
-import { IdentityClient } from "@/lib/modules/identity/client";
+import { IdentityClient } from "@/modules/auth";
 
 /**
  * Mengirim notifikasi follow-up melalui WhatsApp (admin).

@@ -1,6 +1,6 @@
 import * as billingRepo from "../repositories/billing.repository";
 import * as transactionRepo from "../repositories/transaction.repository";
-import { IdentityClient } from "@/lib/modules/identity/client";
+import { IdentityClient } from "@/modules/auth";
 import { processApprovedTransaction } from "./transaction.service";
 
 /**

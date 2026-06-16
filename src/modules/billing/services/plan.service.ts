@@ -2,8 +2,8 @@ import * as billingRepo from "../repositories/billing.repository";
 import * as planRepo from "../repositories/plan.repository";
 import * as subscriptionRepo from "../repositories/subscription.repository";
 import { unstable_cache } from "next/cache";
-import { TenantClient } from "@/lib/modules/tenant/client";
-import { IdentityClient } from "@/lib/modules/identity/client";
+import { TenantClient } from "@/modules/tenant";
+import { IdentityClient } from "@/modules/auth";
 import { PricingPlanDTO } from "../index";
 
 /**

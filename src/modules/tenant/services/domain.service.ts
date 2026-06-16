@@ -107,7 +107,7 @@ export async function verifyDomain(siteId: string, domain: string): Promise<Doma
             // Kirim email notifikasi secara asinkron
             (async () => {
                 try {
-                    const { IdentityClient } = await import("@/lib/modules/identity/client");
+                    const { IdentityClient } = await import("@/modules/auth");
                     const siteOwner = await IdentityClient.getSiteOwner(siteId);
                     if (siteOwner && siteOwner.email) {
                         const { sendDomainVerifiedEmail } = await import("@/lib/services/email");

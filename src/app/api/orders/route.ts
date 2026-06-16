@@ -1,6 +1,6 @@
 import { apiResponse, apiError, validateBody } from "@/lib/api/utils";
-import { OrderClient } from "@/lib/modules/order/client";
-import { BillingClient } from "@/lib/modules/billing/client";
+import { OrderClient } from "@/modules/order";
+import { BillingClient } from "@/modules/billing";
 import { z as _z } from "zod";
 import zod from "zod";
 const z: typeof _z = _z || (zod as any).z || zod;

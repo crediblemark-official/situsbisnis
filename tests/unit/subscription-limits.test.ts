@@ -10,7 +10,7 @@ vi.mock('@/lib/core/db', () => ({
   },
 }));
 
-vi.mock('@/lib/modules/content/client', () => ({
+vi.mock('@/modules/content', () => ({
   ContentClient: {
     countPosts: vi.fn(),
     countTestimonials: vi.fn(),
@@ -18,15 +18,15 @@ vi.mock('@/lib/modules/content/client', () => ({
   }
 }));
 
-vi.mock('@/lib/modules/catalog/client', () => ({
+vi.mock('@/modules/catalog', () => ({
   CatalogClient: {
     countProducts: vi.fn(),
   }
 }));
 
 import { db } from '@/lib/core/db';
-import { ContentClient } from '@/lib/modules/content/client';
-import { CatalogClient } from '@/lib/modules/catalog/client';
+import { ContentClient } from '@/modules/content';
+import { CatalogClient } from '@/modules/catalog';
 
 describe('lib/subscription-limits.ts', () => {
   beforeEach(() => {

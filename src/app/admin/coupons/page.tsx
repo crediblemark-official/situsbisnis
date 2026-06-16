@@ -1,7 +1,7 @@
 import React from "react";
 import { db } from "@/lib/core/db";
 import CouponList from "@/components/admin/CouponList";
-import { IdentityClient } from "@/lib/modules/identity/client";
+import { IdentityClient } from "@/modules/auth";
 
 export const dynamic = "force-dynamic";
 

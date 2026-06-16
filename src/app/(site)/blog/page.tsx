@@ -9,7 +9,7 @@ import { serializeProducts } from "@/lib/content/serialize";
 import { ProductGridItem } from "@/app/dashboard/products/ProductGridItem";
 import Link from "next/link";
 import { ArrowRight, ShoppingCart } from "lucide-react";
-import { IdentityClient } from "@/lib/modules/identity/client";
+import { IdentityClient } from "@/modules/auth";
 
 export async function generateMetadata(): Promise<Metadata> {
     const siteId = await getSiteId();

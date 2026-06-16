@@ -1,6 +1,6 @@
 import * as couponRepo from "../repositories/coupon.repository";
 import * as planRepo from "../repositories/plan.repository";
-import { IdentityClient } from "@/lib/modules/identity/client";
+import { IdentityClient } from "@/modules/auth";
 
 /**
  * Memvalidasi kupon diskon dan menghitung harga akhirnya.

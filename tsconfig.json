@@ -11,12 +11,6 @@
     "paths": {
       "@/*": ["./src/*"],
       "@/modules/*": ["./src/modules/*"],
-      "@/lib/modules/identity/client": ["./src/modules/auth"],
-      "@/lib/modules/identity/types": ["./src/modules/auth"],
-      "@/lib/modules/identity/*": ["./src/modules/auth/*"],
-      "@/lib/modules/*/client": ["./src/modules/*"],
-      "@/lib/modules/*/types": ["./src/modules/*"],
-      "@/lib/modules/*": ["./src/modules/*"],
       "@/components/ui/FormRichText": ["./src/modules/content/ui/editor/FormRichText"],
       "@/components/ui/FormMediaPicker": ["./src/modules/content/ui/credbuild/FormMediaPicker"],
       "@/components/shop/*": ["./src/modules/catalog/ui/shop/*"],

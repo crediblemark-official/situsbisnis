@@ -3,8 +3,8 @@ import * as subscriptionRepo from "../repositories/subscription.repository";
 import * as transactionRepo from "../repositories/transaction.repository";
 import * as couponRepo from "../repositories/coupon.repository";
 import * as planRepo from "../repositories/plan.repository";
-import { TenantClient } from "@/lib/modules/tenant/client";
-import { IdentityClient } from "@/lib/modules/identity/client";
+import { TenantClient } from "@/modules/tenant";
+import { IdentityClient } from "@/modules/auth";
 
 /**
  * Membeli slot situs tambahan untuk tenant.

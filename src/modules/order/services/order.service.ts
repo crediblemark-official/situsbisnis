@@ -46,7 +46,7 @@ export async function getOrderDetail(orderId: string, siteId: string) {
         throw new Error("Order not found");
     }
 
-    const { CatalogClient } = await import("@/lib/modules/catalog/client");
+    const { CatalogClient } = await import("@/modules/catalog");
     const productIds = order.items.map(item => item.productId);
     const productsMap = await CatalogClient.getProductsMap(productIds);
 

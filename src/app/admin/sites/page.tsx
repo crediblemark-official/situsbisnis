@@ -19,7 +19,7 @@ export default async function AdminSitesPage() {
         }
     });
 
-    const { IdentityClient } = await import("@/lib/modules/identity/client");
+    const { IdentityClient } = await import("@/modules/auth");
     const rawSites = await Promise.all(dbSites.map(async (site) => {
         const owner = await IdentityClient.getSiteOwner(site.id);
         return {

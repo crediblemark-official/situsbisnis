@@ -1,5 +1,5 @@
 import { getApiContext, apiResponse, apiError } from "@/lib/api/utils";
-import { OrderClient } from "@/lib/modules/order/client";
+import { OrderClient } from "@/modules/order";
 
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {

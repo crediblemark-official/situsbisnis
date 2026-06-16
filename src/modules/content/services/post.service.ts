@@ -1,5 +1,5 @@
 import * as contentRepo from "../repositories/content.repository";
-import { IdentityClient } from "@/lib/modules/identity/client";
+import { IdentityClient } from "@/modules/auth";
 
 /**
  * Mengambil detail artikel (post) berdasarkan slug di suatu situs.

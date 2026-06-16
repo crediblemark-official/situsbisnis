@@ -1,5 +1,5 @@
 import { getApiContext, apiResponse, apiError } from "@/lib/api/utils";
-import { BillingClient } from "@/lib/modules/billing/client";
+import { BillingClient } from "@/modules/billing";
 
 export async function POST(req: Request) {
     try {

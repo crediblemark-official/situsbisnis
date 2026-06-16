@@ -4,7 +4,7 @@ import { Users, Globe, CreditCard, TrendingUp, Activity, ArrowUpRight, Clock } f
 import { PageHeader } from "@/components/ui/PageHeader";
 import Link from "next/link";
 import { THead, TBody, TR, TH, TD } from "@/components/ui/Table";
-import { BillingClient } from "@/lib/modules/billing/client";
+import { BillingClient } from "@/modules/billing";
 
 
 async function getStats() {
@@ -36,7 +36,7 @@ async function getSystemActivities() {
                     createdAt: true
                 }
             }).then(async (rawSites) => {
-                const { IdentityClient } = await import("@/lib/modules/identity/client");
+                const { IdentityClient } = await import("@/modules/auth");
                 return Promise.all(rawSites.map(async (site) => {
                     const owner = await IdentityClient.getSiteOwner(site.id);
                     return {
@@ -180,7 +180,7 @@ export default async function AdminDashboardPage() {
         }
     });
 
-    const { IdentityClient } = await import("@/lib/modules/identity/client");
+    const { IdentityClient } = await import("@/modules/auth");
     const recentSites = await Promise.all(rawRecentSites.map(async (site) => {
         const owner = await IdentityClient.getSiteOwner(site.id);
         return {

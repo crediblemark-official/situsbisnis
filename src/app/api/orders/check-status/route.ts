@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { OrderClient } from "@/lib/modules/order/client";
+import { OrderClient } from "@/modules/order";
 
 export async function POST(req: Request) {
     try {

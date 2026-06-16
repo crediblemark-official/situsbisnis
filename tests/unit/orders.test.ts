@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { POST as createOrder } from '@/app/api/orders/route';
 import { db } from '@/lib/core/db';
 import { validateBody } from '@/lib/api/utils';
-import { BillingClient } from '@/lib/modules/billing/client';
+import { BillingClient } from '@/modules/billing';
 import { getSiteId } from '@/lib/domains/tenant';
 import { getServerSession } from 'next-auth';
 
@@ -39,7 +39,7 @@ vi.mock('@/lib/domains/tenant', () => ({
   getSiteId: vi.fn(),
 }));
 
-vi.mock('@/lib/modules/billing/client', () => ({
+vi.mock('@/modules/billing', () => ({
   BillingClient: {
     checkSiteLimit: vi.fn(),
   },

@@ -64,7 +64,7 @@ export default async function OrderSuccessPage({
         );
     }
 
-    const { CatalogClient } = await import("@/lib/modules/catalog/client");
+    const { CatalogClient } = await import("@/modules/catalog");
     const productIds = dbOrder.items.map(item => item.productId);
     const productsMap = await CatalogClient.getProductsMap(productIds);
 
