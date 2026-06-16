@@ -1,6 +1,6 @@
-import { db } from "@/lib/core/db";
 import { getSiteId } from "@/lib/domains/tenant";
 import { getApiContext, apiResponse, apiError, validateBody } from "@/lib/api/utils";
+import { TenantClient } from "@/modules/tenant";
 import { z } from "zod";
 
 const contactFormSchema = z.object({
@@ -11,6 +11,10 @@ const contactFormSchema = z.object({
     emailTo: z.string().email("Invalid destination email").optional(),
 });
 
+/**
+ * POST /api/contact
+ * Menyimpan pesan dari formulir kontak publik.
+ */
 export async function POST(req: Request) {
     try {
         const siteId = await getSiteId();
@@ -23,12 +27,7 @@ export async function POST(req: Request) {
 
         const { emailTo: _emailTo, ...submissionData } = data;
 
-        await db.contactSubmission.create({
-            data: {
-                ...submissionData,
-                siteId
-            }
-        });
+        await TenantClient.createContactSubmission(siteId, submissionData);
 
         return apiResponse({ success: true, message: "Message sent successfully" });
     } catch (error) {
@@ -37,25 +36,16 @@ export async function POST(req: Request) {
     }
 }
 
+/**
+ * GET /api/contact
+ * Mengambil daftar pesan formulir kontak (admin/owner saja).
+ */
 export async function GET(_req: Request) {
     try {
         const { siteId, error, status } = await getApiContext(["admin", "editor", "owner"]);
         if (error) return apiError(error, status);
 
-        const submissions = await db.contactSubmission.findMany({
-            where: { siteId },
-            orderBy: { createdAt: 'desc' },
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                subject: true,
-                message: true,
-                status: true,
-                createdAt: true,
-                siteId: true,
-            }
-        });
+        const submissions = await TenantClient.getContactSubmissions(siteId);
         return apiResponse(submissions);
     } catch (error) {
         console.error("Fetch Submissions Error:", error);

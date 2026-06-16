@@ -25,7 +25,8 @@ import {
     createCoupon,
     updateCoupon,
     deleteCoupon,
-    processWithdrawalStatus
+    processWithdrawalStatus,
+    checkUserSitesLimit
 } from "./actions";
 
 export type LimitType = "maxPosts" | "maxProducts" | "maxOrders" | "maxTestimonials" | "maxAssets";
@@ -84,7 +85,8 @@ export const BillingClient = {
     createCoupon,
     updateCoupon,
     deleteCoupon,
-    processWithdrawalStatus
+    processWithdrawalStatus,
+    checkUserSitesLimit
 };
 
 

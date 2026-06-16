@@ -1,4 +1,5 @@
 import * as billingRepo from "../repositories/billing.repository";
+
 import { ContentClient } from "@/lib/modules/content/client";
 import { CatalogClient } from "@/lib/modules/catalog/client";
 import { OrderClient } from "@/lib/modules/order/client";
@@ -86,4 +87,33 @@ export async function checkSiteLimit(siteId: string, type: LimitType): Promise<L
     }
 
     return { allowed: true };
+}
+
+/**
+ * Memverifikasi apakah pengguna sudah mencapai batas jumlah situs dalam paketnya.
+ * Digunakan saat onboarding situs baru.
+ */
+export async function checkUserSitesLimit(siteIds: string[], currentSiteCount: number): Promise<{
+    allowed: boolean;
+    message?: string;
+    planName?: string;
+    maxSitesAllowed?: number;
+}> {
+    const subscription = await billingRepo.findActiveSubscriptionBySiteIds(siteIds);
+
+    const planLimit = subscription?.plan?.maxSites ?? 1;
+    const addonSlots = (subscription as any)?.addonSlots ?? 0;
+    const maxSitesAllowed = planLimit === -1 ? -1 : planLimit + addonSlots;
+    const planName = subscription?.plan?.name || "Free";
+
+    if (maxSitesAllowed !== -1 && currentSiteCount >= maxSitesAllowed) {
+        return {
+            allowed: false,
+            planName,
+            maxSitesAllowed,
+            message: `Limit paket tercapai. Paket Anda (${planName}) hanya mengizinkan ${maxSitesAllowed} situs. Silakan upgrade atau hapus situs yang ada.`
+        };
+    }
+
+    return { allowed: true, planName, maxSitesAllowed: maxSitesAllowed === -1 ? undefined : maxSitesAllowed };
 }

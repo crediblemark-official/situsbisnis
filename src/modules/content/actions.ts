@@ -77,3 +77,34 @@ export async function updateTermInternal(termId: string, siteId: string, data: a
     return contentService.updateTerm(termId, siteId, data);
 }
 
+// Media & Folders Actions
+import * as mediaService from "./services/media.service";
+import * as searchService from "./services/search.service";
+
+export async function getMediaListInternal(siteId: string, folderId: string | null, page: number, limit: number) {
+    return mediaService.getMediaList(siteId, folderId, page, limit);
+}
+
+export async function uploadMediaInternal(siteId: string, file: File, folderId: string | null) {
+    return mediaService.uploadMedia(siteId, file, folderId);
+}
+
+export async function deleteMediaInternal(siteId: string, id: string) {
+    return mediaService.deleteMedia(siteId, id);
+}
+
+export async function getMediaFoldersInternal(siteId: string, parentId: string | null) {
+    return mediaService.getMediaFolders(siteId, parentId);
+}
+
+export async function createMediaFolderInternal(siteId: string, name: string, parentId: string | null) {
+    return mediaService.createMediaFolder(siteId, name, parentId);
+}
+
+export async function deleteMediaFolderInternal(siteId: string, id: string) {
+    return mediaService.deleteMediaFolder(siteId, id);
+}
+
+export async function searchAllInternal(siteId: string, q: string) {
+    return searchService.searchAll(siteId, q);
+}

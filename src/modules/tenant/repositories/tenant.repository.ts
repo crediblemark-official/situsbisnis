@@ -86,3 +86,103 @@ export async function findSiteUsers(siteId: string) {
         }
     });
 }
+
+/**
+ * Mencari site berdasarkan subdomain.
+ */
+export async function findSiteBySubdomain(subdomain: string) {
+    return db.site.findUnique({
+        where: { subdomain }
+    });
+}
+
+/**
+ * Mengambil site-site yang terhubung ke user berdasarkan userId.
+ */
+export async function findSiteUserLinksByUserId(userId: string) {
+    return db.siteUser.findMany({
+        where: { userId },
+        select: { siteId: true }
+    });
+}
+
+/**
+ * Menghapus site beserta semua data yang terhubung (cascade manual untuk constraint RESTRICT).
+ */
+export async function deleteSiteById(id: string) {
+    // Hapus OrderItem dahulu untuk satisfi foreign key RESTRICT
+    await db.orderItem.deleteMany({
+        where: { order: { siteId: id } }
+    });
+    return db.site.delete({ where: { id } });
+}
+
+/**
+ * Mencari site berdasarkan ID (detail penuh).
+ */
+export async function findSiteById(id: string) {
+    return db.site.findUnique({ where: { id } });
+}
+
+/**
+ * Memperbarui data site.
+ */
+export async function updateSiteById(id: string, data: Record<string, unknown>) {
+    return db.site.update({
+        where: { id },
+        data: data as any
+    });
+}
+
+/**
+ * Membuat contact submission baru.
+ */
+export async function createContactSubmission(data: {
+    siteId: string;
+    name: string;
+    email: string;
+    subject?: string;
+    message: string;
+}) {
+    return db.contactSubmission.create({ data });
+}
+
+/**
+ * Mengambil daftar contact submission berdasarkan siteId.
+ */
+export async function findContactSubmissions(siteId: string) {
+    return db.contactSubmission.findMany({
+        where: { siteId },
+        orderBy: { createdAt: 'desc' },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            subject: true,
+            message: true,
+            status: true,
+            createdAt: true,
+            siteId: true,
+        }
+    });
+}
+
+/**
+ * Mengambil pengaturan payment berdasarkan siteId.
+ */
+export async function upsertPaymentSettings(siteId: string, data: {
+    bankName?: string;
+    accountNumber?: string;
+    accountHolder?: string;
+    currency?: string;
+    instructions?: string;
+}) {
+    return db.paymentSettings.upsert({
+        where: { siteId },
+        update: { ...data, updatedAt: new Date() },
+        create: {
+            site: { connect: { id: siteId } },
+            ...data
+        } as any
+    });
+}

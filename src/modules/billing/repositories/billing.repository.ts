@@ -61,6 +61,17 @@ export async function findActiveSubscription(siteId: string) {
 }
 
 /**
+ * Mencari langganan aktif dari sekumpulan siteIds (untuk validasi limit situs saat onboarding).
+ */
+export async function findActiveSubscriptionBySiteIds(siteIds: string[]) {
+    return db.subscription.findFirst({
+        where: { siteId: { in: siteIds }, status: "active" },
+        include: { plan: true },
+        orderBy: { createdAt: "desc" }
+    });
+}
+
+/**
  * Mengambil data transaksi beserta paket langganannya.
  */
 export async function findTransactionById(tx, id: string) {

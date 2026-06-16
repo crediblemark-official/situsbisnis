@@ -1,6 +1,6 @@
-import { db } from "@/lib/core/db";
 import { getApiContext, apiResponse, apiError, validateBody } from "@/lib/api/utils";
 import { getPaymentSettings } from "@/lib/settings/payment";
+import { TenantClient } from "@/modules/tenant";
 import { z } from "zod";
 
 const paymentSchema = z.object({
@@ -11,6 +11,10 @@ const paymentSchema = z.object({
     currency: z.string().optional(),
 });
 
+/**
+ * GET /api/settings/payments
+ * Mengambil pengaturan pembayaran situs.
+ */
 export async function GET() {
     try {
         const { siteId, error, status } = await getApiContext(undefined, { isPublic: true });
@@ -23,6 +27,10 @@ export async function GET() {
     }
 }
 
+/**
+ * POST /api/settings/payments
+ * Menyimpan pengaturan pembayaran situs.
+ */
 export async function POST(req: Request) {
     try {
         const { siteId, error, status } = await getApiContext(["admin", "editor", "owner"]);
@@ -31,27 +39,7 @@ export async function POST(req: Request) {
         const { data, error: vError, details, status: vStatus } = await validateBody(req, paymentSchema);
         if (vError) return apiError(vError, vStatus, details);
 
-        const { bankName, accountNumber, accountHolder, instructions, currency } = data;
-
-        await db.paymentSettings.upsert({
-            where: { siteId },
-            update: {
-                bankName,
-                accountNumber,
-                accountHolder,
-                currency,
-                instructions,
-                updatedAt: new Date(),
-            },
-            create: {
-                siteId,
-                bankName,
-                accountNumber,
-                accountHolder,
-                currency,
-                instructions,
-            }
-        });
+        await TenantClient.savePaymentSettings(siteId, data);
 
         return apiResponse({ success: true });
     } catch (error) {

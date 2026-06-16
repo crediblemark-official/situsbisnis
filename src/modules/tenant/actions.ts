@@ -1,4 +1,6 @@
 import * as tenantService from "./services/tenant.service";
+import * as siteService from "./services/site.service";
+import * as contactService from "./services/contact.service";
 import { SiteInfo, SiteContactInfo } from "./index";
 
 /**
@@ -41,4 +43,65 @@ export async function disassociateUserFromSiteInternal(userId: string, siteId: s
  */
 export async function getSiteUserIdsInternal(siteId: string): Promise<string[]> {
     return tenantService.getSiteUserIds(siteId);
+}
+
+/**
+ * Mengecek ketersediaan subdomain saat onboarding.
+ * Melempar error jika sudah digunakan.
+ */
+export async function checkSubdomainAvailabilityInternal(subdomain: string): Promise<void> {
+    return siteService.checkSubdomainAvailability(subdomain);
+}
+
+/**
+ * Mengambil jumlah site yang dimiliki user beserta daftar siteId-nya.
+ */
+export async function getUserSiteCountInternal(userId: string) {
+    return siteService.getUserSiteCount(userId);
+}
+
+/**
+ * Menghapus site berdasarkan ID (admin only).
+ */
+export async function deleteSiteInternal(id: string): Promise<void> {
+    return siteService.deleteSite(id);
+}
+
+/**
+ * Mengambil detail site berdasarkan ID.
+ */
+export async function getSiteDetailInternal(id: string) {
+    return siteService.getSiteDetail(id);
+}
+
+/**
+ * Membuat contact submission baru.
+ */
+export async function createContactSubmissionInternal(siteId: string, data: {
+    name: string;
+    email: string;
+    subject?: string;
+    message: string;
+}) {
+    return contactService.createContactSubmission(siteId, data);
+}
+
+/**
+ * Mengambil daftar contact submission untuk suatu situs.
+ */
+export async function getContactSubmissionsInternal(siteId: string) {
+    return contactService.getContactSubmissions(siteId);
+}
+
+/**
+ * Menyimpan pengaturan pembayaran untuk suatu situs.
+ */
+export async function savePaymentSettingsInternal(siteId: string, data: {
+    bankName?: string;
+    accountNumber?: string;
+    accountHolder?: string;
+    currency?: string;
+    instructions?: string;
+}) {
+    return contactService.savePaymentSettings(siteId, data);
 }

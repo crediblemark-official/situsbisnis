@@ -1,0 +1,180 @@
+import * as contentRepo from "../repositories/content.repository";
+import { uploadToR2, deleteFromR2 } from "@/lib/media/r2";
+import { BillingClient } from "@/lib/modules/billing/client";
+import { db } from "@/modules/shared/core/db"; // untuk query db.subscription jika dibutuhkan
+import sharp from "sharp";
+import path from "path";
+
+/**
+ * Mengambil daftar media items beserta informasi sisa kuota penyimpanan.
+ */
+export async function getMediaList(siteId: string, folderId: string | null, page: number, limit: number) {
+    const skip = (page - 1) * limit;
+    const whereCondition = {
+        siteId,
+        folderId: folderId === "root" ? null : folderId
+    };
+
+    const [items, total, totalBytes, subscription] = await Promise.all([
+        contentRepo.findMediaItems(siteId, folderId, limit, skip),
+        contentRepo.countMediaItems(siteId),
+        contentRepo.sumMediaSize(siteId),
+        db.subscription.findFirst({
+            where: { siteId, status: "active" },
+            include: { plan: true }
+        })
+    ]);
+
+    const plan = subscription?.plan as any;
+    const hasGallery = plan?.features?.hasGallery === true;
+    const maxAssets = hasGallery ? (plan?.maxAssets ?? -1) : 0;
+    const totalSizeInMb = totalBytes / (1024 * 1024);
+
+    return {
+        data: items,
+        quota: {
+            used: totalSizeInMb,
+            max: maxAssets
+        },
+        pagination: {
+            total,
+            page,
+            limit,
+            totalPages: Math.ceil(total / limit)
+        }
+    };
+}
+
+/**
+ * Memproses unggahan (upload) dan optimasi file media.
+ */
+export async function uploadMedia(siteId: string, file: File, folderId: string | null) {
+    if (!file) throw new Error("FILE_REQUIRED");
+
+    // 1. Check Max Assets Limit
+    const limitCheck = await BillingClient.checkSiteLimit(siteId, "maxAssets");
+    if (!limitCheck.allowed) {
+        throw new Error(limitCheck.message || "QUOTA_FULL");
+    }
+
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const ext = path.extname(file.name).toLowerCase();
+    const isImage = [".jpg", ".jpeg", ".png", ".webp"].includes(ext);
+
+    let url = "";
+    let width, height, blurDataURL;
+    let finalBuffer: Buffer = buffer;
+    let finalMimeType = file.type;
+    let finalFilename = file.name;
+    let finalSize = file.size;
+
+    if (isImage) {
+        try {
+            const image = sharp(buffer);
+            await image.metadata();
+            
+            // Auto-optimize and convert to WebP with max 2560px width
+            const optimizedImage = image
+                .resize(2560, undefined, { withoutEnlargement: true, fit: "inside" })
+                .webp({ quality: 80, effort: 4 })
+                .rotate();
+
+            finalBuffer = await optimizedImage.toBuffer() as Buffer;
+            
+            const processedMetadata = await sharp(finalBuffer).metadata();
+            width = processedMetadata.width;
+            height = processedMetadata.height;
+            
+            finalMimeType = "image/webp";
+            finalFilename = file.name.replace(/\.[^/.]+$/, "") + ".webp";
+            finalSize = finalBuffer.length;
+
+            // Generate tiny placeholder blur image
+            const placeholder = await image
+                .resize(10, 10, { fit: "inside" })
+                .jpeg({ quality: 20, progressive: true })
+                .toBuffer();
+            blurDataURL = `data:image/jpeg;base64,${placeholder.toString("base64")}`;
+        } catch (err) {
+            console.error("Image processing failed:", err);
+        }
+    }
+
+    const uploadName = `${Date.now()}-${finalFilename.replace(/\s+/g, "-")}`;
+    url = await uploadToR2(finalBuffer, uploadName, finalMimeType);
+
+    if (!url) {
+        throw new Error("UPLOAD_FAILED");
+    }
+
+    const mediaItem = await contentRepo.createMediaItem({
+        siteId,
+        folderId,
+        url,
+        filename: finalFilename,
+        mimeType: finalMimeType,
+        size: finalSize,
+        width,
+        height,
+        blurDataURL
+    });
+
+    return mediaItem;
+}
+
+/**
+ * Menghapus file media dari database dan Cloudflare R2 storage.
+ */
+export async function deleteMedia(siteId: string, id: string) {
+    if (!id) throw new Error("ID_REQUIRED");
+
+    const item = await contentRepo.findMediaItemByIdAndSite(id, siteId);
+    if (!item) {
+        throw new Error("NOT_FOUND");
+    }
+
+    await deleteFromR2(item.url);
+    await contentRepo.deleteMediaItem(id);
+
+    return { success: true };
+}
+
+/**
+ * Mengambil daftar folder media berdasarkan siteId dan parentId.
+ */
+export async function getMediaFolders(siteId: string, parentId: string | null) {
+    return contentRepo.findMediaFolders(siteId, parentId);
+}
+
+/**
+ * Membuat folder media baru.
+ */
+export async function createMediaFolder(siteId: string, name: string, parentId: string | null) {
+    if (!name) throw new Error("NAME_REQUIRED");
+    return contentRepo.createMediaFolder({
+        siteId,
+        name,
+        parentId
+    });
+}
+
+/**
+ * Menghapus folder media jika kosong.
+ */
+export async function deleteMediaFolder(siteId: string, id: string) {
+    if (!id) throw new Error("ID_REQUIRED");
+
+    const folder = await contentRepo.findMediaFolderByIdAndSite(id, siteId);
+    if (!folder) {
+        throw new Error("NOT_FOUND");
+    }
+
+    const withCounts = await contentRepo.findMediaFolderWithCounts(id);
+    if (withCounts && (withCounts._count.items > 0 || withCounts._count.children > 0)) {
+        throw new Error("FOLDER_NOT_EMPTY");
+    }
+
+    await contentRepo.deleteMediaFolder(id);
+
+    return { success: true };
+}

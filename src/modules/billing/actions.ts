@@ -113,5 +113,6 @@ export async function processWithdrawalStatus(withdrawalId: string, status: stri
     return withdrawalService.processWithdrawalStatus(withdrawalId, status);
 }
 
-
-
+export async function checkUserSitesLimit(siteIds: string[], currentSiteCount: number) {
+    return limitService.checkUserSitesLimit(siteIds, currentSiteCount);
+}

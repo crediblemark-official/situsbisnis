@@ -1,7 +1,10 @@
-import { db } from "@/lib/core/db";
-import { deleteFromR2 } from "@/lib/media/r2";
 import { getApiContext, apiResponse, apiError } from "@/lib/api/utils";
+import { ContentClient } from "@/modules/content";
 
+/**
+ * DELETE /api/media/[id]
+ * Menghapus file media dari database dan Cloudflare R2 storage.
+ */
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
         const { siteId, error, status } = await getApiContext(["admin", "editor", "owner"]);
@@ -9,23 +12,17 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
 
         const { id } = await params;
 
-        if (!id) return apiError("ID required", 400);
-
-        const item = await db.mediaItem.findFirst({
-            where: { id, siteId }
-        });
-
-        if (!item) return apiError("Item not found", 404);
-
-        await deleteFromR2(item.url);
-
-        await db.mediaItem.delete({
-            where: { id }
-        });
-
-        return apiResponse({ success: true });
+        try {
+            const result = await ContentClient.deleteMedia(siteId, id);
+            return apiResponse(result);
+        } catch (serviceError: any) {
+            const msg = serviceError?.message || "";
+            if (msg === "ID_REQUIRED") return apiError("ID required", 400);
+            if (msg === "NOT_FOUND") return apiError("Item not found", 404);
+            throw serviceError;
+        }
     } catch (error) {
-        console.error("Delete Error:", error);
+        console.error("Delete Media Error:", error);
         return apiError("Internal Error");
     }
 }

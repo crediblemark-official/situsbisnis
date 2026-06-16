@@ -9,7 +9,14 @@ import {
     getTermsInternal,
     createTermInternal,
     deleteTermInternal,
-    updateTermInternal
+    updateTermInternal,
+    getMediaListInternal,
+    uploadMediaInternal,
+    deleteMediaInternal,
+    getMediaFoldersInternal,
+    createMediaFolderInternal,
+    deleteMediaFolderInternal,
+    searchAllInternal
 } from "./actions";
 
 // Facade / Client kontrak publik
@@ -24,6 +31,14 @@ export const ContentClient = {
     getTerms: getTermsInternal,
     createTerm: createTermInternal,
     deleteTerm: deleteTermInternal,
-    updateTerm: updateTermInternal
+    updateTerm: updateTermInternal,
+    getMediaList: getMediaListInternal,
+    uploadMedia: uploadMediaInternal,
+    deleteMedia: deleteMediaInternal,
+    getMediaFolders: getMediaFoldersInternal,
+    createMediaFolder: createMediaFolderInternal,
+    deleteMediaFolder: deleteMediaFolderInternal,
+    searchAll: searchAllInternal
 };
+
 

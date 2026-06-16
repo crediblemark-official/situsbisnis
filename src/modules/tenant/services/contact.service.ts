@@ -1,0 +1,33 @@
+import * as tenantRepo from "../repositories/tenant.repository";
+
+/**
+ * Membuat contact submission baru.
+ */
+export async function createContactSubmission(siteId: string, data: {
+    name: string;
+    email: string;
+    subject?: string;
+    message: string;
+}) {
+    return tenantRepo.createContactSubmission({ siteId, ...data });
+}
+
+/**
+ * Mengambil daftar contact submission untuk suatu situs.
+ */
+export async function getContactSubmissions(siteId: string) {
+    return tenantRepo.findContactSubmissions(siteId);
+}
+
+/**
+ * Menyimpan pengaturan pembayaran untuk suatu situs.
+ */
+export async function savePaymentSettings(siteId: string, data: {
+    bankName?: string;
+    accountNumber?: string;
+    accountHolder?: string;
+    currency?: string;
+    instructions?: string;
+}) {
+    return tenantRepo.upsertPaymentSettings(siteId, data);
+}

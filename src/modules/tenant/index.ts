@@ -4,7 +4,14 @@ import {
     verifyUserSiteAccessInternal,
     associateUserToSiteInternal,
     disassociateUserFromSiteInternal,
-    getSiteUserIdsInternal
+    getSiteUserIdsInternal,
+    checkSubdomainAvailabilityInternal,
+    getUserSiteCountInternal,
+    deleteSiteInternal,
+    getSiteDetailInternal,
+    createContactSubmissionInternal,
+    getContactSubmissionsInternal,
+    savePaymentSettingsInternal
 } from "./actions";
 
 export interface SiteInfo {
@@ -19,12 +26,28 @@ export interface SiteContactInfo {
     contactPhone: string | null;
 }
 
-// Facade / Client kontrak publik
+// Facade / Client kontrak publik modul Tenant
 export const TenantClient = {
+    // Site info
     getSiteInfo: getSiteInfoInternal,
     getSiteContact: getSiteContactInternal,
+    getSiteDetail: getSiteDetailInternal,
+
+    // User-Site access
     verifyUserSiteAccess: verifyUserSiteAccessInternal,
     associateUserToSite: associateUserToSiteInternal,
     disassociateUserFromSite: disassociateUserFromSiteInternal,
-    getSiteUserIds: getSiteUserIdsInternal
+    getSiteUserIds: getSiteUserIdsInternal,
+
+    // Site management (admin / onboarding)
+    checkSubdomainAvailability: checkSubdomainAvailabilityInternal,
+    getUserSiteCount: getUserSiteCountInternal,
+    deleteSite: deleteSiteInternal,
+
+    // Contact form
+    createContactSubmission: createContactSubmissionInternal,
+    getContactSubmissions: getContactSubmissionsInternal,
+
+    // Payment settings
+    savePaymentSettings: savePaymentSettingsInternal,
 };

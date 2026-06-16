@@ -1,6 +1,10 @@
-import { db } from "@/lib/core/db";
 import { getApiContext, apiResponse, apiError } from "@/lib/api/utils";
+import { ContentClient } from "@/modules/content";
 
+/**
+ * GET /api/media/folders
+ * Mengambil daftar folder media berdasarkan parentId.
+ */
 export async function GET(req: Request) {
     try {
         const { siteId, error, status } = await getApiContext();
@@ -9,28 +13,17 @@ export async function GET(req: Request) {
         const { searchParams } = new URL(req.url);
         const parentId = searchParams.get("parentId") || null;
 
-        const folders = await db.mediaFolder.findMany({
-            where: {
-                siteId,
-                parentId: parentId
-            },
-            select: {
-                id: true,
-                name: true,
-                parentId: true,
-                _count: {
-                    select: { items: true, children: true }
-                }
-            },
-            orderBy: { name: 'asc' }
-        });
-
+        const folders = await ContentClient.getMediaFolders(siteId, parentId);
         return apiResponse(folders);
     } catch (_error) {
         return apiError("Failed to fetch folders");
     }
 }
 
+/**
+ * POST /api/media/folders
+ * Membuat folder media baru.
+ */
 export async function POST(req: Request) {
     try {
         const { siteId, error, status } = await getApiContext(["admin", "editor"]);
@@ -39,17 +32,14 @@ export async function POST(req: Request) {
         const body = await req.json();
         const { name, parentId } = body;
 
-        if (!name) return apiError("Name is required", 400);
-
-        const folder = await db.mediaFolder.create({
-            data: {
-                name,
-                siteId,
-                parentId: parentId || null
-            }
-        });
-
-        return apiResponse(folder);
+        try {
+            const folder = await ContentClient.createMediaFolder(siteId, name, parentId || null);
+            return apiResponse(folder);
+        } catch (serviceError: any) {
+            const msg = serviceError?.message || "";
+            if (msg === "NAME_REQUIRED") return apiError("Name is required", 400);
+            throw serviceError;
+        }
     } catch (_error) {
         return apiError("Failed to create folder");
     }

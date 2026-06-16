@@ -30,3 +30,20 @@ export async function findProductsByIds(productIds: string[]) {
         }
     });
 }
+
+/**
+ * Mencari produk berdasarkan query teks (nama atau slug).
+ */
+export async function searchProducts(siteId: string, q: string, limit = 5) {
+    return db.product.findMany({
+        where: {
+            siteId,
+            OR: [
+                { name: { contains: q, mode: 'insensitive' } },
+                { slug: { contains: q, mode: 'insensitive' } },
+            ]
+        },
+        take: limit,
+        select: { id: true, name: true }
+    });
+}
