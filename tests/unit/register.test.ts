@@ -3,7 +3,7 @@ import { POST as registerHandler } from '@/app/api/auth/register/route';
 import { db } from '@/lib/core/db';
 import { cookies } from 'next/headers';
 import bcrypt from 'bcryptjs';
-import { sendWelcomeEmail } from '@/modules/tenant/services/email.service';
+import { eventBus } from '@/modules/shared/core/event-bus';
 
 vi.mock('@/lib/core/db', () => ({
   db: {
@@ -24,8 +24,10 @@ vi.mock('bcryptjs', () => ({
   },
 }));
 
-vi.mock('@/modules/tenant/services/email.service', () => ({
-  sendWelcomeEmail: vi.fn().mockResolvedValue({ success: true }),
+vi.mock('@/modules/shared/core/event-bus', () => ({
+  eventBus: {
+    publish: vi.fn(),
+  },
 }));
 
 describe('Registration API Route (POST /api/auth/register)', () => {
@@ -120,7 +122,6 @@ describe('Registration API Route (POST /api/auth/register)', () => {
       referralCode: 'USERCODE',
     };
     vi.mocked(db.user.create).mockResolvedValue(mockCreatedUser as any);
-    vi.mocked(sendWelcomeEmail).mockResolvedValue({ success: true } as any);
 
     const req = new Request('http://localhost/api/auth/register', {
       method: 'POST',
@@ -149,10 +150,18 @@ describe('Registration API Route (POST /api/auth/register)', () => {
     );
 
     // Welcome email trigger verification
-    expect(sendWelcomeEmail).toHaveBeenCalledWith(
-      'new@example.com',
-      'New Owner',
-      'SitusBisnis'
+    // Verifikasi pemicuan welcome email melalui event bus
+    expect(eventBus.publish).toHaveBeenCalledWith(
+      "notification.email.send",
+      expect.objectContaining({
+        template: "welcome",
+        payload: expect.objectContaining({
+          toEmail: 'new@example.com',
+          userName: 'New Owner',
+          siteName: 'SitusBisnis'
+        })
+      }),
+      "auth"
     );
   });
 });

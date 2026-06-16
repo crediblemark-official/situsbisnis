@@ -113,13 +113,15 @@ export async function verifyDomain(siteId: string, domain: string): Promise<Doma
                         { siteId }
                     );
                     if (siteOwner && siteOwner.email) {
-                        const { sendDomainVerifiedEmail } = await import("@/modules/tenant/services/email.service");
-                        await sendDomainVerifiedEmail({
-                            toEmail: siteOwner.email,
-                            userName: siteOwner.name || "Pengguna",
-                            siteName: updatedSite.name,
-                            domain: domain
-                        });
+                        await eventBus.publish("notification.email.send", {
+                            template: "domainVerified",
+                            payload: {
+                                toEmail: siteOwner.email,
+                                userName: siteOwner.name || "Pengguna",
+                                siteName: updatedSite.name,
+                                domain: domain
+                            }
+                        }, "tenant");
                     }
                 } catch (err) {
                     console.error("[DOMAIN_EMAIL_ERROR] Failed to send domain verification email:", err);

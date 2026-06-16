@@ -89,7 +89,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
             // Kirim email notifikasi ke pemilik site (fire and forget)
             const siteOwner = await IdentityClient.getSiteOwner(id);
             if (siteOwner && siteOwner.email) {
-                const { sendTrialExtendedEmail } = await import("@/modules/tenant/services/email.service");
+                const { sendTrialExtendedEmail } = await import("@/modules/notification");
                 const formattedEndDate = newEndDate.toLocaleDateString("id-ID", {
                     day: "numeric",
                     month: "long",

@@ -3,7 +3,7 @@ import { PATCH as handleSubscriptionAction } from '@/app/api/admin/subscriptions
 import { db } from '@/lib/core/db';
 import { getApiContext } from '@/lib/api/utils';
 import { sendWhatsAppNotification } from '@/lib/services/whatsapp';
-import { sendSubscriptionCancelledEmail, sendFollowupEmail } from '@/modules/tenant/services/email.service';
+import { eventBus } from '@/modules/shared/core/event-bus';
 import { IdentityClient } from '@/modules/auth';
 
 vi.mock('@/lib/core/db', () => ({
@@ -31,10 +31,7 @@ vi.mock('@/lib/services/whatsapp', () => ({
   sendWhatsAppNotification: vi.fn(),
 }));
 
-vi.mock('@/modules/tenant/services/email.service', () => ({
-  sendSubscriptionCancelledEmail: vi.fn().mockResolvedValue({ success: true }),
-  sendFollowupEmail: vi.fn().mockResolvedValue({ success: true }),
-}));
+// eventBus di-mock di bawah, tidak perlu me-mock modul notification langsung
 
 vi.mock('@/modules/auth', () => ({
   IdentityClient: {
@@ -214,12 +211,19 @@ describe('Subscription Admin API Route (PATCH /api/admin/subscriptions/[id])', (
         where: { id: 'sub-1' },
         data: { status: 'cancelled' },
       });
-      expect(sendSubscriptionCancelledEmail).toHaveBeenCalledWith({
-        toEmail: 'john@example.com',
-        userName: 'John Doe',
-        siteName: 'My Site',
-        planName: 'Pro',
-      });
+      expect(eventBus.publish).toHaveBeenCalledWith(
+        "notification.email.send",
+        expect.objectContaining({
+          template: "subscriptionCancelled",
+          payload: expect.objectContaining({
+            toEmail: 'john@example.com',
+            userName: 'John Doe',
+            siteName: 'My Site',
+            planName: 'Pro'
+          })
+        }),
+        "billing"
+      );
     });
   });
 
@@ -306,7 +310,7 @@ describe('Subscription Admin API Route (PATCH /api/admin/subscriptions/[id])', (
         email: 'owner@site.com',
         referredById: null
       });
-      vi.mocked(sendFollowupEmail).mockResolvedValue({ success: true, id: 'email_sent_id' });
+      // eventBus.publish akan dipanggil untuk followup email
 
       const req = new Request('http://localhost/api/admin/subscriptions/sub-1', {
         method: 'PATCH',
@@ -319,12 +323,19 @@ describe('Subscription Admin API Route (PATCH /api/admin/subscriptions/[id])', (
 
       const res = await handleSubscriptionAction(req, { params: Promise.resolve({ id: 'sub-1' }) });
       expect(res.status).toBe(200);
-      expect(sendFollowupEmail).toHaveBeenCalledWith({
-        toEmail: 'owner@site.com',
-        userName: 'John Owner',
-        subject: 'Pesan Penting Terkait Layanan Website Anda di SitusBisnis',
-        message: 'Hello Email Followup',
-      });
+      expect(eventBus.publish).toHaveBeenCalledWith(
+        "notification.email.send",
+        expect.objectContaining({
+          template: "followup",
+          payload: expect.objectContaining({
+            toEmail: 'owner@site.com',
+            userName: 'John Owner',
+            subject: 'Pesan Penting Terkait Layanan Website Anda di SitusBisnis',
+            message: 'Hello Email Followup'
+          })
+        }),
+        "billing"
+      );
     });
   });
 });

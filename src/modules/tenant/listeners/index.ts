@@ -60,15 +60,17 @@ export async function initTenantListeners() {
         { siteId }
       );
       if (siteOwner && siteOwner.email) {
-        const { sendPaymentSuccessEmail } = await import("@/modules/tenant/services/email.service");
-        await sendPaymentSuccessEmail({
-          toEmail: siteOwner.email,
-          userName: siteOwner.name || "Pengguna",
-          siteName,
-          planName,
-          amount: formattedAmount,
-          endDate: formattedEndDate
-        });
+        await eventBus.publish("notification.email.send", {
+          template: "paymentSuccess",
+          payload: {
+            toEmail: siteOwner.email,
+            userName: siteOwner.name || "Pengguna",
+            siteName,
+            planName,
+            amount: formattedAmount,
+            endDate: formattedEndDate
+          }
+        }, "tenant");
         console.log(`[TenantListener] Notifikasi Email sukses dikirim ke ${siteOwner.email}`);
       }
       
@@ -119,56 +121,4 @@ export async function initTenantListeners() {
     }
   );
 
-  // Subscriber untuk notifikasi email dari modul lain
-  await eventBus.subscribe("notification.email.send", async (data: any) => {
-    const { template, payload } = data;
-    try {
-      console.log(`[TenantListener] Memproses kirim email template: ${template}`);
-      const emailService = await import("../services/email.service");
-      
-      switch (template) {
-        case "welcome":
-          await emailService.sendWelcomeEmail(payload.toEmail, payload.userName, payload.siteName);
-          break;
-        case "withdrawalStatus":
-          await emailService.sendWithdrawalStatusEmail({
-            toEmail: payload.toEmail,
-            userName: payload.userName,
-            amount: payload.amount,
-            status: payload.status,
-            bankDetails: payload.bankDetails
-          });
-          break;
-        case "followup":
-          await emailService.sendFollowupEmail({
-            toEmail: payload.toEmail,
-            userName: payload.userName,
-            subject: payload.subject,
-            message: payload.message
-          });
-          break;
-        case "trialExtended":
-          await emailService.sendTrialExtendedEmail({
-            toEmail: payload.toEmail,
-            userName: payload.userName,
-            siteName: payload.siteName,
-            days: payload.days,
-            newEndDate: payload.newEndDate
-          });
-          break;
-        case "subscriptionCancelled":
-          await emailService.sendSubscriptionCancelledEmail({
-            toEmail: payload.toEmail,
-            userName: payload.userName,
-            siteName: payload.siteName,
-            planName: payload.planName
-          });
-          break;
-        default:
-          console.warn(`[TenantListener Warning] Template email tidak dikenal: ${template}`);
-      }
-    } catch (error) {
-      console.error(`[TenantListener Error] Gagal memproses kirim email template ${template}:`, error);
-    }
-  });
 }

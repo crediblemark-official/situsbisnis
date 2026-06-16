@@ -10,7 +10,7 @@ import {
   sendTrialExtendedEmail,
   sendDomainVerifiedEmail,
   sendSubscriptionCancelledEmail,
-} from '@/modules/tenant/services/email.service';
+} from '@/modules/notification';
 
 // Create mock function for Resend email sending
 const mockSend = vi.fn();

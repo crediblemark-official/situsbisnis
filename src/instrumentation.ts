@@ -7,6 +7,7 @@ export async function register() {
     const { initCatalogListeners } = await import("@/modules/catalog/listeners");
     const { initOrderListeners } = await import("@/modules/order/listeners");
     const { initBillingListeners } = await import("@/modules/billing/listeners");
+    const { initNotificationListeners } = await import("@/modules/notification/listeners");
     
     // Inisialisasi koneksi broker
     await eventBus.init();
@@ -18,6 +19,7 @@ export async function register() {
     await initCatalogListeners();
     await initOrderListeners();
     await initBillingListeners();
+    await initNotificationListeners();
     
     console.log("🚀 Sistem Event-Driven berhasil diinisialisasi.");
   }

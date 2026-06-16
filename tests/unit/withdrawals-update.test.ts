@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { POST as updateWithdrawalHandler } from '@/app/api/admin/withdrawals/update/route';
 import { db } from '@/lib/core/db';
 import { getServerSession } from 'next-auth';
-import { sendWithdrawalStatusEmail } from '@/modules/tenant/services/email.service';
+import { eventBus } from '@/modules/shared/core/event-bus';
 
 vi.mock('@/lib/core/db', () => ({
   db: {
@@ -21,8 +21,10 @@ vi.mock('next-auth', () => ({
   getServerSession: vi.fn(),
 }));
 
-vi.mock('@/modules/tenant/services/email.service', () => ({
-  sendWithdrawalStatusEmail: vi.fn().mockResolvedValue({ success: true }),
+vi.mock('@/modules/shared/core/event-bus', () => ({
+  eventBus: {
+    publish: vi.fn(),
+  },
 }));
 
 describe('Withdrawal Status Update API Route (POST /api/admin/withdrawals/update)', () => {
@@ -134,13 +136,19 @@ describe('Withdrawal Status Update API Route (POST /api/admin/withdrawals/update
     expect(db.user.update).not.toHaveBeenCalled();
 
     // Verify email notification
-    expect(sendWithdrawalStatusEmail).toHaveBeenCalledWith({
-      toEmail: 'affiliate@test.com',
-      userName: 'Budi',
-      amount: 'Rp 250.000', // formatting might contain non-breaking spaces depending on environment, using stringContaining/objectContaining is safer, or check value
-      status: 'approved',
-      bankDetails: 'BCA - 987654321 (a/n Budi Santoso)',
-    });
+    expect(eventBus.publish).toHaveBeenCalledWith(
+      "notification.email.send",
+      expect.objectContaining({
+        template: "withdrawalStatus",
+        payload: expect.objectContaining({
+          toEmail: 'affiliate@test.com',
+          userName: 'Budi',
+          status: 'approved',
+          bankDetails: 'BCA - 987654321 (a/n Budi Santoso)',
+        })
+      }),
+      "billing"
+    );
   });
 
   it('should reject withdrawal successfully, updating status, refunding balance, and sending rejection email', async () => {
@@ -186,12 +194,18 @@ describe('Withdrawal Status Update API Route (POST /api/admin/withdrawals/update
     );
 
     // Verify email notification
-    expect(sendWithdrawalStatusEmail).toHaveBeenCalledWith({
-      toEmail: 'affiliate2@test.com',
-      userName: 'Siti',
-      amount: 'Rp 150.000',
-      status: 'rejected',
-      bankDetails: 'Mandiri - 11223344 (a/n Siti Aminah)',
-    });
+    expect(eventBus.publish).toHaveBeenCalledWith(
+      "notification.email.send",
+      expect.objectContaining({
+        template: "withdrawalStatus",
+        payload: expect.objectContaining({
+          toEmail: 'affiliate2@test.com',
+          userName: 'Siti',
+          status: 'rejected',
+          bankDetails: 'Mandiri - 11223344 (a/n Siti Aminah)',
+        })
+      }),
+      "billing"
+    );
   });
 });
