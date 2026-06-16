@@ -1,8 +1,16 @@
-import { countProductsInternal, getProductsMapInternal, searchProductsInternal } from "./controllers/catalog.controller";
+import { 
+    countProductsInternal, 
+    getProductsMapInternal, 
+    searchProductsInternal,
+    getProductsInternal,
+    getProductInternal
+} from "./controllers/catalog.controller";
 
 // Facade / Client kontrak publik
 export const CatalogClient = {
     countProducts: countProductsInternal,
     getProductsMap: getProductsMapInternal,
-    searchProducts: searchProductsInternal
+    searchProducts: searchProductsInternal,
+    getProducts: getProductsInternal,
+    getProduct: getProductInternal
 };

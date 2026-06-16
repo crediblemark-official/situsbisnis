@@ -47,3 +47,33 @@ export async function searchProducts(siteId: string, q: string, limit = 5) {
         select: { id: true, name: true }
     });
 }
+
+/**
+ * Mengambil daftar produk aktif (tidak diarsipkan) di suatu situs.
+ */
+export async function findPublishedProducts(siteId: string) {
+    return db.product.findMany({
+        where: { isArchived: false, siteId },
+        orderBy: { createdAt: "desc" },
+        select: {
+            id: true,
+            name: true,
+            slug: true,
+            price: true,
+            originalPrice: true,
+            images: true,
+            createdAt: true,
+            stock: true,
+        }
+    });
+}
+
+/**
+ * Mencari produk berdasarkan slug lengkap dengan metadata, term, dan seoMeta.
+ */
+export async function findProductBySlug(siteId: string, slug: string) {
+    return db.product.findUnique({
+        where: { siteId_slug: { siteId, slug } },
+        include: { metaData: true, terms: true, seoMeta: true }
+    });
+}

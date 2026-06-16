@@ -20,3 +20,17 @@ export async function getProductsMapInternal(productIds: string[]): Promise<Reco
 export async function searchProductsInternal(siteId: string, q: string, limit = 5) {
     return catalogService.searchProducts(siteId, q, limit);
 }
+
+/**
+ * Mengambil seluruh produk aktif di suatu situs.
+ */
+export async function getProductsInternal(siteId: string) {
+    return catalogService.getProducts(siteId);
+}
+
+/**
+ * Mengambil detail produk berdasarkan slug di suatu situs.
+ */
+export async function getProductInternal(slug: string, siteId: string) {
+    return catalogService.getProduct(slug, siteId);
+}

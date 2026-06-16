@@ -29,3 +29,16 @@ export async function searchProducts(siteId: string, q: string, limit = 5) {
     return catalogRepo.searchProducts(siteId, q, limit);
 }
 
+/**
+ * Mengambil seluruh produk aktif di suatu situs.
+ */
+export async function getProducts(siteId: string) {
+    return catalogRepo.findPublishedProducts(siteId);
+}
+
+/**
+ * Mengambil detail produk berdasarkan slug di suatu situs.
+ */
+export async function getProduct(slug: string, siteId: string) {
+    return catalogRepo.findProductBySlug(siteId, slug);
+}

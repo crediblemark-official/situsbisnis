@@ -21,7 +21,13 @@ import {
     saveCredBuildPageInternal,
     countMediaItemsInternal,
     countGalleryItemsInternal,
-    countPortfolioItemsInternal
+    countPortfolioItemsInternal,
+    getPostInternal,
+    getPostsInternal,
+    getPageInternal,
+    getGalleryItemsInternal,
+    getPortfoliosInternal,
+    getTestimonialsInternal
 } from "./controllers/content.controller";
 import {
     getMenuInternal,
@@ -54,5 +60,11 @@ export const ContentClient = {
     countGalleryItems: countGalleryItemsInternal,
     countPortfolioItems: countPortfolioItemsInternal,
     getMenu: getMenuInternal,
-    updateMenu: updateMenuInternal
+    updateMenu: updateMenuInternal,
+    getPost: getPostInternal,
+    getPosts: getPostsInternal,
+    getPage: getPageInternal,
+    getGalleryItems: getGalleryItemsInternal,
+    getPortfolios: getPortfoliosInternal,
+    getTestimonials: getTestimonialsInternal
 };

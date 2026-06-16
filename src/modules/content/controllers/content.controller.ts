@@ -1,6 +1,12 @@
 import * as contentService from "../services/content.service";
 import * as mediaService from "../services/media.service";
 import * as searchService from "../services/search.service";
+import * as pageService from "../services/page.service";
+import * as taxonomyService from "../services/taxonomy.service";
+import * as postService from "../services/post.service";
+import * as galleryService from "../services/gallery.service";
+import * as portfolioService from "../services/portfolio.service";
+import * as testimonialService from "../services/testimonial.service";
 
 /**
  * Menghitung jumlah artikel/post di suatu situs.
@@ -39,56 +45,56 @@ export async function getMediaSizeInternal(siteId: string): Promise<number> {
  * Mengambil daftar halaman untuk suatu situs.
  */
 export async function getPagesInternal(siteId: string) {
-    return contentService.getPages(siteId);
+    return pageService.getPages(siteId);
 }
 
 /**
  * Mengambil data detail halaman berdasarkan ID.
  */
 export async function getPageDetailInternal(id: string, siteId: string) {
-    return contentService.getPageDetail(id, siteId);
+    return pageService.getPageDetail(id, siteId);
 }
 
 /**
  * Menyimpan data halaman (upsert) beserta metadata.
  */
 export async function savePageInternal(siteId: string, body: any) {
-    return contentService.savePage(siteId, body);
+    return pageService.savePage(siteId, body);
 }
 
 /**
  * Menghapus halaman.
  */
 export async function deletePageInternal(id: string, siteId: string) {
-    return contentService.deletePage(id, siteId);
+    return pageService.deletePage(id, siteId);
 }
 
 /**
  * Mengambil terms berdasarkan taxonomyId.
  */
 export async function getTermsInternal(taxonomyId: string, siteId: string) {
-    return contentService.getTerms(taxonomyId, siteId);
+    return taxonomyService.getTerms(taxonomyId, siteId);
 }
 
 /**
  * Membuat term baru di taksonomi.
  */
 export async function createTermInternal(taxonomyId: string, siteId: string, data: any) {
-    return contentService.createTerm(taxonomyId, siteId, data);
+    return taxonomyService.createTerm(taxonomyId, siteId, data);
 }
 
 /**
  * Menghapus term.
  */
 export async function deleteTermInternal(termId: string, siteId: string) {
-    return contentService.deleteTerm(termId, siteId);
+    return taxonomyService.deleteTerm(termId, siteId);
 }
 
 /**
  * Memperbarui data term.
  */
 export async function updateTermInternal(termId: string, siteId: string, data: any) {
-    return contentService.updateTerm(termId, siteId, data);
+    return taxonomyService.updateTerm(termId, siteId, data);
 }
 
 // Media & Folders Actions
@@ -121,9 +127,51 @@ export async function searchAllInternal(siteId: string, q: string) {
 }
 
 export async function getCredBuildPageInternal(siteId: string, path: string) {
-    return contentService.getCredBuildPage(siteId, path);
+    return pageService.getCredBuildPage(siteId, path);
 }
 
 export async function saveCredBuildPageInternal(siteId: string, path: string, data: any) {
-    return contentService.saveCredBuildPage(siteId, path, data);
+    return pageService.saveCredBuildPage(siteId, path, data);
+}
+
+/**
+ * Mengambil detail artikel berdasarkan slug di suatu situs.
+ */
+export async function getPostInternal(slug: string, siteId: string) {
+    return postService.getPost(slug, siteId);
+}
+
+/**
+ * Mengambil daftar artikel aktif di suatu situs.
+ */
+export async function getPostsInternal(siteId: string) {
+    return postService.getPosts(siteId);
+}
+
+/**
+ * Mengambil detail halaman berdasarkan path di suatu situs.
+ */
+export async function getPageInternal(path: string, siteId: string) {
+    return pageService.getPage(path, siteId);
+}
+
+/**
+ * Mengambil daftar media galeri di suatu situs.
+ */
+export async function getGalleryItemsInternal(siteId: string) {
+    return galleryService.getGalleryItems(siteId);
+}
+
+/**
+ * Mengambil daftar item portofolio di suatu situs.
+ */
+export async function getPortfoliosInternal(siteId: string) {
+    return portfolioService.getPortfolios(siteId);
+}
+
+/**
+ * Mengambil daftar testimoni yang disetujui di suatu situs.
+ */
+export async function getTestimonialsInternal(siteId: string) {
+    return testimonialService.getTestimonials(siteId);
 }

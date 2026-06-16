@@ -82,3 +82,88 @@ export async function searchPages(siteId: string, q: string, limit = 5) {
         select: { id: true, title: true, path: true }
     });
 }
+
+/**
+ * Mencari artikel berdasarkan slug di suatu situs.
+ */
+export async function findPostBySlug(siteId: string, slug: string) {
+    return db.post.findUnique({
+        where: { siteId_slug: { siteId, slug } },
+        include: {
+            metaData: true
+        }
+    });
+}
+
+/**
+ * Mengambil daftar artikel aktif (published) di suatu situs.
+ */
+export async function findPublishedPosts(siteId: string) {
+    return db.post.findMany({
+        where: { published: true, siteId },
+        orderBy: { createdAt: "desc" },
+        select: {
+            id: true,
+            title: true,
+            slug: true,
+            imageUrl: true,
+            excerpt: true,
+            createdAt: true,
+        }
+    });
+}
+
+/**
+ * Mengambil daftar media galeri di suatu situs.
+ */
+export async function findGalleryItems(siteId: string) {
+    return db.galleryItem.findMany({
+        where: { siteId },
+        orderBy: { createdAt: "desc" },
+        select: {
+            id: true,
+            url: true,
+            title: true,
+            description: true,
+            createdAt: true
+        }
+    });
+}
+
+/**
+ * Mengambil daftar item portofolio di suatu situs.
+ */
+export async function findPortfolioItems(siteId: string) {
+    return db.portfolioItem.findMany({
+        where: { siteId },
+        orderBy: { createdAt: "desc" },
+        select: {
+            id: true,
+            title: true,
+            category: true,
+            imageUrl: true,
+            link: true,
+            description: true,
+            createdAt: true
+        }
+    });
+}
+
+/**
+ * Mengambil daftar testimoni yang disetujui (approved) di suatu situs.
+ */
+export async function findApprovedTestimonials(siteId: string) {
+    return db.testimonial.findMany({
+        where: { isApproved: true, siteId },
+        orderBy: { createdAt: "desc" },
+        select: {
+            id: true,
+            quote: true,
+            author: true,
+            role: true,
+            avatarUrl: true,
+            rating: true,
+            createdAt: true
+        }
+    });
+}

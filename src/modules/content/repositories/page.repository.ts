@@ -148,3 +148,17 @@ export async function upsertCredBuildPage(siteId: string, path: string, data: an
         }
     });
 }
+
+/**
+ * Mencari halaman berdasarkan siteId dan path beserta metadatanya.
+ */
+export async function findPageBySiteAndPathWithMeta(siteId: string, path: string) {
+    return db.credBuildPage.findUnique({
+        where: {
+            siteId_path: { siteId, path }
+        },
+        include: {
+            metaData: true
+        }
+    });
+}
