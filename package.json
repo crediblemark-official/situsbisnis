@@ -85,7 +85,7 @@
     "vitest": "^2.1.9"
   },
   "prisma": {
-    "seed": "node --env-file=.env prisma/init.cjs"
+    "seed": "bun prisma/init.cjs"
   },
   "lint-staged": {
     "*.{ts,tsx}": [

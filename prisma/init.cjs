@@ -48,16 +48,23 @@ async function main() {
         cost: 12,
       });
 
-      await prisma.user.create({
+      const createdUser = await prisma.user.create({
         data: {
           email: adminEmail,
           name: 'Platform Administrator',
           password: hashedPassword,
           role: 'admin',
-          sites: { connect: { id: adminSite.id } },
         },
       });
-      console.log(`✅ Admin account created: ${adminEmail}`);
+
+      await prisma.siteUser.create({
+        data: {
+          siteId: adminSite.id,
+          userId: createdUser.id,
+          role: 'owner',
+        },
+      });
+      console.log(`✅ Admin account created: ${adminEmail} and linked to admin site.`);
     }
   }
 
