@@ -2,7 +2,7 @@ import React from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { getSiteSettings } from "@/modules/tenant/services/site-settings.service";
-import { getMenu } from "@/lib/content/menus";
+import { getMenu } from "@/modules/content/services/menu.service";
 
 export default async function PagesLayout({
     children,

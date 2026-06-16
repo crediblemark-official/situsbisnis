@@ -1,5 +1,5 @@
 import { getSiteSettings } from "@/modules/tenant/services/site-settings.service";
-import { getMenu } from "@/lib/content/menus";
+import { getMenu } from "@/modules/content/services/menu.service";
 import { ThemeLayoutSelector } from "@/lib/content/themes";
 import { getTenant, getSiteId, getSiteAccessStatus } from "@/lib/domains/tenant";
 import { ExpiredSiteView } from "@/components/site/ExpiredSiteView";

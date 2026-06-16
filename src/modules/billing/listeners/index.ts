@@ -1,5 +1,6 @@
 import { eventBus } from "@/modules/shared/core/event-bus";
-import { checkSiteLimit, LimitType } from "../index";
+import { checkSiteLimit } from "../services/limit.service";
+import { LimitType } from "../index";
 
 /**
  * Menginisialisasi event listeners untuk modul billing.
