@@ -1,4 +1,7 @@
 import * as contentRepo from "../repositories/content.repository";
+import * as pageRepo from "../repositories/page.repository";
+import * as mediaRepo from "../repositories/media.repository";
+import * as taxonomyRepo from "../repositories/taxonomy.repository";
 import { hooks } from "@/modules/shared/core/hooks";
 
 /**
@@ -19,7 +22,7 @@ export async function countTestimonials(siteId: string): Promise<number> {
  * Menghitung jumlah berkas media di suatu situs.
  */
 export async function countMediaItems(siteId: string): Promise<number> {
-    return contentRepo.countMediaItems(siteId);
+    return mediaRepo.countMediaItems(siteId);
 }
 
 /**
@@ -47,14 +50,14 @@ export async function getMediaSize(siteId: string): Promise<number> {
  * Mengambil daftar halaman untuk suatu situs.
  */
 export async function getPages(siteId: string) {
-    return contentRepo.findPagesBySite(siteId);
+    return pageRepo.findPagesBySite(siteId);
 }
 
 /**
  * Mengambil data detail halaman berdasarkan ID.
  */
 export async function getPageDetail(id: string, siteId: string) {
-    const page = await contentRepo.findPageById(id);
+    const page = await pageRepo.findPageById(id);
     if (!page || page.siteId !== siteId) {
         throw new Error("Page not found");
     }
@@ -72,7 +75,7 @@ export async function savePage(siteId: string, body: any) {
     }
 
     if (id) {
-        const existing = await contentRepo.findPageById(id);
+        const existing = await pageRepo.findPageById(id);
         if (!existing || existing.siteId !== siteId) {
             throw new Error("Unauthorized");
         }
@@ -94,7 +97,7 @@ export async function savePage(siteId: string, body: any) {
             };
         }
 
-        await contentRepo.updatePage(id, {
+        await pageRepo.updatePage(id, {
             path,
             title,
             description,
@@ -105,12 +108,12 @@ export async function savePage(siteId: string, body: any) {
             data: finalData ?? existing?.data ?? {},
         });
     } else {
-        const existing = await contentRepo.findPageBySiteAndPath(siteId, path);
+        const existing = await pageRepo.findPageBySiteAndPath(siteId, path);
         if (existing) {
             throw new Error("Path already exists");
         }
 
-        await contentRepo.createPage({
+        await pageRepo.createPage({
             siteId,
             path,
             title,
@@ -124,8 +127,8 @@ export async function savePage(siteId: string, body: any) {
     }
 
     const targetPage = id 
-        ? await contentRepo.findPageById(id) 
-        : await contentRepo.findPageBySiteAndPath(siteId, path);
+        ? await pageRepo.findPageById(id) 
+        : await pageRepo.findPageBySiteAndPath(siteId, path);
 
     if (!targetPage) {
         throw new Error("Failed to retrieve saved page");
@@ -134,7 +137,7 @@ export async function savePage(siteId: string, body: any) {
     const targetId = targetPage.id;
 
     if (metaData && Array.isArray(metaData)) {
-        await contentRepo.deletePageMetaData(targetId);
+        await pageRepo.deletePageMetaData(targetId);
 
         if (metaData.length > 0) {
             const mappedMetadata = metaData.map((m: any) => ({
@@ -143,7 +146,7 @@ export async function savePage(siteId: string, body: any) {
                 type: m.type || "text",
                 pageId: targetId,
             }));
-            await contentRepo.createPageMetaData(mappedMetadata);
+            await pageRepo.createPageMetaData(mappedMetadata);
         }
     }
 
@@ -167,12 +170,12 @@ export async function savePage(siteId: string, body: any) {
  * Menghapus halaman.
  */
 export async function deletePage(id: string, siteId: string) {
-    const existing = await contentRepo.findPageById(id);
+    const existing = await pageRepo.findPageById(id);
     if (!existing || existing.siteId !== siteId) {
         throw new Error("Page not found");
     }
 
-    await contentRepo.deletePage(id);
+    await pageRepo.deletePage(id);
     return { success: true };
 }
 
@@ -180,24 +183,24 @@ export async function deletePage(id: string, siteId: string) {
  * Mengambil terms berdasarkan taxonomyId.
  */
 export async function getTerms(taxonomyId: string, siteId: string) {
-    const taxonomy = await contentRepo.findTaxonomyByIdAndSite(taxonomyId, siteId);
+    const taxonomy = await taxonomyRepo.findTaxonomyByIdAndSite(taxonomyId, siteId);
     if (!taxonomy) {
         throw new Error("Taxonomy not found");
     }
 
-    return contentRepo.findTermsByTaxonomyId(taxonomyId);
+    return taxonomyRepo.findTermsByTaxonomyId(taxonomyId);
 }
 
 /**
  * Membuat term baru di taksonomi.
  */
 export async function createTerm(taxonomyId: string, siteId: string, data: any) {
-    const taxonomy = await contentRepo.findTaxonomyByIdAndSite(taxonomyId, siteId);
+    const taxonomy = await taxonomyRepo.findTaxonomyByIdAndSite(taxonomyId, siteId);
     if (!taxonomy) {
         throw new Error("Taxonomy not found");
     }
 
-    return contentRepo.createTerm({
+    return taxonomyRepo.createTerm({
         ...data,
         taxonomyId,
     });
@@ -207,12 +210,12 @@ export async function createTerm(taxonomyId: string, siteId: string, data: any) 
  * Menghapus term.
  */
 export async function deleteTerm(termId: string, siteId: string) {
-    const term = await contentRepo.findTermById(termId);
+    const term = await taxonomyRepo.findTermById(termId);
     if (!term || term.taxonomy.siteId !== siteId) {
         throw new Error("Term not found");
     }
 
-    await contentRepo.deleteTerm(termId);
+    await taxonomyRepo.deleteTerm(termId);
     return { success: true };
 }
 
@@ -220,19 +223,19 @@ export async function deleteTerm(termId: string, siteId: string) {
  * Memperbarui data term.
  */
 export async function updateTerm(termId: string, siteId: string, data: any) {
-    const term = await contentRepo.findTermById(termId);
+    const term = await taxonomyRepo.findTermById(termId);
     if (!term || term.taxonomy.siteId !== siteId) {
         throw new Error("Term not found");
     }
 
-    return contentRepo.updateTerm(termId, data);
+    return taxonomyRepo.updateTerm(termId, data);
 }
 
 /**
  * Mengambil data halaman visual builder (data JSON).
  */
 export async function getCredBuildPage(siteId: string, path: string): Promise<any> {
-    const page = await contentRepo.findPageBySiteAndPath(siteId, path);
+    const page = await pageRepo.findPageBySiteAndPath(siteId, path);
     return page?.data || {};
 }
 
@@ -240,7 +243,7 @@ export async function getCredBuildPage(siteId: string, path: string): Promise<an
  * Menyimpan data halaman visual builder (data JSON) dan memicu revalidasi cache.
  */
 export async function saveCredBuildPage(siteId: string, path: string, data: any): Promise<void> {
-    await contentRepo.upsertCredBuildPage(siteId, path, data);
+    await pageRepo.upsertCredBuildPage(siteId, path, data);
     
     // Purge Next.js cache
     try {

@@ -1,4 +1,5 @@
 import * as contentRepo from "../repositories/content.repository";
+import * as mediaRepo from "../repositories/media.repository";
 import { uploadToR2, deleteFromR2 } from "@/lib/media/r2";
 import { BillingClient } from "@/modules/billing";
 import sharp from "sharp";
@@ -15,8 +16,8 @@ export async function getMediaList(siteId: string, folderId: string | null, page
     };
 
     const [items, total, totalBytes, subscription] = await Promise.all([
-        contentRepo.findMediaItems(siteId, folderId, limit, skip),
-        contentRepo.countMediaItems(siteId),
+        mediaRepo.findMediaItems(siteId, folderId, limit, skip),
+        mediaRepo.countMediaItems(siteId),
         contentRepo.sumMediaSize(siteId),
         BillingClient.getActiveSubscription(siteId)
     ]);
@@ -103,7 +104,7 @@ export async function uploadMedia(siteId: string, file: File, folderId: string |
         throw new Error("UPLOAD_FAILED");
     }
 
-    const mediaItem = await contentRepo.createMediaItem({
+    const mediaItem = await mediaRepo.createMediaItem({
         siteId,
         folderId,
         url,
@@ -124,13 +125,13 @@ export async function uploadMedia(siteId: string, file: File, folderId: string |
 export async function deleteMedia(siteId: string, id: string) {
     if (!id) throw new Error("ID_REQUIRED");
 
-    const item = await contentRepo.findMediaItemByIdAndSite(id, siteId);
+    const item = await mediaRepo.findMediaItemByIdAndSite(id, siteId);
     if (!item) {
         throw new Error("NOT_FOUND");
     }
 
     await deleteFromR2(item.url);
-    await contentRepo.deleteMediaItem(id);
+    await mediaRepo.deleteMediaItem(id);
 
     return { success: true };
 }
@@ -139,7 +140,7 @@ export async function deleteMedia(siteId: string, id: string) {
  * Mengambil daftar folder media berdasarkan siteId dan parentId.
  */
 export async function getMediaFolders(siteId: string, parentId: string | null) {
-    return contentRepo.findMediaFolders(siteId, parentId);
+    return mediaRepo.findMediaFolders(siteId, parentId);
 }
 
 /**
@@ -147,7 +148,7 @@ export async function getMediaFolders(siteId: string, parentId: string | null) {
  */
 export async function createMediaFolder(siteId: string, name: string, parentId: string | null) {
     if (!name) throw new Error("NAME_REQUIRED");
-    return contentRepo.createMediaFolder({
+    return mediaRepo.createMediaFolder({
         siteId,
         name,
         parentId
@@ -160,17 +161,17 @@ export async function createMediaFolder(siteId: string, name: string, parentId: 
 export async function deleteMediaFolder(siteId: string, id: string) {
     if (!id) throw new Error("ID_REQUIRED");
 
-    const folder = await contentRepo.findMediaFolderByIdAndSite(id, siteId);
+    const folder = await mediaRepo.findMediaFolderByIdAndSite(id, siteId);
     if (!folder) {
         throw new Error("NOT_FOUND");
     }
 
-    const withCounts = await contentRepo.findMediaFolderWithCounts(id);
+    const withCounts = await mediaRepo.findMediaFolderWithCounts(id);
     if (withCounts && (withCounts._count.items > 0 || withCounts._count.children > 0)) {
         throw new Error("FOLDER_NOT_EMPTY");
     }
 
-    await contentRepo.deleteMediaFolder(id);
+    await mediaRepo.deleteMediaFolder(id);
 
     return { success: true };
 }
