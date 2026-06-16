@@ -52,3 +52,11 @@ export async function requestAffiliateWithdrawalInternal(
 export async function checkAffiliateStatusInternal(userId: string) {
     return authService.checkAffiliateStatus(userId);
 }
+
+/**
+ * Server Actions / Wrapper internal untuk memperbarui referrer user.
+ */
+export async function updateUserReferrerInternal(userId: string, referredById: string): Promise<void> {
+    return authService.updateUserReferrer(userId, referredById);
+}
+

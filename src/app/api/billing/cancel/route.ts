@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { db } from "@/lib/core/db";
 import { NextResponse } from "next/server";
+import { BillingClient } from "@/lib/modules/billing/client";
 
 export async function POST(req: Request) {
     try {
@@ -17,40 +17,27 @@ export async function POST(req: Request) {
             return new NextResponse("Missing transactionId", { status: 400 });
         }
 
-        // Find the transaction and check ownership through the site's users relationship
-        const tx = await db.paymentTransaction.findUnique({
-            where: { id: transactionId }
-        });
+        const result = await BillingClient.cancelTransaction(
+            session.user.id,
+            transactionId
+        );
 
-        if (!tx) {
-            return new NextResponse("Transaction not found", { status: 404 });
-        }
-
-        // Verify that the user owns the site associated with the transaction
-        const { IdentityClient } = await import("@/lib/modules/identity/client");
-        const ownerInfo = await IdentityClient.getSiteOwner(tx.siteId);
-        const isOwner = ownerInfo?.id === session.user.id;
-        
-        if (!isOwner) {
+        return NextResponse.json(result);
+    } catch (error: any) {
+        console.error("[BILLING_CANCEL_TX]", error);
+        if (error.message === "Forbidden") {
             return new NextResponse("Forbidden", { status: 403 });
         }
-
-        // Only allow deleting pending transactions
-        if (tx.status !== "pending") {
+        if (error.message === "Transaction not found") {
+            return new NextResponse("Transaction not found", { status: 404 });
+        }
+        if (error.message.includes("Hanya transaksi")) {
             return NextResponse.json(
-                { error: "Hanya transaksi tertunda yang dapat dibatalkan." },
+                { error: error.message },
                 { status: 400 }
             );
         }
-
-        // Delete the transaction permanently
-        await db.paymentTransaction.delete({
-            where: { id: transactionId }
-        });
-
-        return NextResponse.json({ success: true });
-    } catch (error) {
-        console.error("[BILLING_CANCEL_TX]", error);
         return new NextResponse("Internal Error", { status: 500 });
     }
 }
+

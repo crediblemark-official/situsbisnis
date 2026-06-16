@@ -195,3 +195,150 @@ export async function createSubscription(tx, data: { siteId: string, planId: str
         }
     });
 }
+
+/**
+ * Mencari site berdasarkan ID.
+ */
+export async function findSiteById(id: string) {
+    return db.site.findUnique({
+        where: { id }
+    });
+}
+
+/**
+ * Mencari kupon berdasarkan kode kupon.
+ */
+export async function findCouponByCode(code: string) {
+    return db.coupon.findUnique({
+        where: { code }
+    });
+}
+
+/**
+ * Mencari plan berdasarkan ID.
+ */
+export async function findPlanById(id: string) {
+    return db.plan.findUnique({
+        where: { id }
+    });
+}
+
+/**
+ * Mencari transaksi tertunda (pending) yang memiliki bukti pembayaran (awaiting admin review).
+ */
+export async function findPendingTransactionWithProof(siteId: string) {
+    return db.paymentTransaction.findFirst({
+        where: {
+            siteId,
+            status: "pending",
+            NOT: {
+                OR: [
+                    { proofOfPayment: null },
+                    { proofOfPayment: "" }
+                ]
+            }
+        }
+    });
+}
+
+/**
+ * Menghapus transaksi tertunda (pending) milik site yang tidak memiliki bukti pembayaran.
+ */
+export async function deletePendingTransactionsWithoutProof(siteId: string) {
+    return db.paymentTransaction.deleteMany({
+        where: {
+            siteId,
+            status: "pending",
+            OR: [
+                { proofOfPayment: null },
+                { proofOfPayment: "" }
+            ]
+        }
+    });
+}
+
+/**
+ * Membuat transaksi baru dengan status pending.
+ */
+export async function createPendingTransaction(data: {
+    siteId: string;
+    planId: string;
+    amount: number;
+    addonType?: string;
+    addonQuantity?: number;
+    paymentMethod?: string;
+    couponId?: string | null;
+}) {
+    return db.paymentTransaction.create({
+        data: {
+            siteId: data.siteId,
+            planId: data.planId,
+            amount: data.amount,
+            addonType: data.addonType,
+            addonQuantity: data.addonQuantity,
+            status: "pending",
+            paymentMethod: data.paymentMethod,
+            couponId: data.couponId
+        }
+    });
+}
+
+/**
+ * Menghapus transaksi secara permanen.
+ */
+export async function deleteTransaction(id: string) {
+    return db.paymentTransaction.delete({
+        where: { id }
+    });
+}
+
+/**
+ * Memperbarui detail pembayaran (URL pembayaran, reference, dan metode) transaksi.
+ */
+export async function updateTransactionPaymentDetails(id: string, data: {
+    paymentUrl: string;
+    paymentReference?: string;
+    paymentMethod?: string;
+}) {
+    return db.paymentTransaction.update({
+        where: { id },
+        data: {
+            paymentUrl: data.paymentUrl,
+            paymentReference: data.paymentReference,
+            paymentMethod: data.paymentMethod
+        }
+    });
+}
+
+/**
+ * Memperbarui detail konfirmasi pembayaran manual (catatan dan bukti pembayaran).
+ */
+export async function updateTransactionConfirmDetails(id: string, data: {
+    notes?: string;
+    proofOfPayment?: string;
+}) {
+    return db.paymentTransaction.update({
+        where: { id },
+        data: {
+            notes: data.notes,
+            proofOfPayment: data.proofOfPayment
+        }
+    });
+}
+
+/**
+ * Memperbarui masa uji coba (trial) subscription.
+ */
+export async function updateSubscriptionTrial(id: string, data: {
+    trialEndsAt: Date;
+    trialExtended: boolean;
+}) {
+    return db.subscription.update({
+        where: { id },
+        data: {
+            trialEndsAt: data.trialEndsAt,
+            trialExtended: data.trialExtended
+        }
+    });
+}
+

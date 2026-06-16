@@ -3,7 +3,17 @@ import {
     getActivePlanNamesForSites, 
     checkSiteLimit, 
     processApprovedTransaction, 
-    updateTransactionStatus 
+    updateTransactionStatus,
+    validateCoupon,
+    buySlot,
+    cancelTransaction,
+    checkTransactionStatus,
+    initializeCheckoutPayment,
+    confirmManualPayment,
+    extendTrial,
+    getPaymentMethods,
+    upgradePlan,
+    processDuitkuWebhook
 } from "./actions";
 
 export type LimitType = "maxPosts" | "maxProducts" | "maxOrders" | "maxTestimonials" | "maxAssets";
@@ -40,5 +50,16 @@ export const BillingClient = {
     getActivePlanNamesForSites,
     checkSiteLimit,
     processApprovedTransaction,
-    updateTransactionStatus
+    updateTransactionStatus,
+    validateCoupon,
+    buySlot,
+    cancelTransaction,
+    checkTransactionStatus,
+    initializeCheckoutPayment,
+    confirmManualPayment,
+    extendTrial,
+    getPaymentMethods,
+    upgradePlan,
+    processDuitkuWebhook
 };
+

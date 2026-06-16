@@ -113,3 +113,11 @@ export async function checkAffiliateStatus(userId: string) {
         referralCode: user.referralCode
     };
 }
+
+/**
+ * Memperbarui referrer afiliasi seorang user.
+ */
+export async function updateUserReferrer(userId: string, referredById: string): Promise<void> {
+    await userRepo.updateUserReferrer(userId, referredById);
+}
+

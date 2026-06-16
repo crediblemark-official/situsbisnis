@@ -57,6 +57,7 @@ vi.mock('@/lib/core/db', () => ({
 vi.mock('@/modules/auth', () => ({
   IdentityClient: {
     getSiteOwner: vi.fn(),
+    updateUserReferrer: vi.fn(),
   }
 }));
 
@@ -238,10 +239,7 @@ describe('Coupon Discount System API Routes', () => {
       await upgradePlan(req);
 
       // Verify that user referredById was automatically linked to affiliate-bob
-      expect(db.user.update).toHaveBeenCalledWith({
-        where: { id: 'user-1' },
-        data: { referredById: 'affiliate-bob' },
-      });
+      expect(IdentityClient.updateUserReferrer).toHaveBeenCalledWith('user-1', 'affiliate-bob');
 
       // Verify that payment transaction was created with the correct discounted amount (85000) and couponId
       expect(db.paymentTransaction.create).toHaveBeenCalledWith({

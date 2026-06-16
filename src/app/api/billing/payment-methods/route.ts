@@ -1,7 +1,7 @@
-import { db } from "@/lib/core/db";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { BillingClient } from "@/lib/modules/billing/client";
 
 export async function POST(req: Request) {
     try {
@@ -17,32 +17,15 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Amount is required" }, { status: 400 });
         }
 
-        const platformSettings = await db.platformSettings.findUnique({
-            where: { id: "global" }
-        });
+        const result = await BillingClient.getPaymentMethods(amount);
 
-        if (!platformSettings?.duitkuMerchantCode || !platformSettings?.duitkuApiKey) {
-            return NextResponse.json({ error: "Payment gateway not configured" }, { status: 503 });
-        }
-
-        const { paymentManager } = await import("@crediblemark/buayar");
-
-        const result = await paymentManager.getPaymentMethods("duitku", {
-            amount: Math.round(Number(amount)),
-        }, {
-            merchantCode: platformSettings.duitkuMerchantCode,
-            apiKey: platformSettings.duitkuApiKey,
-            sandbox: platformSettings.duitkuSandbox,
-        });
-
-        if (!result.success) {
-            console.warn("[PAYMENT_METHODS] Failed to fetch from Duitku:", result.error);
-            return NextResponse.json({ error: result.error || "Failed to fetch payment methods" }, { status: 502 });
-        }
-
-        return NextResponse.json({ methods: result.methods });
-    } catch (error) {
+        return NextResponse.json(result);
+    } catch (error: any) {
         console.error("[PAYMENT_METHODS]", error);
-        return new NextResponse("Internal Error", { status: 500 });
+        if (error.message === "Payment gateway not configured") {
+            return NextResponse.json({ error: error.message }, { status: 503 });
+        }
+        return NextResponse.json({ error: error.message || "Failed to fetch payment methods" }, { status: 502 });
     }
 }
+

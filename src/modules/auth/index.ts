@@ -4,7 +4,8 @@ import {
     getUsersMapInternal, 
     awardAffiliateCommissionInternal,
     requestAffiliateWithdrawalInternal,
-    checkAffiliateStatusInternal
+    checkAffiliateStatusInternal,
+    updateUserReferrerInternal
 } from "./actions";
 
 export interface UserDTO {
@@ -36,5 +37,7 @@ export const IdentityClient = {
     getUsersMap: getUsersMapInternal,
     awardAffiliateCommission: awardAffiliateCommissionInternal,
     requestAffiliateWithdrawal: requestAffiliateWithdrawalInternal,
-    checkAffiliateStatus: checkAffiliateStatusInternal
+    checkAffiliateStatus: checkAffiliateStatusInternal,
+    updateUserReferrer: updateUserReferrerInternal
 };
+

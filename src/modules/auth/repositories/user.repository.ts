@@ -119,3 +119,14 @@ export async function decrementUserBalance(client: any, userId: string, amount: 
         }
     });
 }
+
+/**
+ * Memperbarui data referredById (affiliate referrer) milik user.
+ */
+export async function updateUserReferrer(userId: string, referredById: string) {
+    return db.user.update({
+        where: { id: userId },
+        data: { referredById }
+    });
+}
+

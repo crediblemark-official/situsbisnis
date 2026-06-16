@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { db } from "@/lib/core/db";
 import { NextResponse } from "next/server";
+import { BillingClient } from "@/lib/modules/billing/client";
 
 export async function POST(req: Request) {
     try {
@@ -17,35 +17,24 @@ export async function POST(req: Request) {
             return new NextResponse("Missing transaction ID", { status: 400 });
         }
 
-        // Fetch transaction and verify if the logged-in user belongs to the site
-        const existingTransaction = await db.paymentTransaction.findUnique({
-            where: { id: transactionId }
-        });
-
-        if (!existingTransaction) {
-            return new NextResponse("Transaction not found", { status: 404 });
-        }
-
-        const { IdentityClient } = await import("@/lib/modules/identity/client");
-        const ownerInfo = await IdentityClient.getSiteOwner(existingTransaction.siteId);
-        const isUserMember = ownerInfo?.id === session.user.id;
-        
-        if (!isUserMember && session.user.role !== "admin") {
-            return new NextResponse("Forbidden", { status: 403 });
-        }
-
-        const transaction = await db.paymentTransaction.update({
-            where: { id: transactionId },
-            data: {
-                notes,
-                proofOfPayment,
-                // We don't set status to approved here, that's for the admin
-            }
-        });
+        const transaction = await BillingClient.confirmManualPayment(
+            session.user.id,
+            (session.user as any).role,
+            transactionId,
+            notes,
+            proofOfPayment
+        );
 
         return NextResponse.json(transaction);
-    } catch (error) {
+    } catch (error: any) {
         console.error("[BILLING_CONFIRM]", error);
+        if (error.message === "Forbidden") {
+            return new NextResponse("Forbidden", { status: 403 });
+        }
+        if (error.message === "Transaction not found") {
+            return new NextResponse("Transaction not found", { status: 404 });
+        }
         return new NextResponse("Internal Error", { status: 500 });
     }
 }
+
