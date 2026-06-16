@@ -1,6 +1,6 @@
 import * as domainRepo from "../repositories/domain.repository";
 import { verifyDomainConfig as verifyDns } from "@/modules/shared/utils/domains/verification";
-import { DokployService } from "@/modules/shared/utils/services/dokploy.service";
+import { DokployService } from "./dokploy.service";
 
 export interface DomainStatus {
     status: "valid" | "pending" | "error";

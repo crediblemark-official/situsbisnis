@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as DomainService from '@/modules/tenant/services/domain.service';
 import { db } from '@/lib/core/db';
 import { verifyDomainConfig } from '@/lib/domains/verification';
-import { DokployService } from '@/lib/services/dokploy.service';
+import { DokployService } from '@/modules/tenant/services/dokploy.service';
 import { IdentityClient } from '@/modules/auth';
 
 vi.mock('@/lib/core/db', () => ({
@@ -33,7 +33,7 @@ vi.mock('next/cache', () => ({
   revalidateTag: vi.fn(),
 }));
 
-vi.mock('@/lib/services/dokploy.service', () => ({
+vi.mock('@/modules/tenant/services/dokploy.service', () => ({
   DokployService: {
     addDomain: vi.fn(),
     deleteDomain: vi.fn(),
