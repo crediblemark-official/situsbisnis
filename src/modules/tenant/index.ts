@@ -85,3 +85,5 @@ export const TenantClient = {
     getSiteSettings: getSiteSettingsInternal,
     updateSiteSettings: updateSiteSettingsInternal
 };
+
+export { default as ThemeClientUtilities } from "./ui/site/ThemeClientUtilities";

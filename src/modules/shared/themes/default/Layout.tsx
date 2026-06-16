@@ -1,7 +1,7 @@
 import React from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import ThemeClientUtilities from "@/components/site/ThemeClientUtilities";
+import { ThemeClientUtilities } from "@/modules/tenant";
 
 /**
  * Default Theme Layout for SitusBisnis.

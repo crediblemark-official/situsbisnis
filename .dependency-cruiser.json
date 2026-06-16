@@ -2,26 +2,26 @@
   "forbidden": [
     {
       "name": "no-cross-module-internal-imports",
-      "comment": "Mencegah satu modul mengimpor file internal modul lain secara langsung. Harus lewat index.ts.",
+      "comment": "Mencegah satu modul mengimpor file internal modul lain secara langsung. Harus lewat index.ts atau folder ui/.",
       "severity": "error",
       "from": {
         "path": "^src/modules/([^/]+)/"
       },
       "to": {
         "path": "^src/modules/(?!(shared)/)([^/]+)/.+",
-        "pathNot": "^src/modules/$1/|^src/modules/[^/]+/index\\.ts"
+        "pathNot": "^src/modules/$1/|^src/modules/[^/]+/index\\.ts|^src/modules/[^/]+/ui/.+"
       }
     },
     {
       "name": "no-outside-internal-imports",
-      "comment": "Mencegah kode luar mengimpor file internal modul domain secara langsung. Harus lewat index.ts.",
+      "comment": "Mencegah kode luar mengimpor file internal modul domain secara langsung. Harus lewat index.ts atau folder ui/.",
       "severity": "error",
       "from": {
         "pathNot": "^src/modules/(auth|billing|catalog|content|order|tenant)/"
       },
       "to": {
         "path": "^src/modules/(auth|billing|catalog|content|order|tenant)/.+",
-        "pathNot": "^src/modules/[^/]+/index\\.ts"
+        "pathNot": "^src/modules/[^/]+/index\\.ts|^src/modules/[^/]+/ui/.+"
       }
     }
   ],

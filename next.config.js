@@ -66,7 +66,7 @@ const nextConfig = {
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
   productionBrowserSourceMaps: false,
-  serverExternalPackages: ["@prisma/client"],
+  serverExternalPackages: ["@prisma/client", "ioredis"],
   experimental: {
     optimizePackageImports: [
       "lucide-react",
@@ -105,6 +105,14 @@ const nextConfig = {
     };
 
     if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+        dns: false,
+        child_process: false,
+      };
       config.resolve.alias['react'] = path.resolve('./node_modules/react');
       config.resolve.alias['react-dom'] = path.resolve('./node_modules/react-dom');
     }

@@ -1,6 +1,6 @@
 import React from "react";
 import dynamic from "next/dynamic";
-import { FormLabel } from "./Form";
+import { FormLabel } from "@/components/ui/Form";
 
 const TiptapEditor = dynamic(() => import("@/components/editor/TiptapEditor"), {
     ssr: false,

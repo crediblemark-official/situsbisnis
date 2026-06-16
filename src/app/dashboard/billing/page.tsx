@@ -2,7 +2,7 @@ import React from "react";
 import { AlertCircle } from "lucide-react";
 import { getSiteId } from "@/lib/domains/tenant";
 import { LinkButton } from "@/components/ui/LinkButton";
-import BillingClientComponent from "@/modules/shared/ui/dashboard/BillingClient";
+import BillingClientComponent from "@/components/dashboard/BillingClient";
 import { BillingClient } from "@/modules/billing";
 import { IdentityClient } from "@/modules/auth";
 

@@ -2,7 +2,7 @@
 
 import React, { useId } from "react";
 import { MediaPickerField } from "@/components/credbuild/MediaPickerField";
-import { Tooltip } from "./Tooltip";
+import { Tooltip } from "@/components/ui/Tooltip";
 import { Info } from "lucide-react";
 
 interface FormMediaPickerProps {
