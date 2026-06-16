@@ -16,7 +16,9 @@ import {
     getMediaFoldersInternal,
     createMediaFolderInternal,
     deleteMediaFolderInternal,
-    searchAllInternal
+    searchAllInternal,
+    getCredBuildPageInternal,
+    saveCredBuildPageInternal
 } from "./actions";
 
 // Facade / Client kontrak publik
@@ -38,7 +40,9 @@ export const ContentClient = {
     getMediaFolders: getMediaFoldersInternal,
     createMediaFolder: createMediaFolderInternal,
     deleteMediaFolder: deleteMediaFolderInternal,
-    searchAll: searchAllInternal
+    searchAll: searchAllInternal,
+    getCredBuildPage: getCredBuildPageInternal,
+    saveCredBuildPage: saveCredBuildPageInternal
 };
 
 

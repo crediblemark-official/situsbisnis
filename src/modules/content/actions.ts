@@ -108,3 +108,12 @@ export async function deleteMediaFolderInternal(siteId: string, id: string) {
 export async function searchAllInternal(siteId: string, q: string) {
     return searchService.searchAll(siteId, q);
 }
+
+export async function getCredBuildPageInternal(siteId: string, path: string) {
+    return contentService.getCredBuildPage(siteId, path);
+}
+
+export async function saveCredBuildPageInternal(siteId: string, path: string, data: any) {
+    return contentService.saveCredBuildPage(siteId, path, data);
+}
+

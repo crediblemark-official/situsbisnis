@@ -1,7 +1,5 @@
-import { revalidatePath } from "next/cache";
-import { db } from "@/lib/core/db";
-import { Prisma } from "@prisma/client";
 import { getApiContext, apiResponse, apiError, validateBody } from "@/lib/api/utils";
+import { ContentClient } from "@/modules/content";
 import { z } from "zod";
 
 const credBuildSchema = z.object({
@@ -19,26 +17,8 @@ export async function POST(request: Request) {
 
     const { path, data } = body;
 
-    // Prisma upsert using compound unique key
-    await db.credBuildPage.upsert({
-      where: { 
-        siteId_path: { siteId, path } 
-      },
-      update: {
-        data: data as Prisma.JsonValue,
-        useBuilder: true,
-        updatedAt: new Date(),
-      },
-      create: {
-        siteId,
-        path,
-        data: data as Prisma.JsonValue,
-        updatedAt: new Date(),
-      }
-    });
-
-    // Purge Next.js cache
-    revalidatePath(path);
+    // Simpan data halaman via ContentClient
+    await ContentClient.saveCredBuildPage(siteId, path, data);
 
     return apiResponse({ status: "ok" });
   } catch (error) {
@@ -55,13 +35,10 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const path = searchParams.get("path") || "/";
 
-    const page = await db.credBuildPage.findUnique({
-      where: { 
-        siteId_path: { siteId, path } 
-      }
-    });
+    // Ambil data halaman via ContentClient
+    const pageData = await ContentClient.getCredBuildPage(siteId, path);
 
-    return apiResponse(page?.data || {});
+    return apiResponse(pageData);
   } catch (error) {
     console.error("Error fetching CredBuild page:", error);
     return apiResponse({});

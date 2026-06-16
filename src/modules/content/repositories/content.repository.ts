@@ -411,3 +411,27 @@ export async function searchPages(siteId: string, q: string, limit = 5) {
         select: { id: true, title: true, path: true }
     });
 }
+
+/**
+ * Melakukan upsert data halaman visual builder (CredBuildPage).
+ */
+export async function upsertCredBuildPage(siteId: string, path: string, data: any) {
+    return db.credBuildPage.upsert({
+        where: {
+            siteId_path: { siteId, path }
+        },
+        update: {
+            data: data,
+            useBuilder: true,
+            updatedAt: new Date()
+        },
+        create: {
+            siteId,
+            path,
+            data: data,
+            useBuilder: true,
+            updatedAt: new Date()
+        }
+    });
+}
+

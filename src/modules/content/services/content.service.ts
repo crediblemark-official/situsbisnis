@@ -207,3 +207,27 @@ export async function updateTerm(termId: string, siteId: string, data: any) {
     return contentRepo.updateTerm(termId, data);
 }
 
+/**
+ * Mengambil data halaman visual builder (data JSON).
+ */
+export async function getCredBuildPage(siteId: string, path: string): Promise<any> {
+    const page = await contentRepo.findPageBySiteAndPath(siteId, path);
+    return page?.data || {};
+}
+
+/**
+ * Menyimpan data halaman visual builder (data JSON) dan memicu revalidasi cache.
+ */
+export async function saveCredBuildPage(siteId: string, path: string, data: any): Promise<void> {
+    await contentRepo.upsertCredBuildPage(siteId, path, data);
+    
+    // Purge Next.js cache
+    try {
+        const { revalidatePath } = await import("next/cache");
+        revalidatePath(path);
+    } catch (cacheError) {
+        console.error("Cache revalidation error for CredBuild page:", cacheError);
+    }
+}
+
+
