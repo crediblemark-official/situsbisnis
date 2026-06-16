@@ -1,5 +1,5 @@
-import { db } from "@/lib/core/db";
 import { getApiContext, apiResponse, apiError } from "@/lib/api/utils";
+import { OrderClient } from "@/lib/modules/order/client";
 
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
@@ -9,28 +9,12 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
         const { id } = await params;
         if (!id) return apiError("Order ID required", 400);
 
-        const order = await db.order.findFirst({
-            where: { id, siteId },
-            include: { items: true }
-        });
+        const order = await OrderClient.getOrderDetail(id, siteId);
 
-        if (!order) return apiError("Order not found", 404);
-
-        const { CatalogClient } = await import("@/lib/modules/catalog/client");
-        const productIds = order.items.map(item => item.productId);
-        const productsMap = await CatalogClient.getProductsMap(productIds);
-
-        const decoratedItems = order.items.map(item => ({
-            ...item,
-            product: productsMap[item.productId] || null
-        }));
-
-        return apiResponse({
-            ...order,
-            items: decoratedItems
-        });
-    } catch (error) {
+        return apiResponse(order);
+    } catch (error: any) {
         console.error("Error fetching order:", error);
+        if (error.message === "Order not found") return apiError("Order not found", 404);
         return apiError("Internal Error");
     }
 }
@@ -42,26 +26,14 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
         const { id } = await params;
         const body = await req.json();
-        const { paymentStatus, fulfillmentStatus, status: orderStatus } = body;
 
-        const order = await db.order.findFirst({
-            where: { id, siteId }
-        });
-        if (!order) return apiError("Order not found", 404);
+        const result = await OrderClient.updateOrderFulfillment(id, siteId, body);
 
-        const updateData: any = {};
-        if (paymentStatus) updateData.paymentStatus = paymentStatus;
-        if (fulfillmentStatus) updateData.fulfillmentStatus = fulfillmentStatus;
-        if (orderStatus) updateData.status = orderStatus;
-
-        const updated = await db.order.update({
-            where: { id },
-            data: updateData
-        });
-
-        return apiResponse({ success: true, order: updated });
-    } catch (error) {
+        return apiResponse(result);
+    } catch (error: any) {
         console.error("Error updating order:", error);
+        if (error.message === "Order not found") return apiError("Order not found", 404);
         return apiError("Internal Error");
     }
 }
+

@@ -2,7 +2,14 @@ import {
     countOrdersInternal,
     getOrderByIdInternal,
     getPaymentSettingsInternal,
-    processOrderPaymentCallbackInternal
+    processOrderPaymentCallbackInternal,
+    createOrderInternal,
+    checkOrderStatusInternal,
+    initializeOrderPaymentInternal,
+    getOrderPaymentMethodsInternal,
+    processOrderWebhookInternal,
+    getOrderDetailInternal,
+    updateOrderFulfillmentInternal
 } from "./actions";
 
 // Facade / Client kontrak publik
@@ -10,5 +17,13 @@ export const OrderClient = {
     countOrders: countOrdersInternal,
     getOrderById: getOrderByIdInternal,
     getPaymentSettings: getPaymentSettingsInternal,
-    processOrderPaymentCallback: processOrderPaymentCallbackInternal
+    processOrderPaymentCallback: processOrderPaymentCallbackInternal,
+    createOrder: createOrderInternal,
+    checkOrderStatus: checkOrderStatusInternal,
+    initializeOrderPayment: initializeOrderPaymentInternal,
+    getOrderPaymentMethods: getOrderPaymentMethodsInternal,
+    processOrderWebhook: processOrderWebhookInternal,
+    getOrderDetail: getOrderDetailInternal,
+    updateOrderFulfillment: updateOrderFulfillmentInternal
 };
+
