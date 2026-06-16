@@ -29,6 +29,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - API versioning documentation
 
 ### Changed
+- Memigrasikan seluruh rute API `/src/app/api/...` menjadi **Thin Controller** dengan arsitektur **Modular Monolith & Layered Architecture** (Facade -> Action -> Service -> Repository).
+- Memecah berkas service `billing.service.ts` (~1400 baris) menjadi 6 sub-service modular yang masing-masing berukuran di bawah 300 baris (`limit`, `plan`, `coupon`, `withdrawal`, `checkout`, `platform`).
+- Memindahkan kueri database langsung pada rute API (seperti `/api/admin/*`, `/api/billing/*`, `/api/credbuild`, `/api/analytics`, `/api/health`, `/api/ai`, dll.) ke repositori domain masing-masing.
+- Memperbaiki dependensi lintas modul pada `search.service.ts` dengan memanfaatkan facade `CatalogClient` untuk mematuhi aturan isolasi Modular Monolith.
 - Fixed 15 TypeScript errors in credbuild.config.tsx
 - Fixed 49 ESLint warnings (unused imports)
 - Removed `ignoreBuildErrors` from next.config.js
