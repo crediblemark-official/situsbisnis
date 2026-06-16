@@ -1,10 +1,8 @@
-import { db } from "@/lib/core/db";
+import { IdentityClient } from "@/modules/auth";
 import { getApiContext, apiResponse, apiError, validateBody } from "@/lib/api/utils";
-import bcrypt from "bcryptjs";
 import { z as _z } from "zod";
 import zod from "zod";
 const z: typeof _z = _z || (zod as any).z || zod;
-import { Role } from "@prisma/client";
 
 export const userSchema = z.object({
     name: z.string().optional(),
@@ -19,70 +17,16 @@ export async function GET() {
         const { session, siteId, error, status } = await getApiContext(["admin", "owner", "editor"]);
         if (error) return apiError(error, status);
 
-
-
-        // Check if we are in a tenant subsite context (subdomain !== 'admin')
         const { getTenant } = await import("@/lib/domains/tenant");
         const tenant = await getTenant();
         const isTenantContext = !!siteId && tenant !== null && tenant !== "admin";
 
-        let rawUsers;
-        if (session.user.role === "admin" && !isTenantContext) {
-            rawUsers = await db.user.findMany({
-                select: {
-                    id: true,
-                    name: true,
-                    email: true,
-                    role: true,
-                    image: true,
-                    createdAt: true
-                }
-            });
-        } else {
-            const siteUsers = await db.siteUser.findMany({
-                where: { siteId },
-                select: { userId: true }
-            });
-            const userIds = siteUsers.map(su => su.userId);
-
-            rawUsers = await db.user.findMany({
-                where: {
-                    id: { in: userIds },
-                    role: { not: "admin" }
-                },
-                select: {
-                    id: true,
-                    name: true,
-                    email: true,
-                    role: true,
-                    image: true,
-                    createdAt: true
-                }
-            });
+        try {
+            const { users } = await IdentityClient.getUsers(session.user.role, isTenantContext, siteId);
+            return apiResponse({ users });
+        } catch (err: any) {
+            return apiError(err.message || "Failed to fetch users");
         }
-
-        // Ambil jumlah postingan (posts) per pengguna secara terpisah menggunakan groupBy
-        const postCounts = await db.post.groupBy({
-            by: ["authorId"],
-            _count: {
-                id: true
-            },
-            where: {
-                ...(isTenantContext ? { siteId } : {}),
-                published: true
-            }
-        });
-
-        const postCountMap = new Map(postCounts.map(pc => [pc.authorId, pc._count.id]));
-
-        const users = rawUsers.map(user => ({
-            ...user,
-            _count: {
-                posts: postCountMap.get(user.id) || 0
-            }
-        }));
-
-        return apiResponse({ users });
     } catch (error) {
         console.error("Fetch Users Error:", error);
         return apiError("Failed to fetch users");
@@ -97,60 +41,19 @@ export async function POST(req: Request) {
         const { data, error: vError, details, status: vStatus } = await validateBody(req, userSchema);
         if (vError) return apiError(vError, vStatus, details);
 
-        const { name, email, role } = data;
-
-        // Security: Only platform admins can assign the admin role
-        if (role === "admin" && session?.user?.role !== "admin") {
-            return apiError("Forbidden: Only platform admins can assign the admin role", 403);
-        }
-
-        let user = await db.user.findUnique({
-            where: { email }
-        });
-
-        if (user) {
-            if (siteId) {
-                await db.siteUser.upsert({
-                    where: {
-                        siteId_userId: {
-                            siteId,
-                            userId: user.id
-                        }
-                    },
-                    create: {
-                        siteId,
-                        userId: user.id,
-                        role: "editor"
-                    },
-                    update: {}
-                });
+        try {
+            const user = await IdentityClient.createUserByAdmin(siteId, data, session.user.role);
+            return apiResponse({ success: true, user });
+        } catch (err: any) {
+            const message = err.message;
+            if (message.startsWith("Forbidden")) {
+                return apiError(message, 403);
             }
-        } else {
-            const hashedPassword = await bcrypt.hash("change-me", 10);
-            user = await db.user.create({
-                data: {
-                    name,
-                    email,
-                    password: hashedPassword,
-                    role: (role as Role) || Role.user,
-                    image: `https://ui-avatars.com/api/?name=${encodeURIComponent(name || email)}&background=random`
-                }
-            });
-
-            if (siteId) {
-                await db.siteUser.create({
-                    data: {
-                        siteId,
-                        userId: user.id,
-                        role: "editor"
-                    }
-                });
-            }
+            throw err;
         }
-
-        return apiResponse({ success: true, user });
     } catch (error) {
         console.error("Create User Error:", error);
         return apiError("Failed to create user");
     }
 }
+

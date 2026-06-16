@@ -5,7 +5,17 @@ import {
     awardAffiliateCommissionInternal,
     requestAffiliateWithdrawalInternal,
     checkAffiliateStatusInternal,
-    updateUserReferrerInternal
+    updateUserReferrerInternal,
+    registerUserInternal,
+    verifyBridgeTokenInternal,
+    updateUserProfileInternal,
+    getUsersInternal,
+    createUserByAdminInternal,
+    updateUserByAdminInternal,
+    deleteUserByAdminInternal,
+    getUserSitesInternal,
+    updateSiteCustomDomainInternal,
+    verifySiteCustomDomainInternal
 } from "./actions";
 
 export interface UserDTO {
@@ -38,6 +48,17 @@ export const IdentityClient = {
     awardAffiliateCommission: awardAffiliateCommissionInternal,
     requestAffiliateWithdrawal: requestAffiliateWithdrawalInternal,
     checkAffiliateStatus: checkAffiliateStatusInternal,
-    updateUserReferrer: updateUserReferrerInternal
+    updateUserReferrer: updateUserReferrerInternal,
+    registerUser: registerUserInternal,
+    verifyBridgeToken: verifyBridgeTokenInternal,
+    updateUserProfile: updateUserProfileInternal,
+    getUsers: getUsersInternal,
+    createUserByAdmin: createUserByAdminInternal,
+    updateUserByAdmin: updateUserByAdminInternal,
+    deleteUserByAdmin: deleteUserByAdminInternal,
+    getUserSites: getUserSitesInternal,
+    updateSiteCustomDomain: updateSiteCustomDomainInternal,
+    verifySiteCustomDomain: verifySiteCustomDomainInternal
 };
+
 

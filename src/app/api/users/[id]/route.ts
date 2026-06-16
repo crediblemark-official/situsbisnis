@@ -1,6 +1,5 @@
-import { db } from "@/lib/core/db";
+import { IdentityClient } from "@/modules/auth";
 import { getApiContext, apiResponse, apiError, validateBody } from "@/lib/api/utils";
-import bcrypt from "bcryptjs";
 import { userSchema } from "@/app/api/users/route";
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -14,45 +13,22 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         const { data, error: vError, details, status: vStatus } = await validateBody(req, userSchema.partial());
         if (vError) return apiError(vError, vStatus, details);
 
-        const { role, name, email, password } = data;
-
-        const targetUser = await db.user.findUnique({ where: { id } });
-        if (!targetUser) return apiError("User not found", 404);
-
-        if (session.user.role !== "admin") {
-            const belongs = await db.siteUser.findFirst({
-                where: {
-                    userId: id,
-                    siteId: siteId
-                }
-            });
-            if (!belongs) return apiError("User not found in this site context", 404);
-
-            // Security: Non-admins cannot modify platform admin users
-            if (targetUser.role === "admin") {
-                return apiError("Forbidden: Cannot modify a platform admin", 403);
+        try {
+            await IdentityClient.updateUserByAdmin(id, siteId, data, session.user.id, session.user.role);
+            return apiResponse({ success: true });
+        } catch (err: any) {
+            const message = err.message;
+            if (message === "User not found") {
+                return apiError("User not found", 404);
             }
-
-            // Security: Non-admins cannot promote anyone to admin
-            if (role === "admin") {
-                return apiError("Forbidden: Only platform admins can assign the admin role", 403);
+            if (message === "User not found in site") {
+                return apiError("User not found in this site context", 404);
             }
+            if (message.startsWith("Forbidden")) {
+                return apiError(message, 403);
+            }
+            throw err;
         }
-
-        const updateData: any = {};
-        if (role) updateData.role = role;
-        if (name) updateData.name = name;
-        if (email) updateData.email = email;
-        if (password && password.trim() !== "") {
-            updateData.password = await bcrypt.hash(password, 10);
-        }
-
-        await db.user.update({
-            where: { id },
-            data: updateData
-        });
-
-        return apiResponse({ success: true });
     } catch (e) {
         console.error("Update User Error:", e);
         return apiError("Failed to update user");
@@ -67,39 +43,25 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
         const { id } = await params;
         if (!id) return apiError("User ID required", 400);
 
-        if (id === session.user.id) {
-            return apiError("Cannot delete yourself", 400);
+        try {
+            const result = await IdentityClient.deleteUserByAdmin(id, siteId, session.user.id, session.user.role);
+            if (result.removed) {
+                return apiResponse({ success: true, message: "User removed from site" });
+            }
+            return apiResponse({ success: true });
+        } catch (err: any) {
+            const message = err.message;
+            if (message === "Cannot delete yourself") {
+                return apiError("Cannot delete yourself", 400);
+            }
+            if (message === "User not found in site") {
+                return apiError("User not found in this site context", 404);
+            }
+            throw err;
         }
-
-        // Check if we are in a tenant subsite context (subdomain !== 'admin')
-        const { getTenant } = await import("@/lib/domains/tenant");
-        const tenant = await getTenant();
-        const isTenantContext = !!siteId && tenant !== null && tenant !== "admin";
-
-        if (session.user.role !== "admin" || isTenantContext) {
-            const belongs = await db.siteUser.findFirst({
-                where: {
-                    userId: id,
-                    siteId: siteId
-                }
-            });
-            if (!belongs) return apiError("User not found in this site context", 404);
-            
-            await db.siteUser.deleteMany({
-                where: {
-                    siteId: siteId,
-                    userId: id
-                }
-            });
-            return apiResponse({ success: true, message: "User removed from site" });
-        }
-
-        await db.post.deleteMany({ where: { authorId: id } });
-        await db.user.delete({ where: { id } });
-
-        return apiResponse({ success: true });
     } catch (e) {
         console.error("Delete User Error:", e);
         return apiError("Failed to delete user");
     }
 }
+

@@ -1,8 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { db } from "@/lib/core/db";
+import { IdentityClient } from "@/modules/auth";
 import { apiResponse, apiError } from "@/lib/api/utils";
-import { DomainService } from "@/lib/services/domain.service";
 import { z } from "zod";
 
 const verifySchema = z.object({
@@ -26,44 +25,22 @@ export async function POST(req: Request) {
 
         const { siteId, domain } = parsed.data;
 
-        // Verify the user owns this site
-        const siteUserLink = await db.siteUser.findFirst({
-            where: {
-                siteId,
-                userId,
-                role: "owner"
+        try {
+            const result = await IdentityClient.verifySiteCustomDomain(userId, siteId, domain);
+            return apiResponse(result);
+        } catch (err: any) {
+            const message = err.message;
+            if (message === "Access denied") {
+                return apiError("Site not found or access denied", 404);
             }
-        });
-
-        if (!siteUserLink) {
-            return apiError("Site not found or access denied", 404);
+            if (message === "Upgrade required") {
+                return apiError("Paket Anda tidak mendukung domain kustom.", 403);
+            }
+            return apiError(message, 400);
         }
-
-        const siteOwner = await db.site.findUnique({
-            where: { id: siteId }
-        });
-
-        // Verify plan allows custom domain
-        const subscription = await db.subscription.findFirst({
-            where: { siteId, status: "active" },
-            include: { plan: true }
-        });
-        const planName = subscription?.plan?.name || "Free";
-        const planFeatures = (subscription?.plan?.features as any) || {};
-        
-        const { isFeatureEnabled } = await import("@/lib/billing/features");
-        if (!isFeatureEnabled(planName, planFeatures, "hasCustomDomain")) {
-            return apiError("Paket Anda tidak mendukung domain kustom.", 403);
-        }
-
-        const result = await DomainService.verifyDomain(siteId, domain);
-        if (result.status === "error") {
-            return apiError(result.message, 400, result.details);
-        }
-
-        return apiResponse(result);
     } catch (error) {
         console.error("[USER_SITES_VERIFY_POST]", error);
         return apiError("Internal Server Error");
     }
 }
+
