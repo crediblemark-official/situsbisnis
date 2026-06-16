@@ -7,8 +7,8 @@
 ### Langkah 1: Clone & Instal
 
 ```bash
-git clone https://github.com/crediblemark-official/SitusBisnis.git
-cd SitusBisnis
+git clone https://github.com/crediblemark-official/situsbisnis.git
+cd situsbisnis
 bun install
 ```
 

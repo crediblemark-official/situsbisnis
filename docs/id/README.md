@@ -3,7 +3,7 @@
 Aplikasi Next.js bertenaga untuk membangun dan mengelola konten multi-tenant dengan CredBuild. Dirancang untuk kecepatan, fleksibilitas, dan pengalaman editorial premium.
 
 <p align="center">
-  <a href="README.md">English</a> | <a href="README.id.md">Bahasa Indonesia</a>
+  <a href="../../README.md">English</a> | <a href="README.md">Bahasa Indonesia</a>
 </p>
 
 ## Fitur Utama
@@ -21,8 +21,7 @@ Aplikasi Next.js bertenaga untuk membangun dan mengelola konten multi-tenant den
 
 Kami menggunakan alias `@/*` untuk semua import internal guna menjaga kebersihan kode dan batas arsitektur.
 
-- `@/modules/*`: Batas Logis (Logical Boundaries) domain bisnis utama (auth, billing, catalog, content, order, tenant, shared) dengan Layered Architecture.
-- `@/components/*`: Komponen UI dan dashboard global yang dapat digunakan kembali.
+- `@/modules/*`: Batas Logis (Logical Boundaries) — 14 modul domain (auth, catalog, domain, financial, infrastructure, media, notification, order, page, payment, post, shared, site, subscription) dengan Layered Architecture + Facade Pattern.
 
 ### Keamanan & UX
 
@@ -41,8 +40,8 @@ Kami menggunakan alias `@/*` untuk semua import internal guna menjaga kebersihan
 
 1.  **Clone repositori**:
     ```bash
-    git clone https://github.com/crediblemark-official/1001_WEB.git
-    cd 1001_WEB
+    git clone https://github.com/crediblemark-official/situsbisnis.git
+    cd situsbisnis
     ```
 2.  **Instal dependensi**:
     ```bash
@@ -82,8 +81,9 @@ SitusBisnis menggunakan integrasi **Duitku** untuk memproses pembayaran. Aplikas
 
 ## Dokumentasi Terkait
 
-- [Analisis Keamanan](docs/security-analysis.md) - Tinjauan keamanan arsitektur.
-- [Panduan Pengembang](docs/creating-hero-components.md) - Cara membuat komponen visual kustom.
+- [Arsitektur](ARCHITECTURE.md) - Arsitektur modular monolith.
+- [Panduan Instalasi](INSTALLATION.md) - Cara instalasi dan konfigurasi.
+- [Panduan Deployment](DEPLOYMENT.md) - Cara deploy ke production.
 
 ---
 

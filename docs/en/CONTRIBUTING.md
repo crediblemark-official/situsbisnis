@@ -17,7 +17,7 @@ By participating in this project, you agree to abide by our Code of Conduct.
 ### Setup
 
 1. Fork the repository
-2. Clone your fork: `git clone https://github.com/your-username/NEXT_CMS.git`
+2. Clone your fork: `git clone https://github.com/your-username/situsbisnis.git`
 3. Install dependencies: `bun install`
 4. Copy `.env.example` to `.env.local` and fill in required values
 5. Set up the database: `bun run db:push`
@@ -141,5 +141,5 @@ bun run test:e2e           # Run Playwright tests
 
 ## Questions?
 
-- Open a [Discussion](https://github.com/crediblemark/NEXT_CMS/discussions)
+- Open a [Discussion](https://github.com/crediblemark-official/situsbisnis/discussions)
 - Contact the team at support@SitusBisnis.id
