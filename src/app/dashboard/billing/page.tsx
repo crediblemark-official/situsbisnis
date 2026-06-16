@@ -3,7 +3,6 @@ import { AlertCircle } from "lucide-react";
 import { getSiteId } from "@/lib/domains/tenant";
 import { LinkButton } from "@/components/ui/LinkButton";
 import BillingClientComponent from "@/components/dashboard/BillingClient";
-import { SubscriptionClient } from "@/modules/subscription";
 import { FinancialClient } from "@/modules/financial";
 import { IdentityClient } from "@/modules/auth";
 

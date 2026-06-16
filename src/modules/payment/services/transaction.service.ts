@@ -1,6 +1,5 @@
 import { SubscriptionClient } from "@/modules/subscription";
 import { db } from "@/modules/shared/core/db";
-import * as billingRepo from "@/modules/subscription/repositories/billing.repository";
 import * as transactionRepo from "../repositories/transaction.repository";
 import * as subscriptionRepo from "@/modules/subscription/repositories/subscription.repository";
 import * as couponRepo from "@/modules/financial/repositories/coupon.repository";

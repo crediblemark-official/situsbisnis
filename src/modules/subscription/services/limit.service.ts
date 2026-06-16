@@ -6,7 +6,7 @@ const LIMIT_CONFIG: Record<LimitType, {
     field: string;
     label: string;
     dependency?: string;
-    countFn: (siteId: string) => Promise<number>;
+    countFn: (_siteId: string) => Promise<number>;
 }> = {
     maxPosts: {
         field: "maxPosts",

@@ -4,7 +4,7 @@ import { getSiteContact, getSiteInfo } from "../services/tenant.service";
 import { sendWhatsAppNotification } from "@/modules/shared/utils/services/whatsapp";
 
 export async function initSiteListeners() {
-  await eventBus.subscribe("billing.payment.completed", async (data: any, metadata) => {
+  await eventBus.subscribe("billing.payment.completed", async (data: any, _metadata) => {
     const { transactionId, siteId, amount } = data;
     try {
       console.log(`[SiteListener] Memproses notifikasi pembayaran sukses untuk transaksi: ${transactionId}`);

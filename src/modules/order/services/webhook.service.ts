@@ -94,7 +94,7 @@ export async function checkOrderStatus(orderId: string) {
  * Memproses Duitku callback webhook untuk pesanan.
  */
 export async function processOrderWebhook(body: Record<string, any>) {
-    const { merchantCode, amount, merchantOrderId, signature, resultCode } = body;
+    const { merchantCode, amount, merchantOrderId, signature } = body;
 
     if (!merchantCode || !amount || !merchantOrderId || !signature) {
         throw new Error("Missing parameters");

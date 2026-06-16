@@ -59,7 +59,7 @@ vi.mock('@/modules/shared/core/event-bus', () => ({
         await awardAffiliateCommissionInternal(db, data);
       }
     }),
-    request: vi.fn(async (channel, data) => {
+    request: vi.fn(async (channel, _data) => {
       if (channel === 'request.auth.getSiteOwner') {
         const user = await db.user.findUnique({ where: { id: 'any' } });
         return user ? { id: user.id, name: user.name, email: user.email, referredById: user.referredById } : null;

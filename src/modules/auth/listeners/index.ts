@@ -6,7 +6,7 @@ import { db } from "@/modules/shared/core/db";
  * Menginisialisasi seluruh event listener untuk modul auth.
  */
 export async function initAuthListeners() {
-  await eventBus.subscribe("affiliate.commission.awarded", async (data: any, metadata) => {
+  await eventBus.subscribe("affiliate.commission.awarded", async (data: any, _metadata) => {
     try {
       console.log(`[AuthListener] Memproses komisi afiliasi untuk transaksi: ${data.transactionId}, user: ${data.userId}`);
       

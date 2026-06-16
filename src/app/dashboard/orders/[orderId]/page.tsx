@@ -28,7 +28,7 @@ export default async function OrderDetailPage({
     let order;
     try {
         order = await OrderClient.getOrderDetail(orderId, siteId);
-    } catch (e) {
+    } catch {
         return notFound();
     }
 

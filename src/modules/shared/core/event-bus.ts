@@ -3,8 +3,8 @@ import EventEmitter from "events";
 import crypto from "crypto";
 import { EventPayload, EventMetadata } from "./event-types";
 
-type EventCallback<T = any> = (data: T, metadata: EventMetadata) => void | Promise<void>;
-type RequestHandler<T = any, R = any> = (data: T) => R | Promise<R>;
+type EventCallback<T = any> = (_data: T, _metadata: EventMetadata) => void | Promise<void>;
+type RequestHandler<T = any, R = any> = (_data: T) => R | Promise<R>;
 
 class EventBus {
   private localEmitter = new EventEmitter();
