@@ -1,4 +1,6 @@
 import * as authService from "../services/auth.service";
+import * as userService from "../services/user.service";
+import * as affiliateService from "../services/affiliate.service";
 import { SiteOwnerInfo, UserDTO, AwardCommissionDTO } from "../index";
 
 /**
@@ -12,14 +14,14 @@ export async function getSiteOwnerInternal(siteId: string): Promise<SiteOwnerInf
  * Mendapatkan data user berdasarkan ID.
  */
 export async function getUserByIdInternal(userId: string): Promise<UserDTO | null> {
-    return authService.getUserById(userId);
+    return userService.getUserById(userId);
 }
 
 /**
  * Mendapatkan map dari banyak user.
  */
 export async function getUsersMapInternal(userIds: string[]): Promise<Record<string, UserDTO>> {
-    return authService.getUsersMap(userIds);
+    return userService.getUsersMap(userIds);
 }
 
 /**
@@ -29,7 +31,7 @@ export async function awardAffiliateCommissionInternal(
     dbClient: any,
     data: AwardCommissionDTO
 ): Promise<void> {
-    return authService.awardAffiliateCommission(dbClient, data);
+    return affiliateService.awardAffiliateCommission(dbClient, data);
 }
 
 /**
@@ -43,28 +45,28 @@ export async function requestAffiliateWithdrawalInternal(
     accountName: string,
     notes?: string
 ) {
-    return authService.requestAffiliateWithdrawal(userId, amount, bankName, accountNumber, accountName, notes);
+    return affiliateService.requestAffiliateWithdrawal(userId, amount, bankName, accountNumber, accountName, notes);
 }
 
 /**
  * Memeriksa status keuangan afiliasi milik user.
  */
 export async function checkAffiliateStatusInternal(userId: string) {
-    return authService.checkAffiliateStatus(userId);
+    return affiliateService.checkAffiliateStatus(userId);
 }
 
 /**
  * Memperbarui referrer afiliasi seorang user.
  */
 export async function updateUserReferrerInternal(userId: string, referredById: string): Promise<void> {
-    return authService.updateUserReferrer(userId, referredById);
+    return affiliateService.updateUserReferrer(userId, referredById);
 }
 
 /**
  * Memeriksa keberadaan kode referral.
  */
 export async function checkReferralCodeInternal(code: string): Promise<{ exists: boolean; name?: string | null }> {
-    return authService.checkReferralCode(code);
+    return affiliateService.checkReferralCode(code);
 }
 
 
@@ -86,21 +88,21 @@ export async function verifyBridgeTokenInternal(token: string) {
  * Mengubah data profil user sendiri (nama & ganti password).
  */
 export async function updateUserProfileInternal(email: string, body: any) {
-    return authService.updateUserProfile(email, body);
+    return userService.updateUserProfile(email, body);
 }
 
 /**
  * Mengambil daftar user di level platform (admin) atau di level site (owner/editor).
  */
 export async function getUsersInternal(sessionRole: string, isTenantContext: boolean, siteId?: string) {
-    return authService.getUsers(sessionRole, isTenantContext, siteId);
+    return userService.getUsers(sessionRole, isTenantContext, siteId);
 }
 
 /**
  * Membuat user baru oleh admin atau owner.
  */
 export async function createUserByAdminInternal(siteId: string | undefined, data: any, sessionRole: string) {
-    return authService.createUserByAdmin(siteId, data, sessionRole);
+    return userService.createUserByAdmin(siteId, data, sessionRole);
 }
 
 /**
@@ -113,7 +115,7 @@ export async function updateUserByAdminInternal(
     sessionUserId: string,
     sessionRole: string
 ) {
-    return authService.updateUserByAdmin(userId, siteId, data, sessionUserId, sessionRole);
+    return userService.updateUserByAdmin(userId, siteId, data, sessionUserId, sessionRole);
 }
 
 /**
@@ -125,7 +127,7 @@ export async function deleteUserByAdminInternal(
     sessionUserId: string,
     sessionRole: string
 ) {
-    return authService.deleteUserByAdmin(userId, siteId, sessionUserId, sessionRole);
+    return userService.deleteUserByAdmin(userId, siteId, sessionUserId, sessionRole);
 }
 
 /**
@@ -153,5 +155,5 @@ export async function verifySiteCustomDomainInternal(userId: string, siteId: str
  * Mengambil daftar user lengkap beserta referrals count untuk admin platform.
  */
 export async function getAdminUsersContextInternal() {
-    return authService.getAdminUsersContext();
+    return userService.getAdminUsersContext();
 }

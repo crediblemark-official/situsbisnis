@@ -1,4 +1,6 @@
 import * as orderService from "../services/order.service";
+import * as checkoutService from "../services/checkout.service";
+import * as webhookService from "../services/webhook.service";
 
 /**
  * Menghitung jumlah pesanan di suatu situs.
@@ -38,23 +40,23 @@ export async function createOrderInternal(
     customerDetails: any,
     sessionCustomer?: any
 ) {
-    return orderService.createOrder(siteId, items, customerDetails, sessionCustomer);
+    return checkoutService.createOrder(siteId, items, customerDetails, sessionCustomer);
 }
 
 export async function checkOrderStatusInternal(orderId: string) {
-    return orderService.checkOrderStatus(orderId);
+    return webhookService.checkOrderStatus(orderId);
 }
 
 export async function initializeOrderPaymentInternal(orderId: string, paymentMethod: string, origin: string) {
-    return orderService.initializeOrderPayment(orderId, paymentMethod, origin);
+    return checkoutService.initializeOrderPayment(orderId, paymentMethod, origin);
 }
 
 export async function getOrderPaymentMethodsInternal(orderId: string) {
-    return orderService.getOrderPaymentMethods(orderId);
+    return checkoutService.getOrderPaymentMethods(orderId);
 }
 
 export async function processOrderWebhookInternal(body: Record<string, any>) {
-    return orderService.processOrderWebhook(body);
+    return webhookService.processOrderWebhook(body);
 }
 
 export async function getOrderDetailInternal(orderId: string, siteId: string) {

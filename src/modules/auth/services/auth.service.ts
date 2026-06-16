@@ -1,9 +1,9 @@
 import * as userRepo from "../repositories/user.repository";
-import { SiteOwnerInfo, UserDTO, AwardCommissionDTO } from "../index";
-import { db } from "@/modules/shared/core/db";
+import * as affiliateRepo from "../repositories/affiliate.repository";
+import * as tenantUserRepo from "../repositories/tenant-user.repository";
+import { SiteOwnerInfo } from "../index";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
-import { Role } from "@prisma/client";
 
 function generateReferralCode() {
     return Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -13,129 +13,8 @@ function generateReferralCode() {
  * Mendapatkan pemilik site.
  */
 export async function getSiteOwner(siteId: string): Promise<SiteOwnerInfo | null> {
-    return userRepo.findSiteUserOwner(siteId);
+    return tenantUserRepo.findSiteUserOwner(siteId);
 }
-
-/**
- * Mendapatkan data user berdasarkan ID.
- */
-export async function getUserById(userId: string): Promise<UserDTO | null> {
-    const user = await userRepo.findUserById(userId);
-    return user as UserDTO | null;
-}
-
-/**
- * Mendapatkan map dari banyak user.
- */
-export async function getUsersMap(userIds: string[]): Promise<Record<string, UserDTO>> {
-    if (userIds.length === 0) return {};
-    const users = await userRepo.findUsersByIds(userIds);
-    
-    const resultMap: Record<string, UserDTO> = {};
-    users.forEach(u => {
-        resultMap[u.id] = u as UserDTO;
-    });
-    return resultMap;
-}
-
-/**
- * Memberikan komisi afiliasi kepada referrer user.
- */
-export async function awardAffiliateCommission(
-    dbClient: any,
-    data: AwardCommissionDTO
-): Promise<void> {
-    const client = dbClient || db;
-    await userRepo.createCommission(client, data.userId, data.amount, data.transactionId, data.description);
-    await userRepo.incrementUserBalance(client, data.userId, data.amount);
-}
-
-/**
- * Memproses permintaan penarikan dana afiliasi (withdrawal).
- */
-export async function requestAffiliateWithdrawal(
-    userId: string,
-    amount: number,
-    bankName: string,
-    accountNumber: string,
-    accountName: string,
-    notes?: string
-) {
-    return db.$transaction(async (tx) => {
-        const user = await tx.user.findUnique({
-            where: { id: userId },
-            select: { affiliateBalance: true }
-        });
-
-        if (!user) {
-            throw new Error("User tidak ditemukan.");
-        }
-
-        const balance = Number(user.affiliateBalance);
-        if (balance < amount) {
-            throw new Error("Saldo Anda tidak mencukupi untuk melakukan penarikan.");
-        }
-
-        await userRepo.decrementUserBalance(tx, userId, amount);
-
-        const withdrawal = await userRepo.createUserWithdrawal(
-            tx,
-            userId,
-            amount,
-            bankName,
-            accountNumber,
-            accountName,
-            notes
-        );
-
-        return withdrawal;
-    });
-}
-
-/**
- * Memeriksa status keuangan afiliasi milik user.
- */
-export async function checkAffiliateStatus(userId: string) {
-    const user = await db.user.findUnique({
-        where: { id: userId },
-        select: {
-            id: true,
-            name: true,
-            email: true,
-            affiliateBalance: true,
-            referralCode: true
-        }
-    });
-
-    if (!user) return null;
-
-    return {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        balance: Number(user.affiliateBalance),
-        referralCode: user.referralCode
-    };
-}
-
-/**
- * Memperbarui referrer afiliasi seorang user.
- */
-export async function updateUserReferrer(userId: string, referredById: string): Promise<void> {
-    await userRepo.updateUserReferrer(userId, referredById);
-}
-
-/**
- * Memeriksa keberadaan kode referral.
- */
-export async function checkReferralCode(code: string): Promise<{ exists: boolean; name?: string | null }> {
-    const user = await userRepo.findUserByReferralCode(code);
-    if (!user) {
-        return { exists: false };
-    }
-    return { exists: true, name: user.name };
-}
-
 
 /**
  * Registrasi user baru (SaaS onboarding).
@@ -181,7 +60,7 @@ export async function registerUser(body: any, referralCodeFromCookie?: string) {
 
     let referredById = null;
     if (referralCode) {
-        const referrer = await userRepo.findUserByReferralCode(referralCode);
+        const referrer = await affiliateRepo.findUserByReferralCode(referralCode);
         if (referrer) {
             referredById = referrer.id;
         }
@@ -190,7 +69,7 @@ export async function registerUser(body: any, referralCodeFromCookie?: string) {
     let newReferralCode = generateReferralCode();
     let codeExists = true;
     while (codeExists) {
-        const existingCode = await userRepo.findUserByReferralCode(newReferralCode);
+        const existingCode = await affiliateRepo.findUserByReferralCode(newReferralCode);
         if (!existingCode) {
             codeExists = false;
         } else {
@@ -255,177 +134,10 @@ export async function verifyBridgeToken(token: string) {
 }
 
 /**
- * Mengubah data profil user sendiri (nama & ganti password).
- */
-export async function updateUserProfile(email: string, body: any) {
-    const { name, currentPassword, newPassword } = body;
-
-    const currentUser = await userRepo.findUserByEmail(email);
-    if (!currentUser) {
-        throw new Error("User not found");
-    }
-
-    const updateData: any = {};
-    if (name) updateData.name = name;
-
-    if (newPassword) {
-        if (!currentPassword) {
-            throw new Error("Current password required");
-        }
-
-        if (currentUser.password) {
-            const passwordsMatch = await bcrypt.compare(currentPassword, currentUser.password);
-            if (!passwordsMatch) {
-                throw new Error("Incorrect current password");
-            }
-        }
-
-        updateData.password = await bcrypt.hash(newPassword, 10);
-    }
-
-    await userRepo.updateUser(currentUser.id, updateData);
-    return { success: true };
-}
-
-/**
- * Mengambil daftar user di level platform (admin) atau di level site (owner/editor).
- */
-export async function getUsers(sessionRole: string, isTenantContext: boolean, siteId?: string) {
-    let rawUsers;
-    if (sessionRole === "admin" && !isTenantContext) {
-        rawUsers = await userRepo.findAllUsers();
-    } else {
-        if (!siteId) throw new Error("Site ID required");
-        const userIds = await userRepo.findSiteUserIds(siteId);
-        rawUsers = await userRepo.findSiteUsersExceptAdmin(userIds);
-    }
-
-    const postCounts = await userRepo.countPostsGroupedByAuthor(isTenantContext ? siteId : undefined);
-    const postCountMap = new Map(postCounts.map(pc => [pc.authorId, pc._count.id]));
-
-    const users = rawUsers.map(user => ({
-        ...user,
-        _count: {
-            posts: postCountMap.get(user.id) || 0
-        }
-    }));
-
-    return { users };
-}
-
-/**
- * Membuat user baru oleh admin atau owner.
- */
-export async function createUserByAdmin(siteId: string | undefined, data: any, sessionRole: string) {
-    const { name, email, role } = data;
-
-    if (role === "admin" && sessionRole !== "admin") {
-        throw new Error("Forbidden: Only platform admins can assign the admin role");
-    }
-
-    let user = await userRepo.findUserByEmail(email);
-
-    if (user) {
-        if (siteId) {
-            await userRepo.upsertSiteUser(siteId, user.id);
-        }
-    } else {
-        const hashedPassword = await bcrypt.hash("change-me", 10);
-        user = await userRepo.createUser({
-            name,
-            email,
-            password: hashedPassword,
-            role: (role as Role) || Role.user,
-            image: `https://ui-avatars.com/api/?name=${encodeURIComponent(name || email)}&background=random`
-        });
-
-        if (siteId && user) {
-            await userRepo.createSiteUser(siteId, user.id);
-        }
-    }
-
-    return user;
-}
-
-/**
- * Memperbarui user oleh admin atau owner.
- */
-export async function updateUserByAdmin(
-    userId: string,
-    siteId: string | undefined,
-    data: any,
-    sessionUserId: string,
-    sessionRole: string
-) {
-    const { role, name, email, password } = data;
-
-    const targetUser = await userRepo.findUserById(userId);
-    if (!targetUser) throw new Error("User not found");
-
-    if (sessionRole !== "admin") {
-        if (!siteId) throw new Error("Site context required");
-        const belongs = await userRepo.findSiteUserLink(siteId, userId);
-        if (!belongs) throw new Error("User not found in site");
-
-        if (targetUser.role === "admin") {
-            throw new Error("Forbidden: Cannot modify a platform admin");
-        }
-
-        if (role === "admin") {
-            throw new Error("Forbidden: Only platform admins can assign the admin role");
-        }
-    }
-
-    const updateData: any = {};
-    if (role) updateData.role = role;
-    if (name) updateData.name = name;
-    if (email) updateData.email = email;
-    if (password && password.trim() !== "") {
-        updateData.password = await bcrypt.hash(password, 10);
-    }
-
-    await userRepo.updateUser(userId, updateData);
-    return { success: true };
-}
-
-
-/**
- * Menghapus/menghilangkan user oleh admin atau owner.
- */
-export async function deleteUserByAdmin(
-    userId: string,
-    siteId: string | undefined,
-    sessionUserId: string,
-    sessionRole: string
-) {
-    if (userId === sessionUserId) {
-        throw new Error("Cannot delete yourself");
-    }
-
-    const { getTenant } = await import("@/lib/domains/tenant");
-    const tenant = await getTenant();
-    const isTenantContext = !!siteId && tenant !== null && tenant !== "admin";
-
-    if (sessionRole !== "admin" || isTenantContext) {
-        if (!siteId) throw new Error("Site context required");
-        const belongs = await userRepo.findSiteUserLink(siteId, userId);
-        if (!belongs) throw new Error("User not found in site");
-
-        await userRepo.deleteSiteUserLinks(siteId, userId);
-        return { success: true, removed: true };
-    }
-
-    await userRepo.deleteUserPosts(userId);
-    await userRepo.deleteUser(userId);
-
-    return { success: true };
-}
-
-/**
  * Mengambil daftar site yang dimiliki user.
  */
 export async function getUserSites(userId: string) {
-    const sites = await userRepo.findUserSites(userId);
+    const sites = await tenantUserRepo.findUserSites(userId);
     return { sites: sites || [] };
 }
 
@@ -433,18 +145,18 @@ export async function getUserSites(userId: string) {
  * Mengubah kustom domain milik site (dilengkapi validasi dan pendaftaran Cloudflare/Dokploy).
  */
 export async function updateSiteCustomDomain(userId: string, siteId: string, customDomain: string | null) {
-    const siteUserLink = await userRepo.findSiteUserLink(siteId, userId, "owner");
+    const siteUserLink = await tenantUserRepo.findSiteUserLink(siteId, userId, "owner");
     if (!siteUserLink) {
         throw new Error("Access denied");
     }
 
-    const siteOwner = await userRepo.findSiteById(siteId);
+    const siteOwner = await tenantUserRepo.findSiteById(siteId);
     if (!siteOwner) throw new Error("Site not found");
 
     const newDomain = customDomain?.trim().toLowerCase() || null;
 
     if (newDomain) {
-        const subscription = await userRepo.findSiteActiveSubscription(siteId);
+        const subscription = await tenantUserRepo.findSiteActiveSubscription(siteId);
         const planName = subscription?.plan?.name || "Free";
         const planFeatures = (subscription?.plan?.features as any) || {};
 
@@ -469,7 +181,7 @@ export async function updateSiteCustomDomain(userId: string, siteId: string, cus
         await DomainService.removeDomain(siteId, oldDomain);
     }
 
-    await userRepo.updateSiteCustomDomain(siteId, newDomain);
+    await tenantUserRepo.updateSiteCustomDomain(siteId, newDomain);
     return { success: true, customDomain: newDomain };
 }
 
@@ -477,12 +189,12 @@ export async function updateSiteCustomDomain(userId: string, siteId: string, cus
  * Memverifikasi CNAME/A-Record kustom domain milik site.
  */
 export async function verifySiteCustomDomain(userId: string, siteId: string, domain: string) {
-    const siteUserLink = await userRepo.findSiteUserLink(siteId, userId, "owner");
+    const siteUserLink = await tenantUserRepo.findSiteUserLink(siteId, userId, "owner");
     if (!siteUserLink) {
         throw new Error("Access denied");
     }
 
-    const subscription = await userRepo.findSiteActiveSubscription(siteId);
+    const subscription = await tenantUserRepo.findSiteActiveSubscription(siteId);
     const planName = subscription?.plan?.name || "Free";
     const planFeatures = (subscription?.plan?.features as any) || {};
 
@@ -499,12 +211,3 @@ export async function verifySiteCustomDomain(userId: string, siteId: string, dom
 
     return result;
 }
-
-/**
- * Mengambil daftar user lengkap beserta referrals count untuk admin platform.
- */
-export async function getAdminUsersContext() {
-    return userRepo.findAdminUsers();
-}
-
-
