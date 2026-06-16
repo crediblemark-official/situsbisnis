@@ -1,4 +1,4 @@
-import { db } from "@/lib/core/db";
+import { ContentClient } from "@/modules/content";
 import { getApiContext, apiResponse, apiError } from "@/lib/api/utils";
 
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -9,19 +9,15 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
         const { id } = await params;
         if (!id) return apiError("ID required", 400);
 
-        const page = await db.credBuildPage.findUnique({
-            where: { id },
-            include: {
-                metaData: true,
-                seoMeta: true,
+        try {
+            const page = await ContentClient.getPageDetail(id, siteId);
+            return apiResponse(page);
+        } catch (err: any) {
+            if (err.message === "Page not found") {
+                return apiError("Page not found", 404);
             }
-        });
-
-        if (!page || page.siteId !== siteId) {
-            return apiError("Page not found", 404);
+            throw err;
         }
-
-        return apiResponse(page);
     } catch (error) {
         console.error("Error fetching page:", error);
         return apiError("Failed to fetch page");
@@ -34,24 +30,20 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
 
     try {
         const { id } = await params;
-
         if (!id) return apiError("ID required", 400);
 
-        const existing = await db.credBuildPage.findUnique({
-            where: { id }
-        });
-
-        if (!existing || existing.siteId !== siteId) {
-            return apiError("Page not found or unauthorized", 404);
+        try {
+            await ContentClient.deletePage(id, siteId);
+            return apiResponse({ success: true });
+        } catch (err: any) {
+            if (err.message === "Page not found") {
+                return apiError("Page not found or unauthorized", 404);
+            }
+            throw err;
         }
-
-        await db.credBuildPage.delete({
-            where: { id }
-        });
-
-        return apiResponse({ success: true });
     } catch (error) {
         console.error("Error deleting page:", error);
         return apiError("Failed to delete");
     }
 }
+

@@ -1,4 +1,4 @@
-import { db } from "@/lib/core/db";
+import { ContentClient } from "@/modules/content";
 import { getApiContext, apiResponse, apiError, validateBody } from "@/lib/api/utils";
 import { z } from "zod";
 
@@ -20,14 +20,15 @@ export async function DELETE(
         const { termId } = await params;
         if (!termId) return apiError("Term ID required", 400);
 
-        const term = await db.term.findFirst({
-            where: { id: termId },
-            include: { taxonomy: true }
-        });
-        if (!term || term.taxonomy.siteId !== siteId) return apiError("Term not found", 404);
-
-        await db.term.delete({ where: { id: termId } });
-        return apiResponse({ success: true });
+        try {
+            await ContentClient.deleteTerm(termId, siteId);
+            return apiResponse({ success: true });
+        } catch (err: any) {
+            if (err.message === "Term not found") {
+                return apiError("Term not found", 404);
+            }
+            throw err;
+        }
     } catch (error) {
         console.error("DELETE Term Error:", error);
         return apiError("Internal Error");
@@ -45,21 +46,21 @@ export async function PUT(
         const { termId } = await params;
         if (!termId) return apiError("Term ID required", 400);
 
-        const term = await db.term.findFirst({
-            where: { id: termId },
-            include: { taxonomy: true }
-        });
-        if (!term || term.taxonomy.siteId !== siteId) return apiError("Term not found", 404);
-
         const { data, error: vError, details, status: vStatus } = await validateBody(req, termUpdateSchema);
         if (vError) return apiError(vError, vStatus, details);
 
-        const updated = await db.term.update({
-            where: { id: termId },
-            data
-        });
-
-        return apiResponse(updated);
+        try {
+            const updated = await ContentClient.updateTerm(termId, siteId, data);
+            return apiResponse(updated);
+        } catch (err: any) {
+            if (err.message === "Term not found") {
+                return apiError("Term not found", 404);
+            }
+            if (err.code === 'P2002') {
+                return apiError("Term with this slug already exists", 409);
+            }
+            throw err;
+        }
     } catch (error: any) {
         if (error.code === 'P2002') {
             return apiError("Term with this slug already exists", 409);
@@ -68,3 +69,4 @@ export async function PUT(
         return apiError("Internal Error");
     }
 }
+

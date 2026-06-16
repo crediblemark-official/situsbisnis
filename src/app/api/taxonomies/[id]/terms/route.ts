@@ -1,4 +1,4 @@
-import { db } from "@/lib/core/db";
+import { ContentClient } from "@/modules/content";
 import { getApiContext, apiResponse, apiError, validateBody } from "@/lib/api/utils";
 import { z } from "zod";
 
@@ -20,23 +20,15 @@ export async function GET(
         const { id } = await params;
         if (!id) return apiError("Taxonomy ID required", 400);
 
-        const taxonomy = await db.taxonomy.findFirst({
-            where: { id, siteId }
-        });
-        if (!taxonomy) return apiError("Taxonomy not found", 404);
-
-        const terms = await db.term.findMany({
-            where: { taxonomyId: id },
-            orderBy: { name: 'asc' },
-            select: {
-                id: true,
-                name: true,
-                slug: true,
-                description: true,
-                parentId: true
+        try {
+            const terms = await ContentClient.getTerms(id, siteId);
+            return apiResponse(terms);
+        } catch (err: any) {
+            if (err.message === "Taxonomy not found") {
+                return apiError("Taxonomy not found", 404);
             }
-        });
-        return apiResponse(terms);
+            throw err;
+        }
     } catch (error) {
         console.error("GET Terms Error:", error);
         return apiError("Internal Error");
@@ -54,22 +46,21 @@ export async function POST(
         const { id } = await params;
         if (!id) return apiError("Taxonomy ID required", 400);
 
-        const taxonomy = await db.taxonomy.findFirst({
-            where: { id, siteId }
-        });
-        if (!taxonomy) return apiError("Taxonomy not found", 404);
-
         const { data, error: vError, details, status: vStatus } = await validateBody(req, termSchema);
         if (vError) return apiError(vError, vStatus, details);
 
-        const term = await db.term.create({
-            data: {
-                ...data,
-                taxonomyId: id,
+        try {
+            const term = await ContentClient.createTerm(id, siteId, data);
+            return apiResponse(term);
+        } catch (err: any) {
+            if (err.message === "Taxonomy not found") {
+                return apiError("Taxonomy not found", 404);
             }
-        });
-
-        return apiResponse(term);
+            if (err.code === 'P2002') {
+                return apiError("Term with this slug already exists in this taxonomy", 409);
+            }
+            throw err;
+        }
     } catch (error: any) {
         if (error.code === 'P2002') {
             return apiError("Term with this slug already exists in this taxonomy", 409);
@@ -78,3 +69,4 @@ export async function POST(
         return apiError("Internal Error");
     }
 }
+
