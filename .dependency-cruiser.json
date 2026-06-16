@@ -5,11 +5,11 @@
       "comment": "Mencegah satu modul mengimpor bagian internal dari modul lain secara langsung. Impor harus lewat client/kontrak.",
       "severity": "error",
       "from": {
-        "path": "^lib/modules/([^/]+)/"
+        "path": "^src/lib/modules/([^/]+)/"
       },
       "to": {
-        "path": "^lib/modules/([^/]+)/internal/",
-        "pathNot": "^lib/modules/$1/"
+        "path": "^src/lib/modules/([^/]+)/internal/",
+        "pathNot": "^src/lib/modules/$1/"
       }
     },
     {
@@ -17,10 +17,10 @@
       "comment": "Mencegah kode di luar folder modules (seperti app/api, components, dll.) mengimpor bagian internal modul secara langsung. Harus lewat client/kontrak.",
       "severity": "error",
       "from": {
-        "pathNot": "^lib/modules/"
+        "pathNot": "^src/lib/modules/"
       },
       "to": {
-        "path": "^lib/modules/[^/]+/internal/"
+        "path": "^src/lib/modules/[^/]+/internal/"
       }
     }
   ],
