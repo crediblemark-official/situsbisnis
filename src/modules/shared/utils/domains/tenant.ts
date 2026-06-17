@@ -4,6 +4,7 @@ import { getRootDomain } from "@/lib/domains/utils";
 import { cache } from "react";
 import { isFeatureEnabled } from "@/lib/billing/features";
 import { unstable_cache } from "next/cache";
+import { GRACE_PERIOD_DAYS } from "@/lib/billing/constants";
 
 export const getTenant = cache(async () => {
     const headerList = await headers();
@@ -123,9 +124,9 @@ export const getSubscription = cache(async () => {
     return unstable_cache(
         async () => {
             const subscription = await db.subscription.findFirst({
-                where: { 
+                where: {
                     siteId,
-                    status: "active" 
+                    status: { in: ["active", "past_due"] }
                 },
                 include: { plan: true },
                 orderBy: { createdAt: "desc" }
@@ -133,9 +134,41 @@ export const getSubscription = cache(async () => {
             return subscription;
         },
         [`site-sub-${siteId}`],
-        { 
+        {
             revalidate: 300, // 5 minutes
-            tags: [`site-${siteId}`, "subscription"] 
+            tags: [`site-${siteId}`, "subscription"]
+        }
+    )();
+});
+
+const getAnySubscription = cache(async () => {
+    const siteId = await getSiteId();
+    if (!siteId) return null;
+
+    return unstable_cache(
+        async () => {
+            // Prioritaskan subscription dengan status active/past_due (masih berlaku)
+            const activeSub = await db.subscription.findFirst({
+                where: {
+                    siteId,
+                    status: { in: ["active", "past_due"] }
+                },
+                include: { plan: true },
+                orderBy: { createdAt: "desc" }
+            });
+            if (activeSub) return activeSub;
+
+            // Fallback: cari subscription terakhir apapun statusnya
+            return db.subscription.findFirst({
+                where: { siteId },
+                include: { plan: true },
+                orderBy: { createdAt: "desc" }
+            });
+        },
+        [`site-sub-any-${siteId}`],
+        {
+            revalidate: 300,
+            tags: [`site-${siteId}`, "subscription"]
         }
     )();
 });
@@ -143,11 +176,10 @@ export const getSubscription = cache(async () => {
 export type SiteAccessStatus = "active" | "expired" | "grace_period" | "no_subscription";
 
 export const getSiteAccessStatus = cache(async (): Promise<SiteAccessStatus> => {
-    const sub = await getSubscription();
+    const sub = await getAnySubscription();
     if (!sub) return "no_subscription";
 
-    // If it's a paid/permanent plan (price > 0 and no trialEndsAt) it's active
-    // Or if it's explicitly set to active and has no end date
+    // Permanent plan (active, no trial, no end date)
     if (sub.status === "active" && !sub.trialEndsAt && !sub.endDate) return "active";
 
     const now = new Date();
@@ -157,9 +189,9 @@ export const getSiteAccessStatus = cache(async (): Promise<SiteAccessStatus> => 
         const trialEnd = new Date(sub.trialEndsAt);
         if (now <= trialEnd) return "active";
 
-        // Trial expired - Check Grace Period (30 days)
+        // Trial expired - Check Grace Period
         const graceEnd = new Date(trialEnd);
-        graceEnd.setDate(graceEnd.getDate() + 30);
+        graceEnd.setDate(graceEnd.getDate() + GRACE_PERIOD_DAYS);
 
         if (now <= graceEnd) return "grace_period";
         return "expired";
@@ -171,11 +203,14 @@ export const getSiteAccessStatus = cache(async (): Promise<SiteAccessStatus> => 
         if (now <= end) return "active";
 
         const graceEnd = new Date(end);
-        graceEnd.setDate(graceEnd.getDate() + 30);
+        graceEnd.setDate(graceEnd.getDate() + GRACE_PERIOD_DAYS);
 
         if (now <= graceEnd) return "grace_period";
         return "expired";
     }
 
-    return sub.status as SiteAccessStatus;
+    // Fallback: map DB status to SiteAccessStatus
+    if (sub.status === "cancelled" || sub.status === "expired") return "expired";
+    if (sub.status === "past_due") return "grace_period";
+    return "active";
 });

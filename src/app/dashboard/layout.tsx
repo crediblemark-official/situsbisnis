@@ -65,8 +65,7 @@ export default async function DashboardLayout({
         if (!isUserLinked) {
             // Find if user is associated with any other site(s)
             const userSitesRes = await IdentityClient.getUserSites(session.user.id);
-            const firstSiteLink = userSitesRes.sites[0];
-            const firstUserSite = firstSiteLink?.site;
+            const firstUserSite = userSitesRes.sites[0];
 
             const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
             const currentRootDomain = host.includes("localhost") ? "localhost:3000" : (process.env.NEXT_PUBLIC_ROOT_DOMAIN || "localhost:3000");

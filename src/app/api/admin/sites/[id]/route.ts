@@ -76,7 +76,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
             }
 
             const { revalidateTag } = await import("next/cache");
-            revalidateTag(`site-${id}`, "default" as any);
+            revalidateTag(`site-${id}`, "default");
 
             return apiResponse({ success: true, message: "Site set to Free plan" });
         }
@@ -95,7 +95,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
             }
 
             const { revalidateTag } = await import("next/cache");
-            revalidateTag(`site-${id}`, "default" as any);
+            revalidateTag(`site-${id}`, "default");
 
             // Kirim email notifikasi ke pemilik site (fire and forget)
             const siteOwner = await IdentityClient.getSiteOwner(id);

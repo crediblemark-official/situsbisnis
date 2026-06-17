@@ -29,6 +29,13 @@ export async function POST(req: Request) {
         if (error.message === "Platform not configured" || error.message === "Processing error") {
             return new NextResponse(error.message, { status: 500 });
         }
+        // ALREADY_PROCESSED = duitku sent duplicate callback, acknowledge it
+        if (error.message === "ALREADY_PROCESSED" || error.message === "TRANSACTION_NOT_FOUND") {
+            return new NextResponse("OK", {
+                status: 200,
+                headers: { "Content-Type": "text/plain" }
+            });
+        }
         return new NextResponse("Internal Server Error", { status: 500 });
     }
 }

@@ -91,6 +91,12 @@ export async function findWithdrawalById(id: string) {
     });
 }
 
+export async function findWithdrawalByIdTx(tx: any, id: string) {
+    return tx.withdrawal.findUnique({
+        where: { id }
+    });
+}
+
 /**
  * Memperbarui data penarikan saldo (withdrawal).
  */

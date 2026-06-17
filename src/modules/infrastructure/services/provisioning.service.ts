@@ -12,10 +12,12 @@ export async function provisionSite(userId: string, siteName: string, subdomain:
 
     const site = await provisioningRepo.executeProvisionSiteTransaction(userId, siteName, subdomain);
 
-    // Invalidasi cache dashboard
+    // Invalidasi cache
     try {
         const { revalidateTag } = await import("next/cache");
         revalidateTag("settings", "default");
+        revalidateTag(`site-${site.id}`, "default");
+        revalidateTag("subscription", "default");
     } catch (cacheError) {
         console.error("[provisionSite] Cache revalidation failed:", cacheError);
     }

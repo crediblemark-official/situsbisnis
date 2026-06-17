@@ -21,14 +21,22 @@ export async function findActivePlanNamesForSites(siteIds: string[]) {
 }
 
 /**
- * Mengambil subscription aktif untuk suatu situs.
+ * Mengambil subscription aktif atau past_due untuk suatu situs.
+ * past_due termasuk karena masih dalam grace period.
  */
 export async function findActiveSubscription(siteId: string) {
-    return db.subscription.findFirst({
-        where: { siteId, status: "active" },
+    const subs = await db.subscription.findMany({
+        where: {
+            siteId,
+            status: { in: ["active", "past_due"] }
+        },
         include: { plan: true },
         orderBy: { createdAt: "desc" }
     });
+    if (subs.length > 1) {
+        console.warn(`[findActiveSubscription] Multiple active/past_due subscriptions found for site '${siteId}' — using the latest. Count: ${subs.length}`);
+    }
+    return subs[0] || null;
 }
 
 /**
@@ -36,19 +44,25 @@ export async function findActiveSubscription(siteId: string) {
  */
 export async function findActiveSubscriptionBySiteIds(siteIds: string[]) {
     return db.subscription.findFirst({
-        where: { siteId: { in: siteIds }, status: "active" },
+        where: {
+            siteId: { in: siteIds },
+            status: { in: ["active", "past_due"] }
+        },
         include: { plan: true },
         orderBy: { createdAt: "desc" }
     });
 }
 
 /**
- * Mengambil subscription aktif terakhir dari suatu situs.
+ * Mengambil subscription aktif atau past_due terakhir dari suatu situs.
  */
 export async function findLatestSubscription(tx, siteId: string) {
     const client = tx || db;
     return client.subscription.findFirst({
-        where: { siteId, status: "active" }
+        where: {
+            siteId,
+            status: { in: ["active", "past_due"] }
+        }
     });
 }
 
@@ -60,6 +74,39 @@ export async function findLatestSubscriptionAnyStatus(siteId: string) {
         where: { siteId },
         orderBy: { createdAt: "desc" }
     });
+}
+
+/**
+ * Mengambil seluruh subscription aktif untuk suatu situs (bisa lebih dari satu).
+ * Digunakan untuk mendeteksi dan membersihkan duplikasi.
+ */
+export async function findAllActiveSubscriptions(siteId: string) {
+    return db.subscription.findMany({
+        where: { siteId, status: "active" },
+        include: { plan: true },
+        orderBy: { createdAt: "desc" }
+    });
+}
+
+/**
+ * Membersihkan duplikasi subscription aktif — cancel semua kecuali yang terbaru.
+ */
+export async function deduplicateActiveSubscriptions(siteId: string) {
+    const activeSubs = await db.subscription.findMany({
+        where: { siteId, status: "active" },
+        orderBy: { createdAt: "desc" }
+    });
+
+    if (activeSubs.length <= 1) return 0;
+
+    const [keep, ...toCancel] = activeSubs;
+    await db.subscription.updateMany({
+        where: { id: { in: toCancel.map(s => s.id) } },
+        data: { status: "cancelled" }
+    });
+
+    console.warn(`[Deduplicate] Cancelled ${toCancel.length} duplicate active subscriptions for site '${siteId}', keeping '${keep.id}'`);
+    return toCancel.length;
 }
 
 /**
@@ -155,6 +202,20 @@ export async function findSubscriptionById(id: string) {
         where: { id },
         include: { plan: true }
     });
+}
+
+/**
+ * Atomic trial extension — only updates if trialExtended is still false (race condition guard).
+ */
+export async function updateSubscriptionTrialAtomic(id: string, trialEndsAt: Date) {
+    const result = await db.subscription.updateMany({
+        where: { id, trialExtended: false },
+        data: {
+            trialEndsAt,
+            trialExtended: true
+        }
+    });
+    return result.count > 0;
 }
 
 /**

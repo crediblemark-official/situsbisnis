@@ -1,6 +1,7 @@
 import * as subscriptionRepo from "../repositories/subscription.repository";
 import { LimitType, LimitCheckResult } from "../index";
 import { eventBus } from "@/modules/shared/core/event-bus";
+import { GRACE_PERIOD_DAYS } from "@/lib/billing/constants";
 
 const LIMIT_CONFIG: Record<LimitType, {
     field: string;
@@ -97,6 +98,20 @@ export async function checkUserSitesLimit(siteIds: string[], currentSiteCount: n
     maxSitesAllowed?: number;
 }> {
     const subscription = await subscriptionRepo.findActiveSubscriptionBySiteIds(siteIds);
+
+    // Verifikasi subscription tidak dalam status efektif expired/grace
+    if (subscription) {
+        const now = new Date();
+        const isTrialExpired = subscription.trialEndsAt && now > subscription.trialEndsAt;
+        const isEndDatePassed = subscription.endDate && now > subscription.endDate;
+        if (isTrialExpired || isEndDatePassed) {
+            return {
+                allowed: false,
+                planName: subscription.plan?.name || "Free",
+                message: "Langganan Anda telah berakhir. Silakan perbarui langganan untuk membuat situs baru."
+            };
+        }
+    }
 
     const planLimit = subscription?.plan?.maxSites ?? 1;
     const addonSlots = (subscription as any)?.addonSlots ?? 0;

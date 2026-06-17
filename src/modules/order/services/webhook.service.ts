@@ -77,7 +77,8 @@ export async function checkOrderStatus(orderId: string) {
     });
 
     if (result.success && result.status === "paid" && order.paymentStatus !== "paid") {
-        await orderRepo.updateOrderPaymentStatus(order.id, "paid", "processing");
+        const creditOwner = !paymentSettings?.duitkuMerchantCode || !paymentSettings?.duitkuApiKey;
+        await processOrderPaymentCallback(order.id, order.siteId, Number(order.total), creditOwner);
         console.log(`[ORDER_CHECK_STATUS] Order '${order.id}' marked as paid via polling.`);
     }
 
@@ -145,6 +146,7 @@ export async function processOrderWebhook(body: Record<string, any>) {
     }
 
     if (verification.status === "paid") {
+        // creditOwner = true jika site menggunakan payment gateway platform (bukan milik sendiri)
         const creditOwner = !paymentSettings?.duitkuMerchantCode || !paymentSettings?.duitkuApiKey;
         await processOrderPaymentCallback(actualOrderId, order.siteId, Number(order.total), creditOwner);
     }

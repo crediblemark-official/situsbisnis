@@ -79,7 +79,7 @@ export async function upsertPlans(plans: PlanUpdateData[]): Promise<void> {
             maxTestimonials: isNaN(parseInt(String(plan.maxTestimonials))) ? -1 : parseInt(String(plan.maxTestimonials)),
             maxOrders: isNaN(parseInt(String(plan.maxOrders))) ? -1 : parseInt(String(plan.maxOrders)),
             maxSites: isNaN(parseInt(String(plan.maxSites))) ? 1 : parseInt(String(plan.maxSites)),
-            addonSiteBilling: plan.addonSiteBilling,
+            addonSiteBilling: plan.addonSiteBilling === true ? "recurring" : plan.addonSiteBilling === false ? "one_time" : plan.addonSiteBilling,
             showInPricing: plan.showInPricing ?? true,
             features: {
                 hasBlog: plan.hasBlog ?? false,

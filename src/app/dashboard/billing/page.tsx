@@ -17,7 +17,7 @@ export default async function BillingPage() {
         const session = await getServerSession(authOptions);
         if (session?.user?.id) {
             const userSitesRes = await IdentityClient.getUserSites(session.user.id);
-            siteId = userSitesRes.sites[0]?.site?.id || null;
+            siteId = userSitesRes.sites[0]?.id || null;
         }
     }
 

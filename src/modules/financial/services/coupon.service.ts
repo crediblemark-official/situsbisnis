@@ -53,8 +53,7 @@ export async function validateCoupon(code: string, planId?: string) {
             id: coupon.id,
             code: coupon.code,
             discountType: coupon.discountType,
-            discountValue: Number(coupon.discountValue),
-            affiliateId: coupon.affiliateId
+            discountValue: Number(coupon.discountValue)
         },
         originalPrice: planPrice,
         discountAmount,
@@ -100,10 +99,15 @@ export async function createCoupon(body: any) {
         throw new Error("DUPLICATE_CODE");
     }
 
+    const parsedDiscount = parseFloat(discountValue);
+    if (isNaN(parsedDiscount) || parsedDiscount <= 0) {
+        throw new Error("Invalid discount value");
+    }
+
     const coupon = await couponRepo.createCoupon({
         code: formattedCode,
         discountType,
-        discountValue: parseFloat(discountValue),
+        discountValue: parsedDiscount,
         affiliateId: affiliateId || null,
         expiryDate: expiryDate ? new Date(expiryDate) : null,
         maxUses: maxUses ? parseInt(maxUses) : null,

@@ -9,9 +9,9 @@ import { PricingPlanDTO } from "../index";
  * Mengambil paket harga untuk ditampilkan ke landing page dengan caching.
  */
 export async function getPricingPlans(): Promise<PricingPlanDTO[]> {
-    return unstable_cache(
-        async () => {
-            try {
+    try {
+        return await unstable_cache(
+            async () => {
                 const dbPlans = await planRepo.findPricingPlans();
                 const mainDomain = process.env.NEXT_PUBLIC_APP_URL || "SitusBisnis.com";
                 const cleanDomain = mainDomain.replace(/^https?:\/\//, "").replace(/\/$/, "");
@@ -65,29 +65,29 @@ export async function getPricingPlans(): Promise<PricingPlanDTO[]> {
                         description: plan.description,
                         price: Number(plan.price),
                         priceYearly: plan.priceYearly ? Number(plan.priceYearly) : null,
-                        originalPrice: plan.originalPrice ? Number(plan.originalPrice) : 0,
-                        originalPriceYearly: plan.originalPriceYearly ? Number(plan.originalPriceYearly) : 0,
+                        originalPrice: plan.originalPrice ? Number(plan.originalPrice) : null,
+                        originalPriceYearly: plan.originalPriceYearly ? Number(plan.originalPriceYearly) : null,
                         interval: plan.interval,
                         trialDays: plan.trialDays || 0,
                         color,
                         displayPrice: formatPrice(plan.price),
                         displayPriceYearly: plan.priceYearly ? formatPrice(plan.priceYearly) : null,
-                        displayOriginalPrice: plan.originalPrice ? formatPrice(plan.originalPrice) : null,
-                        displayOriginalPriceYearly: plan.originalPriceYearly ? formatPrice(plan.originalPriceYearly) : null,
+                        displayOriginalPrice: plan.originalPrice && Number(plan.originalPrice) > 0 ? formatPrice(plan.originalPrice) : null,
+                        displayOriginalPriceYearly: plan.originalPriceYearly && Number(plan.originalPriceYearly) > 0 ? formatPrice(plan.originalPriceYearly) : null,
                         coreFeatures,
                         limits,
                         addonPrice: planFeatures.addonSitePrice ? formatPrice(planFeatures.addonSitePrice) : null,
                         addonBilling: plan.addonSiteBilling === 'recurring' ? '/bulan' : ' (Sekali bayar)'
                     };
                 });
-            } catch (e) {
-                console.error("[getPricingPlans] Failed to fetch landing page plans:", e);
-                return [];
-            }
-        },
-        ["pricing-plans-cache"],
-        { revalidate: 3600, tags: ["pricing-plans"] }
-    )();
+            },
+            ["pricing-plans-cache"],
+            { revalidate: 3600, tags: ["pricing-plans"] }
+        )();
+    } catch (e) {
+        console.error("[getPricingPlans] Failed to fetch landing page plans:", e);
+        return [];
+    }
 }
 
 /**
@@ -130,16 +130,17 @@ export async function extendTrial(userId: string, userRole: string, siteId: stri
     const sub = await subscriptionRepo.findLatestSubscriptionAnyStatus(siteId);
 
     if (!sub) throw new Error("No subscription found");
-    if (sub.trialExtended) throw new Error("Trial already extended");
-    if (!sub.trialEndsAt) throw new Error("This is not a trial subscription");
+    if (sub.trialExtended) throw new Error("TRIAL_ALREADY_EXTENDED");
+    if (!sub.trialEndsAt) throw new Error("NOT_A_TRIAL");
 
     const newEndDate = new Date(sub.trialEndsAt);
     newEndDate.setDate(newEndDate.getDate() + 7);
 
-    await subscriptionRepo.updateSubscriptionTrial(sub.id, {
-        trialEndsAt: newEndDate,
-        trialExtended: true
-    });
+    // Atomic update: only succeed if trialExtended is still false
+    const updated = await subscriptionRepo.updateSubscriptionTrialAtomic(sub.id, newEndDate);
+    if (!updated) {
+        throw new Error("Trial already extended");
+    }
 
     try {
         const { revalidateTag } = await import("next/cache");
@@ -204,6 +205,10 @@ export async function getActiveSubscription(siteId: string) {
  * Memperpanjang masa aktif subscription (admin).
  */
 export async function extendSubscription(subId: string, days: number) {
+    if (!days || days <= 0) {
+        throw new Error("Days must be positive");
+    }
+
     const sub = await subscriptionRepo.findSubscriptionById(subId);
     if (!sub) {
         throw new Error("NOT_FOUND");
@@ -288,6 +293,9 @@ export async function cancelSubscription(subId: string) {
     const sub = await subscriptionRepo.findSubscriptionById(subId);
     if (!sub) {
         throw new Error("NOT_FOUND");
+    }
+    if (sub.status === "cancelled") {
+        return { success: true, message: "Subscription already cancelled" };
     }
 
     await subscriptionRepo.updateSubscriptionStatusOnly(subId, "cancelled");

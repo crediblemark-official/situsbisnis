@@ -1,5 +1,6 @@
 import { eventBus } from "@/modules/shared/core/event-bus";
 import * as emailTemplates from "../services/email-templates.service";
+import * as emailReminderTemplates from "../services/email-reminder-templates.service";
 
 /**
  * Menginisialisasi event listener untuk modul notification.
@@ -65,6 +66,38 @@ export async function initNotificationListeners() {
             userName: payload.userName,
             siteName: payload.siteName,
             planName: payload.planName
+          });
+          break;
+        case "trial_expiring_soon":
+          await emailReminderTemplates.sendTrialExpiringSoonEmail({
+            toEmail: payload.toEmail,
+            userName: payload.userName,
+            siteName: payload.siteName,
+            daysLeft: payload.daysLeft
+          });
+          break;
+        case "trial_expired":
+          await emailReminderTemplates.sendTrialExpiredEmail({
+            toEmail: payload.toEmail,
+            userName: payload.userName,
+            siteName: payload.siteName,
+          });
+          break;
+        case "subscription_expiring_soon":
+          await emailReminderTemplates.sendSubscriptionExpiringSoonEmail({
+            toEmail: payload.toEmail,
+            userName: payload.userName,
+            siteName: payload.siteName,
+            planName: payload.planName,
+            daysLeft: payload.daysLeft
+          });
+          break;
+        case "grace_period_ending":
+          await emailReminderTemplates.sendGracePeriodEndingEmail({
+            toEmail: payload.toEmail,
+            userName: payload.userName,
+            siteName: payload.siteName,
+            daysLeft: payload.daysLeft
           });
           break;
         default:

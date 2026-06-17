@@ -23,6 +23,15 @@ export async function processApprovedTransaction(transactionId: string) {
         const updated = await transactionRepo.updateTransactionStatus(tx, transactionId, "approved");
 
         if (updated.couponId) {
+            const coupon = await tx.coupon.findUnique({
+                where: { id: updated.couponId }
+            });
+            if (!coupon) {
+                throw new Error("COUPON_NOT_FOUND");
+            }
+            if (coupon.maxUses !== null && coupon.usedCount >= coupon.maxUses) {
+                throw new Error("COUPON_EXHAUSTED");
+            }
             await couponRepo.incrementCouponUses(tx, updated.couponId);
         }
 
@@ -88,7 +97,7 @@ export async function processApprovedTransaction(transactionId: string) {
             if (existingSub) {
                 await subscriptionRepo.updateSubscriptionAddonSlots(tx, existingSub.id, updated.addonQuantity || 0);
             }
-        } else {
+        } else if (!updated.addonType) {
             const activeSubBeforeUpgrade = await subscriptionRepo.findLatestSubscription(tx, updated.siteId);
             const carryOverSlots = activeSubBeforeUpgrade?.addonSlots || 0;
 
@@ -108,16 +117,19 @@ export async function processApprovedTransaction(transactionId: string) {
                     endDate,
                     addonSlots: Math.max(existingSubOfThisPlan.addonSlots, carryOverSlots)
                 });
-            } else {
-                await subscriptionRepo.createSubscription(tx, {
-                    siteId: updated.siteId,
-                    planId: updated.planId,
-                    status: "active",
-                    startDate: now,
-                    endDate,
-                    addonSlots: carryOverSlots
-                });
-            }
+        } else {
+            await subscriptionRepo.createSubscription(tx, {
+                siteId: updated.siteId,
+                planId: updated.planId,
+                status: "active",
+                startDate: now,
+                endDate,
+                addonSlots: carryOverSlots
+            });
+        }
+    } else {
+        console.error(`[processApprovedTransaction] Unknown addonType: '${updated.addonType}' for transaction '${updated.id}'`);
+        throw new Error(`Unknown addonType: ${updated.addonType}`);
         }
 
         return updated;
@@ -185,23 +197,23 @@ export async function cancelTransaction(userId: string, transactionId: string) {
         throw new Error("Missing transactionId");
     }
 
-    const tx = await transactionRepo.findTransactionById(null, transactionId);
-    if (!tx) {
-        throw new Error("Transaction not found");
-    }
-
-    const ownerInfo = await eventBus.request<any, any>("request.auth.getSiteOwner", { siteId: tx.siteId });
-    const isOwner = ownerInfo?.id === userId;
-
-    if (!isOwner) {
-        throw new Error("Forbidden");
-    }
-
-    if (tx.status !== "pending") {
-        throw new Error("Hanya transaksi tertunda yang dapat dibatalkan.");
-    }
-
     await db.$transaction(async (txn) => {
+        const tx = await transactionRepo.findTransactionById(txn, transactionId);
+        if (!tx) {
+            throw new Error("Transaction not found");
+        }
+
+        const ownerInfo = await eventBus.request<any, any>("request.auth.getSiteOwner", { siteId: tx.siteId });
+        const isOwner = ownerInfo?.id === userId;
+
+        if (!isOwner) {
+            throw new Error("Forbidden");
+        }
+
+        if (tx.status !== "pending") {
+            throw new Error("Hanya transaksi tertunda yang dapat dibatalkan.");
+        }
+
         await transactionRepo.updateTransactionStatus(txn, transactionId, "cancelled");
     });
     return { success: true };

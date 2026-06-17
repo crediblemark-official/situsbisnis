@@ -148,8 +148,14 @@ export async function verifyBridgeToken(token: string) {
  * Mengambil daftar site yang dimiliki user.
  */
 export async function getUserSites(userId: string) {
-    const sites = await tenantUserRepo.findUserSites(userId);
-    return { sites: sites || [] };
+    const userSites = await tenantUserRepo.findUserSites(userId);
+    const sites = (userSites || []).map(us => ({
+        id: us.site.id,
+        name: us.site.name,
+        subdomain: us.site.subdomain,
+        customDomain: us.site.customDomain
+    }));
+    return { sites };
 }
 
 /**

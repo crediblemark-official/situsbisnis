@@ -254,6 +254,7 @@ export async function upgradePlan(
         }
     }
 
+    let couponAffiliateId: string | null = null;
     if (appliedCoupon) {
         let discountAmount = 0;
         if (appliedCoupon.discountType === "percentage") {
@@ -262,11 +263,7 @@ export async function upgradePlan(
             discountAmount = Number(appliedCoupon.discountValue);
         }
         totalAmount = Math.max(0, totalAmount - discountAmount);
-
-        const siteOwner = await eventBus.request<any, any>("request.auth.getSiteOwner", { siteId });
-        if (appliedCoupon.affiliateId && siteOwner && !siteOwner.referredById && siteOwner.id !== appliedCoupon.affiliateId) {
-            await eventBus.request<any, any>("request.auth.updateUserReferrer", { userId: siteOwner.id, referredById: appliedCoupon.affiliateId });
-        }
+        couponAffiliateId = appliedCoupon.affiliateId || null;
     }
 
     let transaction = await db.$transaction(async (tx) => {
@@ -276,6 +273,14 @@ export async function upgradePlan(
         }
 
         await transactionRepo.deletePendingTransactionsWithoutProofTx(tx, siteId);
+
+        // Set referrer inside transaction — rolls back if transaction creation fails
+        if (couponAffiliateId) {
+            const siteOwner = await eventBus.request<any, any>("request.auth.getSiteOwner", { siteId });
+            if (siteOwner && !siteOwner.referredById && siteOwner.id !== couponAffiliateId) {
+                await eventBus.request<any, any>("request.auth.updateUserReferrer", { userId: siteOwner.id, referredById: couponAffiliateId });
+            }
+        }
 
         return transactionRepo.createUpgradeTransactionTx(tx, {
             siteId,

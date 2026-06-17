@@ -1,10 +1,18 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { PaymentClient } from "@/modules/payment";
 
 export async function POST(req: Request) {
     // 1. Strict Guard: Only allow this simulation endpoint in development mode
     if (process.env.NODE_ENV !== "development") {
         return new NextResponse("Forbidden in production", { status: 403 });
+    }
+
+    // 2. Require admin authentication even in development
+    const session = await getServerSession(authOptions);
+    if (!session || (session.user as any).role !== "admin") {
+        return new NextResponse("Unauthorized", { status: 401 });
     }
 
     try {

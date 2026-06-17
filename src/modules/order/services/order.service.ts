@@ -92,8 +92,11 @@ export async function getOrders(siteId: string, options: { skip: number; take: n
         whereCondition.customerEmail = options.customerEmail;
     }
 
+    const safeSkip = Math.max(0, options.skip);
+    const safeTake = Math.min(Math.max(1, options.take), 100);
+
     const [orders, total] = await Promise.all([
-        orderRepo.findOrders(whereCondition, options.skip, options.take),
+        orderRepo.findOrders(whereCondition, safeSkip, safeTake),
         orderRepo.countOrdersWithFilter(whereCondition)
     ]);
 

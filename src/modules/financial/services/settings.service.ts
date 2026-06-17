@@ -71,16 +71,16 @@ export async function getSubscriptionContext(siteId: string) {
         ...plan,
         price: Number(plan.price),
         priceYearly: plan.priceYearly ? Number(plan.priceYearly) : null,
-        originalPrice: plan.originalPrice ? Number(plan.originalPrice) : 0,
-        originalPriceYearly: plan.originalPriceYearly ? Number(plan.originalPriceYearly) : 0,
+        originalPrice: plan.originalPrice ? Number(plan.originalPrice) : null,
+        originalPriceYearly: plan.originalPriceYearly ? Number(plan.originalPriceYearly) : null,
     }));
 
     let serializedCurrentPlan: any = (subscription?.plan as any) ? {
         ...(subscription.plan as any),
         price: Number((subscription.plan as any).price),
         priceYearly: (subscription.plan as any).priceYearly ? Number((subscription.plan as any).priceYearly) : null,
-        originalPrice: (subscription.plan as any).originalPrice ? Number((subscription.plan as any).originalPrice) : 0,
-        originalPriceYearly: (subscription.plan as any).originalPriceYearly ? Number((subscription.plan as any).originalPriceYearly) : 0,
+        originalPrice: (subscription.plan as any).originalPrice ? Number((subscription.plan as any).originalPrice) : null,
+        originalPriceYearly: (subscription.plan as any).originalPriceYearly ? Number((subscription.plan as any).originalPriceYearly) : null,
         subscriptionId: subscription.id,
         endDate: subscription.endDate ? subscription.endDate.toISOString() : null,
         trialEndsAt: subscription.trialEndsAt ? subscription.trialEndsAt.toISOString() : null,
@@ -89,20 +89,43 @@ export async function getSubscriptionContext(siteId: string) {
         addonSlots: subscription.addonSlots || 0
     } : null;
 
-    // Fallback: Jika tidak ada subscription aktif, anggap paket "Free" sebagai paket saat ini jika ada
+    // Fallback: Jika tidak ada subscription aktif, cari subscription terakhir (mungkin expired)
+    // agar bisa menampilkan informasi plan yang benar
     if (!serializedCurrentPlan) {
-        const freePlan: any = dbPlans.find((p: any) => p.name.toLowerCase() === 'free');
-        if (freePlan) {
+        const latestSub = subscription ? null : await db.subscription.findFirst({
+            where: { siteId },
+            include: { plan: true },
+            orderBy: { createdAt: "desc" }
+        });
+
+        if (latestSub) {
             serializedCurrentPlan = {
-                ...freePlan,
-                price: Number(freePlan.price),
-                priceYearly: freePlan.priceYearly ? Number(freePlan.priceYearly) : null,
-                originalPrice: freePlan.originalPrice ? Number(freePlan.originalPrice) : 0,
-                originalPriceYearly: freePlan.originalPriceYearly ? Number(freePlan.originalPriceYearly) : 0,
-                subscriptionId: null,
-                endDate: null,
-                status: 'none'
+                ...(latestSub.plan as any),
+                price: Number((latestSub.plan as any).price),
+                priceYearly: (latestSub.plan as any).priceYearly ? Number((latestSub.plan as any).priceYearly) : null,
+                originalPrice: (latestSub.plan as any).originalPrice ? Number((latestSub.plan as any).originalPrice) : null,
+                originalPriceYearly: (latestSub.plan as any).originalPriceYearly ? Number((latestSub.plan as any).originalPriceYearly) : null,
+                subscriptionId: latestSub.id,
+                endDate: latestSub.endDate ? latestSub.endDate.toISOString() : null,
+                trialEndsAt: latestSub.trialEndsAt ? latestSub.trialEndsAt.toISOString() : null,
+                trialExtended: latestSub.trialExtended || false,
+                status: latestSub.status,
+                addonSlots: latestSub.addonSlots || 0
             };
+        } else {
+            const freePlan: any = dbPlans.find((p: any) => p.name.toLowerCase() === 'free');
+            if (freePlan) {
+                serializedCurrentPlan = {
+                    ...freePlan,
+                    price: Number(freePlan.price),
+                    priceYearly: freePlan.priceYearly ? Number(freePlan.priceYearly) : null,
+                    originalPrice: freePlan.originalPrice ? Number(freePlan.originalPrice) : null,
+                    originalPriceYearly: freePlan.originalPriceYearly ? Number(freePlan.originalPriceYearly) : null,
+                    subscriptionId: null,
+                    endDate: null,
+                    status: 'none'
+                };
+            }
         }
     }
 

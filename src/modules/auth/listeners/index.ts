@@ -9,6 +9,17 @@ export async function initAuthListeners() {
   await eventBus.subscribe("affiliate.commission.awarded", async (data: any, _metadata) => {
     try {
       console.log(`[AuthListener] Memproses komisi afiliasi untuk transaksi: ${data.transactionId}, user: ${data.userId}`);
+
+      // Idempotency check: skip if commission already exists for this transaction
+      if (data.transactionId) {
+        const existing = await db.commission.findFirst({
+          where: { transactionId: data.transactionId }
+        });
+        if (existing) {
+          console.log(`[AuthListener] Commission already exists for transaction ${data.transactionId}, skipping.`);
+          return;
+        }
+      }
       
       // Panggil controller internal modul auth untuk memberikan komisi
       await awardAffiliateCommissionInternal(db, {

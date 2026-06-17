@@ -32,8 +32,11 @@ export async function POST(req: Request) {
         if (e.message === "Site not found" || e.message === "No subscription found") {
             return apiError(e.message, 404);
         }
-        if (e.message === "Trial already extended" || e.message === "This is not a trial subscription") {
-            return apiError(e.message, 400);
+        if (e.message === "TRIAL_ALREADY_EXTENDED") {
+            return apiError("Trial already extended", 400);
+        }
+        if (e.message === "NOT_A_TRIAL") {
+            return apiError("This is not a trial subscription", 400);
         }
         return apiError("Failed to extend trial");
     }

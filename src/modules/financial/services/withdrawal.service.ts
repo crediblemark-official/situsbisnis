@@ -15,7 +15,7 @@ export async function processWithdrawalStatus(withdrawalId: string, status: stri
     let user;
 
     await db.$transaction(async (tx) => {
-        const currentWd = await SubscriptionClient.findWithdrawalById(withdrawalId);
+        const currentWd = await billingRepo.findWithdrawalByIdTx(tx, withdrawalId);
 
         if (!currentWd) {
             throw new Error("NOT_FOUND");

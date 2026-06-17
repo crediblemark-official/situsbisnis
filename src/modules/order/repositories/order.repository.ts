@@ -52,7 +52,16 @@ export async function findPaymentSettings(siteId: string) {
  */
 export async function processOrderPayment(orderId: string, siteId: string, amount: number, creditOwner: boolean) {
     return db.$transaction(async (tx) => {
-        // 1. Update Order Payment Status
+        // 1. Check if already paid (idempotency guard)
+        const existing = await tx.order.findUnique({
+            where: { id: orderId },
+            select: { paymentStatus: true, total: true }
+        });
+        if (existing?.paymentStatus === "paid") {
+            return { success: true, ownerId: null, alreadyPaid: true };
+        }
+
+        // 2. Update Order Payment Status
         await tx.order.update({
             where: { id: orderId },
             data: {
@@ -62,19 +71,20 @@ export async function processOrderPayment(orderId: string, siteId: string, amoun
         });
 
         if (creditOwner) {
-            // 2. Cari owner situs
+            // 3. Cari owner situs
             const siteOwner = await tx.siteUser.findFirst({
                 where: { siteId, role: "owner" },
                 select: { userId: true }
             });
 
-            // 3. Tambahkan ke saldo owner
-            if (siteOwner) {
+            // 4. Tambahkan ke saldo owner — gunakan amount dari DB, bukan dari webhook
+            const dbAmount = Number(existing.total);
+            if (siteOwner && dbAmount > 0) {
                 await tx.user.update({
                     where: { id: siteOwner.userId },
                     data: {
                         affiliateBalance: {
-                            increment: amount
+                            increment: dbAmount
                         }
                     }
                 });

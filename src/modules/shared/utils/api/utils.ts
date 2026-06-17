@@ -37,9 +37,15 @@ export async function getApiContext(requiredRoles?: Role[], options: { isPublic?
         return { error: "Site context required", status: 400 };
     }
 
-    // Verifikasi user milik situs ini — di-cache 5 menit per pasangan user-site
-    // Cache terinvalidasi saat tag site-${siteId} di-revalidate (misal saat admin update akses)
+    // Non-admin access checks
     if (siteId && session && (session.user as any).role !== "admin" && !isPublic) {
+        // Enforce subscription status
+        if (status === "expired") {
+            apiLogger.warn({ siteId, status }, "Access denied: Site subscription expired");
+            return { error: "Langganan Anda telah berakhir. Silakan perbarui langganan untuk melanjutkan.", status: 403 };
+        }
+
+        // Verifikasi user milik situs ini — di-cache 5 menit per pasangan user-site
         const userId = (session.user as any).id as string;
         const isUserLinkedToSite = await unstable_cache(
             async () => db.siteUser.count({

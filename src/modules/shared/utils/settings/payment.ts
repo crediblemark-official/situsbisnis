@@ -40,21 +40,25 @@ export const getPaymentSettings = cache(async (siteId?: string): Promise<Payment
             }
 
             // Create default settings if none exist
-            const newSettings = await db.paymentSettings.create({
-                data: {
-                    siteId: id,
-                    bankName: env.DEFAULT_BANK_NAME,
-                    accountNumber: env.DEFAULT_BANK_ACCOUNT,
-                    accountHolder: env.DEFAULT_BANK_HOLDER,
-                    currency: env.DEFAULT_CURRENCY,
-                    instructions: env.DEFAULT_INSTRUCTIONS
-                }
-            });
-            return {
-                ...newSettings,
-                duitkuEnabled: hasPlatformDuitku,
-                isPlatformManaged: hasPlatformDuitku
-            };
+            try {
+                const newSettings = await db.paymentSettings.create({
+                    data: {
+                        siteId: id,
+                        bankName: env.DEFAULT_BANK_NAME,
+                        accountNumber: env.DEFAULT_BANK_ACCOUNT,
+                        accountHolder: env.DEFAULT_BANK_HOLDER,
+                        currency: env.DEFAULT_CURRENCY,
+                        instructions: env.DEFAULT_INSTRUCTIONS
+                    }
+                });
+                return {
+                    ...newSettings,
+                    duitkuEnabled: hasPlatformDuitku,
+                    isPlatformManaged: hasPlatformDuitku
+                };
+            } catch (createError) {
+                console.error(`[getPaymentSettings] Failed to create payment settings for site '${id}':`, createError);
+            }
         }
 
         // Fallback to platform defaults if no site

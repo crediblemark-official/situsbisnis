@@ -6,6 +6,7 @@ vi.mock('@/lib/core/db', () => ({
   db: {
     subscription: {
       findFirst: vi.fn(),
+      findMany: vi.fn(),
     }
   },
 }));
@@ -65,7 +66,7 @@ describe('lib/subscription-limits.ts', () => {
 
   describe('checkSiteLimit', () => {
     it('should return not allowed when no subscription', async () => {
-      vi.mocked(db.subscription.findFirst).mockResolvedValue(null);
+      vi.mocked(db.subscription.findMany).mockResolvedValue([]);
       
       const result = await SubscriptionClient.checkSiteLimit('site-1', 'maxPosts');
       
@@ -73,9 +74,9 @@ describe('lib/subscription-limits.ts', () => {
     });
 
     it('should return allowed when plan has -1 (unlimited)', async () => {
-      vi.mocked(db.subscription.findFirst).mockResolvedValue({
+      vi.mocked(db.subscription.findMany).mockResolvedValue([{
         plan: { name: 'Pro', maxPosts: -1, features: { hasBlog: true } }
-      } as any);
+      } as any]);
       
       const result = await SubscriptionClient.checkSiteLimit('site-1', 'maxPosts');
       
@@ -83,9 +84,9 @@ describe('lib/subscription-limits.ts', () => {
     });
 
     it('should return allowed when under limit', async () => {
-      vi.mocked(db.subscription.findFirst).mockResolvedValue({
+      vi.mocked(db.subscription.findMany).mockResolvedValue([{
         plan: { name: 'Basic', maxPosts: 10, features: { hasBlog: true } }
-      } as any);
+      } as any]);
       
       vi.mocked(PostClient.countPosts).mockResolvedValue(5);
       
@@ -95,9 +96,9 @@ describe('lib/subscription-limits.ts', () => {
     });
 
     it('should return not allowed when at limit', async () => {
-      vi.mocked(db.subscription.findFirst).mockResolvedValue({
+      vi.mocked(db.subscription.findMany).mockResolvedValue([{
         plan: { name: 'Basic', maxPosts: 10, features: { hasBlog: true } }
-      } as any);
+      } as any]);
       
       vi.mocked(PostClient.countPosts).mockResolvedValue(10);
       
@@ -109,9 +110,9 @@ describe('lib/subscription-limits.ts', () => {
     });
 
     it('should handle different limit types', async () => {
-      vi.mocked(db.subscription.findFirst).mockResolvedValue({
+      vi.mocked(db.subscription.findMany).mockResolvedValue([{
         plan: { name: 'Basic', maxProducts: 5, features: { hasProducts: true } }
-      } as any);
+      } as any]);
       
       vi.mocked(CatalogClient.countProducts).mockResolvedValue(6);
       
