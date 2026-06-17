@@ -2,6 +2,7 @@ import {
     countPosts,
     countTestimonials
 } from "./services/content.service";
+export * from "./actions/post.actions";
 import {
     getTerms,
     createTerm,

@@ -1,15 +1,21 @@
 import {
     processApprovedTransaction,
     updateTransactionStatus,
-    buySlot,
     cancelTransaction,
-    checkTransactionStatus,
+    confirmManualPayment
+} from "./services/transaction.service";
+import {
+    buySlot,
     initializeCheckoutPayment,
-    confirmManualPayment,
+    upgradePlan
+} from "./services/checkout.service";
+import {
+    checkTransactionStatus,
     getPaymentMethods,
-    upgradePlan,
     processDuitkuWebhook
-} from "./controllers/payment.controller";
+} from "./services/webhook.service";
+
+export * from "./actions/payment.actions";
 
 export const PaymentClient = {
     processApprovedTransaction,

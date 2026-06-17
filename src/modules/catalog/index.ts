@@ -1,16 +1,18 @@
 import { 
-    countProductsInternal, 
-    getProductsMapInternal, 
-    searchProductsInternal,
-    getProductsInternal,
-    getProductInternal
-} from "./controllers/catalog.controller";
+    countProducts, 
+    getProductsMap, 
+    searchProducts,
+    getProducts,
+    getProduct
+} from "./services/catalog.service";
+
+export * from "./actions/product.actions";
 
 // Facade / Client kontrak publik
 export const CatalogClient = {
-    countProducts: countProductsInternal,
-    getProductsMap: getProductsMapInternal,
-    searchProducts: searchProductsInternal,
-    getProducts: getProductsInternal,
-    getProduct: getProductInternal
+    countProducts,
+    getProductsMap,
+    searchProducts,
+    getProducts,
+    getProduct
 };

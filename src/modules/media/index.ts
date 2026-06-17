@@ -4,6 +4,7 @@ import {
     countPortfolioItems,
     getMediaSize
 } from "./services/content.service";
+export * from "./actions/media.actions";
 import {
     getMediaList,
     uploadMedia,
