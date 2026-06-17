@@ -3,6 +3,8 @@
 import { Archive, RotateCcw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ConfirmActionButton } from "@/components/ui/ConfirmActionButton";
+import { archiveProductAction } from "@/modules/catalog/actions/product.actions";
+import toast from "react-hot-toast";
 
 interface ArchiveProductButtonProps {
     productId: string;
@@ -15,17 +17,12 @@ export function ArchiveProductButton({ productId, productName, isArchived }: Arc
 
     const handleArchive = async () => {
         try {
-            const res = await fetch(`/api/products/${productId}/archive`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ isArchived: !isArchived }),
-            });
-
-            if (!res.ok) {
-                const data = await res.json();
-                throw new Error(data.error || "Gagal mengubah status produk");
+            const res = await archiveProductAction(productId, !isArchived);
+            if (!res.success) {
+                throw new Error(res.error || "Gagal mengubah status produk");
             }
 
+            toast.success(isArchived ? "Produk berhasil dipulihkan" : "Produk berhasil diarsipkan");
             router.refresh();
         } catch (error) {
             alert((error as Error).message);

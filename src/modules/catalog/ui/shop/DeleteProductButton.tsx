@@ -3,6 +3,8 @@
 import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ConfirmActionButton } from "@/components/ui/ConfirmActionButton";
+import { deleteProductAction } from "@/modules/catalog/actions/product.actions";
+import toast from "react-hot-toast";
 
 interface DeleteProductButtonProps {
     productId: string;
@@ -14,15 +16,12 @@ export function DeleteProductButton({ productId, productName }: DeleteProductBut
 
     const handleDelete = async () => {
         try {
-            const res = await fetch(`/api/products/${productId}`, {
-                method: "DELETE",
-            });
-
-            if (!res.ok) {
-                const data = await res.json();
-                throw new Error(data.error || "Gagal menghapus produk");
+            const res = await deleteProductAction(productId);
+            if (!res.success) {
+                throw new Error(res.error || "Gagal menghapus produk");
             }
 
+            toast.success("Produk berhasil dihapus");
             router.refresh();
         } catch (error) {
             alert((error as Error).message);

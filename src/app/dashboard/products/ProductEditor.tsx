@@ -7,6 +7,7 @@ import { useCurrency } from "@/hooks/use-currency";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { slugify } from "@/lib/utils/string";
 import { EditorLayout } from "@/components/dashboard/EditorLayout";
+import { createProductAction, updateProductAction, deleteProductAction } from "@/modules/catalog/actions/product.actions";
 
 import { ProductInfoSection } from "@/components/dashboard/products/ProductInfoSection";
 import { ProductMediaSection } from "@/components/dashboard/products/ProductMediaSection";
@@ -108,8 +109,8 @@ export default function ProductEditor({ productId, initialData }: { productId?: 
     async function handleDelete() {
         if (!initialData?.id) return;
         try {
-            const res = await fetch(`/api/products/${initialData.id}`, { method: "DELETE" });
-            if (!res.ok) throw new Error("Failed to delete product");
+            const res = await deleteProductAction(initialData.id);
+            if (!res.success) throw new Error(res.error || "Failed to delete product");
             router.refresh();
             router.push("/dashboard/products");
             toast.success("Produk berhasil dihapus");
@@ -250,9 +251,6 @@ export default function ProductEditor({ productId, initialData }: { productId?: 
         e.preventDefault();
         setIsLoading(true);
         try {
-            const url = isEditing ? `/api/products/${initialData.id}` : "/api/products";
-            const method = isEditing ? "PUT" : "POST";
-            
             // Only submit specifications that have both non-empty keys and values
             const validMetaData = formData.metaData.filter(
                 (m: any) => m.key.trim() !== "" && m.value !== undefined && m.value !== null && m.value.toString().trim() !== ""
@@ -279,29 +277,30 @@ export default function ProductEditor({ productId, initialData }: { productId?: 
                 });
             }
 
-            const res = await fetch(url, {
-                method,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    name: formData.name,
-                    slug: formData.slug,
-                    price: parseFloat(formData.price.toString()),
-                    originalPrice: formData.originalPrice ? parseFloat(formData.originalPrice.toString()) : null,
-                    stock: formData.isDigital ? 999999 : parseInt(formData.stock.toString()),
-                    description: formData.description,
-                    images: formData.images,
-                    variants: formData.hasVariants ? formData.variantItems : [],
-                    variantOptions: formData.hasVariants ? formData.variantOptions : [],
-                    metaData: validMetaData
-                })
-            });
-            if (!res.ok) throw new Error("Failed to save product");
+            const payload = {
+                name: formData.name,
+                slug: formData.slug,
+                price: parseFloat(formData.price.toString()),
+                originalPrice: formData.originalPrice ? parseFloat(formData.originalPrice.toString()) : null,
+                stock: formData.isDigital ? 999999 : parseInt(formData.stock.toString()),
+                description: formData.description,
+                images: formData.images,
+                variants: formData.hasVariants ? formData.variantItems : [],
+                variantOptions: formData.hasVariants ? formData.variantOptions : [],
+                metaData: validMetaData
+            };
+
+            const res = isEditing
+                ? await updateProductAction(initialData.id, payload)
+                : await createProductAction(payload);
+
+            if (!res.success) throw new Error(res.error || "Failed to save product");
             router.refresh();
             router.push("/dashboard/products");
             toast.success("Produk berhasil disimpan");
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
-            toast.error("Gagal menyimpan produk.");
+            toast.error(error.message || "Gagal menyimpan produk.");
         } finally {
             setIsLoading(false);
         }

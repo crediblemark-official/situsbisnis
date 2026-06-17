@@ -139,3 +139,31 @@ export async function deleteProductAction(id: string) {
         return { success: false, error: "Failed to delete product" };
     }
 }
+
+export async function archiveProductAction(id: string, isArchived: boolean) {
+    try {
+        const { siteId, error } = await getApiContext(["admin", "owner", "editor"]);
+        if (error || !siteId) return { success: false, error: error || "Unauthorized" };
+
+        if (!id) return { success: false, error: "ID required" };
+
+        const existing = await db.product.findFirst({ where: { id, siteId } });
+        if (!existing) return { success: false, error: "Product not found or unauthorized" };
+
+        const updated = await db.product.update({
+            where: { id },
+            data: { isArchived }
+        });
+
+        await eventBus.publish("crud.updated", {
+            model: "product",
+            siteId,
+            item: updated
+        }, "crud").catch(console.error);
+
+        return { success: true, item: updated };
+    } catch (err: any) {
+        console.error("[ARCHIVE_PRODUCT_ACTION] Error:", err);
+        return { success: false, error: "Gagal mengubah status arsip produk" };
+    }
+}
