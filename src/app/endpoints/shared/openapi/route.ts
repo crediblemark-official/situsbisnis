@@ -1,10 +1,2 @@
-import { NextResponse } from 'next/server';
-import { openApiSpec } from '@/lib/api/openapi';
-
 export const dynamic = 'force-static';
-
-export async function GET() {
-  return NextResponse.json(openApiSpec, {
-    headers: { 'Content-Type': 'application/json' },
-  });
-}
+export { getOpenApiSpecApi as GET } from "@/modules/shared/controllers/openapi-api.controller";

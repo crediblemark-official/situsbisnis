@@ -1,0 +1,27 @@
+import { NextRequest, NextResponse } from "next/server";
+import { SubscriptionClient } from "../index";
+
+/**
+ * Handler GET untuk memproses cron job pemeriksaan status langganan.
+ */
+export async function checkSubscriptionsCronApi(req: NextRequest) {
+    const authHeader = req.headers.get("authorization");
+    const expectedToken = process.env.CRON_SECRET;
+
+    if (!expectedToken) {
+        console.warn("[CRON] CRON_SECRET not configured — skipping auth check");
+    } else if (!authHeader || authHeader !== `Bearer ${expectedToken}`) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    try {
+        const result = await SubscriptionClient.checkAndUpdateExpiredSubscriptions();
+        return NextResponse.json({
+            success: true,
+            ...result,
+        });
+    } catch (error: any) {
+        console.error("[CRON] check-subscriptions failed:", error);
+        return NextResponse.json({ error: error.message || "Internal error" }, { status: 500 });
+    }
+}
