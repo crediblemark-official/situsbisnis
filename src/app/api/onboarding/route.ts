@@ -5,6 +5,7 @@ import { SiteClient } from "@/modules/site"
 import { InfrastructureClient } from "@/modules/infrastructure";
 import { SubscriptionClient } from "@/modules/subscription";
 import { z } from "zod";
+import { validateCsrf } from "@/modules/shared/utils/csrf";
 
 const onboardingSchema = z.object({
     siteName: z.string().min(1, "Site name is required"),
@@ -17,6 +18,11 @@ const onboardingSchema = z.object({
  */
 export async function POST(req: Request) {
     try {
+        const csrf = validateCsrf(req);
+        if (!csrf.valid) {
+            return apiError("CSRF validation failed", 403);
+        }
+
         const session = await getServerSession(authOptions);
         if (!session) return apiError("Unauthorized", 401);
 

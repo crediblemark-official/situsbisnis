@@ -57,9 +57,9 @@ export async function registerDomain(siteId: string, domain: string): Promise<Do
         // Revalidate cache
         try {
             const { revalidateTag } = await import("next/cache");
-            revalidateTag(`site-${siteId}`, "default");
-            revalidateTag(`site-id-${updatedSite.subdomain}`, "default");
-            revalidateTag(`site-id-${domainLower}`, "default");
+            revalidateTag(`site-${siteId}`, { expire: 3600 });
+            revalidateTag(`site-id-${updatedSite.subdomain}`, { expire: 3600 });
+            revalidateTag(`site-id-${domainLower}`, { expire: 3600 });
         } catch (cacheError) {
             console.error("[registerDomain] Cache revalidation failed:", cacheError);
         }
@@ -166,9 +166,9 @@ export async function removeDomain(siteId: string, domain: string) {
         // Revalidate cache
         try {
             const { revalidateTag } = await import("next/cache");
-            revalidateTag(`site-${siteId}`, "default");
-            revalidateTag(`site-id-${updatedSite.subdomain}`, "default");
-            revalidateTag(`site-id-${domainLower}`, "default");
+            revalidateTag(`site-${siteId}`, { expire: 3600 });
+            revalidateTag(`site-id-${updatedSite.subdomain}`, { expire: 3600 });
+            revalidateTag(`site-id-${domainLower}`, { expire: 3600 });
         } catch (cacheError) {
             console.error("[removeDomain] Cache revalidation failed:", cacheError);
         }

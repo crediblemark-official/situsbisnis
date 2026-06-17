@@ -1,9 +1,15 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { IdentityClient } from "@/modules/auth";
+import { validateCsrf } from "@/modules/shared/utils/csrf";
 
 export async function POST(req: Request) {
     try {
+        const csrf = validateCsrf(req);
+        if (!csrf.valid) {
+            return NextResponse.json({ error: "CSRF validation failed" }, { status: 403 });
+        }
+
         const body = await req.json();
         const cookieStore = await cookies();
         const referralCodeFromCookie = cookieStore.get("situsbisnis_ref_code")?.value;

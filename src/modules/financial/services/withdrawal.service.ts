@@ -11,7 +11,10 @@ export async function processWithdrawalStatus(withdrawalId: string, status: stri
         throw new Error("Missing data");
     }
 
-    const result = await db.$transaction(async (tx) => {
+    let result;
+    let user;
+
+    await db.$transaction(async (tx) => {
         const currentWd = await SubscriptionClient.findWithdrawalById(withdrawalId);
 
         if (!currentWd) {
@@ -22,18 +25,19 @@ export async function processWithdrawalStatus(withdrawalId: string, status: stri
             throw new Error("ALREADY_PROCESSED");
         }
 
-        const updated = await billingRepo.updateWithdrawal(tx, withdrawalId, { status });
+        result = await billingRepo.updateWithdrawal(tx, withdrawalId, { status });
 
         // Jika ditolak, kembalikan saldo afiliasi ke user
         if (status === "rejected") {
             await billingRepo.incrementUserBalance(tx, currentWd.userId, Number(currentWd.amount));
         }
-
-        return updated;
     });
 
+    // Fetch user secara terpisah (soft reference — tanpa FK join)
+    user = await db.user.findUnique({ where: { id: result.userId } });
+
     // Kirim email notifikasi status
-    if (result && result.user && result.user.email) {
+    if (user?.email) {
         try {
             const formattedAmount = new Intl.NumberFormat("id-ID", {
                 style: "currency",
@@ -46,8 +50,8 @@ export async function processWithdrawalStatus(withdrawalId: string, status: stri
             await eventBus.publish("notification.email.send", {
                 template: "withdrawalStatus",
                 payload: {
-                    toEmail: result.user.email,
-                    userName: result.user.name || "Pengguna",
+                    toEmail: user.email,
+                    userName: user.name || "Pengguna",
                     amount: formattedAmount,
                     status: result.status as any,
                     bankDetails
@@ -59,7 +63,7 @@ export async function processWithdrawalStatus(withdrawalId: string, status: stri
     }
 
     // Kirim WhatsApp notifikasi
-    if (result && result.user && result.user.phone) {
+    if (user?.phone) {
         try {
             const { sendWhatsAppNotification } = await import("@/lib/services/whatsapp");
             const formattedAmount = new Intl.NumberFormat("id-ID", {
@@ -72,10 +76,10 @@ export async function processWithdrawalStatus(withdrawalId: string, status: stri
             const isApproved = result.status === "approved";
 
             const message = isApproved
-                ? `Halo *${result.user.name || "Pengguna"}*,\n\nPermintaan penarikan saldo Anda senilai *${formattedAmount}* telah *DISETUJUI & DITRANSFER* ke rekening:\n*${bankDetails}*.\n\nSilakan periksa mutasi rekening Anda secara berkala. Terima kasih! 🙏`
-                : `Halo *${result.user.name || "Pengguna"}*,\n\nPermintaan penarikan saldo Anda senilai *${formattedAmount}* ke rekening:\n*${bankDetails}*\ntelah *DITOLAK*. Saldo Anda telah dikembalikan secara otomatis ke akun Anda.\n\nJika ada pertanyaan, silakan hubungi tim support kami.`;
+                ? `Halo *${user.name || "Pengguna"}*,\n\nPermintaan penarikan saldo Anda senilai *${formattedAmount}* telah *DISETUJUI & DITRANSFER* ke rekening:\n*${bankDetails}*.\n\nSilakan periksa mutasi rekening Anda secara berkala. Terima kasih! 🙏`
+                : `Halo *${user.name || "Pengguna"}*,\n\nPermintaan penarikan saldo Anda senilai *${formattedAmount}* ke rekening:\n*${bankDetails}*\ntelah *DITOLAK*. Saldo Anda telah dikembalikan secara otomatis ke akun Anda.\n\nJika ada pertanyaan, silakan hubungi tim support kami.`;
 
-            await sendWhatsAppNotification(result.user.phone, message);
+            await sendWhatsAppNotification(user.phone, message);
         } catch (err) {
             console.error("[WITHDRAWAL_WHATSAPP_ERROR] Failed to send WA notification:", err);
         }

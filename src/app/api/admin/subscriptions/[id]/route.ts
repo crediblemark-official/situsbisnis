@@ -2,6 +2,7 @@ import { SubscriptionClient } from "@/modules/subscription"
 import { followupWhatsApp, followupEmail } from "@/modules/notification";
 import { getApiContext, apiResponse, apiError } from "@/lib/api/utils";
 import { Role } from "@prisma/client";
+import { validateCsrf } from "@/modules/shared/utils/csrf";
 
 export async function PATCH(
     req: Request,
@@ -10,6 +11,11 @@ export async function PATCH(
     const { id } = await params;
     const { session: _session, error, status } = await getApiContext([Role.admin]);
     if (error) return apiError(error, status);
+
+    const csrf = validateCsrf(req);
+    if (!csrf.valid) {
+        return apiError("CSRF validation failed", 403);
+    }
 
     try {
         const body = await req.json();

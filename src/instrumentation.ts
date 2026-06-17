@@ -7,6 +7,7 @@ export async function register() {
     const { initInfrastructureListeners } = await import("@/modules/infrastructure/listeners");
     const { initPostListeners } = await import("@/modules/post/listeners");
     const { initMediaListeners } = await import("@/modules/media/listeners");
+    const { initPageListeners } = await import("@/modules/page/listeners");
     const { initCatalogListeners } = await import("@/modules/catalog/listeners");
     const { initOrderListeners } = await import("@/modules/order/listeners");
     const { initSubscriptionListeners } = await import("@/modules/subscription/listeners");
@@ -24,6 +25,7 @@ export async function register() {
     await initInfrastructureListeners();
     await initPostListeners();
     await initMediaListeners();
+    await initPageListeners();
     await initCatalogListeners();
     await initOrderListeners();
     await initSubscriptionListeners();

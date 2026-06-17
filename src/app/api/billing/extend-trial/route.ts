@@ -1,8 +1,14 @@
 import { getApiContext, apiResponse, apiError } from "@/lib/api/utils";
 import { SubscriptionClient } from "@/modules/subscription";
+import { validateCsrf } from "@/modules/shared/utils/csrf";
 
 export async function POST(req: Request) {
     try {
+        const csrf = validateCsrf(req);
+        if (!csrf.valid) {
+            return apiError("CSRF validation failed", 403);
+        }
+
         const { session, error, status } = await getApiContext(["owner", "admin"]);
         if (error) return apiError(error, status);
 

@@ -2,9 +2,15 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { IdentityClient } from "@/modules/auth";
 import { NextResponse } from "next/server";
+import { validateCsrf } from "@/modules/shared/utils/csrf";
 
 export async function POST(req: Request) {
     try {
+        const csrf = validateCsrf(req);
+        if (!csrf.valid) {
+            return new NextResponse("CSRF validation failed", { status: 403 });
+        }
+
         const session = await getServerSession(authOptions);
         if (!session?.user?.id) {
             return new NextResponse("Unauthorized", { status: 401 });

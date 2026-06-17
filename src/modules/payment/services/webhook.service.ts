@@ -135,11 +135,25 @@ export async function processDuitkuWebhook(body: Record<string, any>) {
         throw new Error("Missing parameters");
     }
 
-    const actualTransactionId = merchantOrderId.includes("-") ? merchantOrderId.split("-")[0] : merchantOrderId;
+    const actualTransactionId = merchantOrderId.match(/^([^-]+)/)?.[1];
+    if (!actualTransactionId) {
+        throw new Error("Invalid merchantOrderId format");
+    }
 
     const platformSettings = await SubscriptionClient.getPlatformSettings();
     if (!platformSettings || !platformSettings.duitkuApiKey) {
         throw new Error("Platform not configured");
+    }
+
+    const transaction = await transactionRepo.findTransactionById(null, actualTransactionId);
+    if (!transaction) {
+        throw new Error("Transaction not found");
+    }
+
+    const expectedAmount = Number(transaction.amount);
+    if (Number(amount) !== expectedAmount) {
+        console.error(`[DUITKU] Amount mismatch: webhook=${amount}, expected=${expectedAmount}`);
+        throw new Error("Amount mismatch");
     }
 
     const { paymentManager } = await import("@crediblemark/buayar");

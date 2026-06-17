@@ -3,18 +3,18 @@ import { authOptions } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 
-/**
- * Auth Bridge - Step 1: Generate Token & Redirect
- * 
- * Usage: /api/auth/bridge?target=http://tokokue.localhost:3000/dashboard
- * 
- * Flow:
- * 1. Admin clicks "Manage Site" in admin panel
- * 2. Link points to /api/auth/bridge?target=<subdomain-url>
- * 3. This endpoint verifies the admin is logged in
- * 4. Creates a short-lived HMAC-signed bridge token
- * 5. Redirects to the subdomain's /api/auth/bridge/accept endpoint
- */
+const ALLOWED_HOSTNAMES = new Set([
+    "localhost",
+    "127.0.0.1",
+]);
+
+function isAllowedTarget(hostname: string, rootDomain: string): boolean {
+    if (ALLOWED_HOSTNAMES.has(hostname)) return true;
+    if (hostname === rootDomain) return true;
+    if (hostname.endsWith(`.${rootDomain}`)) return true;
+    return false;
+}
+
 export async function GET(req: NextRequest) {
     const session = await getServerSession(authOptions);
 
@@ -29,7 +29,6 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: "Missing target parameter" }, { status: 400 });
     }
 
-    // Validate target URL
     let targetUrl: URL;
     try {
         targetUrl = new URL(target);
@@ -37,17 +36,23 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: "Invalid target URL" }, { status: 400 });
     }
 
-    // Create a short-lived bridge token (5 min expiry)
+    const rootDomain = (process.env.NEXT_PUBLIC_ROOT_DOMAIN || "situsbisnis.com")
+        .replace(/^https?:\/\//, "").split(":")[0];
+    const targetHost = targetUrl.hostname;
+
+    if (!isAllowedTarget(targetHost, rootDomain)) {
+        return NextResponse.json({ error: "Invalid target domain" }, { status: 400 });
+    }
+
     const secret = process.env.NEXTAUTH_SECRET!;
     const payload = JSON.stringify({
         userId: session.user.id,
-        exp: Date.now() + 5 * 60 * 1000, // 5 minutes
+        exp: Date.now() + 5 * 60 * 1000,
     });
 
     const signature = crypto.createHmac("sha256", secret).update(payload).digest("hex");
     const bridgeToken = Buffer.from(payload).toString("base64url") + "." + signature;
 
-    // Build the accept URL on the target subdomain
     const acceptUrl = new URL("/api/auth/bridge/accept", targetUrl.origin);
     acceptUrl.searchParams.set("token", bridgeToken);
     acceptUrl.searchParams.set("redirect", targetUrl.pathname + targetUrl.search);

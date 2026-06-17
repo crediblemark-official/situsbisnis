@@ -47,6 +47,7 @@ export async function GET(req: NextRequest) {
             sameSite: "lax",
             path: "/",
             secure: isProduction,
+            maxAge: 30 * 24 * 60 * 60, // 30 days
         });
 
         console.log("[BRIDGE] Session bridged for:", user.email, "->", host);

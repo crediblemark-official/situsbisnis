@@ -4,7 +4,7 @@ import * as contentService from "../services/content.service";
 /**
  * Menginisialisasi event listener dan reply handler untuk modul content.
  */
-export async function initContentListeners() {
+export async function initPageListeners() {
   await eventBus.reply("request.content.countPosts", async (data: { siteId: string }) => {
     try {
       return await contentService.countPosts(data.siteId);

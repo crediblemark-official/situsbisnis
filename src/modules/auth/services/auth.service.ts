@@ -6,8 +6,8 @@ import { SiteOwnerInfo } from "../index";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 
-function generateReferralCode() {
-    return Math.random().toString(36).substring(2, 8).toUpperCase();
+function generateReferralCode(): string {
+    return crypto.randomBytes(4).toString("hex").toUpperCase();
 }
 
 /**
@@ -27,6 +27,10 @@ export async function registerUser(body: any, referralCodeFromCookie?: string) {
 
     if (!email || !password) {
         throw new Error("Email dan password wajib diisi");
+    }
+
+    if (password.length < 8) {
+        throw new Error("Password minimal 8 karakter");
     }
 
     if (!phone || typeof phone !== "string" || phone.trim() === "") {
@@ -96,7 +100,9 @@ export async function registerUser(body: any, referralCodeFromCookie?: string) {
                 userName: user.name || "Pengguna",
                 siteName: "SitusBisnis"
             }
-        }, "auth");
+        }, "auth").catch((err: any) => {
+            console.error("[Auth] Gagal publish welcome email event:", err);
+        });
     }
 
     return {

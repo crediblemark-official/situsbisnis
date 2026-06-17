@@ -54,11 +54,39 @@ export async function findPendingTransactionWithProof(siteId: string) {
     });
 }
 
+export async function findPendingTransactionWithProofTx(tx: any, siteId: string) {
+    return tx.paymentTransaction.findFirst({
+        where: {
+            siteId,
+            status: "pending",
+            NOT: {
+                OR: [
+                    { proofOfPayment: null },
+                    { proofOfPayment: "" }
+                ]
+            }
+        }
+    });
+}
+
 /**
  * Menghapus transaksi tertunda (pending) milik site yang tidak memiliki bukti pembayaran.
  */
 export async function deletePendingTransactionsWithoutProof(siteId: string) {
     return db.paymentTransaction.deleteMany({
+        where: {
+            siteId,
+            status: "pending",
+            OR: [
+                { proofOfPayment: null },
+                { proofOfPayment: "" }
+            ]
+        }
+    });
+}
+
+export async function deletePendingTransactionsWithoutProofTx(tx: any, siteId: string) {
+    return tx.paymentTransaction.deleteMany({
         where: {
             siteId,
             status: "pending",
@@ -83,6 +111,29 @@ export async function createPendingTransaction(data: {
     couponId?: string | null;
 }) {
     return db.paymentTransaction.create({
+        data: {
+            siteId: data.siteId,
+            planId: data.planId,
+            amount: data.amount,
+            addonType: data.addonType,
+            addonQuantity: data.addonQuantity,
+            status: "pending",
+            paymentMethod: data.paymentMethod,
+            couponId: data.couponId
+        }
+    });
+}
+
+export async function createPendingTransactionTx(tx: any, data: {
+    siteId: string;
+    planId: string;
+    amount: number;
+    addonType?: string;
+    addonQuantity?: number;
+    paymentMethod?: string;
+    couponId?: string | null;
+}) {
+    return tx.paymentTransaction.create({
         data: {
             siteId: data.siteId,
             planId: data.planId,
@@ -150,6 +201,25 @@ export async function createUpgradeTransaction(data: {
     paymentMethod: string;
 }) {
     return db.paymentTransaction.create({
+        data: {
+            siteId: data.siteId,
+            planId: data.planId,
+            amount: data.amount,
+            status: "pending",
+            couponId: data.couponId,
+            paymentMethod: data.paymentMethod
+        }
+    });
+}
+
+export async function createUpgradeTransactionTx(tx: any, data: {
+    siteId: string;
+    planId: string;
+    amount: number;
+    couponId: string | null;
+    paymentMethod: string;
+}) {
+    return tx.paymentTransaction.create({
         data: {
             siteId: data.siteId,
             planId: data.planId,

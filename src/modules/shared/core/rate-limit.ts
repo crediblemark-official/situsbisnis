@@ -36,9 +36,11 @@ function getConfig(path: string): RateLimitConfig {
 }
 
 function getClientIp(req: NextRequest): string {
+  // Prioritaskan header tepercaya: Cloudflare > x-real-ip > x-forwarded-for > fallback
   return (
-    req.headers.get("x-forwarded-for")?.split(",")[0] ||
+    req.headers.get("cf-connecting-ip") ||
     req.headers.get("x-real-ip") ||
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
     "unknown"
   );
 }

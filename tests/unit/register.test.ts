@@ -26,7 +26,7 @@ vi.mock('bcryptjs', () => ({
 
 vi.mock('@/modules/shared/core/event-bus', () => ({
   eventBus: {
-    publish: vi.fn(),
+    publish: vi.fn().mockResolvedValue(undefined),
   },
 }));
 

@@ -2,6 +2,7 @@ import { SubscriptionClient } from "@/modules/subscription";
 import { FinancialClient } from "@/modules/financial";
 import * as transactionRepo from "../repositories/transaction.repository";
 import { eventBus } from "@/modules/shared/core/event-bus";
+import { db } from "@/modules/shared/core/db";
 
 /**
  * Membeli slot situs tambahan untuk tenant.
@@ -41,20 +42,22 @@ export async function buySlot(
 
     const totalAmount = addonPrice * quantity;
 
-    const pendingWithProof = await transactionRepo.findPendingTransactionWithProof(siteId);
-    if (pendingWithProof) {
-        throw new Error("Anda memiliki transaksi tertunda yang sedang diverifikasi admin. Harap tunggu persetujuan.");
-    }
+    let transaction = await db.$transaction(async (tx) => {
+        const pendingWithProof = await transactionRepo.findPendingTransactionWithProofTx(tx, siteId);
+        if (pendingWithProof) {
+            throw new Error("Anda memiliki transaksi tertunda yang sedang diverifikasi admin. Harap tunggu persetujuan.");
+        }
 
-    await transactionRepo.deletePendingTransactionsWithoutProof(siteId);
+        await transactionRepo.deletePendingTransactionsWithoutProofTx(tx, siteId);
 
-    let transaction = await transactionRepo.createPendingTransaction({
-        siteId,
-        planId: subscription.planId,
-        amount: totalAmount,
-        addonType: "site_slot",
-        addonQuantity: quantity,
-        paymentMethod
+        return transactionRepo.createPendingTransactionTx(tx, {
+            siteId,
+            planId: subscription.planId,
+            amount: totalAmount,
+            addonType: "site_slot",
+            addonQuantity: quantity,
+            paymentMethod
+        });
     });
 
     try {
@@ -64,14 +67,15 @@ export async function buySlot(
             if (platformSettings?.duitkuMerchantCode && platformSettings?.duitkuApiKey) {
                 const { paymentManager } = await import("@crediblemark/buayar");
                 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://situsbisnis.com";
+                const ownerInfo = await eventBus.request<any, any>("request.auth.getSiteOwner", { siteId });
 
                 const invoice = await paymentManager.createInvoice("duitku", {
                     orderId: transaction.id,
                     amount: totalAmount,
                     productDetails: `Pembelian Slot: +${quantity} Tambahan Situs • Utama: ${site.name}`,
                     customer: {
-                        name: "Customer",
-                        email: ""
+                        name: ownerInfo?.name || "Customer",
+                        email: ownerInfo?.email || ""
                     },
                     returnUrl: `${appUrl}/dashboard/billing`,
                     callbackUrl: `${appUrl}/api/billing/webhook/duitku`
@@ -81,19 +85,20 @@ export async function buySlot(
                     sandbox: platformSettings.duitkuSandbox
                 });
 
-                if (invoice.success && invoice.paymentUrl) {
-                    transaction = await transactionRepo.updateTransactionPaymentDetails(transaction.id, {
-                        paymentUrl: invoice.paymentUrl,
-                        paymentReference: invoice.reference,
-                        paymentMethod: "duitku"
-                    });
-                } else {
-                    console.warn(`[DUITKU] Addon invoice creation failed: ${invoice.error}`);
+                if (!invoice.success || !invoice.paymentUrl) {
+                    throw new Error(invoice.error || "Gagal membuat invoice Duitku");
                 }
+
+                transaction = await transactionRepo.updateTransactionPaymentDetails(transaction.id, {
+                    paymentUrl: invoice.paymentUrl,
+                    paymentReference: invoice.reference,
+                    paymentMethod: "duitku"
+                });
             }
         }
     } catch (duitkuError) {
         console.error("[DUITKU_BUY_SLOT_ERROR]", duitkuError);
+        throw duitkuError;
     }
 
     return transaction;
@@ -137,13 +142,14 @@ export async function initializeCheckoutPayment(
     const suffix = Date.now().toString().slice(-4);
     const uniqueDuitkuId = `${transaction.id}-${paymentMethod}-${suffix}`;
 
+    const customerEmail = ownerInfo?.email || "";
     const invoice = await paymentManager.createInvoice("duitku", {
         orderId: uniqueDuitkuId,
         amount: Number(transaction.amount),
         productDetails: transaction.plan ? `Upgrade Paket ${transaction.plan.name}` : "Upgrade Layanan SitusBisnis",
         customer: {
-            name: site?.name || "Tenant",
-            email: "tenant@situsbisnis.com",
+            name: ownerInfo?.name || site?.name || "Tenant",
+            email: customerEmail,
         },
         paymentMethod,
         returnUrl: `${appUrl}/dashboard/billing?status=success`,
@@ -233,13 +239,6 @@ export async function upgradePlan(
         totalAmount += (existingSub.addonSlots * addonPrice);
     }
 
-    const pendingWithProof = await transactionRepo.findPendingTransactionWithProof(siteId);
-    if (pendingWithProof) {
-        throw new Error("Anda memiliki transaksi tertunda yang sedang diverifikasi admin. Harap tunggu persetujuan.");
-    }
-
-    await transactionRepo.deletePendingTransactionsWithoutProof(siteId);
-
     let appliedCoupon = null;
     if (couponCode) {
         const formattedCode = couponCode.trim().toUpperCase();
@@ -270,12 +269,21 @@ export async function upgradePlan(
         }
     }
 
-    let transaction = await transactionRepo.createUpgradeTransaction({
-        siteId,
-        planId,
-        amount: totalAmount,
-        couponId: appliedCoupon ? appliedCoupon.id : null,
-        paymentMethod: paymentMethod
+    let transaction = await db.$transaction(async (tx) => {
+        const pendingWithProof = await transactionRepo.findPendingTransactionWithProofTx(tx, siteId);
+        if (pendingWithProof) {
+            throw new Error("Anda memiliki transaksi tertunda yang sedang diverifikasi admin. Harap tunggu persetujuan.");
+        }
+
+        await transactionRepo.deletePendingTransactionsWithoutProofTx(tx, siteId);
+
+        return transactionRepo.createUpgradeTransactionTx(tx, {
+            siteId,
+            planId,
+            amount: totalAmount,
+            couponId: appliedCoupon ? appliedCoupon.id : null,
+            paymentMethod: paymentMethod
+        });
     });
 
     try {
@@ -286,13 +294,14 @@ export async function upgradePlan(
                 const { paymentManager } = await import("@crediblemark/buayar");
                 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://situsbisnis.com";
 
+                const ownerInfo = await eventBus.request<any, any>("request.auth.getSiteOwner", { siteId });
                 const invoice = await paymentManager.createInvoice("duitku", {
                     orderId: transaction.id,
                     amount: totalAmount,
                     productDetails: `Peningkatan Paket: Premium ${plan.name.toUpperCase()} • Situs: ${site.name}`,
                     customer: {
-                        name: "Customer",
-                        email: ""
+                        name: ownerInfo?.name || site.name || "Customer",
+                        email: ownerInfo?.email || ""
                     },
                     returnUrl: `${appUrl}/dashboard/billing`,
                     callbackUrl: `${appUrl}/api/billing/webhook/duitku`
@@ -302,19 +311,20 @@ export async function upgradePlan(
                     sandbox: platformSettings.duitkuSandbox
                 });
 
-                if (invoice.success && invoice.paymentUrl) {
-                    transaction = await transactionRepo.updateTransactionPaymentDetails(transaction.id, {
-                        paymentUrl: invoice.paymentUrl,
-                        paymentReference: invoice.reference,
-                        paymentMethod: "duitku"
-                    });
-                } else {
-                    console.warn(`[DUITKU] Invoice creation failed: ${invoice.error}`);
+                if (!invoice.success || !invoice.paymentUrl) {
+                    throw new Error(invoice.error || "Gagal membuat invoice Duitku");
                 }
+
+                transaction = await transactionRepo.updateTransactionPaymentDetails(transaction.id, {
+                    paymentUrl: invoice.paymentUrl,
+                    paymentReference: invoice.reference,
+                    paymentMethod: "duitku"
+                });
             }
         }
     } catch (duitkuError) {
         console.error("[DUITKU_UPGRADE_ERROR]", duitkuError);
+        throw duitkuError;
     }
 
     return transaction;

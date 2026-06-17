@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { FinancialClient } from "@/modules/financial";
 import { NextResponse } from "next/server";
+import { validateCsrf } from "@/modules/shared/utils/csrf";
 
 export async function GET(_req: Request) {
     try {
@@ -23,6 +24,11 @@ export async function POST(req: Request) {
         const session = await getServerSession(authOptions);
         if (!session || (session.user as any).role !== "admin") {
             return new NextResponse("Unauthorized", { status: 401 });
+        }
+
+        const csrf = validateCsrf(req);
+        if (!csrf.valid) {
+            return new NextResponse("CSRF validation failed", { status: 403 });
         }
 
         const body = await req.json();

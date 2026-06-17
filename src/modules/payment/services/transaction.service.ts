@@ -152,7 +152,7 @@ export async function processApprovedTransaction(transactionId: string) {
     if (updatedTx && updatedTx.status === "approved") {
         try {
             const { revalidateTag } = await import("next/cache");
-            revalidateTag(`site-${updatedTx.siteId}`, "default");
+            revalidateTag(`site-${updatedTx.siteId}`, { expire: 3600 });
         } catch (e) {
             console.error("Failed to revalidate subscription cache:", e);
         }
@@ -178,7 +178,7 @@ export async function updateTransactionStatus(transactionId: string, status: str
 }
 
 /**
- * Membatalkan transaksi pending secara permanen.
+ * Membatalkan transaksi pending (soft delete: update status ke cancelled).
  */
 export async function cancelTransaction(userId: string, transactionId: string) {
     if (!transactionId) {
@@ -201,7 +201,9 @@ export async function cancelTransaction(userId: string, transactionId: string) {
         throw new Error("Hanya transaksi tertunda yang dapat dibatalkan.");
     }
 
-    await transactionRepo.deleteTransaction(transactionId);
+    await db.$transaction(async (txn) => {
+        await transactionRepo.updateTransactionStatus(txn, transactionId, "cancelled");
+    });
     return { success: true };
 }
 

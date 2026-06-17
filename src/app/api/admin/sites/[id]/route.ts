@@ -2,6 +2,7 @@ import { getApiContext, apiResponse, apiError } from "@/lib/api/utils";
 import { SiteClient } from "@/modules/site";
 import { FinancialClient } from "@/modules/financial";
 import { IdentityClient } from "@/modules/auth";
+import { validateCsrf } from "@/modules/shared/utils/csrf";
 
 /**
  * DELETE /api/admin/sites/[id]
@@ -11,6 +12,11 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
     try {
         const { error, status } = await getApiContext(["admin"]);
         if (error) return apiError(error, status);
+
+        const csrf = validateCsrf(_req);
+        if (!csrf.valid) {
+            return apiError("CSRF validation failed", 403);
+        }
 
         const { id } = await params;
         if (!id) return apiError("Site ID required", 400);
@@ -40,6 +46,11 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     try {
         const { error, status } = await getApiContext(["admin"]);
         if (error) return apiError(error, status);
+
+        const csrf = validateCsrf(req);
+        if (!csrf.valid) {
+            return apiError("CSRF validation failed", 403);
+        }
 
         const { id } = await params;
         const body = await req.json();

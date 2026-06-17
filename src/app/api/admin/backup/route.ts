@@ -1,5 +1,6 @@
 import { getApiContext, apiResponse, apiError } from "@/lib/api/utils";
 import { InfrastructureClient } from "@/modules/infrastructure";
+import { validateCsrf } from "@/modules/shared/utils/csrf";
 
 /**
  * GET /api/admin/backup
@@ -37,6 +38,11 @@ export async function POST(req: Request) {
     try {
         const { session, error, status } = await getApiContext(["admin"], { requireSite: false });
         if (error) return apiError(error, status);
+
+        const csrf = validateCsrf(req);
+        if (!csrf.valid) {
+            return apiError("CSRF validation failed", 403);
+        }
 
         const currentAdminId = (session?.user as any)?.id;
         if (!currentAdminId) {

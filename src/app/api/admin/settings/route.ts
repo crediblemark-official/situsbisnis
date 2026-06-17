@@ -1,5 +1,6 @@
 import { getApiContext, apiResponse, apiError } from "@/lib/api/utils";
 import { SubscriptionClient } from "@/modules/subscription";
+import { validateCsrf } from "@/modules/shared/utils/csrf";
 
 // GET handler ensures Turbopack compiles this route during warm-up,
 // preventing 404 cold-start race condition on PATCH requests.
@@ -11,6 +12,11 @@ export async function PATCH(req: Request) {
     try {
         const { session: _session, error, status } = await getApiContext(["admin"]);
         if (error) return apiError(error, status);
+
+        const csrf = validateCsrf(req);
+        if (!csrf.valid) {
+            return apiError("CSRF validation failed", 403);
+        }
 
         const body = await req.json();
         const {

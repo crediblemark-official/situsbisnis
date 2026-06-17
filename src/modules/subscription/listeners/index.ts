@@ -2,8 +2,8 @@ import { eventBus } from "@/modules/shared/core/event-bus";
 import { checkSiteLimit } from "../services/limit.service";
 import { LimitType } from "../index";
 
-export function initSubscriptionListeners() {
-    eventBus.reply<{ siteId: string; limitType: string }, { allowed: boolean; message?: string }>(
+export async function initSubscriptionListeners() {
+    await eventBus.reply<{ siteId: string; limitType: string }, { allowed: boolean; message?: string }>(
         "request.billing.checkLimit",
         async (data) => {
             try {
@@ -15,7 +15,7 @@ export function initSubscriptionListeners() {
         }
     );
 
-    eventBus.reply<{ siteId: string }, any>(
+    await eventBus.reply<{ siteId: string }, any>(
         "request.billing.getActiveSubscription",
         async (data) => {
             try {

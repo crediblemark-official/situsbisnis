@@ -12,6 +12,7 @@ vi.mock('@/lib/core/db', () => ({
       update: vi.fn(),
     },
     user: {
+      findUnique: vi.fn(),
       update: vi.fn(),
     },
   },
@@ -23,7 +24,7 @@ vi.mock('next-auth', () => ({
 
 vi.mock('@/modules/shared/core/event-bus', () => ({
   eventBus: {
-    publish: vi.fn(),
+    publish: vi.fn().mockResolvedValue(undefined),
   },
 }));
 
@@ -110,10 +111,15 @@ describe('Withdrawal Status Update API Route (POST /api/admin/withdrawals/update
     };
 
     vi.mocked(db.withdrawal.findUnique).mockResolvedValue(mockWd as any);
+    vi.mocked(db.user.findUnique).mockResolvedValue({
+      id: 'user-affiliate',
+      email: 'affiliate@test.com',
+      name: 'Budi',
+      phone: '6281234567890',
+    } as any);
     vi.mocked(db.withdrawal.update).mockResolvedValue({
       ...mockWd,
       status: 'approved',
-      user: { email: 'affiliate@test.com', name: 'Budi' },
     } as any);
 
     const req = new Request('http://localhost/api/admin/withdrawals/update', {
@@ -167,10 +173,15 @@ describe('Withdrawal Status Update API Route (POST /api/admin/withdrawals/update
     };
 
     vi.mocked(db.withdrawal.findUnique).mockResolvedValue(mockWd as any);
+    vi.mocked(db.user.findUnique).mockResolvedValue({
+      id: 'user-affiliate-2',
+      email: 'affiliate2@test.com',
+      name: 'Siti',
+      phone: '6281234567890',
+    } as any);
     vi.mocked(db.withdrawal.update).mockResolvedValue({
       ...mockWd,
       status: 'rejected',
-      user: { email: 'affiliate2@test.com', name: 'Siti' },
     } as any);
 
     const req = new Request('http://localhost/api/admin/withdrawals/update', {

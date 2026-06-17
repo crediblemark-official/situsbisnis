@@ -1,6 +1,7 @@
 import { apiResponse, apiError, validateBody } from "@/lib/api/utils";
 import { OrderClient } from "@/modules/order";
 import { SubscriptionClient } from "@/modules/subscription";
+import { validateCsrf } from "@/modules/shared/utils/csrf";
 import { z as _z } from "zod";
 import zod from "zod";
 const z: typeof _z = _z || (zod as any).z || zod;
@@ -22,6 +23,11 @@ const orderSchema = z.object({
 
 export async function POST(req: Request) {
     try {
+        const csrf = validateCsrf(req);
+        if (!csrf.valid) {
+            return apiError("CSRF validation failed", 403);
+        }
+
         const siteId = await (async () => {
             const { getSiteId } = await import("@/lib/domains/tenant");
             return await getSiteId();

@@ -3,6 +3,19 @@ import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import { getProxiedUrl } from '@/lib/media/utils';
 
+function sanitizeHtml(html: string): string {
+    return html
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+        .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "")
+        .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, "")
+        .replace(/<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi, "")
+        .replace(/on\w+="[^"]*"/gi, "")
+        .replace(/on\w+='[^']*'/gi, "")
+        .replace(/on\w+=\S+/gi, "")
+        .replace(/href=["']javascript:/gi, 'href="#"')
+        .replace(/src=["']javascript:/gi, 'src="#"');
+}
+
 /**
  * Converts Tiptap JSON content to static HTML for Server-Side Rendering.
  * This is crucial for performance (LCP/SEO).
@@ -19,8 +32,8 @@ export function renderTiptapToHTML(content: any): string {
             // Try parsing as JSON first
             parsedContent = JSON.parse(contentStr);
         } catch {
-            // If not JSON, it's already HTML (legacy)
-            return contentStr;
+            // If not JSON, it's already HTML (legacy) — sanitize before returning
+            return sanitizeHtml(contentStr);
         }
     }
 
@@ -53,7 +66,7 @@ export function renderTiptapToHTML(content: any): string {
         return html;
     } catch (error) {
         console.error("[TIPTAP_RENDER_ERROR]", error);
-        return typeof content === "object" ? JSON.stringify(content) : String(content);
+        return typeof content === "object" ? JSON.stringify(content) : sanitizeHtml(String(content));
     }
 }
 

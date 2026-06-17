@@ -65,7 +65,7 @@ export const authOptions: NextAuthOptions = {
 
                 if (!user || !user.password) {
                     console.log("[AUTH] User search result for", maskedEmail, ":", user ? "FOUND (but no PWD)" : "NOT FOUND");
-                    throw new Error("Email address not found in our records.");
+                    throw new Error("Email atau password salah.");
                 }
 
                 const passwordsMatch = await bcrypt.compare(credentials.password, user.password);
@@ -76,7 +76,7 @@ export const authOptions: NextAuthOptions = {
                 }
 
                 console.log("[AUTH] Password mismatch for:", maskEmail(user.email));
-                throw new Error("The password you entered is incorrect.");
+                throw new Error("Email atau password salah.");
             }
         })
     ],

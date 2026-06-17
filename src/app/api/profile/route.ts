@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { IdentityClient } from "@/modules/auth";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { validateCsrf } from "@/modules/shared/utils/csrf";
 
 const profileUpdateSchema = z.object({
     name: z.string().min(1, "Name is required").optional(),
@@ -13,6 +14,11 @@ const profileUpdateSchema = z.object({
 
 export async function PUT(req: Request) {
     try {
+        const csrf = validateCsrf(req);
+        if (!csrf.valid) {
+            return new NextResponse("CSRF validation failed", { status: 403 });
+        }
+
         const session = await getServerSession(authOptions);
 
         if (!session?.user?.email) {

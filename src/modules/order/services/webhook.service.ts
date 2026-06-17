@@ -100,11 +100,20 @@ export async function processOrderWebhook(body: Record<string, any>) {
         throw new Error("Missing parameters");
     }
 
-    const actualOrderId = merchantOrderId.includes("-") ? merchantOrderId.split("-")[0] : merchantOrderId;
+    const actualOrderId = merchantOrderId.match(/^([^-]+)/)?.[1];
+    if (!actualOrderId) {
+        throw new Error("Invalid merchantOrderId format");
+    }
 
     const order = await orderRepo.findOrderById(actualOrderId);
     if (!order) {
         throw new Error("Order not found");
+    }
+
+    const expectedAmount = Number(order.total);
+    if (Number(amount) !== expectedAmount) {
+        console.error(`[DUITKU] Amount mismatch in order webhook: webhook=${amount}, expected=${expectedAmount}`);
+        throw new Error("Amount mismatch");
     }
 
     const paymentSettings = await orderRepo.findPaymentSettings(order.siteId);

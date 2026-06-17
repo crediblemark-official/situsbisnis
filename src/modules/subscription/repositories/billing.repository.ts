@@ -98,8 +98,7 @@ export async function updateWithdrawal(tx, id: string, data: any) {
     const client = tx || db;
     return client.withdrawal.update({
         where: { id },
-        data,
-        include: { user: true }
+        data
     });
 }
 

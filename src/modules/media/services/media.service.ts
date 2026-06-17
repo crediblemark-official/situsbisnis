@@ -57,6 +57,23 @@ export async function uploadMedia(siteId: string, file: File, folderId: string |
     const ext = path.extname(file.name).toLowerCase();
     const isImage = [".jpg", ".jpeg", ".png", ".webp"].includes(ext);
 
+    if (isImage) {
+        const magicBytes: Record<string, number[]> = {
+            ".jpg": [0xFF, 0xD8, 0xFF],
+            ".jpeg": [0xFF, 0xD8, 0xFF],
+            ".png": [0x89, 0x50, 0x4E, 0x47],
+            ".webp": [0x52, 0x49, 0x46, 0x46],
+        };
+        const expected = magicBytes[ext];
+        if (expected) {
+            const header = Array.from(buffer.subarray(0, expected.length));
+            const match = expected.every((byte, i) => header[i] === byte);
+            if (!match) {
+                throw new Error("FILE_TYPE_MISMATCH");
+            }
+        }
+    }
+
     let url = "";
     let width, height, blurDataURL;
     let finalBuffer: Buffer = buffer;
