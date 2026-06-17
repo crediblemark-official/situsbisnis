@@ -55,8 +55,8 @@ vi.mock('@/modules/shared/core/event-bus', () => ({
   eventBus: {
     publish: vi.fn(async (channel, data) => {
       if (channel === 'affiliate.commission.awarded') {
-        const { awardAffiliateCommissionInternal } = await import('@/modules/auth/controllers/auth.controller');
-        await awardAffiliateCommissionInternal(db, data);
+        const { awardAffiliateCommission } = await import('@/modules/auth/services/affiliate.service');
+        await awardAffiliateCommission(db, data);
       }
     }),
     request: vi.fn(async (channel, _data) => {

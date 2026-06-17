@@ -1,5 +1,5 @@
 import { eventBus } from "@/modules/shared/core/event-bus";
-import { awardAffiliateCommissionInternal } from "../controllers/auth.controller";
+import { awardAffiliateCommission } from "../services/affiliate.service";
 import { db } from "@/modules/shared/core/db";
 
 /**
@@ -21,8 +21,8 @@ export async function initAuthListeners() {
         }
       }
       
-      // Panggil controller internal modul auth untuk memberikan komisi
-      await awardAffiliateCommissionInternal(db, {
+      // Panggil service modul auth untuk memberikan komisi
+      await awardAffiliateCommission(db, {
         userId: data.userId,
         amount: data.amount,
         transactionId: data.transactionId,
@@ -39,32 +39,32 @@ export async function initAuthListeners() {
   eventBus.reply<{ siteId: string }, any>(
     "request.auth.getSiteOwner",
     async (data) => {
-      const { getSiteOwnerInternal } = await import("../controllers/auth.controller");
-      return getSiteOwnerInternal(data.siteId);
+      const { getSiteOwner } = await import("../services/auth.service");
+      return getSiteOwner(data.siteId);
     }
   );
 
   eventBus.reply<{ userIds: string[] }, any>(
     "request.auth.getUsersMap",
     async (data) => {
-      const { getUsersMapInternal } = await import("../controllers/auth.controller");
-      return getUsersMapInternal(data.userIds);
+      const { getUsersMap } = await import("../services/user.service");
+      return getUsersMap(data.userIds);
     }
   );
 
   eventBus.reply<{ userId: string }, any>(
     "request.auth.getUserById",
     async (data) => {
-      const { getUserByIdInternal } = await import("../controllers/auth.controller");
-      return getUserByIdInternal(data.userId);
+      const { getUserById } = await import("../services/user.service");
+      return getUserById(data.userId);
     }
   );
 
   eventBus.reply<{ userId: string; referredById: string }, any>(
     "request.auth.updateUserReferrer",
     async (data) => {
-      const { updateUserReferrerInternal } = await import("../controllers/auth.controller");
-      return updateUserReferrerInternal(data.userId, data.referredById);
+      const { updateUserReferrer } = await import("../services/affiliate.service");
+      return updateUserReferrer(data.userId, data.referredById);
     }
   );
 }

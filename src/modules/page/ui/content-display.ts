@@ -2,7 +2,7 @@ import { getSiteId } from "@/modules/shared/utils/domains/tenant";
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
 import { PostClient } from "@/modules/post";
-import { getPageInternal } from "../controllers/content.controller";
+import { getPage as getPageFromService } from "../services/page.service";
 import { MediaClient } from "@/modules/media";
 import { eventBus } from "@/modules/shared/core/event-bus";
 
@@ -61,7 +61,7 @@ export const getPage = cache(async (path: string, siteId?: string) => {
 
     return unstable_cache(
         async () => {
-            return getPageInternal(path, id);
+            return getPageFromService(path, id);
         },
         [`page-${id}-${path}`],
         { revalidate: 300, tags: [`site-${id}`, `page-${path}`] }

@@ -1,24 +1,32 @@
-import { 
-    getSiteOwnerInternal, 
-    getUserByIdInternal, 
-    getUsersMapInternal, 
-    awardAffiliateCommissionInternal,
-    requestAffiliateWithdrawalInternal,
-    checkAffiliateStatusInternal,
-    updateUserReferrerInternal,
-    registerUserInternal,
-    verifyBridgeTokenInternal,
-    updateUserProfileInternal,
-    getUsersInternal,
-    createUserByAdminInternal,
-    updateUserByAdminInternal,
-    deleteUserByAdminInternal,
-    getUserSitesInternal,
-    updateSiteCustomDomainInternal,
-    verifySiteCustomDomainInternal,
-    checkReferralCodeInternal,
-    getAdminUsersContextInternal
-} from "./controllers/auth.controller";
+import {
+    getSiteOwner,
+    registerUser,
+    verifyBridgeToken,
+    getUserSites,
+    updateSiteCustomDomain,
+    verifySiteCustomDomain
+} from "./services/auth.service";
+
+import {
+    getUserById,
+    getUsersMap,
+    updateUserProfile,
+    getUsers,
+    createUserByAdmin,
+    updateUserByAdmin,
+    deleteUserByAdmin,
+    getAdminUsersContext
+} from "./services/user.service";
+
+import {
+    awardAffiliateCommission,
+    requestAffiliateWithdrawal,
+    checkAffiliateStatus,
+    updateUserReferrer,
+    checkReferralCode
+} from "./services/affiliate.service";
+
+export * from "./actions/auth.actions";
 
 export interface UserDTO {
     id: string;
@@ -44,25 +52,25 @@ export interface AwardCommissionDTO {
 
 // Facade / Client kontrak publik
 export const IdentityClient = {
-    getSiteOwner: getSiteOwnerInternal,
-    getUserById: getUserByIdInternal,
-    getUsersMap: getUsersMapInternal,
-    awardAffiliateCommission: awardAffiliateCommissionInternal,
-    requestAffiliateWithdrawal: requestAffiliateWithdrawalInternal,
-    checkAffiliateStatus: checkAffiliateStatusInternal,
-    updateUserReferrer: updateUserReferrerInternal,
-    registerUser: registerUserInternal,
-    verifyBridgeToken: verifyBridgeTokenInternal,
-    updateUserProfile: updateUserProfileInternal,
-    getUsers: getUsersInternal,
-    getAdminUsersContext: getAdminUsersContextInternal,
-    createUserByAdmin: createUserByAdminInternal,
-    updateUserByAdmin: updateUserByAdminInternal,
-    deleteUserByAdmin: deleteUserByAdminInternal,
-    getUserSites: getUserSitesInternal,
-    updateSiteCustomDomain: updateSiteCustomDomainInternal,
-    verifySiteCustomDomain: verifySiteCustomDomainInternal,
-    checkReferralCode: checkReferralCodeInternal
+    getSiteOwner,
+    getUserById,
+    getUsersMap,
+    awardAffiliateCommission,
+    requestAffiliateWithdrawal,
+    checkAffiliateStatus,
+    updateUserReferrer,
+    registerUser,
+    verifyBridgeToken,
+    updateUserProfile,
+    getUsers,
+    getAdminUsersContext,
+    createUserByAdmin,
+    updateUserByAdmin,
+    deleteUserByAdmin,
+    getUserSites,
+    updateSiteCustomDomain,
+    verifySiteCustomDomain,
+    checkReferralCode
 };
 
 

@@ -1,20 +1,20 @@
 import {
-    getPagesInternal,
-    getPageDetailInternal,
-    savePageInternal,
-    deletePageInternal,
-    getCredBuildPageInternal,
-    saveCredBuildPageInternal,
-    getPageInternal,
-} from "./controllers/content.controller";
+    getPages,
+    getPageDetail,
+    savePage,
+    deletePage,
+    getCredBuildPage,
+    saveCredBuildPage,
+    getPage
+} from "./services/page.service";
 import {
-    getMenuInternal,
-    updateMenuInternal
-} from "./controllers/menu.controller";
+    getMenu,
+    updateMenu
+} from "./services/menu.service";
 import {
     getPost,
     getPosts,
-    getPage,
+    getPage as getCachedPage,
     getGalleryItems,
     getPortfolios,
     getTestimonials,
@@ -22,19 +22,21 @@ import {
     getProduct
 } from "./ui/content-display";
 
+export * from "./actions/page.actions";
+
 export const PageClient = {
-    getPages: getPagesInternal,
-    getPageDetail: getPageDetailInternal,
-    savePage: savePageInternal,
-    deletePage: deletePageInternal,
-    getCredBuildPage: getCredBuildPageInternal,
-    saveCredBuildPage: saveCredBuildPageInternal,
-    getPage: getPageInternal,
-    getMenu: getMenuInternal,
-    updateMenu: updateMenuInternal,
+    getPages,
+    getPageDetail,
+    savePage,
+    deletePage,
+    getCredBuildPage,
+    saveCredBuildPage,
+    getPage,
+    getMenu,
+    updateMenu,
     getPost,
     getPosts,
-    getCachedPage: getPage,
+    getCachedPage,
     getGalleryItems,
     getPortfolios,
     getTestimonials,
