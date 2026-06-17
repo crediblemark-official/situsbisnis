@@ -103,32 +103,4 @@ export async function GET() {
     }
 }
 
-async function handleUpdate(req: Request) {
-    try {
-        const { error: authError, status: authStatus, siteId } = await getApiContext(["admin", "owner"], { requireSite: true });
-        if (authError || !siteId) return apiError(authError || "Unauthorized", authStatus);
 
-        const { data, error: vError, details, status: vStatus } = await validateBody(req, settingsSchema);
-        if (vError) return apiError(vError, vStatus, details);
-
-        const { customDomain: _, ...settingsData } = data;
-
-        const updatedSettings = await SiteClient.updateSiteSettings(settingsData, siteId);
-
-        // Ambil customDomain terkini untuk response
-        const domainInfo = await SiteClient.getSiteDomainInfo(siteId);
-
-        return apiResponse({ ...updatedSettings, customDomain: domainInfo?.customDomain });
-    } catch (error) {
-        console.error("Error updating settings:", error);
-        return apiError("Failed to update settings");
-    }
-}
-
-export async function PATCH(req: Request) {
-    return handleUpdate(req);
-}
-
-export async function PUT(req: Request) {
-    return handleUpdate(req);
-}

@@ -15,7 +15,7 @@ const nextConfig = {
       { source: '/api/affiliate/:path*', destination: '/api/auth/affiliate/:path*' },
       { source: '/api/onboarding/:path*', destination: '/api/auth/onboarding/:path*' },
       
-      // Catalog routes
+      // Catalog routes (DEPRECATED: Gunakan Server Actions untuk mutasi)
       { source: '/api/products/:path*', destination: '/api/catalog/products/:path*' },
       
       // Domain routes
@@ -46,7 +46,7 @@ const nextConfig = {
       { source: '/api/billing/:path*', destination: '/api/payment/billing/:path*' },
       { source: '/api/admin/transactions/:path*', destination: '/api/payment/transactions/:path*' },
       
-      // Post routes
+      // Post routes (DEPRECATED: Gunakan Server Actions untuk mutasi)
       { source: '/api/posts/:path*', destination: '/api/post/posts/:path*' },
       { source: '/api/taxonomies/:path*', destination: '/api/post/taxonomies/:path*' },
       { source: '/api/testimonials/:path*', destination: '/api/post/testimonials/:path*' },
@@ -55,7 +55,7 @@ const nextConfig = {
       // Shared routes
       { source: '/api/openapi/:path*', destination: '/api/shared/openapi/:path*' },
       
-      // Site routes
+      // Site routes (DEPRECATED: Gunakan Server Actions untuk mutasi)
       { source: '/api/settings/:path*', destination: '/api/site/settings/:path*' },
       { source: '/api/analytics/:path*', destination: '/api/site/analytics/:path*' },
       { source: '/api/contact/:path*', destination: '/api/site/contact/:path*' },

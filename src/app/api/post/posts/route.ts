@@ -1,1 +1,2 @@
-export { postApi as GET, postApi as POST } from "@/modules/post/api";
+export { postApi as GET } from "@/modules/post/api";
+

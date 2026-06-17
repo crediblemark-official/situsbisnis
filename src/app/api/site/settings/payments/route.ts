@@ -27,23 +27,4 @@ export async function GET() {
     }
 }
 
-/**
- * POST /api/settings/payments
- * Menyimpan pengaturan pembayaran situs.
- */
-export async function POST(req: Request) {
-    try {
-        const { siteId, error, status } = await getApiContext(["admin", "editor", "owner"]);
-        if (error) return apiError(error, status);
 
-        const { data, error: vError, details, status: vStatus } = await validateBody(req, paymentSchema);
-        if (vError) return apiError(vError, vStatus, details);
-
-        await SiteClient.savePaymentSettings(siteId, data);
-
-        return apiResponse({ success: true });
-    } catch (error) {
-        console.error("Payment settings error:", error);
-        return apiError("Failed to save settings");
-    }
-}

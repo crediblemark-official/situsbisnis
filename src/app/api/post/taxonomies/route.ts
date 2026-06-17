@@ -1,1 +1,2 @@
-export { taxonomyApi as GET, taxonomyApi as POST } from "@/modules/post/api";
+export { taxonomyApi as GET } from "@/modules/post/api";
+
