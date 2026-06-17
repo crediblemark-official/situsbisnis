@@ -11,6 +11,7 @@ export default defineConfig({
       '**/dist/**',
       '**/cypress/**',
       '**/.{idea,git,cache,output,temp}/**',
+      '**/.next/**',
       'tests/e2e/**',
       '**/*.spec.ts'
     ],
