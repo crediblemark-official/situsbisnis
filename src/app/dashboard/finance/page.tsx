@@ -13,24 +13,35 @@ export default async function FinanceDashboardPage() {
 
     const userId = session.user.id;
 
-    // 1. Fetch user data (balance, commissions, withdrawals)
-    const user = await db.user.findUnique({
+    // 1. Fetch user data (balance)
+    const dbUser = await db.user.findUnique({
         where: { id: userId },
         select: {
             id: true,
-            affiliateBalance: true,
-            commissions: {
-                orderBy: { createdAt: "desc" },
-                take: 100
-            },
-            withdrawals: {
-                orderBy: { createdAt: "desc" },
-                take: 100
-            }
+            affiliateBalance: true
         }
     });
 
-    if (!user) redirect("/login");
+    if (!dbUser) redirect("/login");
+
+    const [commissions, withdrawals] = await Promise.all([
+        db.commission.findMany({
+            where: { userId },
+            orderBy: { createdAt: "desc" },
+            take: 100
+        }),
+        db.withdrawal.findMany({
+            where: { userId },
+            orderBy: { createdAt: "desc" },
+            take: 100
+        })
+    ]);
+
+    const user = {
+        ...dbUser,
+        commissions,
+        withdrawals
+    };
 
     // 2. Query all sites owned by this user along with their payment settings
     const siteLinks = await db.siteUser.findMany({

@@ -30,20 +30,31 @@ export default async function AffiliateDashboardPage() {
                 orderBy: {
                     createdAt: "desc"
                 }
-            },
-            commissions: {
-                orderBy: { createdAt: "desc" },
-                take: 10
-            },
-            withdrawals: {
-                orderBy: { createdAt: "desc" },
-                take: 10
             }
         }
     });
 
+    if (!user) redirect("/login");
+
+    const [commissions, withdrawals] = await Promise.all([
+        db.commission.findMany({
+            where: { userId: session.user.id },
+            orderBy: { createdAt: "desc" },
+            take: 10
+        }),
+        db.withdrawal.findMany({
+            where: { userId: session.user.id },
+            orderBy: { createdAt: "desc" },
+            take: 10
+        })
+    ]);
+
     // Generate referral code if missing
-    let finalUser = user;
+    let finalUser = {
+        ...user,
+        commissions,
+        withdrawals
+    };
     if (!user.referralCode) {
         const crypto = require("crypto");
         let newReferralCode = crypto.randomBytes(4).toString("hex").substring(0, 6).toUpperCase();
@@ -62,6 +73,8 @@ export default async function AffiliateDashboardPage() {
         
         finalUser = {
             ...user,
+            commissions,
+            withdrawals,
             referralCode: newReferralCode
         };
     }
