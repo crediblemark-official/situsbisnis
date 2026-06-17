@@ -1,4 +1,4 @@
-import * as menuService from "../ui/menu";
+import * as menuService from "../services/menu.service";
 
 /**
  * Server Actions / Wrapper internal untuk mengambil menu.
