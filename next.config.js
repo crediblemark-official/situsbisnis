@@ -29,7 +29,7 @@ const nextConfig = {
       { source: '/api/admin/backup/:path*', destination: '/api/infrastructure/backup/:path*' },
       { source: '/api/admin/sites/:path*', destination: '/api/infrastructure/sites/:path*' },
       
-      // Media routes
+      // Media routes (DEPRECATED: Gunakan Server Actions untuk mutasi)
       { source: '/api/gallery/:path*', destination: '/api/media/gallery/:path*' },
       { source: '/api/portfolios/:path*', destination: '/api/media/portfolios/:path*' },
       

@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { FormSection, FormInput, FormTextArea } from "@/components/ui/Form";
 import { FormMediaPicker } from "@/components/ui/FormMediaPicker";
 import { Button } from "@/components/ui/Button";
+import { createGalleryItemAction } from "@/modules/media/actions/media.actions";
 
 export default function GalleryForm() {
     const router = useRouter();
@@ -25,19 +26,15 @@ export default function GalleryForm() {
         setLoading(true);
         
         try {
-            const res = await fetch("/api/gallery", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(newAsset),
-            });
+            const res = await createGalleryItemAction(newAsset);
 
-            if (res.ok) {
+            if (res.success) {
                 toast.success("Aset berhasil ditambahkan");
                 setIsCreating(false);
                 setNewAsset({ title: "", url: "", description: "" });
                 router.refresh();
             } else {
-                toast.error("Gagal menambahkan aset");
+                toast.error(res.error || "Gagal menambahkan aset");
             }
         } catch (_e) {
             toast.error("Terjadi kesalahan sistem");

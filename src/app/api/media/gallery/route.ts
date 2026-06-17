@@ -1,1 +1,2 @@
-export { galleryApi as GET, galleryApi as POST } from "@/modules/media/api";
+export { galleryApi as GET } from "@/modules/media/api";
+

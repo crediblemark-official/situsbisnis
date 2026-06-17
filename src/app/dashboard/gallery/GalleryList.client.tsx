@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ConfirmActionButton } from "@/components/ui/ConfirmActionButton";
 import { getProxiedUrl } from "@/lib/media/utils";
+import { deleteGalleryItemAction } from "@/modules/media/actions/media.actions";
 
 type GalleryItem = {
     id: string;
@@ -23,12 +24,12 @@ export default function GalleryList({ items }: { items: GalleryItem[] }) {
 
     const handleDelete = async (id: string) => {
         try {
-            const res = await fetch(`/api/gallery/${id}`, { method: "DELETE" });
-            if (res.ok) {
+            const res = await deleteGalleryItemAction(id);
+            if (res.success) {
                 toast.success("Aset berhasil dihapus");
                 router.refresh();
             } else {
-                toast.error("Gagal menghapus aset");
+                toast.error(res.error || "Gagal menghapus aset");
             }
         } catch (_e) {
             toast.error("Terjadi kesalahan saat menghapus");
