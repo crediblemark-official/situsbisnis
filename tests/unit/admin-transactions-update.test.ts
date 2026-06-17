@@ -80,6 +80,10 @@ vi.mock('next-auth', () => ({
   getServerSession: vi.fn(),
 }));
 
+vi.mock('next/cache', () => ({
+  revalidateTag: vi.fn(),
+}));
+
 describe('Admin Transactions Update API Route', () => {
   beforeEach(() => {
     vi.clearAllMocks();

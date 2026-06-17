@@ -114,9 +114,14 @@ vi.mock('next-auth', () => ({
   getServerSession: vi.fn(),
 }));
 
+vi.mock('next/cache', () => ({
+  revalidateTag: vi.fn(),
+}));
+
 describe('Coupon Discount System API Routes', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   describe('validate-coupon route', () => {
@@ -271,13 +276,35 @@ describe('Coupon Discount System API Routes', () => {
       } as any);
 
       vi.mocked(db.paymentTransaction.findFirst).mockResolvedValue(null);
+      vi.mocked(db.paymentTransaction.create).mockResolvedValue({
+        id: 'tx-upgrade-1',
+        siteId: 'site-1',
+        planId: 'plan-1',
+        amount: 85000,
+        status: 'pending',
+        couponId: 'coupon-aff',
+        paymentMethod: 'manual',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        addonType: null,
+        addonQuantity: 0,
+        proofOfPayment: null,
+        paymentUrl: null,
+        paymentReference: null,
+        vaNumber: null,
+        qrString: null,
+        qrCodeUrl: null,
+        paymentCode: null,
+        notes: null,
+      } as any);
 
       const req = new Request('http://localhost/api/billing/upgrade', {
         method: 'POST',
         body: JSON.stringify({ siteId: 'site-1', planId: 'plan-1', couponCode: 'BUDIPROMO' }),
       });
 
-      await upgradePlan(req);
+      const res = await upgradePlan(req);
+      expect(res.status).toBe(200);
 
       // Verify that user referredById was automatically linked to affiliate-bob
       expect(IdentityClient.updateUserReferrer).toHaveBeenCalledWith('user-1', 'affiliate-bob');

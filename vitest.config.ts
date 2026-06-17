@@ -4,6 +4,7 @@ import path from 'path';
 export default defineConfig({
   test: {
     environment: 'node',
+    setupFiles: ['dotenv/config'],
     include: ['tests/unit/**/*.test.ts'],
     exclude: [
       '**/node_modules/**',

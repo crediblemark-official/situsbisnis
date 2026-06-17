@@ -52,6 +52,7 @@ vi.mock('next-auth', () => ({
 describe('Orders API POST Route', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.spyOn(console, 'error').mockImplementation(() => {});
     vi.mocked(getServerSession).mockResolvedValue(null);
     vi.mocked(db.site.findUnique).mockResolvedValue({ name: 'Test Site' } as any);
     vi.mocked(db.paymentSettings.findUnique).mockResolvedValue(null);

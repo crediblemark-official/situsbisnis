@@ -5,6 +5,7 @@ describe('lib/core/hooks.ts', () => {
   beforeEach(() => {
     hooks['actions'].clear();
     hooks['filters'].clear();
+    vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   describe('addAction / doAction', () => {

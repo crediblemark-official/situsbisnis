@@ -152,7 +152,7 @@ export async function processApprovedTransaction(transactionId: string) {
     if (updatedTx && updatedTx.status === "approved") {
         try {
             const { revalidateTag } = await import("next/cache");
-            revalidateTag(`site-${updatedTx.siteId}`, { expire: 3600 });
+            revalidateTag(`site-${updatedTx.siteId}`, "default");
         } catch (e) {
             console.error("Failed to revalidate subscription cache:", e);
         }
