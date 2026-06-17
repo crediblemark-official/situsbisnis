@@ -10,6 +10,8 @@ import toast from "react-hot-toast";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ConfirmActionButton } from "@/components/ui/ConfirmActionButton";
 
+import { deletePortfolioItemAction } from "@/modules/media/actions/media.actions";
+
 type PortfolioItem = {
     id: string;
     title: string;
@@ -38,12 +40,12 @@ export default function PortfolioList({ items }: { items: PortfolioItem[] }) {
 
     const handleDelete = async (id: string) => {
         try {
-            const res = await fetch(`/api/portfolios/${id}`, { method: "DELETE" });
-            if (res.ok) {
+            const res = await deletePortfolioItemAction(id);
+            if (res.success) {
                 toast.success("Proyek berhasil dihapus");
                 router.refresh();
             } else {
-                toast.error("Gagal menghapus proyek");
+                toast.error(res.error || "Gagal menghapus proyek");
             }
         } catch (_e) {
             toast.error("Terjadi kesalahan saat menghapus");

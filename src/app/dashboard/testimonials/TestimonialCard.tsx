@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 
+import { updateTestimonialAction, deleteTestimonialAction } from "@/modules/post/actions/post.actions";
+
 type TestimonialProps = {
     id: string;
     quote: string;
@@ -23,16 +25,12 @@ export default function TestimonialCard({ testimonial }: { testimonial: Testimon
 
     const handleApprove = async () => {
         try {
-            const res = await fetch(`/api/testimonials/${testimonial.id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ isApproved: true })
-            });
-            if (res.ok) {
+            const res = await updateTestimonialAction(testimonial.id, { isApproved: true });
+            if (res.success) {
                 router.refresh();
                 toast.success("Testimoni disetujui");
             } else {
-                toast.error("Gagal menyetujui testimoni");
+                toast.error(res.error || "Gagal menyetujui testimoni");
             }
         } catch (error) {
             console.error(error);
@@ -41,20 +39,18 @@ export default function TestimonialCard({ testimonial }: { testimonial: Testimon
     };
 
     const handleDelete = async () => {
-
         try {
-            const res = await fetch(`/api/testimonials/${testimonial.id}`, { method: "DELETE" });
-            if (res.ok) {
+            const res = await deleteTestimonialAction(testimonial.id);
+            if (res.success) {
                 router.refresh();
                 toast.success("Testimoni dihapus");
             } else {
-                toast.error("Gagal menghapus testimoni");
+                toast.error(res.error || "Gagal menghapus testimoni");
             }
         } catch (error) {
             console.error("Failed to delete", error);
             toast.error("Terjadi kesalahan saat menghapus");
         } finally {
-
             setShowDeleteModal(false);
         }
     };

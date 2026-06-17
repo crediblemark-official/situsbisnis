@@ -1,10 +1,52 @@
 import { NextResponse } from "next/server";
 import { generatePageWithAI, generateSectionWithAI, refineFieldWithAI } from "@crediblemark/build-ai/server";
+
+/**
+ * Handler GET untuk mengambil data menu berdasarkan slug.
+ */
+export async function getMenusApi(req: Request) {
+    try {
+        const { siteId, error, status } = await getApiContext();
+        if (error) return apiError(error, status);
+
+        const { searchParams } = new URL(req.url);
+        const slug = searchParams.get("slug") || "main";
+
+        const menu = await PageClient.getMenu(slug, siteId);
+        return apiResponse(menu);
+    } catch (error) {
+        console.error("GetMenus Error:", error);
+        return apiError("Internal Error");
+    }
+}
 import presetSchemas from "./schemas.json";
 import { resolveAIConfig } from "../services/ai-config.service";
 import { getApiContext, apiResponse, apiError, validateBody } from "@/lib/api/utils";
 import { PageClient } from "../index";
 import { z } from "zod";
+
+/**
+ * Handler GET untuk mengambil detail data halaman berdasarkan ID.
+ */
+export async function getPageDetailApi(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { siteId, error, status } = await getApiContext();
+    if (error) return apiError(error, status);
+
+    const { id } = await params;
+    if (!id) return apiError("Missing ID", 400);
+
+    const page = await PageClient.getPageDetail(id, siteId);
+    return apiResponse(page);
+  } catch (err: any) {
+    console.error("GetPageDetail Error:", err);
+    if (err.message === "Page not found") {
+      return apiError("Page not found", 404);
+    }
+    return apiError("Internal Error");
+  }
+}
+
 
 const credBuildSchema = z.object({
   path: z.string().min(1),

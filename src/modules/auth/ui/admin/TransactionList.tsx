@@ -15,7 +15,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import Image from "next/image";
 import { TableContainer, THead, TBody, TR, TH, TD } from "@/components/ui/Table";
-import { updateTransactionStatusAction } from "@/modules/payment/actions/payment.actions";
+import { updateTransactionStatusAction } from "@/modules/payment";
 
 export default function TransactionList({ initialTransactions }: { initialTransactions: any[] }) {
     const [transactions, setTransactions] = useState(initialTransactions);

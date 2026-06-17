@@ -2,6 +2,7 @@
 
 import { useEffect, useState, use } from "react";
 import TestimonialEditor from "@/app/dashboard/testimonials/TestimonialEditor";
+import { getTestimonialAction } from "@/modules/post/actions/post.actions";
 import { Loader2 } from "lucide-react";
 
 export default function EditTestimonialPage({ params }: { params: Promise<{ id: string }> }) {
@@ -12,13 +13,9 @@ export default function EditTestimonialPage({ params }: { params: Promise<{ id: 
     useEffect(() => {
         if (!id || id === "new") return;
 
-        fetch(`/api/testimonials/${id}`)
-            .then(res => res.json())
+        getTestimonialAction(id)
             .then(res => {
-                const testimonialData = res.data || res;
-                if (testimonialData && !testimonialData.error) {
-                    setData(testimonialData);
-                }
+                if (res.success && res.data) setData(res.data);
                 setLoading(false);
             })
             .catch(() => setLoading(false));

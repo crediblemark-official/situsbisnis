@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Search, ArrowRight, X, PenTool, FileText, ShoppingBag } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { searchGlobalAction } from "@/modules/post/actions/post.actions";
+import { searchGlobalAction } from "@/modules/post";
 
 interface SearchResult {
     id: string;

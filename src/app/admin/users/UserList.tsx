@@ -10,6 +10,8 @@ import { TableContainer, THead, TBody, TR, TH } from "@/components/ui/Table";
 import AddUserModal from "./AddUserModal";
 import EditUserModal from "./EditUserModal";
 
+import { deleteUserAction, updateUserAction, createUserAction } from "@/modules/auth/actions/auth.actions";
+
 interface User {
     id: string;
     name: string | null;
@@ -51,12 +53,11 @@ export default function UserList({ initialUsers }: { initialUsers: User[] }) {
 
         setLoadingId(id);
         try {
-            const res = await fetch(`/api/users/${id}`, { method: "DELETE" });
-            if (res.ok) {
+            const res = await deleteUserAction(id);
+            if (res.success) {
                 setUsers(prev => prev.filter(u => u.id !== id));
             } else {
-                const err = await res.json();
-                alert(err.message || "Failed to delete user");
+                alert(res.error || "Failed to delete user");
             }
         } catch (_) {
             alert("Network error occurred");
@@ -70,15 +71,11 @@ export default function UserList({ initialUsers }: { initialUsers: User[] }) {
     const handleRoleChange = async (id: string, newRole: string) => {
         setLoadingId(id);
         try {
-            const res = await fetch(`/api/users/${id}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ role: newRole })
-            });
-            if (res.ok) {
+            const res = await updateUserAction(id, { role: newRole });
+            if (res.success) {
                 setUsers(prev => prev.map(u => u.id === id ? { ...u, role: newRole } : u));
             } else {
-                alert("Failed to update role");
+                alert(res.error || "Failed to update role");
             }
         } catch (_) {
             alert("Network error");
@@ -88,33 +85,22 @@ export default function UserList({ initialUsers }: { initialUsers: User[] }) {
     };
 
     const handleInvite = async (data: any) => {
-        const res = await fetch("/api/users", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
-        });
-        if (!res.ok) throw new Error("Failed");
+        const res = await createUserAction(data);
+        if (!res.success) throw new Error(res.error || "Failed");
 
-        const result = await res.json();
         setUsers(prev => [{
-            ...result.user,
+            ...(res.user as any),
             createdAt: new Date().toISOString(),
             _count: { posts: 0 }
         }, ...prev]);
     };
 
     const handleUpdate = async (id: string, data: any) => {
-        const res = await fetch(`/api/users/${id}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
-        });
-        if (!res.ok) {
-            const err = await res.json();
-            throw new Error(err.message || "Update failed");
+        const res = await updateUserAction(id, data);
+        if (!res.success) {
+            throw new Error(res.error || "Update failed");
         }
 
-        await res.json();
         setUsers(prev => prev.map(u => u.id === id ? { ...u, ...data } : u));
     };
 

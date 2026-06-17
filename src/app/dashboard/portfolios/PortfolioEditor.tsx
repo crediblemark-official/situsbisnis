@@ -15,6 +15,8 @@ import { EditorLayout } from "@/components/dashboard/EditorLayout";
 import { FormRichText } from "@/components/ui/FormRichText";
 
 
+import { createPortfolioItemAction, updatePortfolioItemAction, deletePortfolioItemAction } from "@/modules/media/actions/media.actions";
+
 export default function PortfolioEditor({ initialData }: { initialData?: any }) {
     const router = useRouter();
     const [saving, setSaving] = useState(false);
@@ -35,16 +37,11 @@ export default function PortfolioEditor({ initialData }: { initialData?: any }) 
         e.preventDefault();
         setSaving(true);
         try {
-            const url = isEditMode ? `/api/portfolios/${formData.id}` : "/api/portfolios";
-            const method = isEditMode ? "PUT" : "POST";
+            const res = isEditMode
+                ? await updatePortfolioItemAction(formData.id, formData)
+                : await createPortfolioItemAction(formData);
 
-            const res = await fetch(url, {
-                method,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData)
-            });
-
-            if (!res.ok) throw new Error("Gagal menyimpan data");
+            if (!res.success) throw new Error(res.error || "Gagal menyimpan data");
 
             toast.success("Portfolio berhasil disimpan");
             router.refresh();
@@ -59,11 +56,8 @@ export default function PortfolioEditor({ initialData }: { initialData?: any }) 
     const handleDelete = async () => {
         setSaving(true);
         try {
-            const res = await fetch(`/api/portfolios/${formData.id}`, {
-                method: "DELETE"
-            });
-
-            if (!res.ok) throw new Error("Gagal menghapus data");
+            const res = await deletePortfolioItemAction(formData.id);
+            if (!res.success) throw new Error(res.error || "Gagal menghapus data");
 
             toast.success("Portfolio berhasil dihapus");
             router.push("/dashboard/portfolios");

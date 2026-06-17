@@ -419,3 +419,21 @@ export async function searchGlobalAction(q: string) {
 }
 
 
+
+export async function getTestimonialAction(id: string) {
+    try {
+        const { siteId, error } = await getApiContext(["admin", "owner", "editor"]);
+        if (error || !siteId) return { success: false, error: error || "Unauthorized" };
+
+        if (!id) return { success: false, error: "ID required" };
+
+        const { db } = await import("@/modules/shared/core/db");
+        const testimonial = await db.testimonial.findFirst({ where: { id, siteId } });
+        if (!testimonial) return { success: false, error: "Testimonial not found" };
+
+        return { success: true, data: testimonial };
+    } catch (err: any) {
+        console.error("[GET_TESTIMONIAL_ACTION] Error:", err);
+        return { success: false, error: "Gagal mengambil data testimoni" };
+    }
+}

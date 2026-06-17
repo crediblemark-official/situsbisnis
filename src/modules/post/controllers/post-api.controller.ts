@@ -1,1 +1,1 @@
-export { testimonialApi as testimonialApi } from "../api/index";
+export { testimonialApi, taxonomyApi } from "../api/index";

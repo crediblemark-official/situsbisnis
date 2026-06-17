@@ -31,6 +31,46 @@ function checkCacheSupport() {
 }
 
 /**
+ * Handler GET untuk mengambil daftar media.
+ */
+export async function getMediaListApi(req: Request) {
+    try {
+        const { siteId, error, status } = await getApiContext(["admin", "editor", "owner"]);
+        if (error) return apiError(error, status);
+
+        const { searchParams } = new URL(req.url);
+        const folderId = searchParams.get("folderId") || null;
+        const page = parseInt(searchParams.get("page") || "1");
+        const limit = parseInt(searchParams.get("limit") || "50");
+
+        const items = await MediaClient.getMediaList(siteId, folderId, page, limit);
+        return apiResponse(items);
+    } catch (error) {
+        console.error("GetMediaList Error:", error);
+        return apiError("Internal Error");
+    }
+}
+
+/**
+ * Handler GET untuk mengambil daftar folder media.
+ */
+export async function getMediaFoldersApi(req: Request) {
+    try {
+        const { siteId, error, status } = await getApiContext(["admin", "editor", "owner"]);
+        if (error) return apiError(error, status);
+
+        const { searchParams } = new URL(req.url);
+        const parentId = searchParams.get("parentId") || null;
+
+        const folders = await MediaClient.getMediaFolders(siteId, parentId);
+        return apiResponse(folders);
+    } catch (error) {
+        console.error("GetMediaFolders Error:", error);
+        return apiError("Internal Error");
+    }
+}
+
+/**
  * Handler POST untuk mengunggah file media.
  */
 export async function uploadMediaApi(req: Request) {
