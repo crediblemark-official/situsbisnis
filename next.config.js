@@ -6,6 +6,68 @@ const appHostname = new URL(appUrl).hostname;
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async rewrites() {
+    return [
+      // Auth routes
+      { source: '/api/user/:path*', destination: '/api/auth/user/:path*' },
+      { source: '/api/users/:path*', destination: '/api/auth/users/:path*' },
+      { source: '/api/profile/:path*', destination: '/api/auth/profile/:path*' },
+      { source: '/api/affiliate/:path*', destination: '/api/auth/affiliate/:path*' },
+      { source: '/api/onboarding/:path*', destination: '/api/auth/onboarding/:path*' },
+      
+      // Catalog routes
+      { source: '/api/products/:path*', destination: '/api/catalog/products/:path*' },
+      
+      // Domain routes
+      { source: '/api/domains/:path*', destination: '/api/domain/domains/:path*' },
+      
+      // Financial routes
+      { source: '/api/admin/coupons/:path*', destination: '/api/financial/coupons/:path*' },
+      { source: '/api/admin/withdrawals/:path*', destination: '/api/financial/withdrawals/:path*' },
+      
+      // Infrastructure routes
+      { source: '/api/admin/backup/:path*', destination: '/api/infrastructure/backup/:path*' },
+      { source: '/api/admin/sites/:path*', destination: '/api/infrastructure/sites/:path*' },
+      
+      // Media routes
+      { source: '/api/gallery/:path*', destination: '/api/media/gallery/:path*' },
+      { source: '/api/portfolios/:path*', destination: '/api/media/portfolios/:path*' },
+      
+      // Order routes
+      { source: '/api/orders/:path*', destination: '/api/order/orders/:path*' },
+      
+      // Page routes
+      { source: '/api/pages/:path*', destination: '/api/page/pages/:path*' },
+      { source: '/api/menus/:path*', destination: '/api/page/menus/:path*' },
+      { source: '/api/credbuild/:path*', destination: '/api/page/credbuild/:path*' },
+      { source: '/api/ai/:path*', destination: '/api/page/ai/:path*' },
+      
+      // Payment routes
+      { source: '/api/billing/:path*', destination: '/api/payment/billing/:path*' },
+      { source: '/api/admin/transactions/:path*', destination: '/api/payment/transactions/:path*' },
+      
+      // Post routes
+      { source: '/api/posts/:path*', destination: '/api/post/posts/:path*' },
+      { source: '/api/taxonomies/:path*', destination: '/api/post/taxonomies/:path*' },
+      { source: '/api/testimonials/:path*', destination: '/api/post/testimonials/:path*' },
+      { source: '/api/search/:path*', destination: '/api/post/search/:path*' },
+      
+      // Shared routes
+      { source: '/api/openapi/:path*', destination: '/api/shared/openapi/:path*' },
+      
+      // Site routes
+      { source: '/api/settings/:path*', destination: '/api/site/settings/:path*' },
+      { source: '/api/analytics/:path*', destination: '/api/site/analytics/:path*' },
+      { source: '/api/contact/:path*', destination: '/api/site/contact/:path*' },
+      { source: '/api/health/:path*', destination: '/api/site/health/:path*' },
+      
+      // Subscription routes
+      { source: '/api/admin/plans/:path*', destination: '/api/subscription/plans/:path*' },
+      { source: '/api/admin/subscriptions/:path*', destination: '/api/subscription/subscriptions/:path*' },
+      { source: '/api/admin/settings/:path*', destination: '/api/subscription/settings/:path*' },
+      { source: '/api/cron/:path*', destination: '/api/subscription/cron/:path*' },
+    ];
+  },
   output: 'standalone',
   reactStrictMode: true,
   transpilePackages: ["lucide-react", "@crediblemark/build-ui", "@crediblemark/buayar", "@crediblemark/build-ai", "@crediblemark/starsender"],

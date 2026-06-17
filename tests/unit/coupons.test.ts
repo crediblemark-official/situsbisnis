@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { POST as validateCoupon } from '@/app/api/billing/validate-coupon/route';
-import { POST as upgradePlan } from '@/app/api/billing/upgrade/route';
-import { POST as updateTransaction } from '@/app/api/admin/transactions/update/route';
+import { POST as validateCoupon } from '@/app/api/payment/billing/validate-coupon/route';
+import { POST as upgradePlan } from '@/app/api/payment/billing/upgrade/route';
+import { POST as updateTransaction } from '@/app/api/payment/transactions/update/route';
 import { db } from '@/lib/core/db';
 import { getServerSession } from 'next-auth';
 import { IdentityClient } from '@/modules/auth';

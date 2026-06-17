@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { POST as updateTransaction } from '@/app/api/admin/transactions/update/route';
+import { POST as updateTransaction } from '@/app/api/payment/transactions/update/route';
 import { db } from '@/lib/core/db';
 import { getServerSession } from 'next-auth';
 

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { POST as createUser } from '@/app/api/users/route';
-import { PATCH as updateUser } from '@/app/api/users/[id]/route';
+import { POST as createUser } from '@/app/api/auth/users/route';
+import { PATCH as updateUser } from '@/app/api/auth/users/[id]/route';
 import { db } from '@/lib/core/db';
 import { getApiContext, validateBody } from '@/lib/api/utils';
 

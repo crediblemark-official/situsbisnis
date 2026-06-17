@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { POST as createOrder } from '@/app/api/orders/route';
+import { POST as createOrder } from '@/app/api/order/orders/route';
 import { db } from '@/lib/core/db';
 import { validateBody } from '@/lib/api/utils';
 import { SubscriptionClient } from '@/modules/subscription';

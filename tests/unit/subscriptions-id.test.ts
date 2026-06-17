@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { PATCH as handleSubscriptionAction } from '@/app/api/admin/subscriptions/[id]/route';
+import { PATCH as handleSubscriptionAction } from '@/app/api/subscription/subscriptions/[id]/route';
 import { db } from '@/lib/core/db';
 import { getApiContext } from '@/lib/api/utils';
 import { sendWhatsAppNotification } from '@/lib/services/whatsapp';

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { POST as updateWithdrawalHandler } from '@/app/api/admin/withdrawals/update/route';
+import { POST as updateWithdrawalHandler } from '@/app/api/financial/withdrawals/update/route';
 import { db } from '@/lib/core/db';
 import { getServerSession } from 'next-auth';
 import { eventBus } from '@/modules/shared/core/event-bus';

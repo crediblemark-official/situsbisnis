@@ -1,6 +1,6 @@
 import { IdentityClient } from "@/modules/auth";
 import { getApiContext, apiResponse, apiError, validateBody } from "@/lib/api/utils";
-import { userSchema } from "@/app/api/users/route";
+import { userSchema } from "@/app/api/auth/users/route";
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
