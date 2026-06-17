@@ -1,6 +1,7 @@
 import * as planService from "../services/plan.service";
 import * as limitService from "../services/limit.service";
 import * as platformService from "../services/platform.service";
+import { checkAndUpdateExpiredSubscriptions as checkAndUpdateExpiredSubscriptionsService } from "../services/expiration.service";
 import { LimitType } from "../index";
 
 export async function getPricingPlans() {
@@ -105,4 +106,8 @@ export async function findSiteById(id: string) {
 
 export async function findWithdrawalById(id: string) {
     return platformService.findWithdrawalById(id);
+}
+
+export async function checkAndUpdateExpiredSubscriptions() {
+    return checkAndUpdateExpiredSubscriptionsService();
 }

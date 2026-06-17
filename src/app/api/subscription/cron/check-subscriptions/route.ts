@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { checkAndUpdateExpiredSubscriptions } from "@/modules/subscription/services/expiration.service";
+import { SubscriptionClient } from "@/modules/subscription";
 
 /**
  * GET /api/cron/check-subscriptions
@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
     }
 
     try {
-        const result = await checkAndUpdateExpiredSubscriptions();
+        const result = await SubscriptionClient.checkAndUpdateExpiredSubscriptions();
         return NextResponse.json({
             success: true,
             ...result,

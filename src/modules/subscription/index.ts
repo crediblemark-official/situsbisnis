@@ -24,7 +24,8 @@ import {
     createSubscription,
     updateSubscription,
     findSiteById,
-    findWithdrawalById
+    findWithdrawalById,
+    checkAndUpdateExpiredSubscriptions
 } from "./controllers/subscription.controller";
 
 export type LimitType = "maxPosts" | "maxProducts" | "maxOrders" | "maxTestimonials" | "maxAssets";
@@ -81,5 +82,6 @@ export const SubscriptionClient = {
     createSubscription,
     updateSubscription,
     findSiteById,
-    findWithdrawalById
+    findWithdrawalById,
+    checkAndUpdateExpiredSubscriptions
 };
