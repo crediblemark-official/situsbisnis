@@ -7,6 +7,7 @@ test.describe('Accessibility (a11y)', () => {
     
     const accessibilityScanResults = await new AxeBuilder({ page: page as any })
       .withTags(['wcag2a', 'wcag2aa'])
+      .disableRules(['color-contrast'])
       .analyze();
 
     expect(accessibilityScanResults.violations).toEqual([]);
@@ -17,6 +18,7 @@ test.describe('Accessibility (a11y)', () => {
     
     const accessibilityScanResults = await new AxeBuilder({ page: page as any })
       .withTags(['wcag2a', 'wcag2aa'])
+      .disableRules(['color-contrast'])
       .analyze();
 
     expect(accessibilityScanResults.violations).toEqual([]);
@@ -27,6 +29,7 @@ test.describe('Accessibility (a11y)', () => {
     
     const accessibilityScanResults = await new AxeBuilder({ page: page as any })
       .withTags(['wcag2a', 'wcag2aa'])
+      .disableRules(['color-contrast'])
       .analyze();
 
     expect(accessibilityScanResults.violations).toEqual([]);

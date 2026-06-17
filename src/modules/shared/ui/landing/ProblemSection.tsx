@@ -33,7 +33,7 @@ export function ProblemSection() {
                                         <div className="w-2.5 h-2.5 rounded-full bg-slate-800/70" />
                                     </div>
                                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                        <div className="bg-slate-950 text-[9.5px] text-slate-500 font-mono py-1 px-5 rounded-md border border-slate-850 flex items-center gap-1 w-[60%] justify-center max-w-sm pointer-events-auto select-none shadow-inner">
+                                        <div className="bg-slate-950 text-[9.5px] text-slate-400 font-mono py-1 px-5 rounded-md border border-slate-850 flex items-center gap-1 w-[60%] justify-center max-w-sm pointer-events-auto select-none shadow-inner">
                                             sistem-bisnis-dilema.io
                                         </div>
                                     </div>
@@ -150,7 +150,7 @@ export function ProblemSection() {
                 <div className="absolute bottom-[15%] right-[-10%] w-[30vw] h-[30vw] bg-amber-200/10 rounded-full blur-[90px] pointer-events-none animate-pulse-slow" />
 
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                    <div className="flex lg:grid lg:grid-cols-2 overflow-x-auto no-scrollbar snap-x snap-mandatory gap-8 lg:gap-16 -mx-4 px-6 sm:-mx-6 sm:px-10 lg:mx-0 lg:px-0 pb-4">
+                    <div className="flex lg:grid lg:grid-cols-2 overflow-x-auto no-scrollbar snap-x snap-mandatory gap-8 lg:gap-16 -mx-4 px-6 sm:-mx-6 sm:px-10 lg:mx-0 lg:px-0 pb-4" tabIndex={0} role="region" aria-label="Perbandingan dilema marketplace dan web konvensional">
 
                         {/* Column 1: Marketplace Dilemma */}
                         <div className="snap-start scroll-ml-6 lg:scroll-ml-0 min-w-[82vw] sm:min-w-[400px] lg:min-w-0 flex flex-col gap-5 md:gap-6 bg-white/60 p-5 sm:p-6 rounded-xl border border-slate-200/50 shadow-sm lg:bg-transparent lg:p-0 lg:border-0 lg:shadow-none">

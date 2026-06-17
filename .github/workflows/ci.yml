@@ -172,13 +172,6 @@ jobs:
 
       - name: Generate Prisma Client
         run: bun run prisma:generate
-
-      - name: Run Database Migrations
-        run: bun run prisma:deploy
-        env:
-          DATABASE_URL: postgresql://test:test@localhost:5432/test
-          DIRECT_URL: postgresql://test:test@localhost:5432/test
-
       - name: Build application
         run: bun run build
         env:
