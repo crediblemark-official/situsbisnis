@@ -130,7 +130,7 @@ model Product {
   description    String?
   price          Decimal           @db.Decimal(10, 2)
   originalPrice  Decimal?          @db.Decimal(10, 2)
-  currency       String?           @default("USD")
+  currency       String?           @default("IDR")
   images         String[]
   stock          Int?        @default(0)
   siteId         String
@@ -198,7 +198,7 @@ model PaymentSettings {
   instructions       String?
   siteId             String   @unique
   updatedAt          DateTime @updatedAt
-  currency           String?  @default("USD")
+  currency String? @default("IDR")
   duitkuMerchantCode String?
   duitkuApiKey       String?
   duitkuSandbox      Boolean  @default(true)

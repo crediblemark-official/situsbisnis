@@ -86,7 +86,7 @@ export default function PaymentMethodInfo({
     if (!settings) return (
         <div className="w-full">
             <h2 className="text-sm font-bold text-slate-800 tracking-tight mb-4 flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-600">
+                <div className="w-7 h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-700">
                     <CreditCard size={15} />
                 </div>
                 Metode Pembayaran
@@ -104,7 +104,7 @@ export default function PaymentMethodInfo({
         return (
             <div className="w-full animate-in fade-in duration-300">
                 <h2 className="text-sm font-bold text-slate-800 tracking-tight mb-4 flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-600 flex-shrink-0">
+                    <div className="w-7 h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-700 flex-shrink-0">
                         <CreditCard size={15} />
                     </div>
                     <span>Cara Pembayaran</span>
@@ -235,7 +235,7 @@ export default function PaymentMethodInfo({
                                             className="p-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-500 active:scale-90 transition-all animate-none"
                                             title="Salin Nomor Rekening"
                                         >
-                                            {copied ? <Check size={10} className="text-emerald-600 font-bold" /> : <Copy size={10} />}
+                                            {copied ? <Check size={10} className="text-emerald-700 font-bold" /> : <Copy size={10} />}
                                         </button>
                                     </div>
                                 </div>
@@ -260,7 +260,7 @@ export default function PaymentMethodInfo({
         return (
             <div className="w-full animate-in fade-in duration-300">
                 <h2 className="text-sm font-bold text-slate-800 tracking-tight mb-4 flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-600">
+                    <div className="w-7 h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-700">
                         <CreditCard size={15} />
                     </div>
                     Metode Pembayaran
@@ -336,7 +336,7 @@ export default function PaymentMethodInfo({
     return (
         <div className="w-full">
             <h2 className="text-sm font-bold text-slate-800 tracking-tight mb-4 flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-600">
+                <div className="w-7 h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-700">
                     <CreditCard size={15} />
                 </div>
                 Metode Pembayaran
@@ -371,7 +371,7 @@ export default function PaymentMethodInfo({
                                 className="p-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-500 active:scale-90 transition-all animate-none"
                                 title="Salin Nomor Rekening"
                             >
-                                {copied ? <Check size={10} className="text-emerald-600 font-bold" /> : <Copy size={10} />}
+                                {copied ? <Check size={10} className="text-emerald-700 font-bold" /> : <Copy size={10} />}
                             </button>
                         </div>
                     </div>

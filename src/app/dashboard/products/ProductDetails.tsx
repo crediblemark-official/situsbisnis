@@ -73,7 +73,7 @@ export default function ProductDetails({ product, backUrl = "/dashboard/products
                     {/* Info */}
                     <div className="p-8 md:p-12 flex flex-col h-full">
                         <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
-                        <div className="text-2xl font-bold text-emerald-600 mb-6">{formatPrice(product.price)}</div>
+                        <div className="text-2xl font-bold text-emerald-700 mb-6">{formatPrice(product.price)}</div>
 
                         <div className="prose prose-sm text-white mb-8 flex-1">
                             <TiptapRenderer content={product.description || ""} />
@@ -83,7 +83,7 @@ export default function ProductDetails({ product, backUrl = "/dashboard/products
                             <div className="flex items-center justify-between mb-4">
                                 <span className="text-sm font-medium text-white">
                                     Ketersediaan:
-                                    <span className={(product.stock || 0) > 0 ? "text-emerald-600 ml-1" : "text-red-500 ml-1"}>
+                                    <span className={(product.stock || 0) > 0 ? "text-emerald-700 ml-1" : "text-red-500 ml-1"}>
                                         {(product.stock || 0) > 0 ? "Stok Tersedia" : "Stok Habis"}
                                     </span>
                                 </span>

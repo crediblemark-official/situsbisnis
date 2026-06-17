@@ -44,7 +44,7 @@ export default function SubmitTestimonialPage() {
         return (
             <div className="min-h-screen bg-background flex items-center justify-center p-4">
                 <div className="bg-card text-card-foreground max-w-sm w-full p-6 rounded-xl shadow-sm border border-border text-center space-y-3">
-                    <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
+                    <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 rounded-full flex items-center justify-center mx-auto">
                         <CheckCircle size={24} />
                     </div>
                     <div>

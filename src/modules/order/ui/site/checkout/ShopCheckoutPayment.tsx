@@ -184,7 +184,7 @@ export function ShopCheckoutPayment({ order, platformName: _platformName }: Shop
                     </Link>
                     <div className="flex items-center gap-1.5">
                         <ShieldCheck size={13} className="text-emerald-500" />
-                        <span className="text-[10px] font-semibold text-emerald-600 uppercase tracking-widest">Secured by Duitku</span>
+                        <span className="text-[10px] font-semibold text-emerald-700 uppercase tracking-widest">Secured by Duitku</span>
                     </div>
                     <div className="flex items-center gap-1 text-[10px] font-bold text-blue-600 bg-blue-50 border border-blue-100 px-2 py-1 rounded-full">
                         <ShoppingBag size={9} />

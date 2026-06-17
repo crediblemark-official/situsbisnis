@@ -72,7 +72,7 @@ export function CheckoutSummary({
                             </div>
                             <div className="flex justify-between">
                                 <span>Pengiriman</span>
-                                <span className="text-emerald-600 font-semibold">Gratis</span>
+                                <span className="text-emerald-700 font-semibold">Gratis</span>
                             </div>
                         </div>
                     </div>
@@ -92,7 +92,7 @@ export function CheckoutSummary({
                     </div>
                     <div className="flex justify-between text-xs font-medium text-slate-500">
                         <span>Pengiriman</span>
-                        <span className="text-emerald-600 font-semibold">Gratis</span>
+                        <span className="text-emerald-700 font-semibold">Gratis</span>
                     </div>
                     <div className="flex justify-between items-end pt-3.5 border-t border-slate-100">
                         <div>
@@ -127,7 +127,7 @@ export function CheckoutSummary({
                 </button>
 
                 <p className="text-center text-[10px] text-slate-500 mt-4 flex items-center justify-center font-medium gap-1.5">
-                    <ShieldCheck size={14} className="text-emerald-600" /> Transaksi Terenkripsi & Aman
+                    <ShieldCheck size={14} className="text-emerald-700" /> Transaksi Terenkripsi & Aman
                 </p>
             </div>
         );
@@ -176,7 +176,7 @@ export function CheckoutSummary({
                     </div>
                     <div className="flex justify-between text-xs font-medium text-slate-500">
                         <span>Pengiriman</span>
-                        <span className="text-emerald-600 font-semibold">Gratis</span>
+                        <span className="text-emerald-700 font-semibold">Gratis</span>
                     </div>
                     <div className="flex justify-between items-end pt-3.5 border-t border-slate-100">
                         <div>
@@ -212,7 +212,7 @@ export function CheckoutSummary({
                 </button>
                 
                 <p className="text-center text-[10px] text-slate-500 mt-4 flex items-center justify-center font-medium gap-1.5">
-                    <ShieldCheck size={14} className="text-emerald-600" /> Transaksi Terenkripsi & Aman
+                    <ShieldCheck size={14} className="text-emerald-700" /> Transaksi Terenkripsi & Aman
                 </p>
             </div>
         </div>

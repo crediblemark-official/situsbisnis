@@ -53,7 +53,7 @@ export function ShareLinkPill({ baseUrl }: ShareLinkPillProps) {
                 onClick={handleCopy}
                 className={`p-1.5 rounded-md border text-[9px] font-bold transition-all flex items-center justify-center gap-1 active:scale-95 flex-shrink-0 ${
                     copied
-                        ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
+                        ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-400"
                         : "bg-background border-border/50 hover:bg-muted/10 text-muted-foreground hover:text-foreground"
                 }`}
                 title="Salin tautan ke papan klip"

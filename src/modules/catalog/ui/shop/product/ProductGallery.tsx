@@ -144,7 +144,7 @@ export function ProductGallery({
                         href={`https://api.whatsapp.com/send?text=Lihat%20buku%20keren%20ini%3A%20${encodeURIComponent(product.name)}%20di%20${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-7.5 h-7.5 rounded-full bg-emerald-50 hover:bg-emerald-100 flex items-center justify-center text-emerald-600 active:scale-95 transition-all shadow-sm border border-emerald-100/50 cursor-pointer"
+                        className="w-7.5 h-7.5 rounded-full bg-emerald-50 hover:bg-emerald-100 flex items-center justify-center text-emerald-700 active:scale-95 transition-all shadow-sm border border-emerald-100/50 cursor-pointer"
                         title="Bagikan ke WhatsApp"
                     >
                         <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">

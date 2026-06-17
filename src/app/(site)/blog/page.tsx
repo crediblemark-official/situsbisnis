@@ -96,7 +96,7 @@ export default async function BlogIndexPage() {
                         </div>
                     ) : (
                         <div className="text-center py-16 bg-white dark:bg-card border border-gray-100 dark:border-border/50 rounded-2xl shadow-sm max-w-md mx-auto w-full">
-                            <div className="h-12 w-12 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <div className="h-12 w-12 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <ShoppingCart size={24} />
                             </div>
                             <h3 className="text-base font-bold text-gray-900 dark:text-foreground mb-2">Belum Ada Produk</h3>

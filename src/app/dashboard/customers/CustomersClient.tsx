@@ -318,7 +318,7 @@ export default function CustomersClient({ initialCustomers, currency, totalReven
                                                         href={waUrl} 
                                                         target="_blank" 
                                                         rel="noopener noreferrer"
-                                                        className="px-2.5 py-1.5 bg-emerald-500/10 hover:bg-emerald-500 text-emerald-600 hover:text-white rounded-lg text-[9px] font-black uppercase tracking-widest border border-emerald-500/20 hover:border-emerald-500 transition-all flex items-center gap-1.5 shadow-sm hover:shadow-emerald-500/20 active:scale-95"
+                                                        className="px-2.5 py-1.5 bg-emerald-500/10 hover:bg-emerald-500 text-emerald-700 hover:text-white rounded-lg text-[9px] font-black uppercase tracking-widest border border-emerald-500/20 hover:border-emerald-500 transition-all flex items-center gap-1.5 shadow-sm hover:shadow-emerald-500/20 active:scale-95"
                                                         title="Hubungi via WhatsApp"
                                                     >
                                                         <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current" xmlns="http://www.w3.org/2000/svg">
@@ -470,7 +470,7 @@ export default function CustomersClient({ initialCustomers, currency, totalReven
                                                         href={`https://wa.me/${cleanPhoneForWhatsApp(parsePhoneFromAddress(selectedCustomer.address) || "")}`}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="p-1.5 bg-emerald-500/10 hover:bg-emerald-500 border border-emerald-500/20 text-emerald-600 hover:text-white rounded-lg transition-all outline-none flex items-center justify-center"
+                                                        className="p-1.5 bg-emerald-500/10 hover:bg-emerald-500 border border-emerald-500/20 text-emerald-700 hover:text-white rounded-lg transition-all outline-none flex items-center justify-center"
                                                         title="Buka Chat WhatsApp"
                                                     >
                                                         <ExternalLink size={12} />

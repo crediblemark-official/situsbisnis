@@ -209,7 +209,7 @@ export function ExpressCheckoutModal({
                                 <span className="text-xs font-black text-slate-800" style={{ color: brandColor }}>
                                     {formatPrice(activePrice, currency)}
                                 </span>
-                                <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">
+                                <span className="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">
                                     Unduh Instan
                                 </span>
                             </div>
@@ -351,7 +351,7 @@ export function ExpressCheckoutModal({
                                                     onClick={copyToClipboard}
                                                     className="p-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-500 active:scale-90 transition-all flex items-center justify-center"
                                                 >
-                                                    {copied ? <Check size={8} className="text-emerald-600 font-bold" /> : <Copy size={8} />}
+                                                    {copied ? <Check size={8} className="text-emerald-700 font-bold" /> : <Copy size={8} />}
                                                 </button>
                                             </div>
                                         </div>

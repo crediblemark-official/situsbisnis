@@ -197,7 +197,7 @@ function RegisterForm() {
                         )}
 
                         {referralCode && (
-                            <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 text-[10px] font-bold uppercase tracking-widest rounded-lg mb-4 text-center">
+                            <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 text-[10px] font-bold uppercase tracking-widest rounded-lg mb-4 text-center">
                                 Diundang oleh: {referrerName ? referrerName : "Pengguna Afiliasi"}
                             </div>
                         )}

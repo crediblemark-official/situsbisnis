@@ -48,7 +48,7 @@ export function ProductGridItem({ product, baseUrl = "/dashboard/products" }: { 
                     </h3>
                 </div>
                 <div className="flex items-baseline gap-2 pt-1 flex-wrap">
-                    <span className="text-sm sm:text-base font-black text-emerald-600 dark:text-emerald-400">
+                    <span className="text-sm sm:text-base font-black text-emerald-700 dark:text-emerald-400">
                         {formatPrice(product.price)}
                     </span>
                     {product.originalPrice && Number(product.originalPrice) > Number(product.price) && (

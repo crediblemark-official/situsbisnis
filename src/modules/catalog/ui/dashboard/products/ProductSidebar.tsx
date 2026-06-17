@@ -73,7 +73,7 @@ export function ProductSidebar({
                 {isDigital ? (
                     <div className="space-y-1.5 opacity-90 animate-in fade-in duration-200">
                         <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest block ml-1">Stok Tersedia</span>
-                        <div className="flex items-center gap-2 px-3 py-2 bg-emerald-500/5 border border-emerald-500/20 rounded text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                        <div className="flex items-center gap-2 px-3 py-2 bg-emerald-500/5 border border-emerald-500/20 rounded text-[11px] font-bold text-emerald-700 dark:text-emerald-400">
                             <Package size={14} className="text-emerald-500 shrink-0 animate-pulse" />
                             <span>Unlimited (Digital)</span>
                         </div>

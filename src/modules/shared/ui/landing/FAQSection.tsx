@@ -138,7 +138,7 @@ export function FAQSection({ siteName, whatsappNumber }: FAQSectionProps) {
                         href={waUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-emerald-600 hover:text-emerald-700 font-black transition-colors"
+                        className="inline-flex items-center gap-1.5 text-emerald-700 hover:text-emerald-700 font-black transition-colors"
                     >
                         <MessageCircle size={13} />
                         Tanya via WhatsApp

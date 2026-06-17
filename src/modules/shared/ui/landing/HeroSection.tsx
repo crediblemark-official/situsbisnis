@@ -75,12 +75,12 @@ export function HeroSection() {
                         <div className="absolute -left-6 -top-6 hidden sm:flex flex-col gap-1.5 p-4 bg-white/95 backdrop-blur-md rounded-lg border border-slate-200/80 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.06)] z-20 w-48 text-left animate-float hover:scale-105 hover:-translate-y-0.5 hover:border-slate-350 transition-all duration-350">
                             <div className="flex items-center justify-between">
                                 <span className="text-[8px] font-black text-slate-400 uppercase tracking-wider">Total Penjualan</span>
-                                <div className="w-5.5 h-5.5 rounded bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shadow-sm">
+                                <div className="w-5.5 h-5.5 rounded bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-700 shadow-sm">
                                     <TrendingUp size={11} />
                                 </div>
                             </div>
                             <div className="text-base font-black text-slate-900 tracking-tight">Rp 4,520,000</div>
-                            <div className="text-[8px] text-emerald-600 font-bold flex items-center gap-1">
+                            <div className="text-[8px] text-emerald-700 font-bold flex items-center gap-1">
                                 <span className="px-1 py-0.5 rounded bg-emerald-50 border border-emerald-100">+24.5%</span> 
                                 <span className="text-slate-400 font-medium">minggu ini</span>
                             </div>

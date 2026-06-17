@@ -129,7 +129,7 @@ Berikut saya lampirkan bukti transfernya. Mohon bantuannya untuk memproses pesan
                 {/* Header Section */}
                 <div className="p-8 pb-4">
                     <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner animate-pulse">
-                        <CheckCircle className="text-emerald-600" size={40} />
+                        <CheckCircle className="text-emerald-700" size={40} />
                     </div>
 
                     <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2 tracking-tight">Order Berhasil Dibuat!</h1>
@@ -166,7 +166,7 @@ Berikut saya lampirkan bukti transfernya. Mohon bantuannya untuk memproses pesan
                                             className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-white rounded-xl border border-slate-200/80 shadow-sm hover:border-emerald-500/30 transition-all gap-3"
                                         >
                                             <div className="flex items-center gap-3 min-w-0">
-                                                <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 font-bold text-sm">
+                                                <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-700 font-bold text-sm">
                                                     {idx + 1}
                                                 </span>
                                                 <p className="font-semibold text-sm text-slate-800 truncate" title={item.name}>

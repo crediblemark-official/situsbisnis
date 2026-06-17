@@ -17,8 +17,8 @@ export function useCurrency() {
             Promise.resolve().then(() => setCurrency(saved));
         }
 
-        // Fetch authoritative setting from server
-        fetch("/api/settings/payments")
+        // Fetch authoritative setting from site settings
+        fetch("/api/settings")
             .then(res => {
                 const contentType = res.headers.get("content-type");
                 if (res.ok && contentType && contentType.includes("application/json")) {

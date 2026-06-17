@@ -73,7 +73,6 @@ const nextConfig = {
   productionBrowserSourceMaps: false,
   serverExternalPackages: ["@prisma/client", "ioredis"],
   experimental: {
-    instrumentationHook: true,
     optimizePackageImports: [
       "lucide-react",
       "@crediblemark/build",

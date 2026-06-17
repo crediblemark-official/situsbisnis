@@ -100,7 +100,7 @@ function PricingCard({ plan, currency, billingInterval }: { plan: any; currency:
                 <div className="flex justify-between items-start mb-4">
                     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
                         plan.color === 'blue' ? 'bg-sky-50 text-sky-500 border border-sky-100' : 
-                        plan.color === 'emerald' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 
+                        plan.color === 'emerald' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 
                         'bg-indigo-50 text-indigo-650 border border-indigo-100'
                     } group-hover:scale-110 transition-transform duration-500 shadow-sm`}>
                         <Icon size={22} />
@@ -197,7 +197,7 @@ function PricingCard({ plan, currency, billingInterval }: { plan: any; currency:
                                 <h4 className="text-[8.5px] font-black text-slate-400 uppercase tracking-widest">Manfaat Paket</h4>
                                 {plan.coreFeatures.map((feature: string, idx: number) => (
                                     <div key={idx} className="flex items-start gap-2">
-                                        <div className="w-3.5 h-3.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0 mt-0.5">
+                                        <div className="w-3.5 h-3.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center justify-center shrink-0 mt-0.5">
                                             <Check size={8} strokeWidth={3.5} />
                                         </div>
                                         <span className="text-[11.5px] font-semibold text-slate-600 leading-snug">{feature}</span>

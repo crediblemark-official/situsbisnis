@@ -40,7 +40,7 @@ export default function ShareButtons({ title }: ShareButtonsProps) {
                     href={whatsappUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-7 h-7 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-600 dark:bg-emerald-950/30 dark:hover:bg-emerald-900/40 dark:text-emerald-400 flex items-center justify-center transition-colors shadow-sm hover:shadow"
+                    className="w-7 h-7 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 dark:bg-emerald-950/30 dark:hover:bg-emerald-900/40 dark:text-emerald-400 flex items-center justify-center transition-colors shadow-sm hover:shadow"
                     title="Bagikan ke WhatsApp"
                 >
                     <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor">

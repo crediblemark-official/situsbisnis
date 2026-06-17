@@ -1,6 +1,7 @@
 import { eventBus } from "@/modules/shared/core/event-bus";
 import { db } from "@/modules/shared/core/db";
 import { getSiteContact, getSiteInfo } from "../services/tenant.service";
+import { getSiteSettings } from "../services/settings.service";
 import { sendWhatsAppNotification } from "@/modules/shared/utils/services/whatsapp";
 
 export async function initSiteListeners() {
@@ -25,9 +26,11 @@ export async function initSiteListeners() {
           })
         : "";
 
+      const siteSettings = await getSiteSettings(siteId);
+      const siteCurrency = siteSettings?.currency || "IDR";
       const formattedAmount = new Intl.NumberFormat("id-ID", {
         style: "currency",
-        currency: "IDR",
+        currency: siteCurrency,
         minimumFractionDigits: 0
       }).format(Number(amount));
 

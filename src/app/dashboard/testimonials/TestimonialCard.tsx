@@ -68,7 +68,7 @@ export default function TestimonialCard({ testimonial }: { testimonial: Testimon
                             Pending
                         </span>
                     ) : (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[9px] font-black bg-emerald-500/10 text-emerald-600 uppercase tracking-widest border border-emerald-500/20">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[9px] font-black bg-emerald-500/10 text-emerald-700 uppercase tracking-widest border border-emerald-500/20">
                             Visible
                         </span>
                     )}
