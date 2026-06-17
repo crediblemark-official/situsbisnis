@@ -1,29 +1,35 @@
 import {
-    countMediaItemsInternal,
-    countGalleryItemsInternal,
-    countPortfolioItemsInternal,
-    getMediaSizeInternal,
-    getMediaListInternal,
-    uploadMediaInternal,
-    deleteMediaInternal,
-    getMediaFoldersInternal,
-    createMediaFolderInternal,
-    deleteMediaFolderInternal,
-    getGalleryItemsInternal,
-    getPortfoliosInternal
-} from "./controllers/media.controller";
+    countMediaItems,
+    countGalleryItems,
+    countPortfolioItems,
+    getMediaSize
+} from "./services/content.service";
+import {
+    getMediaList,
+    uploadMedia,
+    deleteMedia,
+    getMediaFolders,
+    createMediaFolder,
+    deleteMediaFolder
+} from "./services/media.service";
+import {
+    getGalleryItems
+} from "./services/gallery.service";
+import {
+    getPortfolios
+} from "./services/portfolio.service";
 
 export const MediaClient = {
-    countMediaItems: countMediaItemsInternal,
-    countGalleryItems: countGalleryItemsInternal,
-    countPortfolioItems: countPortfolioItemsInternal,
-    getMediaSize: getMediaSizeInternal,
-    getMediaList: getMediaListInternal,
-    uploadMedia: uploadMediaInternal,
-    deleteMedia: deleteMediaInternal,
-    getMediaFolders: getMediaFoldersInternal,
-    createMediaFolder: createMediaFolderInternal,
-    deleteMediaFolder: deleteMediaFolderInternal,
-    getGalleryItems: getGalleryItemsInternal,
-    getPortfolios: getPortfoliosInternal
+    countMediaItems,
+    countGalleryItems,
+    countPortfolioItems,
+    getMediaSize,
+    getMediaList,
+    uploadMedia,
+    deleteMedia,
+    getMediaFolders,
+    createMediaFolder,
+    deleteMediaFolder,
+    getGalleryItems,
+    getPortfolios
 };

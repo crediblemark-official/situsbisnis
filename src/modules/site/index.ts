@@ -1,26 +1,32 @@
 import {
-    getSiteInfoInternal,
-    getSiteContactInternal,
-    verifyUserSiteAccessInternal,
-    associateUserToSiteInternal,
-    disassociateUserFromSiteInternal,
-    getSiteUserIdsInternal,
-    checkSubdomainAvailabilityInternal,
-    getUserSiteCountInternal,
-    deleteSiteInternal,
-    getSiteDetailInternal,
-    createContactSubmissionInternal,
-    getContactSubmissionsInternal,
-    countContactSubmissionsInternal,
-    savePaymentSettingsInternal,
-    getSiteDomainInfoInternal,
-    getOrIncrementViewsInternal,
-    pingDatabaseInternal
-} from "./controllers/site.controller";
+    getSiteInfo,
+    getSiteContact,
+    verifyUserSiteAccess,
+    associateUserToSite,
+    disassociateUserFromSite,
+    getSiteUserIds,
+    getSiteDomainInfo,
+    pingDatabase
+} from "./services/tenant.service";
 import {
-    getSiteSettingsInternal,
-    updateSiteSettingsInternal
-} from "./controllers/settings.controller";
+    checkSubdomainAvailability,
+    getUserSiteCount,
+    deleteSite,
+    getSiteDetail
+} from "./services/site.service";
+import {
+    createContactSubmission,
+    getContactSubmissions,
+    countContactSubmissions,
+    savePaymentSettings
+} from "./services/contact.service";
+import {
+    getOrIncrementViews
+} from "./services/analytics.service";
+import {
+    getSiteSettings,
+    updateSiteSettings
+} from "./services/settings.service";
 
 export interface SiteInfo {
     id: string;
@@ -35,32 +41,32 @@ export interface SiteContactInfo {
 }
 
 export const SiteClient = {
-    getSiteInfo: getSiteInfoInternal,
-    getSiteContact: getSiteContactInternal,
-    getSiteDetail: getSiteDetailInternal,
-    getSiteDomainInfo: getSiteDomainInfoInternal,
+    getSiteInfo,
+    getSiteContact,
+    getSiteDetail,
+    getSiteDomainInfo,
 
-    verifyUserSiteAccess: verifyUserSiteAccessInternal,
-    associateUserToSite: associateUserToSiteInternal,
-    disassociateUserFromSite: disassociateUserFromSiteInternal,
-    getSiteUserIds: getSiteUserIdsInternal,
+    verifyUserSiteAccess,
+    associateUserToSite,
+    disassociateUserFromSite,
+    getSiteUserIds,
 
-    checkSubdomainAvailability: checkSubdomainAvailabilityInternal,
-    getUserSiteCount: getUserSiteCountInternal,
-    deleteSite: deleteSiteInternal,
+    checkSubdomainAvailability,
+    getUserSiteCount,
+    deleteSite,
 
-    createContactSubmission: createContactSubmissionInternal,
-    getContactSubmissions: getContactSubmissionsInternal,
-    countContactSubmissions: countContactSubmissionsInternal,
+    createContactSubmission,
+    getContactSubmissions,
+    countContactSubmissions,
 
-    savePaymentSettings: savePaymentSettingsInternal,
+    savePaymentSettings,
 
-    getOrIncrementViews: getOrIncrementViewsInternal,
+    getOrIncrementViews,
 
-    pingDatabase: pingDatabaseInternal,
+    pingDatabase,
 
-    getSiteSettings: getSiteSettingsInternal,
-    updateSiteSettings: updateSiteSettingsInternal
+    getSiteSettings,
+    updateSiteSettings
 };
 
 export { default as ThemeClientUtilities } from "./ui/site/ThemeClientUtilities";

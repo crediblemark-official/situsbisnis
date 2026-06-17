@@ -1,25 +1,33 @@
 import {
-    countPostsInternal,
-    countTestimonialsInternal,
-    getTermsInternal,
-    createTermInternal,
-    deleteTermInternal,
-    updateTermInternal,
-    searchAllInternal,
-    getPostInternal,
-    getPostsInternal,
-    getTestimonialsInternal
-} from "./controllers/post.controller";
+    countPosts,
+    countTestimonials
+} from "./services/content.service";
+import {
+    getTerms,
+    createTerm,
+    deleteTerm,
+    updateTerm
+} from "./services/taxonomy.service";
+import {
+    searchAll
+} from "./services/search.service";
+import {
+    getPost,
+    getPosts
+} from "./services/post.service";
+import {
+    getTestimonials
+} from "./services/testimonial.service";
 
 export const PostClient = {
-    countPosts: countPostsInternal,
-    countTestimonials: countTestimonialsInternal,
-    getTerms: getTermsInternal,
-    createTerm: createTermInternal,
-    deleteTerm: deleteTermInternal,
-    updateTerm: updateTermInternal,
-    searchAll: searchAllInternal,
-    getPost: getPostInternal,
-    getPosts: getPostsInternal,
-    getTestimonials: getTestimonialsInternal
+    countPosts,
+    countTestimonials,
+    getTerms,
+    createTerm,
+    deleteTerm,
+    updateTerm,
+    searchAll,
+    getPost,
+    getPosts,
+    getTestimonials
 };
