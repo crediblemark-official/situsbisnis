@@ -17,6 +17,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import Link from "next/link";
 import { TableContainer, THead, TBody, TR, TH, TD } from "@/components/ui/Table";
+import { deleteSiteAction, manageSiteAction } from "@/modules/infrastructure";
 
 export default function SiteList({ initialSites }: { initialSites: any[] }) {
     const [sites, setSites] = useState(initialSites);
@@ -65,11 +66,11 @@ export default function SiteList({ initialSites }: { initialSites: any[] }) {
 
         setLoadingId(id);
         try {
-            const res = await fetch(`/api/admin/sites/${id}`, { method: "DELETE" });
-            if (res.ok) {
+            const res = await deleteSiteAction(id);
+            if (res.success) {
                 setSites(prev => prev.filter(s => s.id !== id));
             } else {
-                alert("Failed to delete site");
+                alert(res.error || "Failed to delete site");
             }
         } catch (_error) {
             alert("Network error");
@@ -83,17 +84,12 @@ export default function SiteList({ initialSites }: { initialSites: any[] }) {
     const handleAction = async (id: string, action: string) => {
         setLoadingId(id);
         try {
-            const res = await fetch(`/api/admin/sites/${id}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action })
-            });
-            if (res.ok) {
+            const res = await manageSiteAction(id, action);
+            if (res.success) {
                 // Refresh list or update local state
                 window.location.reload();
             } else {
-                const data = await res.json();
-                alert(data.error || "Action failed");
+                alert(res.error || "Action failed");
             }
         } catch (_error) {
             alert("Network error");

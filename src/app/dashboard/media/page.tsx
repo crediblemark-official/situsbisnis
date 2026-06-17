@@ -38,6 +38,13 @@ import { MediaItemCard } from "@/components/dashboard/media/MediaItemCard";
 import { MediaFolderCard } from "@/components/dashboard/media/MediaFolderCard";
 import { MediaQuota } from "@/components/dashboard/media/MediaQuota";
 import { MediaBreadcrumbs } from "@/components/dashboard/media/MediaBreadcrumbs";
+import { 
+    getMediaListAction, 
+    getMediaFoldersAction, 
+    createMediaFolderAction, 
+    deleteMediaFolderAction, 
+    deleteMediaAction 
+} from "@/modules/media/actions/media.actions";
 
 export default function MediaPage() {
     const [items, setItems] = useState<MediaItem[]>([]);
@@ -67,15 +74,17 @@ export default function MediaPage() {
 
     const fetchContent = React.useCallback(async (page: number = 1) => {
         try {
-            const folderParam = currentFolderId === "root" ? "root" : currentFolderId;
-            const foldersRes = await fetch(`/api/media/folders?parentId=${currentFolderId === "root" ? "" : currentFolderId}`);
-            const foldersData = await foldersRes.json();
-            setFolders(foldersData);
+            const folderParam = currentFolderId === "root" ? null : currentFolderId;
+            const foldersResult = await getMediaFoldersAction(folderParam);
+            if (foldersResult.success && foldersResult.folders) {
+                setFolders(foldersResult.folders as any);
+            }
 
-            const itemsRes = await fetch(`/api/media?folderId=${folderParam}&page=${page}&limit=30`);
-            const itemsResData = await itemsRes.json();
-            setItems(itemsResData.data || []);
-            setPagination(itemsResData.pagination || { page: 1, totalPages: 1 });
+            const itemsResult = await getMediaListAction(folderParam, page, 30) as any;
+            if (itemsResult.success) {
+                setItems(itemsResult.data || []);
+                setPagination(itemsResult.pagination || { page: 1, totalPages: 1 });
+            }
 
             setLoading(false);
         } catch (error) {
@@ -88,17 +97,19 @@ export default function MediaPage() {
         let ignore = false;
         async function fetchInitialContent() {
             try {
-                const folderParam = currentFolderId === "root" ? "root" : currentFolderId;
-                const foldersRes = await fetch(`/api/media/folders?parentId=${currentFolderId === "root" ? "" : currentFolderId}`);
-                const foldersData = await foldersRes.json();
-                const itemsRes = await fetch(`/api/media?folderId=${folderParam}&page=1&limit=30`);
-                const itemsResData = await itemsRes.json();
+                const folderParam = currentFolderId === "root" ? null : currentFolderId;
+                const foldersResult = await getMediaFoldersAction(folderParam);
+                const itemsResult = await getMediaListAction(folderParam, 1, 30) as any;
                 
                 if (!ignore) {
-                    setFolders(foldersData);
-                    setItems(itemsResData.data || []);
-                    setPagination(itemsResData.pagination || { page: 1, totalPages: 1 });
-                    setQuota(itemsResData.quota || null);
+                    if (foldersResult.success && foldersResult.folders) {
+                        setFolders(foldersResult.folders as any);
+                    }
+                    if (itemsResult.success) {
+                        setItems(itemsResult.data || []);
+                        setPagination(itemsResult.pagination || { page: 1, totalPages: 1 });
+                        setQuota(itemsResult.quota || null);
+                    }
                     setLoading(false);
                 }
             } catch (error) {
@@ -147,19 +158,15 @@ export default function MediaPage() {
         e.preventDefault();
         if (!newFolderName.trim()) return;
         try {
-            const res = await fetch("/api/media/folders", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    name: newFolderName,
-                    parentId: currentFolderId === "root" ? null : currentFolderId
-                }),
-            });
-            if (res.ok) {
+            const parentId = currentFolderId === "root" ? null : currentFolderId;
+            const res = await createMediaFolderAction(newFolderName, parentId);
+            if (res.success) {
                 setNewFolderName("");
                 setIsCreatingFolder(false);
                 fetchContent();
                 toast.success("Folder berhasil dibuat");
+            } else {
+                toast.error(res.error || "Gagal membuat folder");
             }
         } catch (_) {
             toast.error("Gagal membuat folder");
@@ -170,9 +177,13 @@ export default function MediaPage() {
         if (!itemToDelete) return;
         setDeletingId(itemToDelete.id);
         try {
-            await fetch(`/api/media/${itemToDelete.id}`, { method: "DELETE" });
-            fetchContent();
-            toast.success("Gambar berhasil dihapus");
+            const res = await deleteMediaAction(itemToDelete.id);
+            if (res.success) {
+                fetchContent();
+                toast.success("Gambar berhasil dihapus");
+            } else {
+                toast.error(res.error || "Gagal menghapus gambar");
+            }
         } catch (_) {
             toast.error("Gagal menghapus gambar");
         } finally {
@@ -185,10 +196,9 @@ export default function MediaPage() {
     const handleDeleteFolder = async () => {
         if (!folderToDelete) return;
         try {
-            const res = await fetch(`/api/media/folders/${folderToDelete.id}`, { method: "DELETE" });
-            if (!res.ok) {
-                const data = await res.json();
-                throw new Error(data.error || "Failed to delete");
+            const res = await deleteMediaFolderAction(folderToDelete.id);
+            if (!res.success) {
+                throw new Error(res.error || "Failed to delete");
             }
             fetchContent();
             toast.success("Folder berhasil dihapus");

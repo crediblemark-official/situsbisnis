@@ -14,6 +14,11 @@ import { useCountdown, formatRp } from "./utils";
 import { OrderSummaryCard } from "./OrderSummaryCard";
 import { PaymentDetailsCard } from "./PaymentDetailsCard";
 import { PaymentMethodSelector } from "./PaymentMethodSelector";
+import { 
+    getPaymentMethodsAction, 
+    checkTransactionStatusAction, 
+    initializeCheckoutPaymentAction 
+} from "@/modules/financial";
 
 export function CheckoutClient({ transaction, platformName: _platformName, isDuitkuConfigured }: CheckoutClientProps) {
     const router = useRouter();
@@ -47,17 +52,11 @@ export function CheckoutClient({ transaction, platformName: _platformName, isDui
         setIsLoadingMethods(true);
         setMethodsError(null);
         try {
-            const res = await fetch("/api/billing/payment-methods", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ amount: transaction.amount }),
-            });
-            if (res.ok) {
-                const data = await res.json();
-                setPaymentMethods(data.methods || []);
+            const res = await getPaymentMethodsAction({ amount: transaction.amount });
+            if (res.success && res.result) {
+                setPaymentMethods(res.result.methods || []);
             } else {
-                const data = await res.json().catch(() => ({}));
-                setMethodsError(data.error || "Gagal memuat metode pembayaran.");
+                setMethodsError(res.error || "Gagal memuat metode pembayaran.");
             }
         } catch {
             setMethodsError("Terjadi kesalahan jaringan.");
@@ -80,15 +79,10 @@ export function CheckoutClient({ transaction, platformName: _platformName, isDui
         if (status === "paid" || status === "cancelled") return;
         setIsPolling(true);
         try {
-            const res = await fetch("/api/billing/check-status", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ transactionId: transaction.id }),
-            });
-            if (res.ok) {
-                const data = await res.json();
-                setStatus(data.status);
-                if (data.status === "paid") {
+            const res = await checkTransactionStatusAction({ transactionId: transaction.id });
+            if (res.success && res.result) {
+                setStatus(res.result.status);
+                if (res.result.status === "paid") {
                     if (pollingRef.current) clearInterval(pollingRef.current);
                     setTimeout(() => {
                         setIsRedirecting(true);
@@ -112,20 +106,16 @@ export function CheckoutClient({ transaction, platformName: _platformName, isDui
         if (!selectedMethod || isProceeding) return;
         setIsProceeding(true);
         try {
-            const res = await fetch("/api/billing/checkout/payment", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ transactionId: transaction.id, paymentMethod: selectedMethod }),
-            });
-            if (res.ok) {
-                const data = await res.json();
+            const res = await initializeCheckoutPaymentAction({ transactionId: transaction.id, paymentMethod: selectedMethod });
+            if (res.success && res.result) {
+                const data = res.result as any;
                 if (data.success && data.paymentDetails) {
                     setCustomPaymentDetails(data.paymentDetails);
                 } else {
                     alert(data.error || "Gagal memproses pembayaran.");
                 }
             } else {
-                alert("Gagal memproses pembayaran kustom.");
+                alert(res.error || "Gagal memproses pembayaran kustom.");
             }
         } catch {
             alert("Terjadi kesalahan jaringan.");

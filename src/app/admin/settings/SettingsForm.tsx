@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Save, Loader2, CheckCircle2 } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { updateAdminSettingsAction } from "@/modules/subscription";
 
 // Modular Components
 import { GeneralTab } from "@/components/admin/settings/GeneralTab";
@@ -52,16 +53,12 @@ export default function SettingsForm({ initialData }: { initialData: any }) {
         setSaved(false);
 
         try {
-            const res = await fetch(`/api/admin/settings`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(config)
-            });
-            if (res.ok) {
+            const res = await updateAdminSettingsAction(config);
+            if (res.success) {
                 setSaved(true);
                 setTimeout(() => setSaved(false), 3000);
             } else {
-                alert("Gagal menyimpan pengaturan");
+                alert(res.error || "Gagal menyimpan pengaturan");
             }
         } catch (_error) {
             alert("Kesalahan koneksi internet");

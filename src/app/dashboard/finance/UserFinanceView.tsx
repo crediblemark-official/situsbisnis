@@ -14,6 +14,7 @@ import {
     TrendingUp
 } from "lucide-react";
 import { TableContainer, THead, TBody, TR, TH, TD } from "@/components/ui/Table";
+import { requestAffiliateWithdrawalAction } from "@/modules/auth";
 
 export default function UserFinanceView({ user }: { user: any }) {
     const [activeTab, setActiveTab] = useState<"all" | "balance" | "withdrawals">("all");
@@ -37,15 +38,15 @@ export default function UserFinanceView({ user }: { user: any }) {
         setError("");
 
         try {
-            const res = await fetch("/api/affiliate/withdraw", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(withdrawForm)
+            const data = await requestAffiliateWithdrawalAction({
+                amount: Number(withdrawForm.amount),
+                bankName: withdrawForm.bankName,
+                accountNumber: withdrawForm.accountNumber,
+                accountName: withdrawForm.accountName
             });
 
-            if (!res.ok) {
-                const text = await res.text();
-                throw new Error(text);
+            if (!data.success) {
+                throw new Error(data.error || "Gagal melakukan penarikan.");
             }
 
             // Reload page on success to fetch fresh database state

@@ -17,3 +17,6 @@ export const InfrastructureClient = {
     manageSite: manageSiteAction
 };
 
+export * from "./actions/infra.actions";
+
+

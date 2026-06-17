@@ -8,6 +8,7 @@ import { TableContainer, THead, TBody, TR, TH } from "@/components/ui/Table";
 
 import { SubscriptionTableRow } from "@/components/dashboard/subscriptions/SubscriptionTableRow";
 import { SubscriptionDetailModal } from "@/components/dashboard/subscriptions/SubscriptionDetailModal";
+import { manageSubscriptionAction } from "@/modules/subscription";
 
 export default function SubscriptionList({ initialSubscriptions }: { initialSubscriptions: any[] }) {
     const [subs, _setSubs] = useState(initialSubscriptions);
@@ -70,22 +71,17 @@ export default function SubscriptionList({ initialSubscriptions }: { initialSubs
         if (!subToFollowup || !followupPhone || !followupMessage) return;
         setIsSendingFollowup(true);
         try {
-            const res = await fetch(`/api/admin/subscriptions/${subToFollowup.id}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    action: "followup",
-                    phone: followupPhone,
-                    message: followupMessage
-                })
+            const res = await manageSubscriptionAction(subToFollowup.id, {
+                action: "followup",
+                phone: followupPhone,
+                message: followupMessage
             });
-            const data = await res.json();
-            if (res.ok && data.success) {
+            if (res.success) {
                 alert("WhatsApp follow-up berhasil dikirim via StarSender API!");
                 setShowFollowupModal(false);
                 setSubToFollowup(null);
             } else {
-                alert(data.error || "Gagal mengirim WhatsApp followup");
+                alert(res.error || "Gagal mengirim WhatsApp followup");
             }
         } catch (err) {
             console.error(err);
@@ -106,22 +102,17 @@ export default function SubscriptionList({ initialSubscriptions }: { initialSubs
                 return;
             }
 
-            const res = await fetch(`/api/admin/subscriptions/${subToFollowup.id}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    action: "followup_email",
-                    email: ownerEmail,
-                    message: followupMessage
-                })
+            const res = await manageSubscriptionAction(subToFollowup.id, {
+                action: "followup_email",
+                email: ownerEmail,
+                message: followupMessage
             });
-            const data = await res.json();
-            if (res.ok && data.success) {
+            if (res.success) {
                 alert("Email follow-up berhasil dikirim via Resend!");
                 setShowFollowupModal(false);
                 setSubToFollowup(null);
             } else {
-                alert(data.error || "Gagal mengirim email followup");
+                alert(res.error || "Gagal mengirim email followup");
             }
         } catch (err) {
             console.error(err);
@@ -225,18 +216,13 @@ export default function SubscriptionList({ initialSubscriptions }: { initialSubs
         if (!subToCancel) return;
         setIsUpdating(true);
         try {
-            const res = await fetch(`/api/admin/subscriptions/${subToCancel.id}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action: "cancel" })
-            });
-            if (res.ok) {
+            const res = await manageSubscriptionAction(subToCancel.id, { action: "cancel" });
+            if (res.success) {
                 _setSubs(prev => prev.map(s => s.id === subToCancel.id ? { ...s, status: "cancelled" } : s));
                 setShowCancelModal(false);
                 setSubToCancel(null);
             } else {
-                const data = await res.json();
-                alert(data.error || "Failed to cancel subscription");
+                alert(res.error || "Failed to cancel subscription");
             }
         } catch (_err) {
             alert("Network error");
@@ -248,28 +234,23 @@ export default function SubscriptionList({ initialSubscriptions }: { initialSubs
     const handleExtendSubscription = async (id: string) => {
         setIsUpdating(true);
         try {
-            const res = await fetch(`/api/admin/subscriptions/${id}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action: "extend", days: 7 })
-            });
-            if (res.ok) {
-                const data = await res.json();
+            const res = await manageSubscriptionAction(id, { action: "extend", days: 7 });
+            if (res.success && res.result) {
+                const data = res.result as any;
                 _setSubs(prev => prev.map(s => {
                     if (s.id === id) {
                         return { 
                             ...s, 
                             endDate: data.newEndDate,
                             status: "active",
-                                plan: data.newPlanObj ? data.newPlanObj : s.plan
+                            plan: data.newPlanObj ? data.newPlanObj : s.plan
                         };
                     }
                     return s;
                 }));
                 alert(`Subscription extended by 7 days. Plan: ${data.newPlan || 'Unchanged'}`);
             } else {
-                const data = await res.json();
-                alert(data.error || "Failed to extend subscription");
+                alert(res.error || "Failed to extend subscription");
             }
         } catch (_err) {
             alert("Network error");

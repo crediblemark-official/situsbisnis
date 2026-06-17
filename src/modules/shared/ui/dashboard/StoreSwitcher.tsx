@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { ChevronDown, Globe, Layout, Check, Plus, Search, Home } from "lucide-react";
 import Link from "next/link";
 import { getRootDomain, getProtocol } from "@/lib/domains/utils";
+import { getUserSitesAction } from "@/modules/auth";
 
 interface Site {
     id: string;
@@ -28,10 +29,9 @@ export default function StoreSwitcher({ currentSiteId, currentSiteName }: StoreS
     const fetchSites = async () => {
         setIsLoading(true);
         try {
-            const res = await fetch("/api/user/sites");
-            if (res.ok) {
-                const data = await res.json();
-                setSites(data.sites);
+            const data = await getUserSitesAction();
+            if (data.success && data.sites) {
+                setSites(data.sites as any[]);
             }
         } catch (error) {
             console.error("Failed to fetch sites:", error);

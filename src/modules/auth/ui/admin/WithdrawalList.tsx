@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { TableContainer, THead, TBody, TR, TH, TD } from "@/components/ui/Table";
 import { Search, CheckCircle2, XCircle, Clock, Banknote, User, Copy, Check } from "lucide-react";
+import { updateWithdrawalStatusAction } from "@/modules/financial";
 
 export default function WithdrawalList({ initialWithdrawals }: { initialWithdrawals: any[] }) {
     const [withdrawals, setWithdrawals] = useState(initialWithdrawals);
@@ -34,17 +35,13 @@ export default function WithdrawalList({ initialWithdrawals }: { initialWithdraw
 
         setIsUpdating(actionTarget.id);
         try {
-            const res = await fetch("/api/admin/withdrawals/update", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    withdrawalId: actionTarget.id,
-                    status: actionTarget.type
-                })
+            const data = await updateWithdrawalStatusAction({
+                withdrawalId: actionTarget.id,
+                status: actionTarget.type
             });
 
-            if (res.ok) {
-                const updated = await res.json();
+            if (data.success && data.result) {
+                const updated = data.result as any;
                 setWithdrawals(prev => prev.map(w => w.id === updated.id ? { ...w, ...updated } : w));
             }
         } catch (e) {

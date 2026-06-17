@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { TableContainer, THead, TBody, TR, TH, TD } from "@/components/ui/Table";
 import { Search, Plus, Trash2, Edit, Ticket, Check, X, Percent, Calendar } from "lucide-react";
+import { createCouponAction, updateCouponAction, deleteCouponAction } from "@/modules/financial";
 
 interface Affiliate {
     id: string;
@@ -133,17 +134,15 @@ export default function CouponList({ initialCoupons, affiliates }: CouponListPro
         };
 
         try {
-            const url = modalMode === "create" ? "/api/admin/coupons" : `/api/admin/coupons/${selectedCoupon?.id}`;
-            const method = modalMode === "create" ? "POST" : "PATCH";
+            let res;
+            if (modalMode === "create") {
+                res = await createCouponAction(payload);
+            } else {
+                res = await updateCouponAction(selectedCoupon!.id, payload);
+            }
 
-            const res = await fetch(url, {
-                method,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-
-            if (res.ok) {
-                const savedCoupon = await res.json();
+            if (res.success && res.result) {
+                const savedCoupon = res.result as any;
                 if (modalMode === "create") {
                     setCoupons((prev) => [savedCoupon, ...prev]);
                 } else {
@@ -151,8 +150,7 @@ export default function CouponList({ initialCoupons, affiliates }: CouponListPro
                 }
                 setIsModalOpen(false);
             } else {
-                const data = await res.json().catch(() => ({}));
-                setFormError(data.error || "Gagal menyimpan kupon");
+                setFormError(res.error || "Gagal menyimpan kupon");
             }
         } catch (err) {
             console.error(err);
@@ -167,16 +165,14 @@ export default function CouponList({ initialCoupons, affiliates }: CouponListPro
         setIsDeleting(true);
 
         try {
-            const res = await fetch(`/api/admin/coupons/${deleteTargetId}`, {
-                method: "DELETE"
-            });
+            const res = await deleteCouponAction(deleteTargetId);
 
-            if (res.ok) {
+            if (res.success) {
                 setCoupons((prev) => prev.filter((c) => c.id !== deleteTargetId));
                 setShowDeleteModal(false);
                 setDeleteTargetId(null);
             } else {
-                alert("Gagal menghapus kupon.");
+                alert(res.error || "Gagal menghapus kupon.");
             }
         } catch (err) {
             console.error(err);

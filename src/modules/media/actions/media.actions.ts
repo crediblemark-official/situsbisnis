@@ -251,3 +251,30 @@ export async function deleteMediaAction(id: string) {
         return { success: false, error: "Gagal menghapus file media" };
     }
 }
+
+export async function getMediaListAction(folderId: string | null, page: number = 1, limit: number = 50) {
+    try {
+        const { siteId, error } = await getApiContext();
+        if (error || !siteId) return { success: false, error: error || "Unauthorized" };
+
+        const result = await MediaClient.getMediaList(siteId, folderId, page, limit);
+        return { success: true, ...result };
+    } catch (err: any) {
+        console.error("[GET_MEDIA_LIST_ACTION] Error:", err);
+        return { success: false, error: "Gagal mengambil daftar media" };
+    }
+}
+
+export async function getMediaFoldersAction(parentId: string | null) {
+    try {
+        const { siteId, error } = await getApiContext();
+        if (error || !siteId) return { success: false, error: error || "Unauthorized" };
+
+        const folders = await MediaClient.getMediaFolders(siteId, parentId);
+        return { success: true, folders };
+    } catch (err: any) {
+        console.error("[GET_MEDIA_FOLDERS_ACTION] Error:", err);
+        return { success: false, error: "Gagal mengambil folder media" };
+    }
+}
+

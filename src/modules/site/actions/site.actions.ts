@@ -120,3 +120,41 @@ export async function savePaymentSettingsAction(body: any) {
         return { success: false, error: "Gagal menyimpan pengaturan pembayaran" };
     }
 }
+
+export async function validateGtmAction(value: string) {
+    try {
+        const { error } = await getApiContext(["admin", "owner", "editor"], { requireSite: false });
+        if (error) return { success: false, error: error };
+
+        const trimmedValue = value?.trim();
+        if (!trimmedValue) return { success: false, error: "Missing GTM value" };
+
+        if (!/^GTM-[A-Z0-9]{4,8}$/.test(trimmedValue)) {
+            return { success: true, valid: false };
+        }
+
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 3000);
+
+            const res = await fetch(`https://www.googletagmanager.com/gtm.js?id=${trimmedValue}`, {
+                method: "HEAD",
+                signal: controller.signal,
+                headers: {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+                }
+            });
+
+            clearTimeout(timeoutId);
+
+            return { success: true, valid: res.status === 200 };
+        } catch (err) {
+            console.warn("[ValidateGTM:FetchError]", err);
+            return { success: true, valid: false };
+        }
+    } catch (err: any) {
+        console.error("[VALIDATE_GTM_ACTION] Error:", err);
+        return { success: false, error: "Gagal memvalidasi container GTM" };
+    }
+}
+

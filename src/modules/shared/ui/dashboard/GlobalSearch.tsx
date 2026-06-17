@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Search, ArrowRight, X, PenTool, FileText, ShoppingBag } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { searchGlobalAction } from "@/modules/post/actions/post.actions";
 
 interface SearchResult {
     id: string;
@@ -78,9 +79,9 @@ export function GlobalSearch({ navSections }: { navSections: any[] }) {
             );
 
             try {
-                // 2. Fetch data from API (Posts, Pages, Products)
-                const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
-                const dataResults = await res.json();
+                // 2. Gunakan Server Action (Posts, Pages, Products)
+                const res = await searchGlobalAction(query);
+                const dataResults = res.success ? (res.results || []) : [];
 
                 const mappedDataResults = dataResults.map((item: any) => ({
                     ...item,

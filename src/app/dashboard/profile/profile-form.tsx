@@ -5,6 +5,7 @@ import { Save as SaveIcon, Lock as LockIcon, User as UserIcon } from "lucide-rea
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/Button";
+import { updateProfileAction } from "@/modules/auth";
 
 export function ProfileForm({ user }: { user: any }) {
     const router = useRouter();
@@ -36,19 +37,13 @@ export function ProfileForm({ user }: { user: any }) {
         }
 
         try {
-            const res = await fetch("/api/profile", {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    name,
-                    currentPassword,
-                    newPassword: newPassword || undefined
-                }),
+            const data = await updateProfileAction({
+                name,
+                currentPassword,
+                newPassword: newPassword || undefined
             });
 
-            const data = await res.json();
-
-            if (!res.ok) {
+            if (!data.success) {
                 throw new Error(data.error || "Gagal memperbarui profil");
             }
 

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Save, Loader2, RefreshCw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { updateOrderFulfillmentAction } from "@/modules/order/actions/order.actions";
 
 export default function OrderStatusManager({ orderId, paymentStatus, fulfillmentStatus }: { orderId: string, paymentStatus: string, fulfillmentStatus: string }) {
     const [pStatus, setPStatus] = useState(paymentStatus);
@@ -14,20 +15,16 @@ export default function OrderStatusManager({ orderId, paymentStatus, fulfillment
     const handleUpdate = async () => {
         setIsLoading(true);
         try {
-            const res = await fetch(`/api/orders/${orderId}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    paymentStatus: pStatus,
-                    fulfillmentStatus: fStatus
-                })
+            const res = await updateOrderFulfillmentAction(orderId, {
+                paymentStatus: pStatus,
+                fulfillmentStatus: fStatus
             });
 
-            if (res.ok) {
+            if (res.success) {
                 router.refresh();
                 toast.success("Status pesanan diperbarui");
             } else {
-                toast.error("Gagal memperbarui status");
+                toast.error(res.error || "Gagal memperbarui status");
             }
         } catch (e) {
             console.error(e);

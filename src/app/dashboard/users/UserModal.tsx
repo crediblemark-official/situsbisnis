@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import Portal from "@/components/ui/Portal";
 import { Button } from "@/components/ui/Button";
 import { FormInput, FormSelect } from "@/components/ui/Form";
+import { createUserAction, updateUserAction } from "@/modules/auth";
 
 type UserData = {
     id: string;
@@ -57,23 +58,16 @@ export default function UserModal({ isOpen, onClose, onSuccess, initialData }: P
         setLoading(true);
 
         try {
-            const method = isEditing ? "PATCH" : "POST";
-            const body = isEditing
-                ? { userId: initialData.id, name, email, role, password }
-                : { name, email, role, password };
+            const body = { name, email, role, password };
+            const data = isEditing
+                ? await updateUserAction(initialData.id, body)
+                : await createUserAction(body);
 
-            const res = await fetch("/api/users", {
-                method,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(body),
-            });
-
-            if (res.ok) {
+            if (data.success) {
                 toast.success(isEditing ? "Pengguna berhasil diperbarui" : "Pengguna berhasil ditambahkan");
                 onSuccess();
                 onClose();
             } else {
-                const data = await res.json();
                 toast.error(data.error || "Gagal menyimpan data pengguna");
             }
         } catch (error) {

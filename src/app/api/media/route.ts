@@ -3,27 +3,6 @@ import { MediaClient } from "@/modules/media";
 
 export const dynamic = 'force-dynamic';
 
-/**
- * GET /api/media
- * Mengambil daftar media items beserta informasi kuota penyimpanan.
- */
-export async function GET(req: Request) {
-    try {
-        const { siteId, error, status } = await getApiContext();
-        if (error) return apiError(error, status);
-
-        const { searchParams } = new URL(req.url);
-        const folderId = searchParams.get("folderId") || null;
-        const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
-        const limit = Math.max(1, Math.min(100, parseInt(searchParams.get("limit") || "50")));
-
-        const result = await MediaClient.getMediaList(siteId, folderId, page, limit);
-        return apiResponse(result);
-    } catch (error) {
-        console.error("GET Media Error:", error);
-        return apiError("Internal Error");
-    }
-}
 
 /**
  * POST /api/media

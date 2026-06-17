@@ -21,11 +21,14 @@ Status terbaik saat ini:
 
 ## Verifikasi yang Sudah Dijalankan
 
-| Perintah                    | Hasil                                                 |
-| --------------------------- | ----------------------------------------------------- |
-| `npm run typecheck`         | Lolos                                                 |
-| `npm run test:architecture` | Lolos, Dependency Cruiser tidak menemukan pelanggaran |
-| `npm run test:unit`         | Lolos, 177 tests passed                               |
+| Perintah / Pemeriksaan         | Hasil                                                 |
+| ------------------------------ | ----------------------------------------------------- |
+| `npm run typecheck`            | Lolos                                                 |
+| `npm run test:architecture`    | Lolos, Dependency Cruiser tidak menemukan pelanggaran |
+| `npm run test:unit`            | Lolos, 177 tests passed                               |
+| Hitung route API               | Ditemukan 65 file `src/app/api/**/route.ts`           |
+| Hitung import legacy `@/lib/*` | Ditemukan 239 referensi di `src/`                     |
+| Hitung module actions          | Ditemukan 7 file di `src/modules/*/actions/*.ts`      |
 
 ---
 
@@ -56,6 +59,182 @@ Rekomendasi: ubah status arsitektur menjadi lebih realistis, misalnya:
 
 ---
 
+## Temuan Tambahan: Migrasi Masih Premature dan Banyak Bergantung pada API Route/Utility Lama
+
+Ya, implementasi saat ini masih premature. Meskipun folder `src/modules/*` sudah ada, banyak bagian sistem masih bergantung pada pola lama berbasis API route dan utility shared legacy.
+
+### 1. API route masih menjadi boundary operasional utama
+
+Ditemukan 65 file route API di `src/app/api/**/route.ts`. Banyak route masih langsung menggunakan utility lama:
+
+- `@/lib/api/utils`
+- `@/lib/auth`
+- `@/lib/domains/tenant`
+- `@/lib/settings/payment`
+- `@/lib/media/r2`
+- `@/lib/core/db`
+- `@/lib/core/logger`
+- `@/lib/billing/currency`
+- `@/lib/billing/features`
+- `@/lib/billing/constants`
+
+Contoh route yang masih mengandung logic API/HTTP langsung:
+
+- `src/app/api/site/settings/route.ts`
+- `src/app/api/payment/billing/upgrade/route.ts`
+- `src/app/api/payment/billing/validate-coupon/route.ts`
+- `src/app/api/payment/billing/cancel/route.ts`
+- `src/app/api/payment/billing/checkout/payment/route.ts`
+- `src/app/api/payment/billing/confirm/route.ts`
+- `src/app/api/payment/transactions/update/route.ts`
+- `src/app/api/order/orders/route.ts`
+- `src/app/api/infrastructure/sites/[id]/route.ts`
+- `src/app/api/infrastructure/backup/route.ts`
+- `src/app/api/domain/domains/verify/route.ts`
+
+Artinya, API route belum sepenuhnya menjadi thin adapter. Banyak route masih menangani:
+
+- auth/session
+- CSRF
+- schema validation
+- error response
+- site context
+- business branching
+- response mapping
+
+Dalam modular monolith yang matang, API route seharusnya hanya mengonversi HTTP request ke use case/application service.
+
+### 2. Ada duplikasi antara API route dan Server Actions
+
+Ditemukan 7 file Server Action:
+
+- `src/modules/auth/actions/auth.actions.ts`
+- `src/modules/catalog/actions/product.actions.ts`
+- `src/modules/media/actions/media.actions.ts`
+- `src/modules/page/actions/page.actions.ts`
+- `src/modules/payment/actions/payment.actions.ts`
+- `src/modules/post/actions/post.actions.ts`
+- `src/modules/site/actions/site.actions.ts`
+
+Pola ini menunjukkan transisi belum selesai:
+
+- API route masih ada untuk HTTP client
+- Server Actions dibuat untuk UI/dashboard
+- beberapa action langsung mengakses `db`
+- beberapa action memanggil `getApiContext` dari utility lama
+- beberapa action melakukan event publish manual
+- beberapa action hanya wrapper ke facade, tetapi masih bergantung pada API context
+
+Ini membuat boundary aplikasi menjadi kabur:
+
+```txt
+HTTP Route -> API utils -> business logic
+Server Action -> API utils -> business logic
+Module Service -> event bus -> business logic
+```
+
+Dalam arsitektur modular monolith yang lebih matang, seharusnya ada satu use case/application layer yang dipakai bersama oleh API route, Server Action, CLI, worker, dan event listener.
+
+### 3. Utility legacy masih menjadi tulang punggung infrastruktur
+
+Alias `@/lib/*` masih aktif di `tsconfig.json`:
+
+```json
+"@/lib/*": ["./src/modules/shared/utils/*"],
+"@/lib/core/*": ["./src/modules/shared/core/*"]
+```
+
+Beberapa utility ini sebenarnya sudah berada secara fisik di `src/modules/shared`, tetapi secara import masih memakai alias lama:
+
+- `src/modules/shared/utils/api/utils.ts`
+- `src/modules/shared/utils/domains/tenant.ts`
+- `src/modules/shared/utils/settings/payment.ts`
+- `src/modules/shared/utils/media/r2.ts`
+- `src/modules/shared/core/rate-limit.ts`
+- `src/modules/shared/core/logger.ts`
+
+Dampaknya:
+
+- struktur folder sudah modular, tetapi naming/import masih legacy
+- developer mudah keliru membedakan utility modular vs utility lama
+- dependency graph terlihat lebih bersih daripada realitas arsitektur
+- refactor menjadi lebih sulit karena alias lama masih dipakai luas
+
+### 4. CRUD handler masih menjadi API-centric abstraction
+
+`src/modules/crud/services/crud.service.ts` adalah generic CRUD handler yang sangat terikat HTTP/API:
+
+- menerima `Request`
+- membaca `searchParams`
+- memanggil `getApiContext`
+- mengembalikan `apiResponse`/`apiError`
+- melakukan validation dari body request
+- langsung publish event dari handler
+- membuat response shape berdasarkan model
+
+Ini bukan application service murni. Ini adalah reusable API handler.
+
+Contoh lokasi yang masih memakai pola ini:
+
+- `src/modules/catalog/api/product.ts`
+- `src/modules/post/api/post.ts`
+- `src/modules/post/api/taxonomy.ts`
+- `src/modules/post/api/testimonial.ts`
+- `src/modules/media/api/gallery.ts`
+- `src/modules/media/api/portfolio.ts`
+
+Pola ini boleh untuk fase transisi, tetapi belum merepresentasikan modular monolith matang. Seharusnya:
+
+```txt
+Route Adapter
+  -> Controller/Use Case
+    -> Service
+      -> Repository
+```
+
+Bukan:
+
+```txt
+Route Adapter
+  -> Generic API Handler
+    -> Prisma model delegate
+```
+
+### 5. Business logic masih tersebar di beberapa lapisan
+
+Contoh payment upgrade:
+
+- API route: `src/app/api/payment/billing/upgrade/route.ts`
+- Server Action: `src/modules/payment/actions/payment.actions.ts`
+- Service: `src/modules/payment/services/checkout.service.ts`
+- Repository: `src/modules/payment/repositories/transaction.repository.ts`
+- Transaction service: `src/modules/payment/services/transaction.service.ts`
+- Webhook service: `src/modules/payment/services/webhook.service.ts`
+
+Pola ini belum buruk, tetapi masih premature karena:
+
+- API route dan Server Action sama-sama bisa menjadi entry point
+- service masih menangani otorisasi cross-module via eventBus request
+- eventBus request digunakan untuk query data
+- outbox masih manual
+- listener modul payment/financial belum aktif
+
+### 6. Request/reply masih menggantikan facade dan use case
+
+Banyak service masih memanggil:
+
+- `request.auth.getSiteOwner`
+- `request.tenant.getSiteInfo`
+- `request.tenant.verifyUserSiteAccess`
+- `request.catalog.getProductsMap`
+- `request.billing.checkLimit`
+
+Ini membuat runtime bergantung pada listener event bus. Jika listener belum terdaftar, request timeout. Ini bukan pola yang ideal untuk modular monolith stabil.
+
+Untuk modular monolith, facade client atau application service lebih aman untuk query/command sinkron. Event bus sebaiknya digunakan untuk domain event async, bukan sebagai mekanisme query internal.
+
+---
+
 ## Status Modular Monolith
 
 ### Sudah Terpenuhi
@@ -80,6 +259,9 @@ Rekomendasi: ubah status arsitektur menjadi lebih realistis, misalnya:
 | Listener coverage     |  Belum | Beberapa listener masih TODO                        |
 | Event contract        |  Belum | `event-types.ts` belum mencakup semua event/request |
 | Read model/projection |  Belum | Belum ada pemisahan jelas antara event dan query    |
+| API boundary          |  Belum | API route masih menjadi boundary operasional utama  |
+| Action boundary       |  Belum | Server Actions dan API route masih tumpang tindih   |
+| Utility alias         |  Belum | Alias legacy `@/lib/*` masih dipakai luas           |
 
 ---
 

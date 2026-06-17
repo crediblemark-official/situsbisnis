@@ -5,7 +5,7 @@ import { PaymentClient } from "@/modules/payment";
 
 export async function cancelTransactionAction(transactionId: string) {
     try {
-        const { session, error, status } = await getApiContext(undefined, { requireSite: false });
+        const { session, error } = await getApiContext(undefined, { requireSite: false });
         if (error || !session?.user?.id) return { success: false, error: error || "Unauthorized" };
 
         if (!transactionId) return { success: false, error: "Missing transactionId" };
@@ -27,7 +27,7 @@ export async function cancelTransactionAction(transactionId: string) {
 
 export async function upgradePlanAction(body: { siteId: string; planId: string; couponCode?: string; paymentMethod?: string }) {
     try {
-        const { session, error, status } = await getApiContext(undefined, { requireSite: false });
+        const { session, error } = await getApiContext(undefined, { requireSite: false });
         if (error || !session?.user?.id) return { success: false, error: error || "Unauthorized" };
 
         const { siteId, planId, couponCode, paymentMethod = "manual" } = body;
@@ -54,7 +54,7 @@ export async function upgradePlanAction(body: { siteId: string; planId: string; 
 
 export async function buySlotAction(body: { siteId: string; quantity: number; paymentMethod?: string }) {
     try {
-        const { session, error, status } = await getApiContext(undefined, { requireSite: false });
+        const { session, error } = await getApiContext(undefined, { requireSite: false });
         if (error || !session?.user?.id) return { success: false, error: error || "Unauthorized" };
 
         const { siteId, quantity, paymentMethod = "manual" } = body;
@@ -86,7 +86,7 @@ export async function buySlotAction(body: { siteId: string; quantity: number; pa
 
 export async function confirmManualPaymentAction(body: { transactionId: string; notes?: string; proofOfPayment?: string }) {
     try {
-        const { session, error, status } = await getApiContext(undefined, { requireSite: false });
+        const { session, error } = await getApiContext(undefined, { requireSite: false });
         if (error || !session?.user?.id) return { success: false, error: error || "Unauthorized" };
 
         const { transactionId, notes, proofOfPayment } = body;
@@ -107,5 +107,33 @@ export async function confirmManualPaymentAction(body: { transactionId: string; 
             return { success: false, error: err.message };
         }
         return { success: false, error: "Failed to confirm payment" };
+    }
+}
+
+export async function updateTransactionStatusAction(body: { transactionId: string; status: string }) {
+    try {
+        const { session, error } = await getApiContext(["admin"]);
+        if (error || !session) return { success: false, error: error || "Unauthorized" };
+
+        const { transactionId, status } = body;
+        if (!transactionId || !status) return { success: false, error: "Missing data" };
+
+        let result;
+        if (status === "approved") {
+            result = await PaymentClient.processApprovedTransaction(transactionId);
+        } else {
+            result = await PaymentClient.updateTransactionStatus(transactionId, status);
+        }
+
+        return { success: true, result };
+    } catch (err: any) {
+        console.error("[UPDATE_TRANSACTION_STATUS_ACTION] Error:", err);
+        if (err.message === "TRANSACTION_NOT_FOUND") {
+            return { success: false, error: "Transaction not found" };
+        }
+        if (err.message === "ALREADY_PROCESSED") {
+            return { success: false, error: "Transaction has already been processed" };
+        }
+        return { success: false, error: "Internal Error" };
     }
 }

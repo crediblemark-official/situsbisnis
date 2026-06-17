@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { TransactionHistory } from "@/modules/payment/ui/dashboard/billing/TransactionHistory";
 import { PaymentConfirmation } from "@/modules/payment/ui/dashboard/billing/PaymentConfirmation";
 import { Transaction } from "@/modules/subscription/ui/dashboard/billing/types";
+import { confirmManualPaymentAction, cancelTransactionAction } from "@/modules/financial";
 
 interface HistoryBillClientProps {
     transactions: Transaction[];
@@ -67,15 +68,11 @@ export default function HistoryBillClient({
         if (!activeTx) return;
         setIsLoading(true);
         try {
-            const res = await fetch("/api/billing/confirm", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    transactionId: activeTx.id,
-                    ...confirmData
-                })
+            const res = await confirmManualPaymentAction({
+                transactionId: activeTx.id,
+                ...confirmData
             });
-            if (res.ok) {
+            if (res.success) {
                 const cleanedPhone = whatsappNumber.replace(/[^0-9]/g, "");
                 const planName = activeTx?.plan?.name || "Layanan/Slot";
                 const amountStr = `Rp ${Number(activeTx.amount).toLocaleString("id-ID")}`;
@@ -89,6 +86,8 @@ export default function HistoryBillClient({
 
                 setShowConfirmModal(false);
                 window.location.reload();
+            } else {
+                alert(res.error || "Gagal memproses konfirmasi pembayaran.");
             }
         } catch (error) {
             console.error(error);
@@ -100,19 +99,11 @@ export default function HistoryBillClient({
     const handleCancelTransaction = async (txId: string) => {
         setIsLoading(true);
         try {
-            const res = await fetch("/api/billing/cancel", {
-                method: "POST",
-                headers: { 
-                    "Content-Type": "application/json",
-                    "x-site-id": siteId
-                },
-                body: JSON.stringify({ transactionId: txId })
-            });
-            if (res.ok) {
+            const res = await cancelTransactionAction({ transactionId: txId });
+            if (res.success) {
                 window.location.reload();
             } else {
-                const data = await res.json().catch(() => ({}));
-                alert(data.error || "Gagal membatalkan transaksi.");
+                alert(res.error || "Gagal membatalkan transaksi.");
             }
         } catch (error) {
             console.error(error);

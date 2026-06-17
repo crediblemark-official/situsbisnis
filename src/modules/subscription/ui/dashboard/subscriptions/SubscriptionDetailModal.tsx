@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { CreditCard, Loader2, Check } from "lucide-react";
+import { getAllPlansAction, manageSubscriptionAction } from "@/modules/subscription";
 
 interface SubscriptionDetailModalProps {
     selectedSub: any;
@@ -18,10 +19,9 @@ export function SubscriptionDetailModal({ selectedSub, rootDomain, onClose, onUp
     const fetchPlans = React.useCallback(async () => {
         setLoadingPlans(true);
         try {
-            const res = await fetch("/api/admin/plans");
-            if (res.ok) {
-                const data = await res.json();
-                setPlans(data);
+            const res = await getAllPlansAction();
+            if (res.success && res.result) {
+                setPlans(res.result);
             }
         } catch (err) {
             console.error("Failed to fetch plans", err);
@@ -50,14 +50,12 @@ export function SubscriptionDetailModal({ selectedSub, rootDomain, onClose, onUp
 
         setUpdating(true);
         try {
-            const res = await fetch(`/api/admin/subscriptions/${selectedSub.id}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action: "update_plan", planId: selectedPlanId })
+            const res = await manageSubscriptionAction(selectedSub.id, {
+                action: "update_plan",
+                planId: selectedPlanId
             });
 
-            if (res.ok) {
-                await res.json();
+            if (res.success) {
                 const newPlan = plans.find(p => p.id === selectedPlanId);
                 if (onUpdateSuccess) {
                     onUpdateSuccess(selectedSub.id, newPlan);
@@ -66,8 +64,7 @@ export function SubscriptionDetailModal({ selectedSub, rootDomain, onClose, onUp
                 setIsEditing(false);
                 onClose();
             } else {
-                const data = await res.json();
-                alert(data.error || "Gagal memperbarui paket");
+                alert(res.error || "Gagal memperbarui paket");
             }
         } catch (_err) {
             alert("Kesalahan koneksi internet");

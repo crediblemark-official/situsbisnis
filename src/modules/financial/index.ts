@@ -27,3 +27,6 @@ export const FinancialClient = {
     setSiteToFreePlan,
     extendSiteTrial
 };
+
+export * from "./actions/financial.actions";
+export * from "./actions/billing.actions";

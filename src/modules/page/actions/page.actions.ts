@@ -83,3 +83,18 @@ export async function updateMenuAction(slug: string, items: any[]) {
         return { success: false, error: "Failed to update menu" };
     }
 }
+
+export async function getMenuAction(slug: string) {
+    try {
+        const { siteId, error } = await getApiContext(["admin", "editor", "owner"]);
+        if (error || !siteId) return { success: false, error: error || "Unauthorized" };
+
+        if (!slug) return { success: false, error: "Slug required" };
+
+        const menu = await PageClient.getMenu(slug, siteId);
+        return { success: true, menu };
+    } catch (error) {
+        console.error("[GET_MENU_ACTION] Error:", error);
+        return { success: false, error: "Failed to fetch menu" };
+    }
+}

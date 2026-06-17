@@ -6,6 +6,7 @@ import { ImageIcon, X, Loader2, Upload, Search, Check } from "lucide-react";
 import Portal from "@/components/ui/Portal";
 import toast from "react-hot-toast";
 import { getProxiedUrl } from "@/lib/media/utils";
+import { getMediaListAction } from "@/modules/media/actions/media.actions";
 
 interface MediaItem {
     id: string;
@@ -33,10 +34,13 @@ export const MediaPickerField = ({ value, onChange, label, variant = "default", 
 
     const fetchMedia = useCallback(() => {
         Promise.resolve().then(() => setLoading(true));
-        fetch("/api/media?limit=100")
-            .then(res => res.json())
-            .then(data => {
-                setItems(data.data || []);
+        getMediaListAction(null, 1, 100)
+            .then((res: any) => {
+                if (res.success) {
+                    setItems(res.data || []);
+                } else {
+                    toast.error(res.error || "Failed to fetch media");
+                }
                 setLoading(false);
             })
             .catch(_error => {

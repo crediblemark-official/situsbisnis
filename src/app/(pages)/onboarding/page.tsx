@@ -5,6 +5,7 @@ import { Globe, Layout, Loader2, ChevronRight, Store, AlertCircle } from "lucide
 import { useHostname } from "@/hooks/use-hostname";
 import Image from "next/image";
 import { usePlatformSettings } from "@/hooks/use-platform-settings";
+import { completeOnboardingAction } from "@/modules/auth";
 
 export default function OnboardingPage() {
     const { settings } = usePlatformSettings();
@@ -52,15 +53,9 @@ export default function OnboardingPage() {
         setError("");
 
         try {
-            const res = await fetch("/api/onboarding", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ siteName, subdomain }),
-            });
+            const data = await completeOnboardingAction({ siteName, subdomain });
 
-            const data = await res.json();
-
-            if (res.ok) {
+            if (data.success && data.site) {
                 // Redirect to the new site's dashboard
                 // We use the rootDomain we detected in useEffect
                 const targetUrl = `${window.location.protocol}//${data.site.subdomain}.${rootDomain}/dashboard`;

@@ -4,6 +4,14 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { CreditCard, History } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { 
+    simulateDuitkuAction, 
+    validateCouponAction, 
+    buySlotAction, 
+    upgradePlanAction, 
+    confirmManualPaymentAction, 
+    extendTrialAction 
+} from "@/modules/financial";
 
 // Modular Components
 import { TrialBanner } from "@/modules/subscription/ui/dashboard/billing/TrialBanner";
@@ -63,13 +71,9 @@ export default function BillingClient({ plans, currentPlan, paymentMethods = [],
                 setTimeout(() => {
                     setIsLoading(true);
 
-                    fetch("/api/billing/simulate-duitku", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ transactionId: merchantOrderId })
-                    })
+                    simulateDuitkuAction({ transactionId: merchantOrderId })
                     .then(async (res) => {
-                        if (res.ok) {
+                        if (res.success) {
                             console.log(`[DEV_SIMULATION] Auto-simulation succeeded! Refreshing page...`);
                             
                             // Clean up URL query parameters so manual refreshes don't re-trigger or throw errors
@@ -78,8 +82,7 @@ export default function BillingClient({ plans, currentPlan, paymentMethods = [],
                             
                             window.location.reload();
                         } else {
-                            const data = await res.json().catch(() => ({}));
-                            console.error("[DEV_SIMULATION] Auto-simulation failed:", data.error);
+                            console.error("[DEV_SIMULATION] Auto-simulation failed:", res.error);
                         }
                     })
                     .catch((err) => {
@@ -104,18 +107,12 @@ export default function BillingClient({ plans, currentPlan, paymentMethods = [],
         setIsCheckingCoupon(true);
         setCouponError("");
         try {
-            const res = await fetch("/api/billing/validate-coupon", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ code: couponCode, planId: previewPlan.id })
-            });
+            const res = await validateCouponAction({ code: couponCode, planId: previewPlan.id });
 
-            if (res.ok) {
-                const data = await res.json();
-                setAppliedCoupon(data.coupon);
+            if (res.success && res.result) {
+                setAppliedCoupon(res.result.coupon);
             } else {
-                const data = await res.json().catch(() => ({}));
-                setCouponError(data.error || "Gagal memverifikasi kupon.");
+                setCouponError(res.error || "Gagal memverifikasi kupon.");
             }
         } catch (err) {
             console.error(err);
@@ -134,16 +131,9 @@ export default function BillingClient({ plans, currentPlan, paymentMethods = [],
     const executeBuySlot = async (method: "manual" | "duitku", quantity: number) => {
         setIsLoading(true);
         try {
-            const res = await fetch("/api/billing/buy-slot", {
-                method: "POST",
-                headers: { 
-                    "Content-Type": "application/json",
-                    "x-site-id": siteId
-                },
-                body: JSON.stringify({ siteId, quantity, paymentMethod: method })
-            });
-            if (res.ok) {
-                const tx = await res.json();
+            const res = await buySlotAction({ siteId, quantity, paymentMethod: method });
+            if (res.success && res.result) {
+                const tx = res.result as any;
                 setPaymentSelection(null);
                 if (method === "duitku" && tx.id) {
                     // Redirect to custom checkout page
@@ -155,8 +145,7 @@ export default function BillingClient({ plans, currentPlan, paymentMethods = [],
                     setShowConfirmModal(true);
                 }
             } else {
-                const data = await res.json().catch(() => ({}));
-                alert(data.error || "Gagal membeli slot situs tambahan.");
+                alert(res.error || "Gagal membeli slot situs tambahan.");
             }
         } catch (e) {
             console.error(e);
@@ -169,22 +158,15 @@ export default function BillingClient({ plans, currentPlan, paymentMethods = [],
         if (!previewPlan || (previewPlan.id === currentPlan?.id && !isTrial)) return;
         setIsLoading(true);
         try {
-            const res = await fetch("/api/billing/upgrade", {
-                method: "POST",
-                headers: { 
-                    "Content-Type": "application/json",
-                    "x-site-id": siteId
-                },
-                body: JSON.stringify({ 
-                    siteId, 
-                    planId: previewPlan.id, 
-                    billingCycle,
-                    couponCode: appliedCoupon ? appliedCoupon.code : undefined,
-                    paymentMethod: method
-                })
+            const res = await upgradePlanAction({ 
+                siteId, 
+                planId: previewPlan.id, 
+                billingCycle,
+                couponCode: appliedCoupon ? appliedCoupon.code : undefined,
+                paymentMethod: method
             });
-            if (res.ok) {
-                const tx = await res.json();
+            if (res.success && res.result) {
+                const tx = res.result as any;
                 setPaymentSelection(null);
                 if (method === "duitku" && tx.id) {
                     // Redirect to custom checkout page (branded, not duitku.com)
@@ -196,8 +178,7 @@ export default function BillingClient({ plans, currentPlan, paymentMethods = [],
                     setShowConfirmModal(true);
                 }
             } else {
-                const data = await res.json().catch(() => ({}));
-                alert(data.error || "Gagal memproses peningkatan paket.");
+                alert(res.error || "Gagal memproses peningkatan paket.");
             }
         } catch (error) {
             console.error(error);
@@ -245,15 +226,11 @@ export default function BillingClient({ plans, currentPlan, paymentMethods = [],
         if (!activeTx) return;
         setIsLoading(true);
         try {
-            const res = await fetch("/api/billing/confirm", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    transactionId: activeTx.id,
-                    ...confirmData
-                })
+            const res = await confirmManualPaymentAction({
+                transactionId: activeTx.id,
+                ...confirmData
             });
-            if (res.ok) {
+            if (res.success) {
                 const cleanedPhone = whatsappNumber.replace(/[^0-9]/g, "");
                 const planName = activeTx?.plan?.name || "Layanan/Slot";
                 const amountStr = `Rp ${Number(activeTx.amount).toLocaleString("id-ID")}`;
@@ -268,6 +245,8 @@ export default function BillingClient({ plans, currentPlan, paymentMethods = [],
 
                 setShowConfirmModal(false);
                 window.location.reload();
+            } else {
+                alert(res.error || "Gagal mengirim konfirmasi pembayaran.");
             }
         } catch (error) {
             console.error(error);
@@ -299,19 +278,11 @@ export default function BillingClient({ plans, currentPlan, paymentMethods = [],
     const handleExtendTrial = async () => {
         setIsLoading(true);
         try {
-            const res = await fetch("/api/billing/extend-trial", {
-                method: "POST",
-                headers: { 
-                    "Content-Type": "application/json",
-                    "x-site-id": siteId
-                },
-                body: JSON.stringify({ siteId })
-            });
-            if (res.ok) {
+            const res = await extendTrialAction({ siteId });
+            if (res.success) {
                 window.location.reload();
             } else {
-                const data = await res.json().catch(() => ({}));
-                alert(data.error || "Gagal memperpanjang trial");
+                alert(res.error || "Gagal memperpanjang trial");
             }
         } catch (error) {
             console.error(error);

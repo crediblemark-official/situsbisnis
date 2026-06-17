@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Globe, X, Copy, Check, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 import Portal from "@/components/ui/Portal";
 import { isApexDomain } from "@/lib/domains/utils";
+import { updateSiteCustomDomainAction, verifySiteCustomDomainAction } from "@/modules/auth";
 
 interface DomainModalProps {
     isOpen: boolean;
@@ -42,17 +43,8 @@ export function DomainModal({ isOpen, site, rootDomain, onClose, onDomainUpdated
         setModalSuccess("");
 
         try {
-            const res = await fetch("/api/user/sites", {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    siteId: site.id,
-                    customDomain: customDomain || null
-                })
-            });
-
-            const data = await res.json();
-            if (!res.ok) {
+            const data = await updateSiteCustomDomainAction(site.id, customDomain || null);
+            if (!data.success) {
                 throw new Error(data.error || "Gagal menyimpan domain.");
             }
 
@@ -75,17 +67,8 @@ export function DomainModal({ isOpen, site, rootDomain, onClose, onDomainUpdated
         setModalSuccess("");
 
         try {
-            const res = await fetch("/api/user/sites", {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    siteId: site.id,
-                    customDomain: null
-                })
-            });
-
-            const data = await res.json();
-            if (!res.ok) {
+            const data = await updateSiteCustomDomainAction(site.id, null);
+            if (!data.success) {
                 throw new Error(data.error || "Gagal menghapus domain.");
             }
 
@@ -106,25 +89,17 @@ export function DomainModal({ isOpen, site, rootDomain, onClose, onDomainUpdated
         setModalSuccess("");
 
         try {
-            const res = await fetch("/api/user/sites/verify", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    siteId: site.id,
-                    domain: site.customDomain
-                })
-            });
-
-            const data = await res.json();
-            if (!res.ok) {
+            const data = await verifySiteCustomDomainAction(site.id, site.customDomain);
+            if (!data.success) {
                 throw new Error(data.error || "Proses verifikasi gagal.");
             }
 
-            if (data.status === "valid") {
+            const result = data.result;
+            if (result && result.status === "valid") {
                 onDomainUpdated(site.customDomain, true);
                 setModalSuccess("Domain berhasil diverifikasi dan aktif!");
             } else {
-                setModalError(data.message || "DNS belum terdeteksi. Silakan coba beberapa saat lagi.");
+                setModalError(result?.message || "DNS belum terdeteksi. Silakan coba beberapa saat lagi.");
             }
         } catch (err: any) {
             setModalError(err.message || "Proses verifikasi gagal.");

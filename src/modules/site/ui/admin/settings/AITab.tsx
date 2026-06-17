@@ -1,5 +1,6 @@
 import React from "react";
 import { Sparkles, Eye, EyeOff, Trash2, Plus } from "lucide-react";
+import { fetchAIModelsAction } from "@/modules/subscription";
 
 interface AIConfigRow {
     provider: string;
@@ -73,17 +74,11 @@ export function AITab({ config, setConfig }: AITabProps) {
         if (!apiKey || !apiKey.trim()) return;
         setLoadingModels(prev => ({ ...prev, [index]: true }));
         try {
-            const res = await fetch("/api/admin/settings/ai-models", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ provider, apiKey }),
-            });
-            if (!res.ok) throw new Error("Failed to fetch models");
-            const data = await res.json();
-            if (Array.isArray(data.models)) {
-                setFetchedModels(prev => ({ ...prev, [index]: data.models }));
+            const res = await fetchAIModelsAction({ provider, apiKey });
+            if (res.success && Array.isArray(res.models)) {
+                setFetchedModels(prev => ({ ...prev, [index]: res.models }));
+            } else {
+                throw new Error(res.error || "Failed to fetch models");
             }
         } catch (e) {
             console.error("Detect models error:", e);

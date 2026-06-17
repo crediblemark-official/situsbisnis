@@ -7,6 +7,7 @@ import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { EditorLayout } from "@/components/dashboard/EditorLayout";
 import { FormSection, FormInput } from "@/components/ui/Form";
 import { FormRichText } from "@/components/ui/FormRichText";
+import { createPageAction } from "@/modules/page";
 
 interface PageEditorProps {
     pageId?: string;
@@ -86,14 +87,9 @@ export default function PageEditor({ pageId, initialData }: PageEditorProps) {
         e.preventDefault();
         setSaving(true);
         try {
-            const res = await fetch("/api/pages", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData),
-            });
-            if (!res.ok) {
-                const err = await res.json();
-                throw new Error(err.error || "Failed to save");
+            const data = await createPageAction(formData);
+            if (!data.success) {
+                throw new Error(data.error || "Failed to save");
             }
             if (formData.useBuilder && !isEditing) {
                 const credbuildPath = formData.path === "/" ? "/credbuild" : `/credbuild${formData.path}`;
@@ -124,18 +120,16 @@ export default function PageEditor({ pageId, initialData }: PageEditorProps) {
             onConfirm: async () => {
                 setSaving(true);
                 try {
-                    const res = await fetch("/api/pages", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ ...formData, useBuilder: isPromoting }),
-                    });
-                    if (res.ok) {
+                    const data = await createPageAction({ ...formData, useBuilder: isPromoting });
+                    if (data.success) {
                         if (isPromoting) {
                             const credbuildPath = formData.path === "/" ? "/credbuild" : `/credbuild${formData.path}`;
                             router.push(credbuildPath);
                         } else {
                             setFormData(prev => ({ ...prev, useBuilder: false }));
                         }
+                    } else {
+                        toast.error(data.error || "Gagal berpindah mode editor");
                     }
                 } catch (_e) {
                     toast.error("Gagal berpindah mode editor");

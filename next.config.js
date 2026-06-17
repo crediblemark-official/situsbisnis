@@ -8,59 +8,29 @@ const appHostname = new URL(appUrl).hostname;
 const nextConfig = {
   async rewrites() {
     return [
-      // Auth routes
-      { source: '/api/user/:path*', destination: '/api/auth/user/:path*' },
-      { source: '/api/users/:path*', destination: '/api/auth/users/:path*' },
-      { source: '/api/profile/:path*', destination: '/api/auth/profile/:path*' },
-      { source: '/api/affiliate/:path*', destination: '/api/auth/affiliate/:path*' },
-      { source: '/api/onboarding/:path*', destination: '/api/auth/onboarding/:path*' },
+      // Webhook Pembayaran Duitku (Tetap Dipertahankan)
+      { source: '/api/billing/webhook/duitku', destination: '/api/payment/billing/webhook/duitku' },
       
-      // Domain routes
-      { source: '/api/domains/:path*', destination: '/api/domain/domains/:path*' },
-      
-      // Financial routes
-      { source: '/api/admin/coupons/:path*', destination: '/api/financial/coupons/:path*' },
-      { source: '/api/admin/withdrawals/:path*', destination: '/api/financial/withdrawals/:path*' },
-      
-      // Infrastructure routes
-      { source: '/api/admin/backup/:path*', destination: '/api/infrastructure/backup/:path*' },
-      { source: '/api/admin/sites/:path*', destination: '/api/infrastructure/sites/:path*' },
-      
-      // Media routes (DEPRECATED: Gunakan Server Actions untuk mutasi)
-      { source: '/api/gallery/:path*', destination: '/api/media/gallery/:path*' },
-      { source: '/api/portfolios/:path*', destination: '/api/media/portfolios/:path*' },
-      
-      // Order routes
+      // Order routes (Public Visitor Checkout)
       { source: '/api/orders/:path*', destination: '/api/order/orders/:path*' },
       
-      // Page routes
-      { source: '/api/pages/:path*', destination: '/api/page/pages/:path*' },
-      { source: '/api/menus/:path*', destination: '/api/page/menus/:path*' },
-      { source: '/api/credbuild/:path*', destination: '/api/page/credbuild/:path*' },
-      { source: '/api/ai/:path*', destination: '/api/page/ai/:path*' },
-      
-      // Payment routes
-      { source: '/api/billing/:path*', destination: '/api/payment/billing/:path*' },
-      { source: '/api/admin/transactions/:path*', destination: '/api/payment/transactions/:path*' },
-      
-      // Post routes (DEPRECATED: Gunakan Server Actions untuk mutasi)
+      // Post routes (Public Visitor Testimonials & Search)
       { source: '/api/testimonials/:path*', destination: '/api/post/testimonials/:path*' },
       { source: '/api/search/:path*', destination: '/api/post/search/:path*' },
       
-      // Shared routes
+      // Shared / Utility routes
       { source: '/api/openapi/:path*', destination: '/api/shared/openapi/:path*' },
       
-      // Site routes (DEPRECATED: Gunakan Server Actions untuk mutasi)
-      { source: '/api/settings/:path*', destination: '/api/site/settings/:path*' },
-      { source: '/api/analytics/:path*', destination: '/api/site/analytics/:path*' },
+      // Site routes (Public Health Check & Contact)
       { source: '/api/contact/:path*', destination: '/api/site/contact/:path*' },
       { source: '/api/health/:path*', destination: '/api/site/health/:path*' },
       
-      // Subscription routes
-      { source: '/api/admin/plans/:path*', destination: '/api/subscription/plans/:path*' },
-      { source: '/api/admin/subscriptions/:path*', destination: '/api/subscription/subscriptions/:path*' },
-      { source: '/api/admin/settings/:path*', destination: '/api/subscription/settings/:path*' },
+      // Subscription cron check route
       { source: '/api/cron/:path*', destination: '/api/subscription/cron/:path*' },
+      
+      // Page editor helper routes
+      { source: '/api/credbuild/:path*', destination: '/api/page/credbuild/:path*' },
+      { source: '/api/ai/:path*', destination: '/api/page/ai/:path*' },
     ];
   },
   output: 'standalone',

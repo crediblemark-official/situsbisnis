@@ -15,6 +15,7 @@ import {
     Check
 } from "lucide-react";
 import { toast } from "react-hot-toast";
+import { exportBackupDataAction, importBackupDataAction } from "@/modules/infrastructure";
 
 interface BackupClientProps {
     stats: {
@@ -77,10 +78,11 @@ export default function BackupClient({ stats }: BackupClientProps) {
         setIsExporting(true);
         const exportToast = toast.loading("Mengekspor seluruh isi database...");
         try {
-            const response = await fetch("/api/admin/backup");
-            if (!response.ok) throw new Error("Export failed");
+            const res = await exportBackupDataAction();
+            if (!res.success || !res.result) throw new Error(res.error || "Export failed");
             
-            const blob = await response.blob();
+            const jsonStr = JSON.stringify(res.result, null, 2);
+            const blob = new Blob([jsonStr], { type: "application/json" });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
@@ -127,18 +129,10 @@ export default function BackupClient({ stats }: BackupClientProps) {
             }
 
             setRestoreStatus("Mengirim data pemulihan...");
-            const response = await fetch("/api/admin/backup", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(backupData)
-            });
-
-            const result = await response.json();
+            const res = await importBackupDataAction(backupData);
             
-            if (!response.ok) {
-                throw new Error(result.error || "Gagal memulihkan database.");
+            if (!res.success) {
+                throw new Error(res.error || "Gagal memulihkan database.");
             }
 
             setRestoreStatus("Selesai! Memperbarui tampilan...");

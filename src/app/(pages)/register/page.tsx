@@ -7,6 +7,7 @@ import { Lock, Mail, Loader2, ChevronRight, User, Phone, Eye, EyeOff } from "luc
 import Link from "next/link";
 import Image from "next/image";
 import { usePlatformSettings } from "@/hooks/use-platform-settings";
+import { registerUserAction, checkAffiliateAction } from "@/modules/auth";
 
 function RegisterForm() {
     const router = useRouter();
@@ -69,8 +70,7 @@ function RegisterForm() {
     // Fetch referrer name if referralCode exists
     useEffect(() => {
         if (referralCode) {
-            fetch(`/api/affiliate/check?code=${referralCode}`)
-                .then(res => res.json())
+            checkAffiliateAction(referralCode)
                 .then(data => {
                     if (data.exists && data.name) {
                         setReferrerName(data.name);
@@ -136,15 +136,9 @@ function RegisterForm() {
         }
 
         try {
-            const res = await fetch("/api/auth/register", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, email, password, phone: formattedPhone, referralCode }),
-            });
+            const data = await registerUserAction({ name, email, password, phone: formattedPhone, referralCode });
 
-            const data = await res.json();
-
-            if (res.ok) {
+            if (data.success) {
                 // Automatically sign in the user after registration
                 const result = await signIn("credentials", {
                     email,

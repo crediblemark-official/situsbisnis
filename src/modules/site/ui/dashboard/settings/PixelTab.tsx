@@ -2,6 +2,7 @@ import React from "react";
 import { FormSection, FormInput } from "@/components/ui/Form";
 import { SiteSettings } from "@/modules/site/ui/site-settings";
 import { AlertCircle } from "lucide-react";
+import { validateGtmAction } from "@/modules/site/actions/site.actions";
 
 interface PixelTabProps {
     settings: SiteSettings;
@@ -54,10 +55,9 @@ export const PixelTab = ({ settings, onChange }: PixelTabProps) => {
         const handler = setTimeout(async () => {
             setIsValidatingGtm(true);
             try {
-                const res = await fetch(`/api/settings/validate?type=gtm&value=${value}`);
-                if (res.ok) {
-                    const data = await res.json();
-                    setIsGtmServerValid(data.valid);
+                const res = await validateGtmAction(value);
+                if (res.success) {
+                    setIsGtmServerValid(res.valid ?? false);
                 } else {
                     setIsGtmServerValid(false);
                 }

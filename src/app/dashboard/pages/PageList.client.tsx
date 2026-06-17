@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { deletePageAction } from "@/modules/page";
 
 import { 
     TableContainer,
@@ -38,15 +39,13 @@ export default function PageList({ pages }: { pages: Page[] }) {
 
     const deletePage = async (id: string) => {
         try {
-            const res = await fetch(`/api/pages/${id}`, {
-                method: "DELETE",
-            });
+            const data = await deletePageAction(id);
 
-            if (res.ok) {
+            if (data.success) {
                 toast.success("Halaman berhasil dihapus");
                 router.refresh();
             } else {
-                toast.error("Gagal menghapus halaman");
+                toast.error(data.error || "Gagal menghapus halaman");
             }
         } catch (_e) {
             toast.error("Terjadi kesalahan saat menghapus halaman");

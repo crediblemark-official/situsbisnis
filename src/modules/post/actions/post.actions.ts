@@ -403,3 +403,19 @@ export async function updatePostCategoryAction(postId: string, categoryName: str
     }
 }
 
+export async function searchGlobalAction(q: string) {
+    try {
+        const { siteId, error } = await getApiContext(["admin", "owner", "editor", "user"]);
+        if (error || !siteId) return { success: false, error: error || "Unauthorized" };
+
+        if (!q) return { success: true, results: [] };
+
+        const results = await PostClient.searchAll(siteId, q);
+        return { success: true, results };
+    } catch (err: any) {
+        console.error("[SEARCH_GLOBAL_ACTION] Error:", err);
+        return { success: false, error: "Pencarian gagal dilakukan" };
+    }
+}
+
+

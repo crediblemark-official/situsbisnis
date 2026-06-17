@@ -15,6 +15,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import Image from "next/image";
 import { TableContainer, THead, TBody, TR, TH, TD } from "@/components/ui/Table";
+import { updateTransactionStatusAction } from "@/modules/payment/actions/payment.actions";
 
 export default function TransactionList({ initialTransactions }: { initialTransactions: any[] }) {
     const [transactions, setTransactions] = useState(initialTransactions);
@@ -39,17 +40,13 @@ export default function TransactionList({ initialTransactions }: { initialTransa
 
         setIsUpdating(actionTarget.id);
         try {
-            const response = await fetch("/api/admin/transactions/update", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    transactionId: actionTarget.id,
-                    status: actionTarget.type
-                })
+            const data = await updateTransactionStatusAction({
+                transactionId: actionTarget.id,
+                status: actionTarget.type
             });
 
-            if (response.ok) {
-                const updatedTx = await response.json();
+            if (data.success && data.result) {
+                const updatedTx = data.result as any;
                 setTransactions(prev => prev.map(tx => tx.id === updatedTx.id ? { ...tx, ...updatedTx } : tx));
             }
         } catch (error) {

@@ -8,6 +8,7 @@ import { InfrastructureClient } from "@/modules/infrastructure";
 import { SubscriptionClient } from "@/modules/subscription";
 import { cookies } from "next/headers";
 import { z } from "zod";
+import { getApiContext } from "@/lib/api/utils";
 
 const profileUpdateSchema = z.object({
     name: z.string().min(1, "Name is required").optional(),
@@ -151,5 +152,171 @@ export async function requestAffiliateWithdrawalAction(body: {
             return { success: false, error: "Saldo tidak mencukupi" };
         }
         return { success: false, error: "Internal Error" };
+    }
+}
+
+export async function checkAffiliateAction(code: string) {
+    try {
+        if (!code) {
+            return { success: false, exists: false, error: "Code is required" };
+        }
+
+        const result = await IdentityClient.checkReferralCode(code);
+        return { success: true, exists: result.exists, name: result.name };
+    } catch (error) {
+        console.error("[AFFILIATE_CHECK_ACTION]", error);
+        return { success: false, exists: false, error: "Internal Server Error" };
+    }
+}
+
+export async function getUserSitesAction() {
+    try {
+        const session = await getServerSession(authOptions);
+        if (!session?.user?.id) {
+            return { success: false, error: "Unauthorized" };
+        }
+
+        const { sites } = await IdentityClient.getUserSites(session.user.id);
+        return { success: true, sites };
+    } catch (error: any) {
+        console.error("[GET_USER_SITES_ACTION]", error);
+        return { success: false, error: error.message || "Failed to fetch sites" };
+    }
+}
+
+export async function updateSiteCustomDomainAction(siteId: string, customDomain: string | null | undefined) {
+    try {
+        const session = await getServerSession(authOptions);
+        if (!session?.user?.id) {
+            return { success: false, error: "Unauthorized" };
+        }
+
+        const result = await IdentityClient.updateSiteCustomDomain(session.user.id, siteId, customDomain);
+        return { success: true, result };
+    } catch (err: any) {
+        console.error("[UPDATE_SITE_DOMAIN_ACTION]", err);
+        const message = err.message;
+        if (message === "Access denied") {
+            return { success: false, error: "Site not found or access denied" };
+        }
+        if (message === "Site not found") {
+            return { success: false, error: "Site not found" };
+        }
+        if (message === "Upgrade required") {
+            return { success: false, error: "Paket Anda tidak mendukung domain kustom. Silakan upgrade terlebih dahulu." };
+        }
+        return { success: false, error: message };
+    }
+}
+
+export async function verifySiteCustomDomainAction(siteId: string, domain: string) {
+    try {
+        const session = await getServerSession(authOptions);
+        if (!session?.user?.id) {
+            return { success: false, error: "Unauthorized" };
+        }
+
+        const result = await IdentityClient.verifySiteCustomDomain(session.user.id, siteId, domain);
+        return { success: true, result };
+    } catch (err: any) {
+        console.error("[VERIFY_SITE_DOMAIN_ACTION]", err);
+        const message = err.message;
+        if (message === "Access denied") {
+            return { success: false, error: "Site not found or access denied" };
+        }
+        if (message === "Upgrade required") {
+            return { success: false, error: "Paket Anda tidak mendukung domain kustom." };
+        }
+        return { success: false, error: message };
+    }
+}
+
+const adminUserSchema = z.object({
+    name: z.string().optional(),
+    email: z.string().email("Invalid email address"),
+    role: z.string().optional().default("user"),
+    password: z.string().optional(),
+    userId: z.string().optional(),
+});
+
+export async function createUserAction(body: any) {
+    try {
+        const { session, siteId, error } = await getApiContext(["admin", "owner"]);
+        if (error) return { success: false, error };
+
+        const parsed = adminUserSchema.safeParse(body);
+        if (!parsed.success) {
+            return { success: false, error: "Validation failed", details: parsed.error.format() };
+        }
+
+        try {
+            const user = await IdentityClient.createUserByAdmin(siteId, parsed.data, session.user.role);
+            return { success: true, user };
+        } catch (err: any) {
+            return { success: false, error: err.message };
+        }
+    } catch (error: any) {
+        console.error("Create User Action Error:", error);
+        return { success: false, error: "Failed to create user" };
+    }
+}
+
+export async function updateUserAction(id: string, body: any) {
+    try {
+        const { session, siteId, error } = await getApiContext(["admin", "owner"]);
+        if (error) return { success: false, error };
+
+        if (!id) return { success: false, error: "User ID required" };
+
+        const parsed = adminUserSchema.partial().safeParse(body);
+        if (!parsed.success) {
+            return { success: false, error: "Validation failed", details: parsed.error.format() };
+        }
+
+        try {
+            await IdentityClient.updateUserByAdmin(id, siteId, parsed.data, session.user.id, session.user.role);
+            return { success: true };
+        } catch (err: any) {
+            return { success: false, error: err.message };
+        }
+    } catch (error: any) {
+        console.error("Update User Action Error:", error);
+        return { success: false, error: "Failed to update user" };
+    }
+}
+
+export async function deleteUserAction(id: string) {
+    try {
+        const { session, siteId, error } = await getApiContext(["admin", "owner"]);
+        if (error) return { success: false, error };
+
+        if (!id) return { success: false, error: "User ID required" };
+
+        try {
+            const result = await IdentityClient.deleteUserByAdmin(id, siteId, session.user.id, session.user.role);
+            return { success: true, removed: result.removed };
+        } catch (err: any) {
+            return { success: false, error: err.message };
+        }
+    } catch (error: any) {
+        console.error("Delete User Action Error:", error);
+        return { success: false, error: "Failed to delete user" };
+    }
+}
+
+export async function getUsersAction() {
+    try {
+        const { session, siteId, error } = await getApiContext(["admin", "owner", "editor"]);
+        if (error) return { success: false, error };
+
+        const { getTenant } = await import("@/lib/domains/tenant");
+        const tenant = await getTenant();
+        const isTenantContext = !!siteId && tenant !== null && tenant !== "admin";
+
+        const { users } = await IdentityClient.getUsers(session.user.role, isTenantContext, siteId);
+        return { success: true, users };
+    } catch (error: any) {
+        console.error("Get Users Action Error:", error);
+        return { success: false, error: "Failed to fetch users" };
     }
 }
