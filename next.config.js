@@ -9,28 +9,30 @@ const nextConfig = {
   async rewrites() {
     return [
       // Webhook Pembayaran Duitku (Tetap Dipertahankan)
-      { source: '/api/billing/webhook/duitku', destination: '/api/payment/billing/webhook/duitku' },
+      { source: '/api/billing/webhook/duitku', destination: '/endpoints/payment/billing/webhook/duitku' },
       
       // Order routes (Public Visitor Checkout)
-      { source: '/api/orders/:path*', destination: '/api/order/orders/:path*' },
+      { source: '/api/orders/:path*', destination: '/endpoints/order/orders/:path*' },
       
-      // Post routes (Public Visitor Testimonials & Search)
-      { source: '/api/testimonials/:path*', destination: '/api/post/testimonials/:path*' },
-      { source: '/api/search/:path*', destination: '/api/post/search/:path*' },
+      // Post routes (Public Visitor Testimonials)
+      { source: '/api/testimonials/:path*', destination: '/endpoints/post/testimonials/:path*' },
       
       // Shared / Utility routes
-      { source: '/api/openapi/:path*', destination: '/api/shared/openapi/:path*' },
+      { source: '/api/openapi/:path*', destination: '/endpoints/shared/openapi/:path*' },
       
       // Site routes (Public Health Check & Contact)
-      { source: '/api/contact/:path*', destination: '/api/site/contact/:path*' },
-      { source: '/api/health/:path*', destination: '/api/site/health/:path*' },
+      { source: '/api/contact/:path*', destination: '/endpoints/site/contact/:path*' },
+      { source: '/api/health/:path*', destination: '/endpoints/site/health/:path*' },
       
       // Subscription cron check route
-      { source: '/api/cron/:path*', destination: '/api/subscription/cron/:path*' },
+      { source: '/api/cron/:path*', destination: '/endpoints/subscription/cron/:path*' },
       
       // Page editor helper routes
-      { source: '/api/credbuild/:path*', destination: '/api/page/credbuild/:path*' },
-      { source: '/api/ai/:path*', destination: '/api/page/ai/:path*' },
+      { source: '/api/credbuild/:path*', destination: '/endpoints/page/credbuild/:path*' },
+      { source: '/api/ai/:path*', destination: '/endpoints/page/ai/:path*' },
+
+      // Catch-all mapping untuk sisa /api/* ke /endpoints/*
+      { source: '/api/:path*', destination: '/endpoints/:path*' },
     ];
   },
   output: 'standalone',
