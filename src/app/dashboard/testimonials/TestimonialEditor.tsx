@@ -9,6 +9,7 @@ import { FormSection, FormInput, FormTextArea, FormSwitch } from "@/components/u
 import { FormMediaPicker } from "@/components/ui/FormMediaPicker";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { EditorLayout } from "@/components/dashboard/EditorLayout";
+import { createTestimonialAction, updateTestimonialAction, deleteTestimonialAction } from "@/modules/post/actions/post.actions";
 
 interface TestimonialData {
     id?: string;
@@ -42,19 +43,16 @@ export default function TestimonialEditor({ initialData }: { initialData?: Testi
         setLoading(true);
 
         try {
-            const method = isEditMode ? "PUT" : "POST";
-            const res = await fetch("/api/testimonials", {
-                method,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData)
-            });
+            const res = isEditMode
+                ? await updateTestimonialAction(formData.id, formData)
+                : await createTestimonialAction(formData);
 
-            if (res.ok) {
+            if (res.success) {
                 router.push("/dashboard/testimonials");
                 router.refresh();
                 toast.success("Testimoni berhasil disimpan");
             } else {
-                toast.error("Gagal menyimpan testimoni");
+                toast.error(res.error || "Gagal menyimpan testimoni");
             }
         } catch (error) {
             console.error(error);
@@ -67,13 +65,13 @@ export default function TestimonialEditor({ initialData }: { initialData?: Testi
     const handleDelete = async () => {
         setLoading(true);
         try {
-            const res = await fetch(`/api/testimonials/${formData.id}`, { method: "DELETE" });
-            if (res.ok) {
+            const res = await deleteTestimonialAction(formData.id);
+            if (res.success) {
                 router.push("/dashboard/testimonials");
                 router.refresh();
                 toast.success("Testimoni berhasil dihapus");
             } else {
-                toast.error("Gagal menghapus testimoni");
+                toast.error(res.error || "Gagal menghapus testimoni");
             }
         } catch (error) {
             console.error(error);
