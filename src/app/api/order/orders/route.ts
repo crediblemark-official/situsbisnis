@@ -1,4 +1,4 @@
-import { apiResponse, apiError, validateBody } from "@/lib/api/utils";
+import { getApiContext, apiResponse, apiError, validateBody } from "@/lib/api/utils";
 import { OrderClient } from "@/modules/order";
 import { SubscriptionClient } from "@/modules/subscription";
 import { validateCsrf } from "@/modules/shared/utils/csrf";
@@ -28,26 +28,21 @@ export async function POST(req: Request) {
             return apiError("CSRF validation failed", 403);
         }
 
-        const siteId = await (async () => {
-            const { getSiteId } = await import("@/lib/domains/tenant");
-            return await getSiteId();
-        })();
+        const { session, siteId: ctxSiteId, error: authError, status: authStatus } = await getApiContext(undefined, { isPublic: true });
+        if (authError) return apiError(authError, authStatus);
 
-        if (!siteId) return apiError("Site context required", 400);
+        const finalSiteId = ctxSiteId;
+        if (!finalSiteId) return apiError("Site context required", 400);
 
         const { data, error: vError, details, status: vStatus } = await validateBody(req, orderSchema);
         if (vError) return apiError(vError, vStatus, details);
 
         const { items, name, email, address, city, zip, phone, paymentMethod } = data;
 
-        const { getServerSession } = await import("next-auth");
-        const { authOptions } = await import("@/lib/auth");
-        const session = await getServerSession(authOptions);
-
         const sessionCustomer = session?.user ? { name: session.user.name, email: session.user.email } : undefined;
 
         const result = await OrderClient.createOrder(
-            siteId,
+            finalSiteId,
             items,
             { name, email, address, city, zip, phone, paymentMethod },
             sessionCustomer

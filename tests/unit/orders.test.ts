@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { POST as createOrder } from '@/app/api/order/orders/route';
 import { db } from '@/lib/core/db';
-import { validateBody } from '@/lib/api/utils';
+import { validateBody, getApiContext } from '@/lib/api/utils';
 import { SubscriptionClient } from '@/modules/subscription';
 import { getSiteId } from '@/lib/domains/tenant';
 import { getServerSession } from 'next-auth';
@@ -54,6 +54,7 @@ describe('Orders API POST Route', () => {
     vi.clearAllMocks();
     vi.spyOn(console, 'error').mockImplementation(() => {});
     vi.mocked(getServerSession).mockResolvedValue(null);
+    vi.mocked(getApiContext).mockResolvedValue({ session: null, siteId: 'site-123' } as any);
     vi.mocked(db.site.findUnique).mockResolvedValue({ name: 'Test Site' } as any);
     vi.mocked(db.paymentSettings.findUnique).mockResolvedValue(null);
     vi.mocked(db.platformSettings.findUnique).mockResolvedValue(null);

@@ -1,5 +1,4 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getApiContext, apiError } from "@/lib/api/utils";
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { db } from "@/modules/shared/core/db";
@@ -28,9 +27,9 @@ async function isAllowedTarget(hostname: string, rootDomain: string): Promise<bo
 }
 
 export async function GET(req: NextRequest) {
-    const session = await getServerSession(authOptions);
+    const { session, error: authError, status: authStatus } = await getApiContext(undefined, { requireSite: false });
 
-    if (!session?.user?.id) {
+    if (authError || !session?.user?.id) {
         const host = req.headers.get("host") || "localhost:3000";
         const protocol = req.headers.get("x-forwarded-proto") === "https" ? "https" : "http";
         return NextResponse.redirect(new URL("/login", `${protocol}://${host}`));
@@ -38,14 +37,14 @@ export async function GET(req: NextRequest) {
 
     const target = req.nextUrl.searchParams.get("target");
     if (!target) {
-        return NextResponse.json({ error: "Missing target parameter" }, { status: 400 });
+        return apiError("Missing target parameter", 400);
     }
 
     let targetUrl: URL;
     try {
         targetUrl = new URL(target);
     } catch {
-        return NextResponse.json({ error: "Invalid target URL" }, { status: 400 });
+        return apiError("Invalid target URL", 400);
     }
 
     const rootDomain = (process.env.NEXT_PUBLIC_ROOT_DOMAIN || "situsbisnis.com")
@@ -53,7 +52,7 @@ export async function GET(req: NextRequest) {
     const targetHost = targetUrl.hostname;
 
     if (!isAllowedTarget(targetHost, rootDomain)) {
-        return NextResponse.json({ error: "Invalid target domain" }, { status: 400 });
+        return apiError("Invalid target domain", 400);
     }
 
     const secret = process.env.NEXTAUTH_SECRET!;
@@ -71,3 +70,4 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.redirect(acceptUrl.toString());
 }
+
