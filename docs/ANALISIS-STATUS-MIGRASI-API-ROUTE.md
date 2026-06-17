@@ -1,170 +1,176 @@
-# Analisis Status Migrasi API Route → Modules
+# Analisis Status Migrasi Modules — Update
 
-**Tanggal:** 17 Juni 2026  
-**Scope:** `src/app/api/` → `src/modules/*/actions/` (Server Actions)
-
----
-
-## Ringkasan Eksekutif
-
-Migrasi ke modular monolith baru **setengah jalan** — Server Actions sudah dibuat di beberapa modul, tapi client komponen belum diperbarui untuk menggunakannya. Dua jalur (API route + Server Actions) hidup berdampingan secara tidak konsisten.
+**Tanggal:** 17 Juni 2026 (scan ulang)  
+**Kondisi:** `src/app/api/` sudah dihapus total. Diganti `src/app/endpoints/[...route]/route.ts` + Server Actions.
 
 ---
 
-## 1. Bug Aktif: Folder API Kosong (route.ts tidak ada)
-
-Folder berikut **dibuat tapi kosong** — tidak ada `route.ts` di dalamnya, padahal rewrite rule di `next.config.js` mengarah ke sana:
+## Gambaran Arsitektur Saat Ini
 
 ```
-src/app/api/auth/register/          ← kosong → /api/register → 404
-src/app/api/auth/user/              ← kosong → /api/user → 404
-src/app/api/auth/onboarding/        ← kosong → /api/onboarding → 404
-src/app/api/auth/profile/           ← kosong → /api/profile → 404
-src/app/api/auth/affiliate/check/   ← kosong
-src/app/api/auth/affiliate/withdraw/ ← kosong
-src/app/api/catalog/                ← kosong total (tidak ada subfolder)
-```
+HTTP Request publik/eksternal
+    ↓ next.config.js rewrite (8 rules tersisa)
+    ↓
+src/app/endpoints/
+    ├── auth/[...nextauth]/route.ts       ← NextAuth OAuth
+    └── [...route]/route.ts               ← Catch-all switch (HTTP controller)
+            ↓
+        src/modules/*/controllers/*-api.controller.ts
+            ↓
+        src/modules/*/services/*.service.ts
 
-**Aksi:** Hapus folder kosong ini. Logic sudah ada di `auth.actions.ts`. Update client yang memanggilnya.
-
----
-
-## 2. API Routes "Stub" — Setengah Jalan ke Module API
-
-File route yang hanya meneruskan ke `src/modules/*/api/`:
-
-```ts
-// src/app/api/media/gallery/route.ts
-export { galleryApi as GET } from "@/modules/media/api";
-
-// src/app/api/media/portfolios/route.ts
-export { portfolioApi as GET, portfolioApi as POST } from "@/modules/media/api";
-
-// src/app/api/post/testimonials/route.ts
-export {
-  testimonialApi as GET,
-  testimonialApi as POST,
-} from "@/modules/post/api";
-```
-
-**Masalah:** Gallery, Portfolio, Testimonial sudah punya Server Actions di `media.actions.ts` dan `post.actions.ts`, tapi client komponen masih memanggil `fetch("/api/portfolios/...")` dan `fetch("/api/testimonials/...")`. Dua jalur aktif bersamaan.
-
----
-
-## 3. Inkonsistensi: Actions Ada, Client Belum Dimigrasi
-
-Ini inkonsistensi terbesar.
-
-| Modul   | Actions               | Komponen UI yang masih `fetch()`                                                                                                                                          |
-| ------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `post`  | ✅ `post.actions.ts`  | `TestimonialCard.tsx`, `testimonials/[id]/page.tsx` → `fetch("/api/testimonials/...")`                                                                                    |
-| `media` | ✅ `media.actions.ts` | `PortfolioEditor.tsx`, `PortfolioList.client.tsx`, `dashboard/media/page.tsx` → `fetch("/api/portfolios/...")`, `fetch("/api/media")`                                     |
-| `site`  | ✅ `site.actions.ts`  | `Header.tsx`, `Footer.tsx`, `FloatingChat.tsx`, `DashboardShell.tsx`, `use-currency.ts`, `use-platform-settings.ts` → `fetch("/api/settings")`, `fetch("/api/menus/...")` |
-| `page`  | ✅ `page.actions.ts`  | `dashboard/pages/[id]/page.tsx` → `fetch("/api/pages/...")`                                                                                                               |
-
-### Kasus Khusus: `fetch("/api/settings")` di Shared Module
-
-Dipanggil dari 6 tempat berbeda:
-
-- `modules/shared/ui/layout/Header.tsx`
-- `modules/shared/ui/layout/Footer.tsx`
-- `modules/shared/ui/ui/FloatingChat.tsx`
-- `modules/shared/ui/dashboard/DashboardShell.tsx`
-- `modules/shared/hooks/use-currency.ts`
-- `modules/shared/hooks/use-platform-settings.ts`
-
-Ini **tidak bisa diganti Server Action langsung** karena dipanggil dari client context. Solusi: lift data ke Server Component parent (layout) dan inject via React Context.
-
----
-
-## 4. Modul Belum Punya Actions Sama Sekali
-
-| Modul            | Status                  | Komponen yang terdampak                                                                                                                           |
-| ---------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `order`          | ❌ tidak ada `actions/` | `OrderStatusManager.tsx` → `fetch("/api/orders/...")`                                                                                             |
-| `subscription`   | ❌ tidak ada `actions/` | `SubscriptionDetailModal.tsx` → `fetch("/api/admin/plans")`, `admin/subscriptions/SubscriptionList.tsx` → `fetch("/api/admin/subscriptions/...")` |
-| `infrastructure` | ❌ tidak ada `actions/` | `BackupClient.tsx` → `fetch("/api/admin/backup")`, `admin/sites/SiteList.tsx` → `fetch("/api/admin/sites/...")`                                   |
-| `domain`         | ❌ tidak ada `actions/` | —                                                                                                                                                 |
-| `notification`   | ❌ tidak ada `actions/` | —                                                                                                                                                 |
-| `crud`           | ❌ tidak ada `actions/` | —                                                                                                                                                 |
-
----
-
-## 5. Rewrite Rules yang Belum Bersih
-
-`next.config.js` masih punya 30+ rewrite rules aktif. Beberapa sudah di-comment `DEPRECATED` tapi client masih menggunakan URL lama:
-
-```js
-// Masih aktif di next.config.js
-{ source: '/api/settings/:path*', destination: '/api/site/settings/:path*' },
-{ source: '/api/gallery/:path*',  destination: '/api/media/gallery/:path*' },
-{ source: '/api/portfolios/:path*', destination: '/api/media/portfolios/:path*' },
-// dll.
+Browser (dashboard/admin) → Server Actions
+    src/modules/*/actions/*.actions.ts
+        ↓
+    src/modules/*/services/*.service.ts
 ```
 
 ---
 
-## Roadmap Migrasi
+## Status per Modul
 
-### Fase 1 — Fix Bug Aktif (prioritas sekarang)
-
-- Hapus folder `src/app/api/auth/register/`, `user/`, `onboarding/`, `profile/` yang kosong
-- Hapus folder `src/app/api/catalog/` yang kosong
-- Pastikan rewrite rules untuk route ini juga dihapus atau dialihkan ke actions
-
-### Fase 2 — Selesaikan yang Setengah Jalan (media, post)
-
-- Migrasi `TestimonialCard.tsx` + `testimonials/[id]/page.tsx` → pakai `post.actions.ts`
-- Migrasi `PortfolioEditor.tsx` + `PortfolioList.client.tsx` + `dashboard/media/page.tsx` → pakai `media.actions.ts`
-- Hapus stub routes: `media/gallery/route.ts`, `media/portfolios/route.ts`, `post/testimonials/route.ts` (GET tetap untuk publik)
-
-### Fase 3 — Buat Actions untuk 4 Modul (order, subscription, infrastructure, domain)
-
-- Buat `src/modules/order/actions/order.actions.ts`
-- Buat `src/modules/subscription/actions/subscription.actions.ts`
-- Buat `src/modules/infrastructure/actions/infrastructure.actions.ts`
-- Buat `src/modules/domain/actions/domain.actions.ts`
-- Migrasi client components yang terdampak
-
-### Fase 4 — Tangani shared/settings Secara Arsitektural
-
-- Buat `SiteSettingsContext` yang diisi dari Server Component di `(site)/layout.tsx` dan `dashboard/layout.tsx`
-- Hapus semua `fetch("/api/settings")` dari client components
-- Hapus `use-platform-settings.ts` hook berbasis fetch
-
-### Fase 5 — Hapus Rewrite Rules
-
-- Setelah semua client dimigrasi, hapus rewrite rules dari `next.config.js` satu per satu
+| Modul          | Actions                                          | API Controller                                          | Index/Client              |
+| -------------- | ------------------------------------------------ | ------------------------------------------------------- | ------------------------- |
+| auth           | ✅ `auth.actions.ts` (12 fungsi)                 | ✅ `auth-api.controller.ts` (bridge SSO)                | ✅ `IdentityClient`       |
+| catalog        | ✅ `product.actions.ts` (4 fungsi)               | —                                                       | ✅ `CatalogClient`        |
+| financial      | ✅ `financial.actions.ts` + `billing.actions.ts` | ✅ `financial.controller.ts`                            | ✅ `FinancialClient`      |
+| infrastructure | ✅ `infra.actions.ts` (4 fungsi)                 | ✅ `provisioning.controller.ts`                         | ✅ `InfrastructureClient` |
+| media          | ✅ `media.actions.ts` (11 fungsi)                | ✅ `media-api.controller.ts` (upload + proxy)           | ✅ `MediaClient`          |
+| order          | ⚠️ `order.actions.ts` (1 fungsi saja)            | ✅ `order-api.controller.ts` (5 fungsi)                 | ✅ `OrderClient`          |
+| page           | ✅ `page.actions.ts` (4 fungsi)                  | ✅ `page-api.controller.ts` (AI + credbuild)            | ✅ `PageClient`           |
+| payment        | ✅ `payment.actions.ts` (5 fungsi)               | ✅ `payment-api.controller.ts` (webhook)                | ✅ `PaymentClient`        |
+| post           | ✅ `post.actions.ts` (10 fungsi)                 | ✅ `post-api.controller.ts` (re-export testimonialApi)  | ✅ `PostClient`           |
+| site           | ✅ `site.actions.ts` (3 fungsi)                  | ✅ `site-api.controller.ts` (settings, health, contact) | ✅ `SiteClient`           |
+| subscription   | ✅ `subscription.actions.ts` (4 fungsi)          | ✅ `subscription-api.controller.ts` (cron)              | ✅ `SubscriptionClient`   |
+| domain         | ❌ tidak ada actions                             | controllers hanya internal wrappers                     | ✅ `DomainClient`         |
+| notification   | ❌ tidak ada actions                             | —                                                       | exports langsung          |
+| crud           | ❌ tidak ada actions                             | `crud.controller.ts` (internal factory)                 | `CrudClient`              |
+| shared         | —                                                | `openapi-api.controller.ts`                             | utilities                 |
 
 ---
 
-## Route yang WAJIB Tetap Ada (Tidak Dimigrasi)
+## Masalah 1: Fetch Calls yang Masih Menghasilkan 404
 
-```
-auth/[...nextauth]/route.ts                    ← OAuth callback NextAuth
-payment/billing/webhook/duitku/route.ts        ← External webhook Duitku
-order/orders/webhook/duitku/route.ts           ← External webhook Duitku
-subscription/cron/check-subscriptions/route.ts ← External cron job
-auth/bridge/route.ts + bridge/accept/route.ts  ← Cross-domain SSO
-media/proxy/route.ts                           ← Image streaming + Sharp
-media/route.ts (POST)                          ← File upload multipart
-site/health/route.ts                           ← Health check load balancer
-site/contact/route.ts (POST)                   ← Form kontak visitor publik
-shared/openapi/route.ts                        ← OpenAPI spec tools eksternal
-order/orders/route.ts (POST)                   ← Checkout publik (site visitor)
-order/orders/check-status/route.ts             ← Polling checkout publik
-order/orders/payment/route.ts                  ← Init payment (butuh req.headers)
-order/orders/payment-methods/route.ts          ← Checkout publik
-post/testimonials/route.ts (POST)              ← Submit testimonial visitor publik
-```
+`src/app/api/` sudah dihapus dan ada catch-all rewrite `/api/:path*` → `/endpoints/:path*`, tapi catch-all route hanya menangani route yang terdaftar di switch. Route berikut **tidak ada di switch → 404 aktif**:
+
+| Fetch Call                           | Dipanggil Dari                                                                                   | Status |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------ | ------ |
+| `GET /api/media`                     | `dashboard/media/page.tsx`, `BillingClient.tsx`, `HistoryBillClient.tsx`, `MediaPickerField.tsx` | ❌ 404 |
+| `GET /api/media/folders`             | `dashboard/media/page.tsx`                                                                       | ❌ 404 |
+| `GET /api/taxonomies`                | `PostEditor.tsx`, `PostList.client.tsx`, `taxonomies/new/page.tsx`                               | ❌ 404 |
+| `POST /api/taxonomies`               | `taxonomies/new/page.tsx`                                                                        | ❌ 404 |
+| `GET /api/menus?slug=...`            | `Header.tsx`, `Footer.tsx`                                                                       | ❌ 404 |
+| `PATCH/DELETE /api/portfolios/:id`   | `PortfolioEditor.tsx`, `PortfolioList.client.tsx`                                                | ❌ 404 |
+| `GET /api/portfolios/:id`            | `portfolios/[id]/page.tsx`                                                                       | ❌ 404 |
+| `PATCH/DELETE /api/testimonials/:id` | `TestimonialCard.tsx`, `testimonials/[id]/page.tsx`                                              | ❌ 404 |
+| `POST /api/users`                    | `admin/users/UserList.tsx`                                                                       | ❌ 404 |
+| `PATCH /api/orders/:id`              | `dashboard/orders/[orderId]/OrderStatusManager.tsx`                                              | ❌ 404 |
+
+**Catatan:** `dashboard/media/page.tsx` sudah menggunakan `media.actions.ts` untuk list (baris 47), tapi masih menggunakan `fetch("/api/media")` POST untuk upload (baris 140) — yang ini masih ter-handle karena `case "media": return uploadMediaApi(req)` ada di POST switch.
 
 ---
 
-## Target Akhir
+## Masalah 2: Duplikasi Actions di payment vs financial
 
-|                                                             | Sekarang  | Target |
-| ----------------------------------------------------------- | --------- | ------ |
-| Total API routes                                            | ~74       | ~15–18 |
-| Modul dengan actions                                        | 8/14      | 14/14  |
-| Client yang masih pakai `fetch("/api/...")` untuk dashboard | ~35 calls | 0      |
-| Rewrite rules aktif                                         | 30        | 0      |
+`payment.actions.ts` dan `financial/billing.actions.ts` menduplikasi 4 fungsi dengan nama sama:
+
+| Fungsi                       | `payment/actions/payment.actions.ts`        | `financial/actions/billing.actions.ts`        |
+| ---------------------------- | ------------------------------------------- | --------------------------------------------- |
+| `cancelTransactionAction`    | ✅ ada (signature: `transactionId: string`) | ✅ ada (signature: `body: { transactionId }`) |
+| `upgradePlanAction`          | ✅ ada                                      | ✅ ada                                        |
+| `buySlotAction`              | ✅ ada                                      | ✅ ada                                        |
+| `confirmManualPaymentAction` | ✅ ada                                      | ✅ ada                                        |
+
+**Yang digunakan oleh komponen UI:**
+
+- `HistoryBillClient.tsx` import dari `@/modules/financial` → pakai `billing.actions.ts`
+- `TransactionList.tsx` import dari `@/modules/payment/actions/payment.actions` → pakai `payment.actions.ts`
+- `BillingClient.tsx` masih `fetch("/api/billing/...")` → **tidak pakai actions sama sekali**
+
+Ini redundan dan berisiko konflik — dua implementasi berbeda untuk operasi yang sama.
+
+---
+
+## Masalah 3: `order.actions.ts` Sangat Tidak Lengkap
+
+Hanya punya 1 fungsi (`updateOrderFulfillmentAction`), sementara `order.controller.ts` punya 13 fungsi. Banyak operasi order dari dashboard masih belum punya Server Action:
+
+- `OrderStatusManager.tsx` masih `fetch("/api/orders/:id")` untuk PATCH — tidak ter-handle di endpoint switch
+
+---
+
+## Masalah 4: `page.actions.ts` Tidak Lengkap
+
+Hanya ada: `createPageAction`, `deletePageAction`, `updateMenuAction`, `getMenuAction`.  
+Tidak ada: `updatePageAction`, `getPageAction` — padahal `dashboard/pages/[id]/page.tsx` butuh update page.
+
+---
+
+## Masalah 5: `site.actions.ts` Sangat Minimal (3 fungsi)
+
+Hanya: `updateSiteSettingsAction`, `savePaymentSettingsAction`, `validateGtmAction`.  
+`fetch("/api/settings")` GET dari `Header.tsx`, `Footer.tsx`, `DashboardShell.tsx`, `use-currency.ts`, `use-platform-settings.ts` **ter-handle** (lewat endpoint GET `site/settings`), tapi ini adalah pola yang seharusnya diganti dengan Server Component + Context — bukan fetch dari client.
+
+---
+
+## Masalah 6: fetch di Shared Module (Arsitektural)
+
+6 komponen di `modules/shared/` memanggil `fetch("/api/settings")` dan `fetch("/api/menus")` dari client context:
+
+```
+modules/shared/hooks/use-currency.ts
+modules/shared/hooks/use-platform-settings.ts
+modules/shared/ui/dashboard/DashboardShell.tsx
+modules/shared/ui/layout/Header.tsx
+modules/shared/ui/layout/Footer.tsx
+modules/shared/ui/ui/FloatingChat.tsx
+```
+
+Ini adalah debt arsitektural. Solusi yang benar: inject `siteSettings` dan `menus` sebagai props dari Server Component parent (layout), bukan fetch dari client.
+
+---
+
+## Endpoint Switch: Route yang Belum Ada tapi Dibutuhkan
+
+Perlu ditambahkan ke `src/app/endpoints/[...route]/route.ts`:
+
+```
+GET  media                    → getMediaListApi()
+GET  media/folders            → getMediaFoldersApi()
+GET  post/taxonomies          → getTaxonomiesApi()
+POST post/taxonomies          → createTaxonomyApi()
+GET  page/menus               → getMenusApi()
+GET  media/portfolios/:id     → getPortfolioApi()
+PATCH/DELETE media/portfolios/:id → updatePortfolioApi() / deletePortfolioApi()
+PATCH/DELETE post/testimonials/:id → updateTestimonialApi() / deleteTestimonialApi()
+POST auth/users               → createUserApi()
+PATCH order/orders/:id        → updateOrderFulfillmentApi()
+```
+
+**Atau** — migrasi komponen-komponen ini ke Server Actions (lebih baik untuk dashboard).
+
+---
+
+## Prioritas Aksi
+
+### Immediate (bug aktif / 404):
+
+1. Tambahkan GET `media` ke endpoint switch → `getMediaListApi()` di `media-api.controller.ts`
+2. Tambahkan GET `media/folders` ke endpoint switch
+3. Tambahkan GET/POST `post/taxonomies` ke endpoint switch
+4. Tambahkan GET `page/menus` ke endpoint switch
+5. Tambahkan PATCH `/order/orders/:id` ke endpoint switch (atau buat `updateOrderFulfillmentAction` dipanggil langsung)
+6. Migrasi `PortfolioEditor.tsx` + `PortfolioList.client.tsx` → pakai `media.actions.ts`
+7. Migrasi `TestimonialCard.tsx` + `testimonials/[id]/page.tsx` → pakai `post.actions.ts`
+8. Migrasi `admin/users/UserList.tsx` → pakai `getUsersAction()` + `createUserAction()` dari `auth.actions.ts`
+
+### Short-term (cleanup duplikasi):
+
+9. Gabungkan `payment.actions.ts` ke dalam `financial/billing.actions.ts` — hapus duplikasi
+10. Migrate `BillingClient.tsx` (8 fetch calls) ke `billing.actions.ts`
+
+### Medium-term (arsitektural):
+
+11. Buat `SiteSettingsContext` — inject dari layout server component, hapus `fetch("/api/settings")` dari 6 shared components
+12. Lengkapi `page.actions.ts` dengan `updatePageAction`
+13. Lengkapi `order.actions.ts` dengan actions yang relevan untuk dashboard
