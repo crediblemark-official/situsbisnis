@@ -1,36 +1,37 @@
-"use client";
-
-import { useEffect, useState, use } from "react";
 import PostEditor from "@/app/dashboard/posts/PostEditor";
-import { Loader2 } from "lucide-react";
+import { db } from "@/modules/shared/core/db";
+import { getSiteId } from "@/lib/domains/tenant";
+import { notFound } from "next/navigation";
 
-export default function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = use(params);
-    const [data, setData] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
+export const dynamic = 'force-dynamic';
 
-    useEffect(() => {
-        if (!id) return;
+export default async function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const siteId = await getSiteId();
+    if (!siteId) return notFound();
 
-        fetch(`/api/posts/${id}`)
-            .then(res => res.json())
-            .then(res => {
-                const postData = res.data || res;
-                if (postData && !postData.error) {
-                    setData(postData);
-                }
-                setLoading(false);
-            })
-            .catch(() => setLoading(false));
-    }, [id]);
+    const data = await db.post.findFirst({
+        where: { id, siteId },
+        include: { metaData: true }
+    });
 
-    if (loading) {
-        return (
-            <div className="w-full h-[60vh] flex flex-col items-center justify-center gap-4">
-                <Loader2 className="animate-spin text-primary" size={48} />
-                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground animate-pulse">Memuat Artikel...</span>
-            </div>
-        );
+    const taxonomy = await db.taxonomy.findFirst({
+        where: {
+            siteId,
+            OR: [
+                { slug: "category" },
+                { name: { contains: "category", mode: "insensitive" } },
+                { name: { contains: "kategori", mode: "insensitive" } },
+            ]
+        }
+    });
+
+    let categories: string[] = [];
+    if (taxonomy) {
+        const terms = await db.term.findMany({
+            where: { taxonomyId: taxonomy.id }
+        });
+        categories = terms.map(t => t.name);
     }
 
     if (!data) {
@@ -41,5 +42,5 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
         );
     }
 
-    return <PostEditor key={data.id} postId={data.id} initialData={data} />;
+    return <PostEditor key={data.id} postId={data.id} initialData={data as any} initialCategories={categories} />;
 }

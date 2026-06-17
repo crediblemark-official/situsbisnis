@@ -10,12 +10,12 @@ import { EditorLayout } from "@/components/dashboard/EditorLayout";
 import { FormSection, FormInput, FormSelect, FormSwitch } from "@/components/ui/Form";
 import { SeoScoreIndicator, SeoCheck } from "@/components/dashboard/SeoScoreIndicator";
 
-export default function PostEditor({ postId, initialData }: { postId?: string, initialData?: any }) {
+export default function PostEditor({ postId, initialData, initialCategories }: { postId?: string, initialData?: any, initialCategories?: string[] }) {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [categories, setCategories] = useState<string[]>([]);
-    const [loadingCategories, setLoadingCategories] = useState(true);
+    const [categories, setCategories] = useState<string[]>(initialCategories || []);
+    const [loadingCategories, setLoadingCategories] = useState(!initialCategories);
 
     const [formData, setFormData] = useState({
         title: initialData?.title || "",
@@ -31,6 +31,7 @@ export default function PostEditor({ postId, initialData }: { postId?: string, i
 
     // Load categories dynamically from Site Taxonomies where slug = "category"
     React.useEffect(() => {
+        if (initialCategories) return;
         const loadCategories = async () => {
             try {
                 const res = await fetch("/api/taxonomies");
@@ -71,7 +72,7 @@ export default function PostEditor({ postId, initialData }: { postId?: string, i
         };
         
         loadCategories();
-    }, []);
+    }, [initialCategories]);
 
     // Extract keywords and noindex from metadata
     const keywordsMeta = formData.metaData?.find((m: any) => m.key === "keywords");
@@ -158,20 +159,24 @@ export default function PostEditor({ postId, initialData }: { postId?: string, i
                 // keep as is
             }
 
-            const url = isEditing ? `/api/posts/${initialData.id}` : "/api/posts";
-            const method = isEditing ? "PUT" : "POST";
-
-            const res = await fetch(url, {
-                method,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
+            let res;
+            if (isEditing) {
+                const { updatePostAction } = await import("@/modules/post/actions/post.actions");
+                res = await updatePostAction(initialData.id, {
                     ...formData,
                     content: parsedContent,
-                    published: formData.status === "published"
-                })
-            });
+                    status: formData.status
+                });
+            } else {
+                const { createPostAction } = await import("@/modules/post/actions/post.actions");
+                res = await createPostAction({
+                    ...formData,
+                    content: parsedContent,
+                    status: formData.status
+                });
+            }
 
-            if (!res.ok) throw new Error("Failed to save");
+            if (!res.success) throw new Error(res.error || "Failed to save");
 
             router.refresh();
             router.push("/dashboard/posts");

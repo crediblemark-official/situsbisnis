@@ -32,14 +32,14 @@ type Post = {
     }[];
 };
 
-export default function PostList({ posts }: { posts: Post[] }) {
+export default function PostList({ posts, initialCategories }: { posts: Post[]; initialCategories?: string[] }) {
     const router = useRouter();
     const [updatingPostId, setUpdatingPostId] = useState<string | null>(null);
-    const [categories, setCategories] = useState<string[]>([]);
-    const [loadingCategories, setLoadingCategories] = useState(true);
+    const [categories, setCategories] = useState<string[]>(initialCategories || []);
+    const [loadingCategories, setLoadingCategories] = useState(!initialCategories);
 
-    // Fetch dynamic categories from Site Taxonomies where slug = "category"
     React.useEffect(() => {
+        if (initialCategories) return;
         const loadCategories = async () => {
             try {
                 const res = await fetch("/api/taxonomies");
@@ -74,13 +74,12 @@ export default function PostList({ posts }: { posts: Post[] }) {
                 console.error("Error loading dynamic categories in PostList:", err);
             }
             
-            // Empty array if no taxonomy or terms found. NO hardcoded fallbacks!
             setCategories([]);
             setLoadingCategories(false);
         };
         
         loadCategories();
-    }, []);
+    }, [initialCategories]);
 
     const getPostCategory = (post: Post) => {
         const categoryMeta = post.metaData?.find((m) => m.key === "category");
@@ -94,36 +93,10 @@ export default function PostList({ posts }: { posts: Post[] }) {
         const finalCategory = newCategory;
 
         try {
-            // 1. Fetch current post detail to get all data (content, imageUrl, etc.)
-            const res = await fetch(`/api/posts/${post.id}`);
-            if (!res.ok) throw new Error("Gagal mengambil data lengkap artikel");
-            const data = await res.json();
+            const { updatePostCategoryAction } = await import("@/modules/post/actions/post.actions");
+            const res = await updatePostCategoryAction(post.id, finalCategory);
 
-            // 2. Prepare updated metadata array
-            const newMetaData = [...(data.metaData || [])];
-            const index = newMetaData.findIndex((m: any) => m.key === "category");
-            if (index > -1) {
-                newMetaData[index] = { ...newMetaData[index], value: finalCategory };
-            } else {
-                newMetaData.push({ key: "category", value: finalCategory, type: "text" });
-            }
-
-            // 3. Send PUT request
-            const putRes = await fetch(`/api/posts/${post.id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    title: data.title,
-                    slug: data.slug,
-                    imageUrl: data.imageUrl || "",
-                    content: data.content ? (typeof data.content === 'string' ? data.content : JSON.stringify(data.content)) : "",
-                    status: data.published ? "published" : "draft",
-                    excerpt: data.excerpt || "",
-                    metaData: newMetaData
-                })
-            });
-
-            if (!putRes.ok) throw new Error("Gagal menyimpan kategori");
+            if (!res.success) throw new Error(res.error || "Gagal mengubah kategori");
 
             toast.success("Kategori berhasil diperbarui", { id: loadingToast });
             router.refresh();
@@ -226,14 +199,13 @@ export default function PostList({ posts }: { posts: Post[] }) {
                                                 variant="danger"
                                                 onConfirm={async () => {
                                                     try {
-                                                        const res = await fetch(`/api/posts/${post.id}`, {
-                                                            method: "DELETE",
-                                                        });
-                                                        if (res.ok) {
+                                                        const { deletePostAction } = await import("@/modules/post/actions/post.actions");
+                                                        const res = await deletePostAction(post.id);
+                                                        if (res.success) {
                                                             router.refresh();
                                                             toast.success("Artikel berhasil dihapus");
                                                         } else {
-                                                            toast.error("Gagal menghapus artikel");
+                                                            toast.error(res.error || "Gagal menghapus artikel");
                                                         }
                                                     } catch (error) {
                                                         console.error(error);

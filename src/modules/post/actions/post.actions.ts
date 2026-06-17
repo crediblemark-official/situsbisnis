@@ -355,3 +355,51 @@ export async function deleteTestimonialAction(id: string) {
         return { success: false, error: "Failed to delete testimonial" };
     }
 }
+
+export async function updatePostCategoryAction(postId: string, categoryName: string) {
+    try {
+        const { siteId, error } = await getApiContext(["admin", "owner", "editor"]);
+        if (error || !siteId) return { success: false, error: error || "Unauthorized" };
+
+        const existing = await db.post.findFirst({ where: { id: postId, siteId } });
+        if (!existing) return { success: false, error: "Post not found or unauthorized" };
+
+        // Cari atau update metadata category
+        const existingCategoryMeta = await db.metaData.findFirst({
+            where: { postId, key: "category" }
+        });
+
+        if (existingCategoryMeta) {
+            await db.metaData.update({
+                where: { id: existingCategoryMeta.id },
+                data: { value: categoryName }
+            });
+        } else {
+            await db.metaData.create({
+                data: {
+                    key: "category",
+                    value: categoryName,
+                    type: "text",
+                    postId
+                }
+            });
+        }
+
+        const updatedPost = await db.post.findUnique({
+            where: { id: postId },
+            include: { metaData: true }
+        });
+
+        await eventBus.publish("crud.updated", {
+            model: "post",
+            siteId,
+            item: updatedPost
+        }, "crud").catch(console.error);
+
+        return { success: true, item: updatedPost };
+    } catch (err: any) {
+        console.error("[UPDATE_POST_CATEGORY_ACTION] Error:", err);
+        return { success: false, error: "Gagal memperbarui kategori artikel" };
+    }
+}
+

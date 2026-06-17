@@ -27,7 +27,7 @@ export default async function PostsPage({
         // ...
     }
 
-    const [allPosts, total] = await Promise.all([
+    const [allPosts, total, taxonomy] = await Promise.all([
         db.post.findMany({
             where: siteId ? { siteId } : {},
             orderBy: { createdAt: 'desc' },
@@ -47,8 +47,26 @@ export default async function PostsPage({
                 }
             }
         }),
-        db.post.count({ where: siteId ? { siteId } : {} })
+        db.post.count({ where: siteId ? { siteId } : {} }),
+        siteId ? db.taxonomy.findFirst({
+            where: {
+                siteId,
+                OR: [
+                    { slug: "category" },
+                    { name: { contains: "category", mode: "insensitive" } },
+                    { name: { contains: "kategori", mode: "insensitive" } },
+                ]
+            }
+        }) : null
     ]);
+
+    let categories: string[] = [];
+    if (taxonomy) {
+        const terms = await db.term.findMany({
+            where: { taxonomyId: taxonomy.id }
+        });
+        categories = terms.map(t => t.name);
+    }
 
     const totalPages = Math.ceil(total / pageSize);
 
@@ -67,7 +85,7 @@ export default async function PostsPage({
                 </LinkButton>
             </PageHeader>
 
-            <PostList posts={allPosts as any} />
+            <PostList posts={allPosts as any} initialCategories={categories} />
 
             <Pagination currentPage={currentPage} totalPages={totalPages} />
         </div>
