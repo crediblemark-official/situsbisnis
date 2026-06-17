@@ -15,9 +15,6 @@ const nextConfig = {
       { source: '/api/affiliate/:path*', destination: '/api/auth/affiliate/:path*' },
       { source: '/api/onboarding/:path*', destination: '/api/auth/onboarding/:path*' },
       
-      // Catalog routes (DEPRECATED: Gunakan Server Actions untuk mutasi)
-      { source: '/api/products/:path*', destination: '/api/catalog/products/:path*' },
-      
       // Domain routes
       { source: '/api/domains/:path*', destination: '/api/domain/domains/:path*' },
       
@@ -47,8 +44,6 @@ const nextConfig = {
       { source: '/api/admin/transactions/:path*', destination: '/api/payment/transactions/:path*' },
       
       // Post routes (DEPRECATED: Gunakan Server Actions untuk mutasi)
-      { source: '/api/posts/:path*', destination: '/api/post/posts/:path*' },
-      { source: '/api/taxonomies/:path*', destination: '/api/post/taxonomies/:path*' },
       { source: '/api/testimonials/:path*', destination: '/api/post/testimonials/:path*' },
       { source: '/api/search/:path*', destination: '/api/post/search/:path*' },
       
