@@ -1,1 +1,1 @@
-export { portfolioApi as GET, portfolioApi as PATCH, portfolioApi as PUT, portfolioApi as DELETE } from "@/modules/portfolio/api";
+export { portfolioApi as GET, portfolioApi as PATCH, portfolioApi as PUT, portfolioApi as DELETE } from "@/modules/media/api";

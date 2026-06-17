@@ -1,1 +1,1 @@
-export { portfolioApi as GET, portfolioApi as POST } from "@/modules/portfolio/api";
+export { portfolioApi as GET, portfolioApi as POST } from "@/modules/media/api";
