@@ -35,12 +35,6 @@ export async function POST(req: Request) {
 
         if (!siteId) return apiError("Site context required", 400);
 
-        // Check subscription limit for orders
-        const limitCheck = await SubscriptionClient.checkSiteLimit(siteId, "maxOrders");
-        if (!limitCheck.allowed) {
-            return apiError(limitCheck.message, 403);
-        }
-
         const { data, error: vError, details, status: vStatus } = await validateBody(req, orderSchema);
         if (vError) return apiError(vError, vStatus, details);
 
@@ -67,6 +61,10 @@ export async function POST(req: Request) {
         }
         if (error.message.includes("Product not found")) {
             return apiError(error.message, 400);
+        }
+        const lowerMsg = error.message.toLowerCase();
+        if (lowerMsg.includes("langganan") || lowerMsg.includes("limit")) {
+            return apiError(error.message, 403);
         }
         return apiError("Internal Error");
     }

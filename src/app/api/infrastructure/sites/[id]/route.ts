@@ -1,7 +1,6 @@
 import { getApiContext, apiResponse, apiError } from "@/lib/api/utils";
 import { SiteClient } from "@/modules/site";
-import { FinancialClient } from "@/modules/financial";
-import { IdentityClient } from "@/modules/auth";
+import { InfrastructureClient } from "@/modules/infrastructure";
 import { validateCsrf } from "@/modules/shared/utils/csrf";
 
 /**
@@ -56,73 +55,22 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         const body = await req.json();
         const { action } = body;
 
-        // Ambil detail site untuk validasi dan email
-        let site;
         try {
-            site = await SiteClient.getSiteDetail(id);
+            const result = await InfrastructureClient.manageSite(id, action);
+            return apiResponse(result);
         } catch (serviceError: any) {
-            if (serviceError?.message === "SITE_NOT_FOUND") return apiError("Site not found", 404);
+            const msg = serviceError?.message || "";
+            if (msg === "SITE_NOT_FOUND") return apiError("Site not found", 404);
+            if (msg === "FREE_PLAN_NOT_FOUND") return apiError("Free plan not found in database", 404);
+            if (msg === "NO_SUBSCRIPTION") return apiError("No subscription found", 404);
+            if (msg === "TRIAL_ALREADY_EXTENDED") return apiError("Trial already extended", 400);
+            if (msg === "NOT_A_TRIAL") return apiError("This is not a trial subscription", 400);
+            if (msg === "INVALID_ACTION") return apiError("Invalid action", 400);
             throw serviceError;
         }
-
-        if (action === "set_free") {
-            try {
-                await FinancialClient.setSiteToFreePlan(id);
-            } catch (serviceError: any) {
-                if (serviceError?.message === "FREE_PLAN_NOT_FOUND") {
-                    return apiError("Free plan not found in database", 404);
-                }
-                throw serviceError;
-            }
-
-            const { revalidateTag } = await import("next/cache");
-            revalidateTag(`site-${id}`, "default");
-
-            return apiResponse({ success: true, message: "Site set to Free plan" });
-        }
-
-        if (action === "extend_trial") {
-            let newEndDate: Date;
-            try {
-                const result = await FinancialClient.extendSiteTrial(id, 7);
-                newEndDate = result.newEndDate;
-            } catch (serviceError: any) {
-                const msg = serviceError?.message || "";
-                if (msg === "NO_SUBSCRIPTION") return apiError("No subscription found", 404);
-                if (msg === "TRIAL_ALREADY_EXTENDED") return apiError("Trial already extended", 400);
-                if (msg === "NOT_A_TRIAL") return apiError("This is not a trial subscription", 400);
-                throw serviceError;
-            }
-
-            const { revalidateTag } = await import("next/cache");
-            revalidateTag(`site-${id}`, "default");
-
-            // Kirim email notifikasi ke pemilik site (fire and forget)
-            const siteOwner = await IdentityClient.getSiteOwner(id);
-            if (siteOwner && siteOwner.email) {
-                const { sendTrialExtendedEmail } = await import("@/modules/notification");
-                const formattedEndDate = newEndDate.toLocaleDateString("id-ID", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric"
-                });
-                sendTrialExtendedEmail({
-                    toEmail: siteOwner.email,
-                    userName: siteOwner.name || "Pengguna",
-                    siteName: site.name,
-                    days: 7,
-                    newEndDate: formattedEndDate
-                }).catch(err => {
-                    console.error("[EXTEND_TRIAL_EMAIL_ERROR] Failed to send email:", err);
-                });
-            }
-
-            return apiResponse({ success: true, message: "Trial extended by 7 days" });
-        }
-
-        return apiError("Invalid action", 400);
     } catch (e) {
         console.error("Patch Site Error:", e);
         return apiError("Failed to update site");
     }
 }
+

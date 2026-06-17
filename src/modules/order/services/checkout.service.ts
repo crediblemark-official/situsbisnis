@@ -1,4 +1,5 @@
 import * as orderRepo from "../repositories/order.repository";
+import { SubscriptionClient } from "@/modules/subscription";
 
 /**
  * Membuat pesanan baru dan menghitung total harga secara aman.
@@ -17,6 +18,12 @@ export async function createOrder(
     },
     sessionCustomer?: { name?: string | null; email?: string | null }
 ) {
+    // Check subscription limit for orders
+    const limitCheck = await SubscriptionClient.checkSiteLimit(siteId, "maxOrders");
+    if (!limitCheck.allowed) {
+        throw new Error(limitCheck.message || "Batas pesanan langganan Anda telah tercapai");
+    }
+
     const customerEmail = sessionCustomer?.email || customerDetails.email;
     const customerName = sessionCustomer?.name || customerDetails.name || "Guest Customer";
     const address = customerDetails.address;

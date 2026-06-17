@@ -6,11 +6,14 @@ import {
     type BackupData
 } from "./services/backup-export.service";
 import { importBackupData } from "./services/backup-import.service";
+import { manageSiteAction } from "./services/site-management.service";
 export { DokployService } from "./services/dokploy.service";
 export type { BackupData };
 
 export const InfrastructureClient = {
     provisionSite: provisionSiteInternal,
     exportBackupData,
-    importBackupData
+    importBackupData,
+    manageSite: manageSiteAction
 };
+
