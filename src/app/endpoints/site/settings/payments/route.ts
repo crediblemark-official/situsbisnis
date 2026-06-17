@@ -1,1 +1,0 @@
-export { getPaymentSettingsApi as GET } from "@/modules/site/controllers/site-api.controller";
