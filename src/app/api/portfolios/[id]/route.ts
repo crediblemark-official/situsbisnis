@@ -1,9 +1,1 @@
-import { createCrudHandler } from "@/lib/api/crud-handler";
-import { portfolioConfig } from "@/app/api/portfolios/route";
-
-const handler = createCrudHandler(portfolioConfig);
-
-export const GET = handler.detail.GET;
-export const PATCH = handler.detail.PATCH;
-export const PUT = handler.detail.PUT;
-export const DELETE = handler.detail.DELETE;
+export { portfolioApi as GET, portfolioApi as PATCH, portfolioApi as PUT, portfolioApi as DELETE } from "@/modules/portfolio/api";

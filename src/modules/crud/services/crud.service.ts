@@ -1,25 +1,16 @@
-import { db } from "@/lib/core/db";
-import { getApiContext, apiResponse, apiError, validateBody } from "@/lib/api/utils";
+import { db } from "@/modules/shared/core/db";
+import { getApiContext, apiResponse, apiError, validateBody } from "@/modules/shared/utils/api/utils";
 import { eventBus } from "@/modules/shared/core/event-bus";
 import { z } from "zod";
 import { Prisma, Role } from "@prisma/client";
-import { AppError } from "./errors";
-import { createLogger } from "@/lib/core/logger";
+import { AppError } from "@/modules/shared/utils/api/errors";
+import { createLogger } from "@/modules/shared/core/logger";
 import { unstable_cache } from "next/cache";
+import type { CrudHandlerConfig, CrudHandler } from "../crud.types";
 
-export interface CrudHandlerConfig<T extends z.ZodType<any, any> = z.ZodType<any, any>> {
-    model: Uncapitalize<Prisma.ModelName>;
-    schema?: T;
-    roles?: Role[]; // e.g. ["admin", "editor", "owner"]
-    limitCheckType?: string; // e.g. "maxProducts"
-    idField?: string; // For updates, usually "id", but some schemas use "productId"
-    includeArchivedLogic?: boolean;
-    transformData?: (_data: z.infer<T>, _session: any) => any;
-    isPublicGet?: boolean;
-    listSelect?: any; // Fields to select for the collection view
-}
+const logger = createLogger("crud:service");
 
-export function createCrudHandler<T extends z.ZodType<any, any>>(config: CrudHandlerConfig<T>) {
+export function createCrudHandler<T extends z.ZodType<any, any>>(config: CrudHandlerConfig<T>): CrudHandler {
     const modelDelegate = (db as any)[config.model];
     const modelLogger = createLogger(`crud:${config.model}`);
 
@@ -40,13 +31,11 @@ export function createCrudHandler<T extends z.ZodType<any, any>>(config: CrudHan
                     if (config.includeArchivedLogic) {
                         const isAdminOrEditor = (session?.user as any)?.role === "admin" || (session?.user as any)?.role === "editor";
                         const includeArchived = searchParams.get("includeArchived") === "true";
-                        
                         if (!(isAdminOrEditor && includeArchived)) {
                             whereCondition.isArchived = false;
                         }
                     }
 
-                    // Temporary logic for testimonials (status=all)
                     if (config.model === "testimonial") {
                         const statusParam = searchParams.get('status');
                         if (statusParam !== 'all') {
@@ -57,13 +46,11 @@ export function createCrudHandler<T extends z.ZodType<any, any>>(config: CrudHan
                     let total = 0;
                     let items = [];
 
-                    // Caching hanya untuk request publik (non-autentikasi) untuk mencegah kebocoran data antar user
                     if (config.isPublicGet && siteId) {
                         const fetchCachedData = unstable_cache(
                             async (whereJson: string, lim: number, sk: number, selectJson: string) => {
                                 const parsedWhere = JSON.parse(whereJson);
                                 const parsedSelect = selectJson ? JSON.parse(selectJson) : undefined;
-
                                 const totalCount = await modelDelegate.count({ where: parsedWhere });
                                 const records = await modelDelegate.findMany({
                                     where: parsedWhere,
@@ -75,10 +62,7 @@ export function createCrudHandler<T extends z.ZodType<any, any>>(config: CrudHan
                                 return { total: totalCount, items: records };
                             },
                             [`${config.model}-list-${siteId}-${page}-${limit}-${JSON.stringify(whereCondition)}`],
-                            {
-                                revalidate: 300, // Simpan cache selama 5 menit
-                                tags: [`site-${siteId}`, `site-${siteId}-${config.model}`] // Terinvalidasi otomatis saat POST/PUT/DELETE
-                            }
+                            { revalidate: 300, tags: [`site-${siteId}`, `site-${siteId}-${config.model}`] }
                         );
 
                         const cached = await fetchCachedData(
@@ -90,7 +74,6 @@ export function createCrudHandler<T extends z.ZodType<any, any>>(config: CrudHan
                         total = cached.total;
                         items = cached.items;
                     } else {
-                        // Bypass cache jika request membutuhkan login (admin/editor dashboard)
                         total = await modelDelegate.count({ where: whereCondition });
                         items = await modelDelegate.findMany({
                             where: whereCondition,
@@ -101,7 +84,7 @@ export function createCrudHandler<T extends z.ZodType<any, any>>(config: CrudHan
                         });
                     }
 
-                    const result = {
+                    const result: any = {
                         data: items,
                         pagination: {
                             total,
@@ -111,9 +94,8 @@ export function createCrudHandler<T extends z.ZodType<any, any>>(config: CrudHan
                         }
                     };
 
-                    // For backward compatibility with some components that expect { products: [...] } etc.
-                    if (config.model === "product") (result as any).products = items;
-                    if (config.model === "post") (result as any).posts = items;
+                    if (config.model === "product") result.products = items;
+                    if (config.model === "post") result.posts = items;
 
                     return apiResponse(result);
                 } catch (error: unknown) {
@@ -122,14 +104,13 @@ export function createCrudHandler<T extends z.ZodType<any, any>>(config: CrudHan
                     return apiError("Internal Error");
                 }
             },
-            
+
             POST: async (req: Request) => {
                 try {
                     const roles: Role[] = config.roles || ["admin", "editor", "owner"];
                     const { session, siteId, siteStatus, error, status } = await getApiContext(roles);
                     if (error) return apiError(error, status);
 
-                    // Block creation if site is not active
                     if (siteStatus !== "active") {
                         return apiError(`Situs Anda sedang ${siteStatus}. Silakan perbarui langganan untuk menambah data.`, 403);
                     }
@@ -140,12 +121,10 @@ export function createCrudHandler<T extends z.ZodType<any, any>>(config: CrudHan
                     if (vError) return apiError(vError, vStatus, details);
 
                     const idField = (config.idField || "id") as keyof typeof data;
-                    // Remove the idField and metaData from data before saving
                     const { [idField]: _extractedId, metaData, ...updateDataRaw } = data;
-                    
+
                     const finalData = config.transformData ? config.transformData(updateDataRaw, session) : updateDataRaw;
 
-                    // Create new
                     if (config.limitCheckType) {
                         const limitCheck = await eventBus.request<{ siteId: string; limitType: string }, { allowed: boolean; message: string }>(
                             "request.billing.checkLimit",
@@ -154,19 +133,17 @@ export function createCrudHandler<T extends z.ZodType<any, any>>(config: CrudHan
                         if (!limitCheck.allowed) return apiError(limitCheck.message, 403);
                     }
 
-                    // Define models that don't have updatedAt field in schema.prisma
                     const modelsWithoutUpdatedAt = ["galleryItem", "mediaItem", "mediaFolder", "contactSubmission", "orderItem", "menuItem"];
                     const shouldAddUpdatedAt = !modelsWithoutUpdatedAt.includes(config.model);
 
                     const created = await modelDelegate.create({
-                        data: { 
-                            ...finalData, 
-                            siteId, 
+                        data: {
+                            ...finalData,
+                            siteId,
                             ...(shouldAddUpdatedAt ? { updatedAt: new Date() } : {})
                         }
                     });
 
-                    // Save metaData relation if present
                     if (created && metaData && Array.isArray(metaData)) {
                         const foreignKeyField = `${config.model}Id`;
                         await db.metaData.createMany({
@@ -178,23 +155,17 @@ export function createCrudHandler<T extends z.ZodType<any, any>>(config: CrudHan
                             }))
                         });
                     }
-                    
-                    // Invalidasi cache situs setelah data baru dibuat
-                    try {
-                        const { revalidateTag, revalidatePath } = await import("next/cache");
-                        revalidateTag(`site-${siteId}`, "default");
 
-                        // Untuk post: invalidasi juga path blog secara spesifik
-                        if (config.model === "post" && created) {
-                            revalidatePath("/blog");
-                            if ((created as any).slug) {
-                                revalidatePath(`/blog/${(created as any).slug}`);
-                            }
-                        }
-                    } catch (cacheError) {
-                        console.error("Cache revalidation error setelah POST:", cacheError);
+                    try {
+                        eventBus.publish("crud.created", {
+                            model: config.model,
+                            siteId,
+                            item: created
+                        }, "crud");
+                    } catch (eventError) {
+                        console.error("Event publish error after POST:", eventError);
                     }
-                    
+
                     return apiResponse({ success: true, item: created, product: created, testimonial: created });
                 } catch (error: unknown) {
                     if (error instanceof AppError) return apiError(error.message, error.statusCode, error.details);
@@ -217,7 +188,7 @@ export function createCrudHandler<T extends z.ZodType<any, any>>(config: CrudHan
                         where: { id, siteId },
                         ...(hasMetaData ? { include: { metaData: true } } : {})
                     });
-                    
+
                     if (!existing) return apiError("Item not found", 404);
 
                     return apiResponse(existing);
@@ -264,7 +235,6 @@ export function createCrudHandler<T extends z.ZodType<any, any>>(config: CrudHan
                     const { session, siteId, siteStatus, error, status } = await getApiContext(roles);
                     if (error) return apiError(error, status);
 
-                    // Block updates if site is not active
                     if (siteStatus !== "active") {
                         return apiError(`Situs Anda sedang ${siteStatus}. Silakan perbarui langganan untuk mengubah data.`, 403);
                     }
@@ -289,13 +259,12 @@ export function createCrudHandler<T extends z.ZodType<any, any>>(config: CrudHan
 
                     const updated = await modelDelegate.update({
                         where: { id },
-                        data: { 
-                            ...finalData, 
+                        data: {
+                            ...finalData,
                             ...(shouldAddUpdatedAt ? { updatedAt: new Date() } : {})
                         }
                     });
 
-                    // Save metaData relation if present
                     if (updated && metaData && Array.isArray(metaData)) {
                         const foreignKeyField = `${config.model}Id`;
                         await db.metaData.deleteMany({
@@ -313,20 +282,14 @@ export function createCrudHandler<T extends z.ZodType<any, any>>(config: CrudHan
                         }
                     }
 
-                    // Invalidasi cache situs setelah data diubah
                     try {
-                        const { revalidateTag, revalidatePath } = await import("next/cache");
-                        revalidateTag(`site-${siteId}`, "default");
-
-                        // Untuk post: invalidasi juga path blog secara spesifik
-                        if (config.model === "post" && updated) {
-                            revalidatePath("/blog");
-                            if ((updated as any).slug) {
-                                revalidatePath(`/blog/${(updated as any).slug}`);
-                            }
-                        }
-                    } catch (cacheError) {
-                        console.error("Cache revalidation error setelah PUT:", cacheError);
+                        eventBus.publish("crud.updated", {
+                            model: config.model,
+                            siteId,
+                            item: updated
+                        }, "crud");
+                    } catch (eventError) {
+                        console.error("Event publish error after PUT:", eventError);
                     }
 
                     return apiResponse({ success: true, item: updated, product: updated, testimonial: updated });
@@ -343,7 +306,6 @@ export function createCrudHandler<T extends z.ZodType<any, any>>(config: CrudHan
                     const { siteId, siteStatus, error, status } = await getApiContext(roles);
                     if (error) return apiError(error, status);
 
-                    // Block deletion if site is not active
                     if (siteStatus !== "active") {
                         return apiError(`Situs Anda sedang ${siteStatus}. Silakan perbarui langganan untuk menghapus data.`, 403);
                     }
@@ -354,29 +316,23 @@ export function createCrudHandler<T extends z.ZodType<any, any>>(config: CrudHan
                     const existing = await modelDelegate.findFirst({
                         where: { id, siteId }
                     });
-                    
+
                     if (!existing) return apiError("Item not found", 404);
 
                     await modelDelegate.delete({
                         where: { id }
                     });
-                    
-                    // Invalidasi cache situs setelah data dihapus
-                    try {
-                        const { revalidateTag, revalidatePath } = await import("next/cache");
-                        revalidateTag(`site-${siteId}`, "default");
 
-                        // Untuk post: invalidasi juga path blog secara spesifik
-                        if (config.model === "post" && existing) {
-                            revalidatePath("/blog");
-                            if ((existing as any).slug) {
-                                revalidatePath(`/blog/${(existing as any).slug}`);
-                            }
-                        }
-                    } catch (cacheError) {
-                        console.error("Cache revalidation error setelah DELETE:", cacheError);
+                    try {
+                        eventBus.publish("crud.deleted", {
+                            model: config.model,
+                            siteId,
+                            item: existing
+                        }, "crud");
+                    } catch (eventError) {
+                        console.error("Event publish error after DELETE:", eventError);
                     }
-                    
+
                     return apiResponse({ success: true });
                 } catch (error: unknown) {
                     if (error instanceof AppError) return apiError(error.message, error.statusCode, error.details);
