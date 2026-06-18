@@ -238,7 +238,7 @@ export async function getOrderPaymentMethods(orderId: string) {
     let merchantCode = paymentSettings?.gatewayMerchantId;
     let apiKey = paymentSettings?.gatewayApiKey;
     let sandbox = paymentSettings?.gatewaySandbox ?? true;
-    const gatewayApiType = platformSettings?.gatewayApiType || "snap";
+    const gatewayApiType = (platformSettings?.gatewayApiType || "snap") as "snap" | "core"; // Set to "core" in platform settings to test Core API
 
     if (!merchantCode || !apiKey) {
         gateway = platformSettings?.paymentGateway || "duitku";
