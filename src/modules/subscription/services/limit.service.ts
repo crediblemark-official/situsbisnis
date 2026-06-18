@@ -1,7 +1,6 @@
 import * as subscriptionRepo from "../repositories/subscription.repository";
 import { LimitType, LimitCheckResult } from "../index";
 import { eventBus } from "@/modules/shared/core/event-bus";
-import { GRACE_PERIOD_DAYS } from "@/lib/billing/constants";
 
 const LIMIT_CONFIG: Record<LimitType, {
     field: string;

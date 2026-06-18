@@ -22,7 +22,7 @@ const updateSiteSchema = z.object({
     customDomain: z.string().optional().nullable(),
 });
 
-export async function getProfileApi(req: Request) {
+export async function getProfileApi(_req: Request) {
     const { session, error, status } = await getApiContext(undefined, { requireSite: false });
     if (error) return apiError(error, status);
     if (!session?.user) return apiError("Unauthorized", 401);

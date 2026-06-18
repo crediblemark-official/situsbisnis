@@ -2,7 +2,6 @@ import ProductEditor from "@/modules/catalog/ui/dashboard/products/ProductEditor
 import { db } from "@/modules/shared/core/db";
 import { getSiteId } from "@/lib/domains/tenant";
 import { notFound } from "next/navigation";
-import { serializeProduct } from "@/lib/content/serialize";
 
 export const dynamic = 'force-dynamic';
 

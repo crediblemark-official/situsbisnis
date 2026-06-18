@@ -7,7 +7,7 @@ type Mode = "page" | "section" | "refine";
 
 interface PromptInputProps {
   value: string;
-  onChange: (value: string) => void;
+  onChange: (_value: string) => void;
   onSubmit: () => void;
   isLoading: boolean;
   mode: Mode;

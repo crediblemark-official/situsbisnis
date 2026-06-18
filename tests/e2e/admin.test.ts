@@ -1,7 +1,6 @@
 import { test, expect, uniqueIp } from './helpers';
 
 const h = () => ({ 'x-forwarded-for': uniqueIp() });
-const adminH = () => ({ ...h(), Cookie: process.env.E2E_TEST_ADMIN_COOKIE || '' });
 
 test.describe('Admin — Settings', () => {
 

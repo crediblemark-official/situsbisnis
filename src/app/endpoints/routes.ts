@@ -20,21 +20,21 @@ import { postCredBuildPageApi, getCredBuildPageApi, getMenusApi, getPageDetailAp
 import { processAIApi } from "@/modules/ai/controllers/ai-api.controller";
 import { verifyDomainApi } from "@/modules/domain/controllers/domain-api.controller";
 import { exportBackupApi, importBackupApi } from "@/modules/infrastructure/controllers/infra-api.controller";
-import { getCouponsApi, createCouponApi, updateCouponApi, deleteCouponApi, validateCouponApi, getAdminSettingsContextApi, updateWithdrawalStatusApi } from "@/modules/financial/controllers/financial-api.controller";
+import { getCouponsApi, createCouponApi, updateCouponApi, deleteCouponApi, validateCouponApi, updateWithdrawalStatusApi } from "@/modules/financial/controllers/financial-api.controller";
 import { checkBillingStatusApi } from "@/modules/payment/controllers/billing-api.controller";
 import { updateSubscriptionByAdminApi } from "@/modules/subscription/controllers/subscription-api.controller";
 import { updateSettingsApi, updatePaymentSettingsApi, updateAdminSettingsApi, fetchAiModelsApi, deleteAdminSiteApi, updateAdminSiteApi } from "@/modules/site/controllers/site-api.controller";
 
 type EndpointHandler = (
-    req: Request,
-    context?: { params: Promise<{ id?: string; termId?: string }> }
+    _req: Request,
+    _context?: { params: Promise<{ id?: string; termId?: string }> }
 ) => Promise<Response> | Response;
 
 type EndpointRoute = {
     method: string;
     path: string;
     handler: EndpointHandler;
-    match?: (route: string[], routePath: string) => boolean;
+    match?: (_route: string[], _routePath: string) => boolean;
     paramIndex?: number;
 };
 

@@ -27,7 +27,7 @@ export async function galleryGetApi(req: Request) {
 
 export async function galleryPostApi(req: Request) {
     try {
-        const { session, siteId, siteStatus, error, status } = await getApiContext(["admin", "editor", "owner"]);
+        const { siteId, siteStatus, error, status } = await getApiContext(["admin", "editor", "owner"]);
         if (error) return apiError(error, status);
 
         if (siteStatus !== "active") {
@@ -84,7 +84,7 @@ export async function galleryPatchApi(req: Request, { params }: { params: Promis
 
 export async function galleryPutApi(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
-        const { session, siteId, siteStatus, error, status } = await getApiContext(["admin", "editor", "owner"]);
+        const { siteId, siteStatus, error, status } = await getApiContext(["admin", "editor", "owner"]);
         if (error) return apiError(error, status);
 
         if (siteStatus !== "active") {

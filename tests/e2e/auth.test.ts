@@ -1,7 +1,6 @@
 import { test, expect, uniqueIp } from './helpers';
 
 const h = () => ({ 'x-forwarded-for': uniqueIp() });
-const TH = () => ({ ...h(), 'x-tenant-subdomain': 'demo1' });
 
 test.describe('Auth — Register & Login', () => {
 

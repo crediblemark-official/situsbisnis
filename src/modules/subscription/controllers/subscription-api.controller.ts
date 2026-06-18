@@ -53,7 +53,7 @@ export async function getAdminSubscriptionApi(_req: Request, { params }: { param
  */
 export async function cancelSubscriptionApi(req: Request) {
     try {
-        const { session, error, status } = await getApiContext(undefined, { requireSite: false });
+        const { error, status } = await getApiContext(undefined, { requireSite: false });
         if (error) return apiError(error, status);
 
         const body = await req.json();

@@ -89,6 +89,6 @@ export async function updateTaxonomy(id: string, siteId: string, data: any) {
     });
 }
 
-export async function deleteTaxonomy(id: string, siteId: string) {
+export async function deleteTaxonomy(id: string, _siteId: string) {
     return db.taxonomy.delete({ where: { id } });
 }

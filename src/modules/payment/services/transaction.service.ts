@@ -2,7 +2,6 @@ import { SubscriptionClient } from "@/modules/subscription";
 import { db } from "@/modules/shared/core/db";
 import * as transactionRepo from "../repositories/transaction.repository";
 import * as subscriptionRepo from "@/modules/subscription/repositories/subscription.repository";
-import * as couponRepo from "@/modules/financial/repositories/coupon.repository";
 import { eventBus } from "@/modules/shared/core/event-bus";
 import { processPendingEvents } from "@/modules/shared/core/outbox-dispatcher";
 

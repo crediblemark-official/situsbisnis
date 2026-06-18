@@ -29,7 +29,7 @@ export async function portfolioGetApi(req: Request) {
 
 export async function portfolioPostApi(req: Request) {
     try {
-        const { session, siteId, siteStatus, error, status } = await getApiContext(["admin", "editor", "owner"]);
+        const { siteId, siteStatus, error, status } = await getApiContext(["admin", "editor", "owner"]);
         if (error) return apiError(error, status);
 
         if (siteStatus !== "active") {
@@ -86,7 +86,7 @@ export async function portfolioPatchApi(req: Request, { params }: { params: Prom
 
 export async function portfolioPutApi(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
-        const { session, siteId, siteStatus, error, status } = await getApiContext(["admin", "editor", "owner"]);
+        const { siteId, siteStatus, error, status } = await getApiContext(["admin", "editor", "owner"]);
         if (error) return apiError(error, status);
 
         if (siteStatus !== "active") {

@@ -223,7 +223,7 @@ export function PaymentsTab({
 
                             {/* Pilihan Snap vs Core API */}
                             <div className="space-y-2 pt-2">
-                                <label className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Tipe API (Integrasi)</label>
+                                <span className="block text-[9px] font-black text-muted-foreground uppercase tracking-widest">Tipe API (Integrasi)</span>
                                 <div className="flex gap-4">
                                     <label className="flex items-center gap-2 text-xs font-bold text-foreground cursor-pointer select-none">
                                         <input

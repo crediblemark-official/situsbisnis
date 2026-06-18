@@ -30,6 +30,6 @@ export async function updateTestimonial(id: string, siteId: string, data: any) {
     });
 }
 
-export async function deleteTestimonial(id: string, siteId: string) {
+export async function deleteTestimonial(id: string, _siteId: string) {
     return db.testimonial.delete({ where: { id } });
 }

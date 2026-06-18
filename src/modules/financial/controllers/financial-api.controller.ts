@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import { getApiContext, apiResponse, apiError, validateBody } from "@/lib/api/utils";
 import { FinancialClient } from "../index";
 import { z } from "zod";

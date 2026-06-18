@@ -5,7 +5,7 @@ const reactHooksPlugin = nextConfig.find(c => c.plugins?.['react-hooks']);
 /** @type {import('eslint').Linter.Config[]} */
 const eslintConfig = [
   {
-    ignores: ["**/*.d.ts", ".next/**/*", "public/**/*"]
+    ignores: ["**/*.d.ts", ".next/**/*", "public/**/*", "coverage/**/*"]
   },
   ...nextConfig,
   {

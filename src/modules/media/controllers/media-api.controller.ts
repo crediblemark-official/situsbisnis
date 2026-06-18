@@ -229,7 +229,7 @@ export async function deleteMediaFolderApi(_req: Request, { params }: { params: 
         const { id } = await params;
         if (!id) return apiError("ID is required", 400);
 
-        const folder = await MediaClient.deleteMediaFolder(siteId, id);
+        await MediaClient.deleteMediaFolder(siteId, id);
         return apiResponse({ success: true });
     } catch (error: any) {
         if (error.message?.includes("non-empty")) return apiError(error.message, 400);

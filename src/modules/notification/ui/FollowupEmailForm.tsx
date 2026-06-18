@@ -31,8 +31,9 @@ export function FollowupEmailForm() {
                 </div>
                 <div className="p-4 md:p-8 space-y-6 max-w-3xl">
                     <div className="space-y-2">
-                        <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Email Tujuan</label>
+                        <label htmlFor="followup-email" className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Email Tujuan</label>
                         <input
+                            id="followup-email"
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -42,8 +43,9 @@ export function FollowupEmailForm() {
                         />
                     </div>
                     <div className="space-y-2">
-                        <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Subjek</label>
+                        <label htmlFor="followup-subject" className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Subjek</label>
                         <input
+                            id="followup-subject"
                             type="text"
                             value={subject}
                             onChange={(e) => setSubject(e.target.value)}
@@ -53,8 +55,9 @@ export function FollowupEmailForm() {
                         />
                     </div>
                     <div className="space-y-2">
-                        <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Pesan</label>
+                        <label htmlFor="followup-message" className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Pesan</label>
                         <textarea
+                            id="followup-message"
                             value={message}
                             onChange={(e) => setMessage(e.target.value)}
                             required

@@ -1,4 +1,3 @@
-import { db } from "@/modules/shared/core/db";
 import { eventBus } from "@/modules/shared/core/event-bus";
 import { unstable_cache } from "next/cache";
 

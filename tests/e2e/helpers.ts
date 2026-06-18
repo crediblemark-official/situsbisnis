@@ -1,5 +1,5 @@
 import { test as base } from '@playwright/test';
-import type { Page, APIRequestContext, BrowserContext } from '@playwright/test';
+import type { Page, APIRequestContext } from '@playwright/test';
 
 let uidCounter = 0;
 export const uniqueIp = () => `10.0.${(uidCounter++ % 200) + 1}.${Math.floor(Math.random() * 200) + 10}`;
@@ -43,7 +43,7 @@ export const okOr = (...codes: number[]) => (res: { status: () => number; ok: ()
 
 type TestFixtures = {
   authCookie: string | null;
-  tenantRequest: (request: APIRequestContext) => { headers: Record<string, string> };
+  tenantRequest: (_request: APIRequestContext) => { headers: Record<string, string> };
 };
 
 export const test = base.extend<TestFixtures>({
@@ -64,7 +64,7 @@ export const test = base.extend<TestFixtures>({
     await use(sessionCookie ? `${sessionCookie.name}=${sessionCookie.value}` : null);
   }, { scope: 'test' }],
   tenantRequest: [async ({ }, use) => {
-    await use((request: APIRequestContext) => ({
+    await use((_request: APIRequestContext) => ({
       headers: { ...ipHeaders(), 'x-tenant-subdomain': 'demo1' },
     }));
   }, { scope: 'test' }],

@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import { getApiContext, apiResponse, apiError } from "@/lib/api/utils";
 import { InfrastructureClient } from "../index";
 

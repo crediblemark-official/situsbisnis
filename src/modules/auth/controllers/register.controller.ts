@@ -1,5 +1,4 @@
-import { NextResponse } from "next/server";
-import { getApiContext, apiResponse, apiError } from "@/lib/api/utils";
+import { apiResponse, apiError } from "@/lib/api/utils";
 import { IdentityClient } from "../index";
 import { z } from "zod";
 

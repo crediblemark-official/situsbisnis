@@ -28,7 +28,7 @@ const listSelect = {
 } as const;
 
 function transformData(data: Record<string, unknown>, _session?: unknown): Record<string, unknown> {
-    const { productId, ...rest } = data;
+    const { productId: _productId, ...rest } = data;
     return rest;
 }
 

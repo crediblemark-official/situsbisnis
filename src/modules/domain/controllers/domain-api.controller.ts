@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import { getApiContext, apiResponse, apiError, validateBody } from "@/lib/api/utils";
 import { DomainClient } from "../index";
 import { z } from "zod";
@@ -14,7 +13,6 @@ export async function verifyDomainApi(req: Request) {
         if (authError || !siteId) return apiError(authError || "Unauthorized", authStatus);
 
         const subscription = await SubscriptionClient.getActiveSubscription(siteId);
-        const planName = subscription?.plan?.name || "Free";
         const features = (subscription?.plan?.features as any) || {};
 
         if (!features.hasCustomDomain) {

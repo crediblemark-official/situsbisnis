@@ -34,6 +34,6 @@ export async function updatePost(id: string, siteId: string, data: any) {
     });
 }
 
-export async function deletePost(id: string, siteId: string) {
+export async function deletePost(id: string, _siteId: string) {
     return db.post.delete({ where: { id } });
 }
