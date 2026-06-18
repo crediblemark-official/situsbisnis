@@ -25,9 +25,9 @@ export function PaymentInstructionsView({
         (customPaymentDetails?.paymentMethod && getCategoryLabel(customPaymentDetails.paymentMethod) === "QRIS")
     );
     const paymentInstructions = getPaymentInstructions(customPaymentDetails.paymentMethod, payCode || "", isQris);
-    const qrCodeImageUrl = (customPaymentDetails?.qrString
+    const qrCodeImageUrl = customPaymentDetails?.qrString
         ? `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(customPaymentDetails.qrString)}`
-        : customPaymentDetails?.qrCodeUrl) || null;
+        : null;
 
     return (
         <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm space-y-4">

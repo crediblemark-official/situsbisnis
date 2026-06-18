@@ -18,9 +18,9 @@ export function PaymentDetailsCard({
     const payCode = customPaymentDetails?.vaNumber || customPaymentDetails?.paymentCode || customPaymentDetails?.qrString;
     const isQris = !!(customPaymentDetails?.qrString || customPaymentDetails?.qrCodeUrl || (customPaymentDetails?.paymentMethod && getCategoryLabel(customPaymentDetails.paymentMethod) === "QRIS"));
     const paymentInstructions = getPaymentInstructions(customPaymentDetails.paymentMethod, payCode || "", isQris);
-    const qrCodeImageUrl = (customPaymentDetails?.qrString
+    const qrCodeImageUrl = customPaymentDetails?.qrString
         ? `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(customPaymentDetails.qrString)}`
-        : customPaymentDetails?.qrCodeUrl) || null;
+        : null;
 
     return (
         <div className="bg-card border border-border rounded-xl p-5 space-y-4 shadow-sm">
