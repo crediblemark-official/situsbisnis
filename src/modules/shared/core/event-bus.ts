@@ -303,4 +303,12 @@ class EventBus {
   }
 }
 
-export const eventBus = new EventBus();
+declare const globalThis: {
+  eventBusGlobal: EventBus | undefined;
+} & typeof global;
+
+export const eventBus = globalThis.eventBusGlobal ?? new EventBus();
+
+if (process.env.NODE_ENV !== "production") {
+  globalThis.eventBusGlobal = eventBus;
+}
