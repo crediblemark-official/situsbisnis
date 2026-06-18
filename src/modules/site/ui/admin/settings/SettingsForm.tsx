@@ -36,9 +36,15 @@ export default function SettingsForm({ initialData }: { initialData: any }) {
         emailSenderAddress: initialData?.emailSenderAddress || "",
         plans: [],
         paymentMethods: [],
-        duitkuMerchantCode: "",
-        duitkuApiKey: "",
-        duitkuSandbox: true,
+        paymentGateway: initialData?.paymentGateway || "duitku",
+        duitkuMerchantCode: initialData?.duitkuMerchantCode || "",
+        duitkuApiKey: initialData?.duitkuApiKey || "",
+        duitkuSandbox: initialData?.duitkuSandbox ?? true,
+        midtransMerchantId: initialData?.midtransMerchantId || "",
+        midtransClientKey: initialData?.midtransClientKey || "",
+        midtransServerKey: initialData?.midtransServerKey || "",
+        midtransSandbox: initialData?.midtransSandbox ?? true,
+        midtransApiType: initialData?.midtransApiType || "snap",
         storage: {
             accessKeyId: initialData?.storage?.accessKeyId || "",
             secretAccessKey: initialData?.storage?.secretAccessKey || "",
@@ -213,10 +219,18 @@ export default function SettingsForm({ initialData }: { initialData: any }) {
                             addPaymentMethod={addPaymentMethod}
                             removePaymentMethod={removePaymentMethod}
                             updatePaymentMethod={(id, field, value) => updatePaymentMethod(id, { [field]: value })}
+                            paymentGateway={config.paymentGateway}
                             duitkuMerchantCode={config.duitkuMerchantCode}
                             duitkuApiKey={config.duitkuApiKey}
                             duitkuSandbox={config.duitkuSandbox}
                             onChangeDuitku={(field, value) => setConfig({ ...config, [field]: value })}
+                            midtransMerchantId={config.midtransMerchantId}
+                            midtransClientKey={config.midtransClientKey}
+                            midtransServerKey={config.midtransServerKey}
+                            midtransSandbox={config.midtransSandbox}
+                            midtransApiType={config.midtransApiType}
+                            onChangeMidtrans={(field, value) => setConfig({ ...config, [field]: value })}
+                            onChangeGateway={(value) => setConfig({ ...config, paymentGateway: value })}
                         />
                     )}
 

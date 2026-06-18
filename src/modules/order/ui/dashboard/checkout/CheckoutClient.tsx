@@ -109,6 +109,11 @@ export function CheckoutClient({ transaction, platformName: _platformName, isDui
             const res = await initializeCheckoutPaymentAction({ transactionId: transaction.id, paymentMethod: selectedMethod });
             if (res.success && res.result) {
                 const data = res.result as any;
+                if (data.success && data.transaction?.paymentUrl && !data.transaction.paymentUrl.startsWith("custom:")) {
+                    setIsRedirecting(true);
+                    window.location.href = data.transaction.paymentUrl;
+                    return;
+                }
                 if (data.success && data.paymentDetails) {
                     setCustomPaymentDetails(data.paymentDetails);
                 } else {

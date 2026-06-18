@@ -44,6 +44,12 @@ export interface PlatformSettingsData {
     duitkuMerchantCode?: string;
     duitkuApiKey?: string;
     duitkuSandbox?: boolean;
+    paymentGateway?: string;
+    midtransMerchantId?: string;
+    midtransClientKey?: string;
+    midtransServerKey?: string;
+    midtransSandbox?: boolean;
+    midtransApiType?: string;
     aiProvider?: string;
     aiApiKey?: string;
     starsenderApiKey?: string;

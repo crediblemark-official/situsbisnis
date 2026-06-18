@@ -606,6 +606,12 @@ model PlatformSettings {
   duitkuMerchantCode               String?
   duitkuApiKey                     String?
   duitkuSandbox                    Boolean  @default(true)
+  paymentGateway                   String?  @default("duitku")
+  midtransMerchantId               String?
+  midtransClientKey                String?
+  midtransServerKey                String?
+  midtransSandbox                  Boolean  @default(true)
+  midtransApiType                  String?  @default("snap")
   affiliateCommissionRate          Decimal? @default(20.0) @db.Decimal(5, 2)
   affiliateRecurringCommission     Boolean  @default(false)
   affiliateRecurringCommissionRate Decimal? @default(10.0) @db.Decimal(5, 2)

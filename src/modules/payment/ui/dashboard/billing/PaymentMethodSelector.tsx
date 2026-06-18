@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ArrowLeft, Landmark, CreditCard, Zap, CheckCircle2, Loader2, ArrowRight } from "lucide-react";
 import { Plan } from "@/modules/subscription/ui/dashboard/billing/types";
 
@@ -8,8 +8,9 @@ interface PaymentMethodSelectorProps {
     previewPlan: Plan | null;
     appliedCoupon: any;
     isLoading: boolean;
+    paymentGateway?: string;
     onCancel: () => void;
-    onProceed: (_method: "manual" | "duitku") => void;
+    onProceed: (_method: "manual" | "duitku" | "midtrans") => void;
 }
 
 export function PaymentMethodSelector({
@@ -18,10 +19,17 @@ export function PaymentMethodSelector({
     previewPlan,
     appliedCoupon,
     isLoading,
+    paymentGateway = "duitku",
     onCancel,
     onProceed
 }: PaymentMethodSelectorProps) {
-    const [selectedMethod, setSelectedMethod] = useState<"duitku" | "manual">("duitku");
+    const [selectedMethod, setSelectedMethod] = useState<"duitku" | "midtrans" | "manual">(
+        paymentGateway === "midtrans" ? "midtrans" : "duitku"
+    );
+
+    useEffect(() => {
+        setSelectedMethod(paymentGateway === "midtrans" ? "midtrans" : "duitku");
+    }, [paymentGateway]);
 
     // 1. Calculate Base Price
     let basePrice = 0;
@@ -121,17 +129,17 @@ export function PaymentMethodSelector({
 
                         <div className="grid grid-cols-1 gap-4">
                             
-                            {/* Option 1: Duitku Gateway */}
+                            {/* Option 1: Duitku / Midtrans Gateway */}
                             <div 
-                                onClick={() => setSelectedMethod("duitku")}
+                                onClick={() => setSelectedMethod(paymentGateway === "midtrans" ? "midtrans" : "duitku")}
                                 className={`p-4 rounded-xl border-2 transition-all duration-300 cursor-pointer flex gap-4 items-start relative overflow-hidden group ${
-                                    selectedMethod === "duitku" 
+                                    selectedMethod !== "manual" 
                                         ? "border-primary bg-primary/5 shadow-md shadow-primary/5" 
                                         : "border-border hover:border-border-hover bg-muted/10"
                                 }`}
                             >
                                 <div className={`p-2.5 rounded-lg border shrink-0 transition-colors ${
-                                    selectedMethod === "duitku" 
+                                    selectedMethod !== "manual" 
                                         ? "bg-primary text-primary-foreground border-primary/20" 
                                         : "bg-background text-muted-foreground border-border"
                                 }`}>
@@ -145,10 +153,10 @@ export function PaymentMethodSelector({
                                                 Instan
                                             </span>
                                         </h5>
-                                        {selectedMethod === "duitku" && <CheckCircle2 size={16} className="text-primary shrink-0" />}
+                                        {selectedMethod !== "manual" && <CheckCircle2 size={16} className="text-primary shrink-0" />}
                                     </div>
                                     <p className="text-xs text-muted-foreground font-medium leading-relaxed">
-                                        Bayar menggunakan Virtual Account (BCA, Mandiri, BNI, dll), QRIS, atau Kartu Kredit melalui payment gateway **Duitku**.
+                                        Bayar menggunakan Virtual Account (BCA, Mandiri, BNI, dll), QRIS, atau Kartu Kredit melalui payment gateway **{paymentGateway === "midtrans" ? "Midtrans" : "Duitku"}**.
                                     </p>
                                     <p className="text-[9px] font-black text-emerald-500 uppercase tracking-widest flex items-center gap-1 mt-1 bg-emerald-500/5 border border-emerald-500/10 px-2 py-0.5 rounded w-fit">
                                         <Zap size={10} className="animate-pulse" /> Paket langsung aktif secara otomatis dalam hitungan detik!

@@ -3,7 +3,7 @@ import { createOrderApi, initializeOrderPaymentApi, getOrderPaymentMethodsApi, c
 import { uploadMediaApi, proxyMediaApi, getMediaListApi, getMediaFoldersApi, deleteMediaApi, deleteMediaFolderApi } from "@/modules/media/controllers/media-api.controller";
 import { galleryGetApi, galleryPostApi, galleryGetDetailApi, galleryPatchApi, galleryPutApi, galleryDeleteApi } from "@/modules/media/controllers/gallery.controller";
 import { portfolioGetApi, portfolioPostApi, portfolioGetDetailApi, portfolioPatchApi, portfolioPutApi, portfolioDeleteApi } from "@/modules/media/controllers/portfolio.controller";
-import { processDuitkuWebhookApi } from "@/modules/payment/controllers/payment-api.controller";
+import { processDuitkuWebhookApi, processMidtransWebhookApi } from "@/modules/payment/controllers/payment-api.controller";
 import { checkoutPaymentApi, confirmPaymentApi, cancelPaymentApi, upgradePlanApi, buySlotApi, getPaymentMethodsApi, updateTransactionStatusApi } from "@/modules/payment/controllers/billing-api.controller";
 import { checkSubscriptionsCronApi, getPlansApi, getPricingPlansApi, getAdminSubscriptionApi, cancelSubscriptionApi, extendTrialApi } from "@/modules/subscription/controllers/subscription-api.controller";
 import { getOpenApiSpecApi } from "@/modules/shared/controllers/openapi-api.controller";
@@ -128,6 +128,7 @@ const endpoints: EndpointRoute[] = [
 
     // ===== BILLING / PAYMENT =====
     { method: "POST", path: "payment/billing/webhook/duitku", handler: processDuitkuWebhookApi },
+    { method: "POST", path: "payment/billing/webhook/midtrans", handler: processMidtransWebhookApi },
     { method: "POST", path: "billing/checkout/payment", handler: checkoutPaymentApi },
     { method: "POST", path: "billing/confirm", handler: confirmPaymentApi },
     { method: "POST", path: "billing/cancel", handler: cancelPaymentApi },

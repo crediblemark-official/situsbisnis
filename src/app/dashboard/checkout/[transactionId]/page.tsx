@@ -56,6 +56,9 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
             duitkuMerchantCode: true,
             duitkuApiKey: true,
             duitkuSandbox: true,
+            paymentGateway: true,
+            midtransServerKey: true,
+            midtransSandbox: true,
         }
     });
 
@@ -85,7 +88,11 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         <CheckoutClient
             transaction={serializedTransaction}
             platformName={platformName}
-            isDuitkuConfigured={!!(platform?.duitkuMerchantCode && platform?.duitkuApiKey)}
+            isDuitkuConfigured={
+                platform?.paymentGateway === "midtrans"
+                    ? !!platform?.midtransServerKey
+                    : !!(platform?.duitkuMerchantCode && platform?.duitkuApiKey)
+            }
         />
     );
 }

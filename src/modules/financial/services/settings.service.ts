@@ -42,7 +42,7 @@ export async function getSiteSettingsBillingContext(siteId: string) {
  * Mengambil konteks data langganan lengkap untuk halaman Billing Dashboard.
  */
 export async function getSubscriptionContext(siteId: string) {
-    const [subscription, dbPlans, adminSite] = await Promise.all([
+    const [subscription, dbPlans, adminSite, platformSettings] = await Promise.all([
         SubscriptionClient.getActiveSubscription(siteId),
         SubscriptionClient.getPricingPlans(),
         db.site.findUnique({
@@ -63,6 +63,10 @@ export async function getSubscriptionContext(siteId: string) {
                     }
                 }
             }
+        }),
+        db.platformSettings.findUnique({
+            where: { id: "global" },
+            select: { paymentGateway: true }
         })
     ]);
 
@@ -136,7 +140,8 @@ export async function getSubscriptionContext(siteId: string) {
         plans: serializedPlans,
         currentPlan: serializedCurrentPlan,
         paymentMethods,
-        whatsappNumber
+        whatsappNumber,
+        paymentGateway: platformSettings?.paymentGateway || "duitku"
     };
 }
 

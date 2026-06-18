@@ -29,9 +29,10 @@ interface BillingClientProps {
     paymentMethods?: any[];
     siteId: string;
     whatsappNumber?: string;
+    paymentGateway?: string;
 }
 
-export default function BillingClient({ plans, currentPlan, paymentMethods = [], siteId, whatsappNumber = "6281234567890" }: BillingClientProps) {
+export default function BillingClient({ plans, currentPlan, paymentMethods = [], siteId, whatsappNumber = "6281234567890", paymentGateway = "duitku" }: BillingClientProps) {
     const [previewPlan, setPreviewPlan] = useState<Plan | null>(
         (currentPlan && Number(currentPlan.price) > 0)
             ? currentPlan
@@ -128,14 +129,14 @@ export default function BillingClient({ plans, currentPlan, paymentMethods = [],
         setCouponError("");
     };
 
-    const executeBuySlot = async (method: "manual" | "duitku", quantity: number) => {
+    const executeBuySlot = async (method: "manual" | "duitku" | "midtrans", quantity: number) => {
         setIsLoading(true);
         try {
             const res = await buySlotAction({ siteId, quantity, paymentMethod: method });
             if (res.success && res.result) {
                 const tx = res.result as any;
                 setPaymentSelection(null);
-                if (method === "duitku" && tx.id) {
+                if ((method === "duitku" || method === "midtrans") && tx.id) {
                     // Redirect to custom checkout page
                     window.location.href = `/dashboard/checkout/${tx.id}`;
                 } else if (tx.paymentUrl) {
@@ -154,7 +155,7 @@ export default function BillingClient({ plans, currentPlan, paymentMethods = [],
         }
     };
 
-    const executeUpgrade = async (method: "manual" | "duitku") => {
+    const executeUpgrade = async (method: "manual" | "duitku" | "midtrans") => {
         if (!previewPlan || (previewPlan.id === currentPlan?.id && !isTrial)) return;
         setIsLoading(true);
         try {
@@ -168,7 +169,7 @@ export default function BillingClient({ plans, currentPlan, paymentMethods = [],
             if (res.success && res.result) {
                 const tx = res.result as any;
                 setPaymentSelection(null);
-                if (method === "duitku" && tx.id) {
+                if ((method === "duitku" || method === "midtrans") && tx.id) {
                     // Redirect to custom checkout page (branded, not duitku.com)
                     window.location.href = `/dashboard/checkout/${tx.id}`;
                 } else if (tx.paymentUrl) {
@@ -376,6 +377,7 @@ export default function BillingClient({ plans, currentPlan, paymentMethods = [],
                     previewPlan={previewPlan}
                     appliedCoupon={appliedCoupon}
                     isLoading={isLoading}
+                    paymentGateway={paymentGateway}
                     onCancel={() => setPaymentSelection(null)}
                     onProceed={async (method) => {
                         if (paymentSelection.type === "upgrade") {

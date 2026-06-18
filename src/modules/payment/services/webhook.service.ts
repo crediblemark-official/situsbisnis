@@ -47,52 +47,103 @@ export async function checkTransactionStatus(userId: string, userRole: string, t
     }
 
     const platformSettings = await SubscriptionClient.getPlatformSettings();
-    if (!platformSettings?.duitkuMerchantCode || !platformSettings?.duitkuApiKey) {
+    const gateway = platformSettings?.paymentGateway || "duitku";
+
+    if (gateway === "midtrans") {
+        if (!platformSettings?.midtransServerKey) {
+            return {
+                transactionId: transaction.id,
+                status: transaction.status,
+                amount: Number(transaction.amount),
+                planName: (transaction.plan as any)?.name || "",
+            };
+        }
+
+        let merchantOrderIdForMidtrans = transaction.id;
+        if (transaction.paymentUrl && transaction.paymentUrl.startsWith("custom:")) {
+            try {
+                const customData = JSON.parse(transaction.paymentUrl.substring(7));
+                if (customData.merchantOrderId) {
+                    merchantOrderIdForMidtrans = customData.merchantOrderId;
+                }
+            } catch {}
+        }
+
+        const { paymentManager } = await import("@crediblemark/buayar");
+        const result = await paymentManager.checkTransaction("midtrans", {
+            merchantOrderId: merchantOrderIdForMidtrans,
+        }, {
+            merchantCode: platformSettings.midtransMerchantId || "",
+            apiKey: platformSettings.midtransServerKey,
+            sandbox: platformSettings.midtransSandbox,
+        });
+
+        if (result.success && result.status === "paid" && transaction.status === "pending") {
+            try {
+                await processApprovedTransaction(transaction.id);
+                console.log(`[CHECK_STATUS] Transaction '${transaction.id}' auto-approved via Midtrans status polling.`);
+            } catch (err: any) {
+                if (err.message !== "ALREADY_PROCESSED") {
+                    console.error(`[CHECK_STATUS] Error processing Midtrans check:`, err);
+                }
+            }
+        }
+
         return {
             transactionId: transaction.id,
-            status: transaction.status,
+            status: result.success ? result.status : transaction.status,
+            statusCode: result.statusCode || "",
+            amount: Number(transaction.amount),
+            planName: (transaction.plan as any)?.name || "",
+        };
+    } else {
+        if (!platformSettings?.duitkuMerchantCode || !platformSettings?.duitkuApiKey) {
+            return {
+                transactionId: transaction.id,
+                status: transaction.status,
+                amount: Number(transaction.amount),
+                planName: (transaction.plan as any)?.name || "",
+            };
+        }
+
+        let merchantOrderIdForDuitku = transaction.id;
+        if (transaction.paymentUrl && transaction.paymentUrl.startsWith("custom:")) {
+            try {
+                const customData = JSON.parse(transaction.paymentUrl.substring(7));
+                if (customData.merchantOrderId) {
+                    merchantOrderIdForDuitku = customData.merchantOrderId;
+                }
+            } catch {}
+        }
+
+        const { paymentManager } = await import("@crediblemark/buayar");
+        const result = await paymentManager.checkTransaction("duitku", {
+            merchantOrderId: merchantOrderIdForDuitku,
+        }, {
+            merchantCode: platformSettings.duitkuMerchantCode,
+            apiKey: platformSettings.duitkuApiKey,
+            sandbox: platformSettings.duitkuSandbox,
+        });
+
+        if (result.success && result.status === "paid" && transaction.status === "pending") {
+            try {
+                await processApprovedTransaction(transaction.id);
+                console.log(`[CHECK_STATUS] Transaction '${transaction.id}' auto-approved via Duitku status polling.`);
+            } catch (err: any) {
+                if (err.message !== "ALREADY_PROCESSED") {
+                    console.error(`[CHECK_STATUS] Error processing Duitku check:`, err);
+                }
+            }
+        }
+
+        return {
+            transactionId: transaction.id,
+            status: result.success ? result.status : transaction.status,
+            statusCode: result.statusCode || "",
             amount: Number(transaction.amount),
             planName: (transaction.plan as any)?.name || "",
         };
     }
-
-    let merchantOrderIdForDuitku = transaction.id;
-    if (transaction.paymentUrl && transaction.paymentUrl.startsWith("custom:")) {
-        try {
-            const customData = JSON.parse(transaction.paymentUrl.substring(7));
-            if (customData.merchantOrderId) {
-                merchantOrderIdForDuitku = customData.merchantOrderId;
-            }
-        } catch {}
-    }
-
-    const { paymentManager } = await import("@crediblemark/buayar");
-    const result = await paymentManager.checkTransaction("duitku", {
-        merchantOrderId: merchantOrderIdForDuitku,
-    }, {
-        merchantCode: platformSettings.duitkuMerchantCode,
-        apiKey: platformSettings.duitkuApiKey,
-        sandbox: platformSettings.duitkuSandbox,
-    });
-
-    if (result.success && result.status === "paid" && transaction.status === "pending") {
-        try {
-            await processApprovedTransaction(transaction.id);
-            console.log(`[CHECK_STATUS] Transaction '${transaction.id}' auto-approved via status polling.`);
-        } catch (err: any) {
-            if (err.message !== "ALREADY_PROCESSED") {
-                console.error(`[CHECK_STATUS] Error processing:`, err);
-            }
-        }
-    }
-
-    return {
-        transactionId: transaction.id,
-        status: result.success ? result.status : transaction.status,
-        statusCode: result.statusCode || "",
-        amount: Number(transaction.amount),
-        planName: (transaction.plan as any)?.name || "",
-    };
 }
 
 /**
@@ -104,25 +155,47 @@ export async function getPaymentMethods(amount: number) {
     }
 
     const platformSettings = await SubscriptionClient.getPlatformSettings();
-    if (!platformSettings?.duitkuMerchantCode || !platformSettings?.duitkuApiKey) {
-        throw new Error("Payment gateway not configured");
-    }
+    const gateway = platformSettings?.paymentGateway || "duitku";
 
     const { paymentManager } = await import("@crediblemark/buayar");
 
-    const result = await paymentManager.getPaymentMethods("duitku", {
-        amount: Math.round(Number(amount)),
-    }, {
-        merchantCode: platformSettings.duitkuMerchantCode,
-        apiKey: platformSettings.duitkuApiKey,
-        sandbox: platformSettings.duitkuSandbox,
-    });
+    if (gateway === "midtrans") {
+        if (!platformSettings?.midtransServerKey) {
+            throw new Error("Payment gateway not configured");
+        }
 
-    if (!result.success) {
-        throw new Error(result.error || "Failed to fetch payment methods");
+        const result = await paymentManager.getPaymentMethods("midtrans", {
+            amount: Math.round(Number(amount)),
+        }, {
+            merchantCode: platformSettings.midtransMerchantId || "",
+            apiKey: platformSettings.midtransServerKey,
+            sandbox: platformSettings.midtransSandbox,
+        });
+
+        if (!result.success) {
+            throw new Error(result.error || "Failed to fetch payment methods from Midtrans");
+        }
+
+        return { methods: result.methods };
+    } else {
+        if (!platformSettings?.duitkuMerchantCode || !platformSettings?.duitkuApiKey) {
+            throw new Error("Payment gateway not configured");
+        }
+
+        const result = await paymentManager.getPaymentMethods("duitku", {
+            amount: Math.round(Number(amount)),
+        }, {
+            merchantCode: platformSettings.duitkuMerchantCode,
+            apiKey: platformSettings.duitkuApiKey,
+            sandbox: platformSettings.duitkuSandbox,
+        });
+
+        if (!result.success) {
+            throw new Error(result.error || "Failed to fetch payment methods from Duitku");
+        }
+
+        return { methods: result.methods };
     }
-
-    return { methods: result.methods };
 }
 
 /**
@@ -161,6 +234,55 @@ export async function processDuitkuWebhook(body: Record<string, any>) {
         merchantCode: platformSettings.duitkuMerchantCode || "",
         apiKey: platformSettings.duitkuApiKey,
         sandbox: platformSettings.duitkuSandbox
+    });
+
+    if (!verification.isValid) {
+        throw new Error("Invalid Signature");
+    }
+
+    if (verification.status === "paid") {
+        await processApprovedTransaction(actualTransactionId);
+    }
+
+    return { success: true };
+}
+
+/**
+ * Memproses callback webhook dari Midtrans.
+ */
+export async function processMidtransWebhook(body: Record<string, any>) {
+    const { order_id, status_code, gross_amount, signature_key } = body;
+
+    if (!order_id || !status_code || !gross_amount || !signature_key) {
+        throw new Error("Missing parameters");
+    }
+
+    const actualTransactionId = order_id.match(/^([^-]+)/)?.[1];
+    if (!actualTransactionId) {
+        throw new Error("Invalid order_id format");
+    }
+
+    const platformSettings = await SubscriptionClient.getPlatformSettings();
+    if (!platformSettings || !platformSettings.midtransServerKey) {
+        throw new Error("Platform not configured");
+    }
+
+    const transaction = await transactionRepo.findTransactionById(null, actualTransactionId);
+    if (!transaction) {
+        throw new Error("Transaction not found");
+    }
+
+    const expectedAmount = Number(transaction.amount);
+    if (Math.round(Number(gross_amount)) !== Math.round(expectedAmount)) {
+        console.error(`[MIDTRANS] Amount mismatch: webhook=${gross_amount}, expected=${expectedAmount}`);
+        throw new Error("Amount mismatch");
+    }
+
+    const { paymentManager } = await import("@crediblemark/buayar");
+    const verification = await paymentManager.verifyCallback("midtrans", body, {
+        merchantCode: platformSettings.midtransMerchantId || "",
+        apiKey: platformSettings.midtransServerKey,
+        sandbox: platformSettings.midtransSandbox
     });
 
     if (!verification.isValid) {

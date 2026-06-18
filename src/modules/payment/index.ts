@@ -12,7 +12,8 @@ import {
 import {
     checkTransactionStatus,
     getPaymentMethods,
-    processDuitkuWebhook
+    processDuitkuWebhook,
+    processMidtransWebhook
 } from "./services/webhook.service";
 
 
@@ -26,5 +27,6 @@ export const PaymentClient = {
     confirmManualPayment,
     getPaymentMethods,
     upgradePlan,
-    processDuitkuWebhook
+    processDuitkuWebhook,
+    processMidtransWebhook
 };

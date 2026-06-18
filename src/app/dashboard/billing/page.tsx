@@ -38,7 +38,7 @@ export default async function BillingPage() {
         );
     }
 
-    const { plans, currentPlan, paymentMethods, whatsappNumber } = await FinancialClient.getSubscriptionContext(siteId);
+    const { plans, currentPlan, paymentMethods, whatsappNumber, paymentGateway } = await FinancialClient.getSubscriptionContext(siteId);
 
     return (
         <BillingClientComponent 
@@ -47,6 +47,7 @@ export default async function BillingPage() {
             paymentMethods={paymentMethods}
             siteId={siteId}
             whatsappNumber={whatsappNumber}
+            paymentGateway={paymentGateway}
         />
     );
 }
