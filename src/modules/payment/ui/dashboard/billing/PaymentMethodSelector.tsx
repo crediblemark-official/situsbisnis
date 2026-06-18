@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { ArrowLeft, Landmark, CreditCard, Zap, CheckCircle2, Loader2, ArrowRight } from "lucide-react";
 import { Plan } from "@/modules/subscription/ui/dashboard/billing/types";
 
@@ -23,13 +23,15 @@ export function PaymentMethodSelector({
     onCancel,
     onProceed
 }: PaymentMethodSelectorProps) {
+    const [prevPaymentGateway, setPrevPaymentGateway] = useState(paymentGateway);
     const [selectedMethod, setSelectedMethod] = useState<"duitku" | "midtrans" | "manual">(
         paymentGateway === "midtrans" ? "midtrans" : "duitku"
     );
 
-    useEffect(() => {
+    if (paymentGateway !== prevPaymentGateway) {
+        setPrevPaymentGateway(paymentGateway);
         setSelectedMethod(paymentGateway === "midtrans" ? "midtrans" : "duitku");
-    }, [paymentGateway]);
+    }
 
     // 1. Calculate Base Price
     let basePrice = 0;
