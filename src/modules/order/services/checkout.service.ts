@@ -238,6 +238,7 @@ export async function getOrderPaymentMethods(orderId: string) {
     let merchantCode = paymentSettings?.gatewayMerchantId;
     let apiKey = paymentSettings?.gatewayApiKey;
     let sandbox = paymentSettings?.gatewaySandbox ?? true;
+    const gatewayApiType = platformSettings?.gatewayApiType || "snap";
 
     if (!merchantCode || !apiKey) {
         gateway = platformSettings?.paymentGateway || "duitku";
@@ -262,6 +263,60 @@ export async function getOrderPaymentMethods(orderId: string) {
 
     if (!result.success) {
         throw new Error(result.error || `Failed to fetch payment methods from ${gateway}`);
+    }
+
+    let filteredMethods = result.methods || [];
+    if (gateway === "midtrans" && gatewayApiType === "core") {
+        let enabledMethods: string[] = [];
+        try {
+            const midtransProvider = paymentManager.getProvider("midtrans") as any;
+            const probeRes = await midtransProvider.probePaymentMethods({
+                merchantCode: merchantCode || "",
+                apiKey,
+                sandbox,
+            });
+            if (probeRes && probeRes.success) {
+                enabledMethods = probeRes.enabled || [];
+            }
+        } catch (probeErr) {
+            console.error("[ORDER_PAYMENT_METHODS_PROBE_ERROR]", probeErr);
+        }
+
+        if (enabledMethods.length > 0) {
+            const methodMapping: Record<string, string[]> = {
+                qris: ["qris", "other_qris"],
+                gopay: ["gopay"],
+                shopeepay: ["shopeepay"],
+                ovo: ["ovo"],
+                dana: ["dana"],
+                linkaja: ["linkaja"],
+                bca: ["bca_va"],
+                bni: ["bni_va"],
+                bri: ["bri_va"],
+                cimb: ["cimb_va"],
+                danamon: ["danamon_va"],
+                bsi: ["bsi_va"],
+                seabank: ["seabank_va"],
+                mandiri: ["mandiri_va"],
+                permata: ["permata_va", "other_va"],
+                alfamart: ["alfamart"],
+                indomaret: ["indomaret"],
+                akulaku: ["akulaku"],
+                kredivo: ["kredivo"],
+            };
+
+            const probedKeys = Object.keys(methodMapping);
+            const disabledMethodNames: string[] = [];
+            for (const key of probedKeys) {
+                if (!enabledMethods.includes(key)) {
+                    disabledMethodNames.push(...methodMapping[key]);
+                }
+            }
+
+            filteredMethods = filteredMethods.filter(
+                (m) => !disabledMethodNames.includes(m.paymentMethod)
+            );
+        }
     }
 
     // Mapping payment method images to local assets
@@ -291,7 +346,7 @@ export async function getOrderPaymentMethods(orderId: string) {
         "akulaku": "/logo-pembayaran/IR.svg",
     };
 
-    const methods = (result.methods || []).map(method => ({
+    const methods = (filteredMethods || []).map(method => ({
         ...method,
         paymentImage: imageMapping[method.paymentMethod] || method.paymentImage,
     }));

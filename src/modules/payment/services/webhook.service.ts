@@ -198,21 +198,27 @@ export async function getPaymentMethods(amount: number) {
         }
 
         if (enabledMethods.length > 0) {
-            const methodMapping: Record<string, string[]> = {
-                qris: ["qris", "other_qris"],
-                gopay: ["gopay"],
-                shopeepay: ["shopeepay"],
-                bca: ["bca_va"],
-                bni: ["bni_va"],
-                bri: ["bri_va"],
-                cimb: ["cimb_va"],
-                mandiri: ["mandiri_va"],
-                permata: ["permata_va"],
-                alfamart: ["alfamart"],
-                indomaret: ["indomaret"],
-                akulaku: ["akulaku"],
-                kredivo: ["kredivo"],
-            };
+          const methodMapping: Record<string, string[]> = {
+            qris: ["qris", "other_qris"],
+            gopay: ["gopay"],
+            shopeepay: ["shopeepay"],
+            ovo: ["ovo"],
+            dana: ["dana"],
+            linkaja: ["linkaja"],
+            bca: ["bca_va"],
+            bni: ["bni_va"],
+            bri: ["bri_va"],
+            cimb: ["cimb_va"],
+            danamon: ["danamon_va"],
+            bsi: ["bsi_va"],
+            seabank: ["seabank_va"],
+            mandiri: ["mandiri_va"],
+            permata: ["permata_va", "other_va"],
+            alfamart: ["alfamart"],
+            indomaret: ["indomaret"],
+            akulaku: ["akulaku"],
+            kredivo: ["kredivo"],
+          };
 
             const probedKeys = Object.keys(methodMapping);
             const disabledMethodNames: string[] = [];
