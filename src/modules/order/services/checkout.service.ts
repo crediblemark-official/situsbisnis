@@ -1,6 +1,10 @@
 import * as orderRepo from "../repositories/order.repository";
 import { SubscriptionClient } from "@/modules/subscription";
 
+// Cache hasil probe Midtrans secara global di process memory
+let midtransProbeCache: { timestamp: number; enabled: string[] } | null = null;
+const PROBE_CACHE_TTL = 1000 * 60 * 30; // 30 menit
+
 /**
  * Membuat pesanan baru dan menghitung total harga secara aman.
  */
@@ -267,59 +271,70 @@ export async function getOrderPaymentMethods(orderId: string) {
 
     let filteredMethods = result.methods || [];
 
-    // Nonaktifkan probe sementara untuk kecepatan - tampilkan semua metode pembayaran
-    // if (gateway === "midtrans" && gatewayApiType === "core") {
-    //     let enabledMethods: string[] = [];
-    //     try {
-    //         const midtransProvider = paymentManager.getProvider("midtrans") as any;
-    //         const probeRes = await midtransProvider.probePaymentMethods({
-    //             merchantCode: merchantCode || "",
-    //             apiKey,
-    //             sandbox,
-    //         });
-    //         if (probeRes && probeRes.success) {
-    //             enabledMethods = probeRes.enabled || [];
-    //         }
-    //     } catch (probeErr) {
-    //         console.error("[ORDER_PAYMENT_METHODS_PROBE_ERROR]", probeErr);
-    //     }
-    //
-    //     if (enabledMethods.length > 0) {
-    //         const methodMapping: Record<string, string[]> = {
-    //             qris: ["qris"],
-    //             gopay: ["gopay"],
-    //             shopeepay: ["shopeepay"],
-    //             ovo: ["ovo"],
-    //             dana: ["dana"],
-    //             linkaja: ["linkaja"],
-    //             bca: ["bca_va"],
-    //             bni: ["bni_va"],
-    //             bri: ["bri_va"],
-    //             cimb: ["cimb_va"],
-    //             danamon: ["danamon_va"],
-    //             bsi: ["bsi_va"],
-    //             seabank: ["seabank_va"],
-    //             mandiri: ["mandiri_va"],
-    //             permata: ["permata_va", "other_va"],
-    //             alfamart: ["alfamart"],
-    //             indomaret: ["indomaret"],
-    //             akulaku: ["akulaku"],
-    //             kredivo: ["kredivo"],
-    //         };
-    //
-    //         const probedKeys = Object.keys(methodMapping);
-    //         const disabledMethodNames: string[] = [];
-    //         for (const key of probedKeys) {
-    //             if (!enabledMethods.includes(key)) {
-    //                 disabledMethodNames.push(...methodMapping[key]);
-    //             }
-    //         }
-    //
-    //         filteredMethods = filteredMethods.filter(
-    //             (m) => !disabledMethodNames.includes(m.paymentMethod)
-    //         );
-    //     }
-    // }
+    if (gateway === "midtrans" && gatewayApiType === "core") {
+        let enabledMethods: string[] = [];
+        const now = Date.now();
+        if (midtransProbeCache && (now - midtransProbeCache.timestamp) < PROBE_CACHE_TTL) {
+            enabledMethods = midtransProbeCache.enabled;
+        } else {
+            try {
+                const midtransProvider = paymentManager.getProvider("midtrans") as any;
+                const probeRes = await midtransProvider.probePaymentMethods({
+                    merchantCode: merchantCode || "",
+                    apiKey,
+                    sandbox,
+                });
+                if (probeRes && probeRes.success) {
+                    enabledMethods = probeRes.enabled || [];
+                    midtransProbeCache = {
+                        timestamp: now,
+                        enabled: enabledMethods
+                    };
+                }
+            } catch (probeErr) {
+                console.error("[ORDER_PAYMENT_METHODS_PROBE_ERROR]", probeErr);
+                if (midtransProbeCache) {
+                    enabledMethods = midtransProbeCache.enabled;
+                }
+            }
+        }
+
+        if (enabledMethods.length > 0) {
+            const methodMapping: Record<string, string[]> = {
+                qris: ["qris"],
+                gopay: ["gopay"],
+                shopeepay: ["shopeepay"],
+                ovo: ["ovo"],
+                dana: ["dana"],
+                linkaja: ["linkaja"],
+                bca: ["bca_va"],
+                bni: ["bni_va"],
+                bri: ["bri_va"],
+                cimb: ["cimb_va"],
+                danamon: ["danamon_va"],
+                bsi: ["bsi_va"],
+                seabank: ["seabank_va"],
+                mandiri: ["mandiri_va"],
+                permata: ["permata_va", "other_va"],
+                alfamart: ["alfamart"],
+                indomaret: ["indomaret"],
+                akulaku: ["akulaku"],
+                kredivo: ["kredivo"],
+            };
+
+            const probedKeys = Object.keys(methodMapping);
+            const disabledMethodNames: string[] = [];
+            for (const key of probedKeys) {
+                if (!enabledMethods.includes(key)) {
+                    disabledMethodNames.push(...methodMapping[key]);
+                }
+            }
+
+            filteredMethods = filteredMethods.filter(
+                (m) => !disabledMethodNames.includes(m.paymentMethod)
+            );
+        }
+    }
 
     // Mapping payment method images to local assets
     const imageMapping: Record<string, string> = {
