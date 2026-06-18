@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: situsbisnis
+    container_name: situsbisnis-v2
     restart: unless-stopped
     environment:
       # Koneksi database via PgBouncer internal (Port 6432)
