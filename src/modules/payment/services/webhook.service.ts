@@ -117,7 +117,8 @@ export async function getPaymentMethods(amount: number) {
     const gatewayApiKey = platformSettings?.gatewayApiKey;
     const gatewayMerchantId = platformSettings?.gatewayMerchantId;
     const gatewaySandbox = platformSettings?.gatewaySandbox ?? true;
-    const gatewayApiType = platformSettings?.gatewayApiType || "snap";
+    const FORCE_SNAP_MODE = true; // Set to false to test Core API
+    const gatewayApiType = FORCE_SNAP_MODE ? "snap" : (platformSettings?.gatewayApiType || "snap");
 
     if (!gatewayApiKey || !gatewayMerchantId) {
         throw new Error("Payment gateway not configured");

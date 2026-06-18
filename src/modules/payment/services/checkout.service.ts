@@ -67,9 +67,8 @@ export async function buySlot(
             const gatewayApiKey = platformSettings?.gatewayApiKey;
             const gatewayMerchantId = platformSettings?.gatewayMerchantId;
             const gatewaySandbox = platformSettings?.gatewaySandbox ?? true;
-            const gatewayApiType = platformSettings?.gatewayApiType || "snap";
-    // Force Snap mode for now to avoid Payment channel error
-    // const gatewayApiType = "snap";
+            const FORCE_SNAP_MODE = true; // Set to false to test Core API
+    const gatewayApiType = FORCE_SNAP_MODE ? "snap" : (platformSettings?.gatewayApiType || "snap");
 
             if (gatewayApiKey && gatewayMerchantId) {
                 const { paymentManager } = await import("@crediblemark/buayar");
@@ -164,9 +163,8 @@ export async function initializeCheckoutPayment(
     const gatewayApiKey = platformSettings?.gatewayApiKey;
     const gatewayMerchantId = platformSettings?.gatewayMerchantId;
     const gatewaySandbox = platformSettings?.gatewaySandbox ?? true;
-    const gatewayApiType = platformSettings?.gatewayApiType || "snap";
-    // Force Snap mode for now to avoid Payment channel error
-    // const gatewayApiType = "snap";
+    const FORCE_SNAP_MODE = true; // Set to false to test Core API
+    const gatewayApiType = FORCE_SNAP_MODE ? "snap" : (platformSettings?.gatewayApiType || "snap");
 
     console.log("[DEBUG] Midtrans Platform Settings:", {
         gateway,
@@ -359,9 +357,8 @@ export async function upgradePlan(
             const gatewayApiKey = platformSettings?.gatewayApiKey;
             const gatewayMerchantId = platformSettings?.gatewayMerchantId;
             const gatewaySandbox = platformSettings?.gatewaySandbox ?? true;
-            const gatewayApiType = platformSettings?.gatewayApiType || "snap";
-    // Force Snap mode for now to avoid Payment channel error
-    // const gatewayApiType = "snap";
+            const FORCE_SNAP_MODE = true; // Set to false to test Core API
+    const gatewayApiType = FORCE_SNAP_MODE ? "snap" : (platformSettings?.gatewayApiType || "snap");
 
             if (gatewayApiKey && gatewayMerchantId) {
                 const { paymentManager } = await import("@crediblemark/buayar");
