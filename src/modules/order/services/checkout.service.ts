@@ -266,58 +266,60 @@ export async function getOrderPaymentMethods(orderId: string) {
     }
 
     let filteredMethods = result.methods || [];
-    if (gateway === "midtrans" && gatewayApiType === "core") {
-        let enabledMethods: string[] = [];
-        try {
-            const midtransProvider = paymentManager.getProvider("midtrans") as any;
-            const probeRes = await midtransProvider.probePaymentMethods({
-                merchantCode: merchantCode || "",
-                apiKey,
-                sandbox,
-            });
-            if (probeRes && probeRes.success) {
-                enabledMethods = probeRes.enabled || [];
-            }
-        } catch (probeErr) {
-            console.error("[ORDER_PAYMENT_METHODS_PROBE_ERROR]", probeErr);
-        }
 
-        if (enabledMethods.length > 0) {
-            const methodMapping: Record<string, string[]> = {
-                qris: ["qris"],
-                gopay: ["gopay"],
-                shopeepay: ["shopeepay"],
-                ovo: ["ovo"],
-                dana: ["dana"],
-                linkaja: ["linkaja"],
-                bca: ["bca_va"],
-                bni: ["bni_va"],
-                bri: ["bri_va"],
-                cimb: ["cimb_va"],
-                danamon: ["danamon_va"],
-                bsi: ["bsi_va"],
-                seabank: ["seabank_va"],
-                mandiri: ["mandiri_va"],
-                permata: ["permata_va", "other_va"],
-                alfamart: ["alfamart"],
-                indomaret: ["indomaret"],
-                akulaku: ["akulaku"],
-                kredivo: ["kredivo"],
-            };
-
-            const probedKeys = Object.keys(methodMapping);
-            const disabledMethodNames: string[] = [];
-            for (const key of probedKeys) {
-                if (!enabledMethods.includes(key)) {
-                    disabledMethodNames.push(...methodMapping[key]);
-                }
-            }
-
-            filteredMethods = filteredMethods.filter(
-                (m) => !disabledMethodNames.includes(m.paymentMethod)
-            );
-        }
-    }
+    // Nonaktifkan probe sementara untuk kecepatan - tampilkan semua metode pembayaran
+    // if (gateway === "midtrans" && gatewayApiType === "core") {
+    //     let enabledMethods: string[] = [];
+    //     try {
+    //         const midtransProvider = paymentManager.getProvider("midtrans") as any;
+    //         const probeRes = await midtransProvider.probePaymentMethods({
+    //             merchantCode: merchantCode || "",
+    //             apiKey,
+    //             sandbox,
+    //         });
+    //         if (probeRes && probeRes.success) {
+    //             enabledMethods = probeRes.enabled || [];
+    //         }
+    //     } catch (probeErr) {
+    //         console.error("[ORDER_PAYMENT_METHODS_PROBE_ERROR]", probeErr);
+    //     }
+    //
+    //     if (enabledMethods.length > 0) {
+    //         const methodMapping: Record<string, string[]> = {
+    //             qris: ["qris"],
+    //             gopay: ["gopay"],
+    //             shopeepay: ["shopeepay"],
+    //             ovo: ["ovo"],
+    //             dana: ["dana"],
+    //             linkaja: ["linkaja"],
+    //             bca: ["bca_va"],
+    //             bni: ["bni_va"],
+    //             bri: ["bri_va"],
+    //             cimb: ["cimb_va"],
+    //             danamon: ["danamon_va"],
+    //             bsi: ["bsi_va"],
+    //             seabank: ["seabank_va"],
+    //             mandiri: ["mandiri_va"],
+    //             permata: ["permata_va", "other_va"],
+    //             alfamart: ["alfamart"],
+    //             indomaret: ["indomaret"],
+    //             akulaku: ["akulaku"],
+    //             kredivo: ["kredivo"],
+    //         };
+    //
+    //         const probedKeys = Object.keys(methodMapping);
+    //         const disabledMethodNames: string[] = [];
+    //         for (const key of probedKeys) {
+    //             if (!enabledMethods.includes(key)) {
+    //                 disabledMethodNames.push(...methodMapping[key]);
+    //             }
+    //         }
+    //
+    //         filteredMethods = filteredMethods.filter(
+    //             (m) => !disabledMethodNames.includes(m.paymentMethod)
+    //         );
+    //     }
+    // }
 
     // Mapping payment method images to local assets
     const imageMapping: Record<string, string> = {
