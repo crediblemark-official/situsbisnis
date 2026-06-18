@@ -163,15 +163,7 @@ export async function initializeCheckoutPayment(
     const gatewayApiKey = platformSettings?.gatewayApiKey;
     const gatewayMerchantId = platformSettings?.gatewayMerchantId;
     const gatewaySandbox = platformSettings?.gatewaySandbox ?? true;
-    const FORCE_SNAP_MODE = true; // Set to false to test Core API
-    const gatewayApiType = FORCE_SNAP_MODE ? "snap" : (platformSettings?.gatewayApiType || "snap");
-
-    console.log("[DEBUG] Midtrans Platform Settings:", {
-        gateway,
-        gatewayApiType,
-        gatewaySandbox,
-        gatewayMerchantId: gatewayMerchantId ? "***" : "missing"
-    });
+    const gatewayApiType = platformSettings?.gatewayApiType || "snap";
 
     if (!gatewayApiKey || !gatewayMerchantId) {
         throw new Error("Platform payment settings not configured");
@@ -186,7 +178,7 @@ export async function initializeCheckoutPayment(
     const customerEmail = ownerInfo?.email || "";
     const isCore = gateway === "midtrans" && gatewayApiType === "core";
 
-    const invoiceParams = {
+    const invoice = await paymentManager.createInvoice(gateway as any, {
         orderId: uniqueOrderId,
         amount: Number(transaction.amount),
         productDetails: transaction.plan ? `Upgrade Paket ${transaction.plan.name}` : "Upgrade Layanan SitusBisnis",
@@ -196,23 +188,12 @@ export async function initializeCheckoutPayment(
         },
         paymentMethod: isCore || gateway === "duitku" ? paymentMethod : undefined,
         returnUrl: `${appUrl}/dashboard/billing?status=success`,
-        callbackUrl: gateway === "midtrans"
-            ? `${appUrl}/api/payment/billing/webhook/midtrans`
-            : `${appUrl}/api/billing/webhook/duitku`
-    };
-
-    const invoiceConfig = {
+        callbackUrl: gateway === "midtrans" ? `${appUrl}/api/payment/billing/webhook/midtrans` : `${appUrl}/api/billing/webhook/duitku`
+    }, {
         merchantCode: gatewayMerchantId,
         apiKey: gatewayApiKey,
         sandbox: gatewaySandbox
-    };
-
-    console.log("[DEBUG] Midtrans createInvoice - Params:", invoiceParams);
-    console.log("[DEBUG] Midtrans createInvoice - Config:", { ...invoiceConfig, apiKey: "***" });
-
-    const invoice = await paymentManager.createInvoice(gateway as any, invoiceParams, invoiceConfig);
-
-    console.log("[DEBUG] Midtrans createInvoice - Response:", invoice);
+    });
 
     if (!invoice.success) {
       throw new Error(invoice.error || `Failed to create ${gateway} invoice`);
