@@ -23,23 +23,23 @@ ALTER TABLE "_SiteToUser" DROP CONSTRAINT IF EXISTS "_SiteToUser_A_fkey";
 ALTER TABLE "_SiteToUser" DROP CONSTRAINT IF EXISTS "_SiteToUser_B_fkey";
 
 -- AlterTable
-ALTER TABLE "Order" ADD COLUMN     "paymentCode" TEXT,
-ADD COLUMN     "paymentMethod" TEXT,
-ADD COLUMN     "qrCodeUrl" TEXT,
-ADD COLUMN     "qrString" TEXT,
-ADD COLUMN     "vaNumber" TEXT;
+ALTER TABLE "Order" ADD COLUMN IF NOT EXISTS "paymentCode" TEXT;
+ALTER TABLE "Order" ADD COLUMN IF NOT EXISTS "paymentMethod" TEXT;
+ALTER TABLE "Order" ADD COLUMN IF NOT EXISTS "qrCodeUrl" TEXT;
+ALTER TABLE "Order" ADD COLUMN IF NOT EXISTS "qrString" TEXT;
+ALTER TABLE "Order" ADD COLUMN IF NOT EXISTS "vaNumber" TEXT;
 
 -- AlterTable
-ALTER TABLE "PaymentTransaction" ADD COLUMN     "paymentCode" TEXT,
-ADD COLUMN     "qrCodeUrl" TEXT,
-ADD COLUMN     "qrString" TEXT,
-ADD COLUMN     "vaNumber" TEXT;
+ALTER TABLE "PaymentTransaction" ADD COLUMN IF NOT EXISTS "paymentCode" TEXT;
+ALTER TABLE "PaymentTransaction" ADD COLUMN IF NOT EXISTS "qrCodeUrl" TEXT;
+ALTER TABLE "PaymentTransaction" ADD COLUMN IF NOT EXISTS "qrString" TEXT;
+ALTER TABLE "PaymentTransaction" ADD COLUMN IF NOT EXISTS "vaNumber" TEXT;
 
 -- AlterTable
-ALTER TABLE "Product" ADD COLUMN     "originalPrice" DECIMAL(65,30);
+ALTER TABLE "Product" ADD COLUMN IF NOT EXISTS "originalPrice" DECIMAL(65,30);
 
 -- AlterTable
-ALTER TABLE "SiteSettings" ADD COLUMN     "enabledCustomers" BOOLEAN DEFAULT false;
+ALTER TABLE "SiteSettings" ADD COLUMN IF NOT EXISTS "enabledCustomers" BOOLEAN DEFAULT false;
 
 -- DropTable
 DROP TABLE IF EXISTS "_SiteToUser";
