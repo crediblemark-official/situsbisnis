@@ -20,7 +20,15 @@ import {
     initializeCheckoutPaymentAction 
 } from "@/modules/financial/public-actions";
 
-export function CheckoutClient({ transaction, platformName: _platformName, isDuitkuConfigured }: CheckoutClientProps) {
+export function CheckoutClient({ 
+    transaction, 
+    platformName: _platformName, 
+    isDuitkuConfigured,
+    paymentGateway = "duitku",
+    midtransApiType = "snap",
+    midtransClientKey = "",
+    midtransSandbox = true,
+}: CheckoutClientProps) {
     const router = useRouter();
     const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
     const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
@@ -45,6 +53,95 @@ export function CheckoutClient({ transaction, platformName: _platformName, isDui
         }
         return null;
     });
+
+    const isMidtransSnap = paymentGateway === "midtrans" && midtransApiType === "snap";
+
+    // Load Snap.js jika Midtrans Snap aktif
+    useEffect(() => {
+        if (isMidtransSnap) {
+            const snapSrc = midtransSandbox 
+                ? "https://app.sandbox.midtrans.com/snap/snap.js"
+                : "https://app.midtrans.com/snap/snap.js";
+            
+            let script = document.querySelector(`script[src="${snapSrc}"]`) as HTMLScriptElement;
+            if (!script) {
+                script = document.createElement("script");
+                script.src = snapSrc;
+                script.setAttribute("data-client-key", midtransClientKey || "");
+                document.body.appendChild(script);
+            }
+        }
+    }, [isMidtransSnap, midtransSandbox, midtransClientKey]);
+
+    const triggerSnapPopup = useCallback((token: string, redirectUrl: string) => {
+        if (typeof window !== "undefined" && (window as any).snap) {
+            (window as any).snap.pay(token, {
+                onSuccess: function (result: any) {
+                    console.log("Snap success:", result);
+                    setStatus("paid");
+                    router.push("/dashboard/billing?status=success");
+                },
+                onPending: function (result: any) {
+                    console.log("Snap pending:", result);
+                },
+                onError: function (result: any) {
+                    console.error("Snap error:", result);
+                    alert("Pembayaran gagal atau dibatalkan.");
+                },
+                onClose: function () {
+                    console.log("Snap widget closed");
+                }
+            });
+        } else {
+            // Fallback ke redirect URL jika snap.js belum/gagal ter-load
+            setTimeout(() => {
+                setIsRedirecting(true);
+                window.location.href = redirectUrl;
+            }, 0);
+        }
+    }, [router]);
+
+    // Auto-proceed untuk Midtrans Snap
+    const hasAttemptedSnapInit = useRef(false);
+    useEffect(() => {
+        if (isMidtransSnap && !expired && !customPaymentDetails && !isProceeding && status === "pending" && !hasAttemptedSnapInit.current) {
+            hasAttemptedSnapInit.current = true;
+            
+            if (transaction.paymentReference && transaction.paymentUrl && !transaction.paymentUrl.startsWith("custom:")) {
+                triggerSnapPopup(transaction.paymentReference, transaction.paymentUrl);
+            } else {
+                const autoInitSnap = async () => {
+                    setIsProceeding(true);
+                    try {
+                        const res = await initializeCheckoutPaymentAction({ 
+                            transactionId: transaction.id, 
+                            paymentMethod: "midtrans" 
+                        });
+                        if (res.success && res.result) {
+                            const data = res.result as any;
+                            if (data.success && data.transaction?.paymentReference && data.transaction?.paymentUrl) {
+                                triggerSnapPopup(data.transaction.paymentReference, data.transaction.paymentUrl);
+                            } else if (data.success && data.transaction?.paymentUrl) {
+                                setTimeout(() => {
+                                    setIsRedirecting(true);
+                                    window.location.href = data.transaction.paymentUrl;
+                                }, 0);
+                            } else {
+                                alert(data.error || "Gagal menginisialisasi Midtrans Snap.");
+                            }
+                        } else {
+                            alert(res.error || "Gagal menginisialisasi pembayaran.");
+                        }
+                    } catch (err) {
+                        console.error("Auto init snap error:", err);
+                    } finally {
+                        setIsProceeding(false);
+                    }
+                };
+                autoInitSnap();
+            }
+        }
+    }, [isMidtransSnap, expired, customPaymentDetails, transaction, status, isProceeding, triggerSnapPopup]);
 
     // ── Fetch payment methods ─────────────────────────────────────────────────
     const fetchPaymentMethods = useCallback(async () => {
@@ -174,7 +271,7 @@ export function CheckoutClient({ transaction, platformName: _platformName, isDui
                 </button>
                 <div className="flex items-center gap-2">
                     <ShieldCheck size={14} className="text-emerald-500" />
-                    <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Secured by Duitku</span>
+                    <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Secured by {paymentGateway === "midtrans" ? "Midtrans" : "Duitku"}</span>
                 </div>
                 {/* Spacer to keep middle element centered */}
                 <div className="w-[70px] shrink-0" />
@@ -210,6 +307,34 @@ export function CheckoutClient({ transaction, platformName: _platformName, isDui
                             onCopy={handleCopy}
                             onResetPayment={handleResetPayment}
                         />
+                    ) : isMidtransSnap ? (
+                        <div className="bg-card border border-border rounded-xl p-6 text-center space-y-4 shadow-sm flex flex-col items-center">
+                            {isProceeding ? (
+                                <Loader2 size={32} className="animate-spin text-primary shrink-0" />
+                            ) : (
+                                <ShieldCheck size={32} className="text-primary shrink-0" />
+                            )}
+                            <div>
+                                <h4 className="text-sm font-bold text-foreground">Menghubungkan ke Midtrans Snap</h4>
+                                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                                    Mohon tunggu sebentar, kami sedang membuka halaman pembayaran otomatis Midtrans Snap untuk Anda.
+                                </p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    if (transaction.paymentReference && transaction.paymentUrl) {
+                                        triggerSnapPopup(transaction.paymentReference, transaction.paymentUrl);
+                                    } else {
+                                        hasAttemptedSnapInit.current = false;
+                                        setStatus("pending");
+                                    }
+                                }}
+                                className="bg-primary hover:bg-primary/95 text-primary-foreground px-6 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all"
+                            >
+                                Buka Ulang Pembayaran Snap
+                            </button>
+                        </div>
                     ) : (
                         <PaymentMethodSelector
                             isLoadingMethods={isLoadingMethods}

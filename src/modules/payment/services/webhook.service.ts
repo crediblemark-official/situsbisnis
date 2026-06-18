@@ -146,6 +146,10 @@ export async function checkTransactionStatus(userId: string, userRole: string, t
     }
 }
 
+// Cache hasil probe Midtrans secara global di process memory
+let midtransProbeCache: { timestamp: number; enabled: string[] } | null = null;
+const PROBE_CACHE_TTL = 1000 * 60 * 30; // 30 menit
+
 /**
  * Mengambil daftar metode pembayaran yang tersedia dari gateway.
  */
@@ -176,7 +180,67 @@ export async function getPaymentMethods(amount: number) {
             throw new Error(result.error || "Failed to fetch payment methods from Midtrans");
         }
 
-        return { methods: result.methods };
+        let filteredMethods = result.methods || [];
+        if (platformSettings.midtransApiType === "core") {
+            let enabledMethods: string[] = [];
+            const now = Date.now();
+            if (midtransProbeCache && (now - midtransProbeCache.timestamp) < PROBE_CACHE_TTL) {
+                enabledMethods = midtransProbeCache.enabled;
+            } else {
+                try {
+                    const midtransProvider = paymentManager.getProvider("midtrans") as any;
+                    const probeRes = await midtransProvider.probePaymentMethods({
+                        merchantCode: platformSettings.midtransMerchantId || "",
+                        apiKey: platformSettings.midtransServerKey,
+                        sandbox: platformSettings.midtransSandbox,
+                    });
+                    if (probeRes && probeRes.success) {
+                        enabledMethods = probeRes.enabled || [];
+                        midtransProbeCache = {
+                            timestamp: now,
+                            enabled: enabledMethods
+                        };
+                    }
+                } catch (probeErr) {
+                    console.error("[MIDTRANS_PROBE_ERROR]", probeErr);
+                    if (midtransProbeCache) {
+                        enabledMethods = midtransProbeCache.enabled;
+                    }
+                }
+            }
+
+            if (enabledMethods.length > 0) {
+                const methodMapping: Record<string, string[]> = {
+                    qris: ["qris", "other_qris"],
+                    gopay: ["gopay"],
+                    shopeepay: ["shopeepay"],
+                    bca: ["bca_va"],
+                    bni: ["bni_va"],
+                    bri: ["bri_va"],
+                    cimb: ["cimb_va"],
+                    mandiri: ["mandiri_va"],
+                    permata: ["permata_va"],
+                    alfamart: ["alfamart"],
+                    indomaret: ["indomaret"],
+                    akulaku: ["akulaku"],
+                    kredivo: ["kredivo"],
+                };
+
+                const probedKeys = Object.keys(methodMapping);
+                const disabledMethodNames: string[] = [];
+                for (const key of probedKeys) {
+                    if (!enabledMethods.includes(key)) {
+                        disabledMethodNames.push(...methodMapping[key]);
+                    }
+                }
+
+                filteredMethods = filteredMethods.filter(
+                    (m) => !disabledMethodNames.includes(m.paymentMethod)
+                );
+            }
+        }
+
+        return { methods: filteredMethods };
     } else {
         if (!platformSettings?.duitkuMerchantCode || !platformSettings?.duitkuApiKey) {
             throw new Error("Payment gateway not configured");

@@ -22,4 +22,8 @@ export interface CheckoutClientProps {
     transaction: TransactionData;
     platformName: string;
     isDuitkuConfigured: boolean;
+    paymentGateway?: string;
+    midtransApiType?: string;
+    midtransClientKey?: string;
+    midtransSandbox?: boolean;
 }

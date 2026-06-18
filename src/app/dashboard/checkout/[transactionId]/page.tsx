@@ -59,6 +59,8 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
             paymentGateway: true,
             midtransServerKey: true,
             midtransSandbox: true,
+            midtransClientKey: true,
+            midtransApiType: true,
         }
     });
 
@@ -93,6 +95,10 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
                     ? !!platform?.midtransServerKey
                     : !!(platform?.duitkuMerchantCode && platform?.duitkuApiKey)
             }
+            paymentGateway={platform?.paymentGateway || "duitku"}
+            midtransApiType={platform?.midtransApiType || "snap"}
+            midtransClientKey={platform?.midtransClientKey || ""}
+            midtransSandbox={platform?.midtransSandbox ?? true}
         />
     );
 }
