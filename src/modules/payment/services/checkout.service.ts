@@ -194,10 +194,10 @@ export async function initializeCheckoutPayment(
         merchantCode: gatewayMerchantId,
         apiKey: gatewayApiKey,
         sandbox: gatewaySandbox
-    });
+      });
 
     if (!invoice.success) {
-        throw new Error(invoice.error || `Failed to create ${gateway} invoice`);
+      throw new Error(invoice.error || `Failed to create ${gateway} invoice`);
     }
 
     const customPayload = {

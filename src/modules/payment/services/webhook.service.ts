@@ -152,7 +152,6 @@ export async function getPaymentMethods(amount: number) {
         "seabank_va": "/logo-pembayaran/A1.svg",
         "other_va": "/logo-pembayaran/A1.svg",
         "qris": "/logo-pembayaran/QRIS.svg",
-        "other_qris": "/logo-pembayaran/QRIS.svg",
         "gopay": "/logo-pembayaran/JP.svg",
         "shopeepay": "/logo-pembayaran/FT.svg",
         "ovo": "/logo-pembayaran/OV.svg",
@@ -199,7 +198,7 @@ export async function getPaymentMethods(amount: number) {
 
         if (enabledMethods.length > 0) {
           const methodMapping: Record<string, string[]> = {
-            qris: ["qris", "other_qris"],
+            qris: ["qris"],
             gopay: ["gopay"],
             shopeepay: ["shopeepay"],
             ovo: ["ovo"],
