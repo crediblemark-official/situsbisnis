@@ -137,7 +137,38 @@ export async function getPaymentMethods(amount: number) {
         throw new Error(result.error || `Failed to fetch payment methods from ${gateway}`);
     }
 
-    let filteredMethods = result.methods || [];
+    // Mapping payment method images to local assets
+    const imageMapping: Record<string, string> = {
+        "credit_card": "/logo-pembayaran/VC.svg",
+        "googlepay": "/logo-pembayaran/VC.svg",
+        "bca_va": "/logo-pembayaran/BC.svg",
+        "bni_va": "/logo-pembayaran/I1.svg",
+        "bri_va": "/logo-pembayaran/BR.svg",
+        "mandiri_va": "/logo-pembayaran/M2.svg",
+        "permata_va": "/logo-pembayaran/BT.svg",
+        "cimb_va": "/logo-pembayaran/A1.svg",
+        "danamon_va": "/logo-pembayaran/A1.svg",
+        "bsi_va": "/logo-pembayaran/BV.svg",
+        "seabank_va": "/logo-pembayaran/A1.svg",
+        "other_va": "/logo-pembayaran/A1.svg",
+        "qris": "/logo-pembayaran/QRIS.svg",
+        "other_qris": "/logo-pembayaran/QRIS.svg",
+        "gopay": "/logo-pembayaran/JP.svg",
+        "shopeepay": "/logo-pembayaran/FT.svg",
+        "ovo": "/logo-pembayaran/OV.svg",
+        "dana": "/logo-pembayaran/DA.svg",
+        "linkaja": "/logo-pembayaran/DA.svg",
+        "indomaret": "/logo-pembayaran/DN.svg",
+        "alfamart": "/logo-pembayaran/IR.svg",
+        "kredivo": "/logo-pembayaran/IR.svg",
+        "akulaku": "/logo-pembayaran/IR.svg",
+    };
+
+    let filteredMethods = (result.methods || []).map(method => ({
+        ...method,
+        paymentImage: imageMapping[method.paymentMethod] || method.paymentImage,
+    }));
+
     if (gateway === "midtrans" && gatewayApiType === "core") {
         let enabledMethods: string[] = [];
         const now = Date.now();
