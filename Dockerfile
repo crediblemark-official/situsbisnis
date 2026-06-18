@@ -41,8 +41,6 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Batasi ukuran heap memory JavaScriptCore Bun (512MB) agar garbage collection dipicu lebih agresif
-ENV JSC_maxHeapSize=536870912
 # Batasi arena alokasi memory glibc untuk mencegah fragmentasi RAM virtual di lingkungan Linux/Docker
 ENV MALLOC_ARENA_MAX=2
 
