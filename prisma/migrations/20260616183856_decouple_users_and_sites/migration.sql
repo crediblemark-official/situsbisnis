@@ -1,26 +1,26 @@
 -- DropForeignKey
-ALTER TABLE "Commission" DROP CONSTRAINT "Commission_transactionId_fkey";
+ALTER TABLE "Commission" DROP CONSTRAINT IF EXISTS "Commission_transactionId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "Coupon" DROP CONSTRAINT "Coupon_affiliateId_fkey";
+ALTER TABLE "Coupon" DROP CONSTRAINT IF EXISTS "Coupon_affiliateId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "OrderItem" DROP CONSTRAINT "OrderItem_productId_fkey";
+ALTER TABLE "OrderItem" DROP CONSTRAINT IF EXISTS "OrderItem_productId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "PaymentTransaction" DROP CONSTRAINT "PaymentTransaction_siteId_fkey";
+ALTER TABLE "PaymentTransaction" DROP CONSTRAINT IF EXISTS "PaymentTransaction_siteId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "Post" DROP CONSTRAINT "Post_authorId_fkey";
+ALTER TABLE "Post" DROP CONSTRAINT IF EXISTS "Post_authorId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "Subscription" DROP CONSTRAINT "Subscription_siteId_fkey";
+ALTER TABLE "Subscription" DROP CONSTRAINT IF EXISTS "Subscription_siteId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "_SiteToUser" DROP CONSTRAINT "_SiteToUser_A_fkey";
+ALTER TABLE "_SiteToUser" DROP CONSTRAINT IF EXISTS "_SiteToUser_A_fkey";
 
 -- DropForeignKey
-ALTER TABLE "_SiteToUser" DROP CONSTRAINT "_SiteToUser_B_fkey";
+ALTER TABLE "_SiteToUser" DROP CONSTRAINT IF EXISTS "_SiteToUser_B_fkey";
 
 -- AlterTable
 ALTER TABLE "Order" ADD COLUMN     "paymentCode" TEXT,
@@ -42,7 +42,7 @@ ALTER TABLE "Product" ADD COLUMN     "originalPrice" DECIMAL(65,30);
 ALTER TABLE "SiteSettings" ADD COLUMN     "enabledCustomers" BOOLEAN DEFAULT false;
 
 -- DropTable
-DROP TABLE "_SiteToUser";
+DROP TABLE IF EXISTS "_SiteToUser";
 
 -- CreateTable
 CREATE TABLE "SiteUser" (
