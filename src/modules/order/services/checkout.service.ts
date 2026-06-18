@@ -238,7 +238,7 @@ export async function getOrderPaymentMethods(orderId: string) {
     let merchantCode = paymentSettings?.gatewayMerchantId;
     let apiKey = paymentSettings?.gatewayApiKey;
     let sandbox = paymentSettings?.gatewaySandbox ?? true;
-    const gatewayApiType = "snap" as "snap" | "core"; // Change to "core" in code to test Core API (requires Midtrans payment channels to be available)
+    const gatewayApiType = (platformSettings?.gatewayApiType || "snap") as "snap" | "core"; // Uses value from platform settings (admin panel)
 
     if (!merchantCode || !apiKey) {
         gateway = platformSettings?.paymentGateway || "duitku";

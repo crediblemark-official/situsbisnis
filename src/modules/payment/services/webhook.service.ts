@@ -117,7 +117,7 @@ export async function getPaymentMethods(amount: number) {
     const gatewayApiKey = platformSettings?.gatewayApiKey;
     const gatewayMerchantId = platformSettings?.gatewayMerchantId;
     const gatewaySandbox = platformSettings?.gatewaySandbox ?? true;
-    const gatewayApiType = "snap" as "snap" | "core"; // Change to "core" in code to test Core API (requires Midtrans payment channels to be available)
+    const gatewayApiType = (platformSettings?.gatewayApiType || "snap") as "snap" | "core"; // Uses value from platform settings (admin panel)
 
     if (!gatewayApiKey || !gatewayMerchantId) {
         throw new Error("Payment gateway not configured");
