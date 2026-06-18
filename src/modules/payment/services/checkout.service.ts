@@ -68,6 +68,8 @@ export async function buySlot(
             const gatewayMerchantId = platformSettings?.gatewayMerchantId;
             const gatewaySandbox = platformSettings?.gatewaySandbox ?? true;
             const gatewayApiType = platformSettings?.gatewayApiType || "snap";
+    // Force Snap mode for now to avoid Payment channel error
+    // const gatewayApiType = "snap";
 
             if (gatewayApiKey && gatewayMerchantId) {
                 const { paymentManager } = await import("@crediblemark/buayar");
@@ -163,6 +165,15 @@ export async function initializeCheckoutPayment(
     const gatewayMerchantId = platformSettings?.gatewayMerchantId;
     const gatewaySandbox = platformSettings?.gatewaySandbox ?? true;
     const gatewayApiType = platformSettings?.gatewayApiType || "snap";
+    // Force Snap mode for now to avoid Payment channel error
+    // const gatewayApiType = "snap";
+
+    console.log("[DEBUG] Midtrans Platform Settings:", {
+        gateway,
+        gatewayApiType,
+        gatewaySandbox,
+        gatewayMerchantId: gatewayMerchantId ? "***" : "missing"
+    });
 
     if (!gatewayApiKey || !gatewayMerchantId) {
         throw new Error("Platform payment settings not configured");
@@ -349,6 +360,8 @@ export async function upgradePlan(
             const gatewayMerchantId = platformSettings?.gatewayMerchantId;
             const gatewaySandbox = platformSettings?.gatewaySandbox ?? true;
             const gatewayApiType = platformSettings?.gatewayApiType || "snap";
+    // Force Snap mode for now to avoid Payment channel error
+    // const gatewayApiType = "snap";
 
             if (gatewayApiKey && gatewayMerchantId) {
                 const { paymentManager } = await import("@crediblemark/buayar");
