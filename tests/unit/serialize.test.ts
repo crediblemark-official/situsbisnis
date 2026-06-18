@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { serializeProduct, serializeProducts, serializeOrder } from '@/lib/content/serialize';
+import { serializeProduct, serializeProducts, serializeOrder, serializeTransaction, serializeTransactions } from '@/lib/content/serialize';
 
 // Mock Prisma types
 const mockProduct = {
@@ -37,6 +37,15 @@ const mockOrder = {
       price: { toString: () => '49.99' } as any 
     }
   ],
+};
+
+const mockTransaction = {
+  id: 'tx-123',
+  siteId: 'site-1',
+  amount: { toString: () => '50000' } as any,
+  status: 'pending',
+  createdAt: new Date('2024-01-01'),
+  updatedAt: new Date('2024-01-02'),
 };
 
 describe('lib/serialize.ts', () => {
@@ -99,6 +108,28 @@ describe('lib/serialize.ts', () => {
       
       expect(result).toBeDefined();
       expect(result?.items).toBeUndefined();
+    });
+  });
+
+  describe('serializeTransaction', () => {
+    it('should serialize a single transaction', () => {
+      const result = serializeTransaction(mockTransaction as any);
+      
+      expect(result?.amount).toBe(50000);
+      expect(result?.createdAt).toBe(new Date('2024-01-01').toISOString());
+    });
+
+    it('should return null for null input', () => {
+      const result = serializeTransaction(null);
+      expect(result).toBeNull();
+    });
+  });
+
+  describe('serializeTransactions', () => {
+    it('should serialize array of transactions', () => {
+      const result = serializeTransactions([mockTransaction, mockTransaction]);
+      expect(result).toHaveLength(2);
+      expect(result[0].amount).toBe(50000);
     });
   });
 });

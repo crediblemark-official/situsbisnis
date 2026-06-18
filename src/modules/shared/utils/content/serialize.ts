@@ -54,3 +54,23 @@ export function serializeOrders(orders: any[]) {
     return orders.map(serializeOrder);
 }
 
+export function serializeTransaction(tx: any) {
+    if (!tx) return null;
+    return {
+        ...tx,
+        amount: tx.amount ? Number(tx.amount) : 0,
+        createdAt: tx.createdAt ? new Date(tx.createdAt).toISOString() : undefined,
+        updatedAt: tx.updatedAt ? new Date(tx.updatedAt).toISOString() : undefined,
+        // Jika menyertakan relasi plan
+        plan: tx.plan ? {
+            ...tx.plan,
+            price: tx.plan.price ? Number(tx.plan.price) : 0,
+        } : null,
+    };
+}
+
+export function serializeTransactions(transactions: any[]) {
+    return transactions.map(serializeTransaction);
+}
+
+

@@ -4,6 +4,7 @@ import { getApiContext } from "@/lib/api/utils";
 import { PaymentClient } from "@/modules/payment";
 import { SubscriptionClient } from "@/modules/subscription";
 import { FinancialClient } from "@/modules/financial";
+import { serializeTransaction } from "@/lib/content/serialize";
 
 export async function simulateDuitkuAction(body: { transactionId: string }) {
     try {
@@ -62,7 +63,7 @@ export async function buySlotAction(body: { siteId: string; quantity: number; pa
             quantity,
             paymentMethod
         );
-        return { success: true, result: transaction };
+        return { success: true, result: serializeTransaction(transaction) };
     } catch (err: any) {
         console.error("[BUY_SLOT_ACTION] Error:", err);
         if (err.message === "Forbidden") {
@@ -104,7 +105,7 @@ export async function upgradePlanAction(body: {
             couponCode,
             paymentMethod
         );
-        return { success: true, result: transaction };
+        return { success: true, result: serializeTransaction(transaction) };
     } catch (err: any) {
         console.error("[UPGRADE_PLAN_ACTION] Error:", err);
         if (err.message === "Forbidden") {
@@ -139,7 +140,7 @@ export async function confirmManualPaymentAction(body: {
             notes,
             proofOfPayment
         );
-        return { success: true, result: transaction };
+        return { success: true, result: serializeTransaction(transaction) };
     } catch (err: any) {
         console.error("[CONFIRM_MANUAL_PAYMENT_ACTION] Error:", err);
         if (err.message === "Forbidden") {
@@ -196,7 +197,7 @@ export async function cancelTransactionAction(body: { transactionId: string }) {
             session.user.id,
             transactionId
         );
-        return { success: true, result };
+        return { success: true, result: serializeTransaction(result) };
     } catch (err: any) {
         console.error("[CANCEL_TRANSACTION_ACTION] Error:", err);
         if (err.message === "Forbidden") {
@@ -249,7 +250,7 @@ export async function initializeCheckoutPaymentAction(body: { transactionId: str
             transactionId,
             paymentMethod
         );
-        return { success: true, result };
+        return { success: true, result: serializeTransaction(result) };
     } catch (err: any) {
         console.error("[INITIALIZE_CHECKOUT_PAYMENT_ACTION] Error:", err);
         if (err.message === "Forbidden") {
@@ -275,7 +276,7 @@ export async function checkTransactionStatusAction(body: { transactionId: string
             (session.user as any).role,
             transactionId
         );
-        return { success: true, result };
+        return { success: true, result: serializeTransaction(result) };
     } catch (err: any) {
         console.error("[CHECK_TRANSACTION_STATUS_ACTION] Error:", err);
         if (err.message === "Forbidden") {
