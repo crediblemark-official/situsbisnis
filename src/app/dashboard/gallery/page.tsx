@@ -5,8 +5,8 @@ import { db } from "@/lib/core/db";
 import { getSiteId } from "@/lib/domains/tenant";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Pagination } from "@/components/ui/Pagination";
-import GalleryList from "./GalleryList.client";
-import GalleryForm from "./GalleryForm.client";
+import GalleryList from "@/modules/media/ui/dashboard/gallery/GalleryList.client";
+import GalleryForm from "@/modules/media/ui/dashboard/gallery/GalleryForm.client";
 
 export const dynamic = 'force-dynamic';
 

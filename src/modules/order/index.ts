@@ -1,33 +1,39 @@
 import { 
-    countOrdersInternal,
-    getRecentOrdersInternal,
-    getOrderByIdInternal,
-    getPaymentSettingsInternal,
-    processOrderPaymentCallbackInternal,
-    createOrderInternal,
-    checkOrderStatusInternal,
-    initializeOrderPaymentInternal,
-    getOrderPaymentMethodsInternal,
-    processOrderWebhookInternal,
-    getOrderDetailInternal,
-    updateOrderFulfillmentInternal,
-    getOrdersInternal
-} from "./controllers/order.controller";
+    countOrders,
+    getRecentOrders,
+    getOrderById,
+    getPaymentSettings,
+    processOrderPaymentCallback,
+    getOrderDetail,
+    updateOrderFulfillment,
+    getOrders
+} from "./services/order.service";
+
+import {
+    createOrder,
+    initializeOrderPayment,
+    getOrderPaymentMethods
+} from "./services/checkout.service";
+
+import {
+    checkOrderStatus,
+    processOrderWebhook
+} from "./services/webhook.service";
 
 // Facade / Client kontrak publik
 export const OrderClient = {
-    countOrders: countOrdersInternal,
-    getRecentOrders: getRecentOrdersInternal,
-    getOrderById: getOrderByIdInternal,
-    getPaymentSettings: getPaymentSettingsInternal,
-    processOrderPaymentCallback: processOrderPaymentCallbackInternal,
-    createOrder: createOrderInternal,
-    checkOrderStatus: checkOrderStatusInternal,
-    initializeOrderPayment: initializeOrderPaymentInternal,
-    getOrderPaymentMethods: getOrderPaymentMethodsInternal,
-    processOrderWebhook: processOrderWebhookInternal,
-    getOrderDetail: getOrderDetailInternal,
-    updateOrderFulfillment: updateOrderFulfillmentInternal,
-    getOrders: getOrdersInternal
+    countOrders,
+    getRecentOrders,
+    getOrderById,
+    getPaymentSettings,
+    processOrderPaymentCallback,
+    createOrder,
+    checkOrderStatus,
+    initializeOrderPayment,
+    getOrderPaymentMethods,
+    processOrderWebhook,
+    getOrderDetail,
+    updateOrderFulfillment,
+    getOrders
 };
 

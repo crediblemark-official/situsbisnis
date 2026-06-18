@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, use } from "react";
-import PortfolioEditor from "@/app/dashboard/portfolios/PortfolioEditor";
+import PortfolioEditor from "@/modules/media/ui/dashboard/portfolios/PortfolioEditor";
 import { Loader2 } from "lucide-react";
 
 export default function EditPortfolioPage({ params }: { params: Promise<{ id: string }> }) {

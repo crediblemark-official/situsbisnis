@@ -5,7 +5,7 @@ import { db } from "@/lib/core/db";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Pagination } from "@/components/ui/Pagination";
 import { LinkButton } from "@/components/ui/LinkButton";
-import PostList from "./PostList.client";
+import PostList from "@/modules/post/ui/dashboard/posts/PostList.client";
 
 import { getSiteId } from "@/lib/domains/tenant";
 

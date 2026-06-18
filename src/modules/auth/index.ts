@@ -26,7 +26,7 @@ import {
     checkReferralCode
 } from "./services/affiliate.service";
 
-export * from "./actions/auth.actions";
+
 
 export interface UserDTO {
     id: string;

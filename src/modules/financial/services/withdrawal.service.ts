@@ -1,5 +1,5 @@
 import { SubscriptionClient } from "@/modules/subscription";
-import * as billingRepo from "@/modules/subscription/repositories/billing.repository";
+import * as billingRepo from "../repositories/withdrawal.repository";
 import { db } from "@/modules/shared/core/db";
 import { eventBus } from "@/modules/shared/core/event-bus";
 

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { registerUserAction } from '@/modules/auth';
+import { registerUserAction } from '@/modules/auth/public-actions';
 import { db } from '@/lib/core/db';
 import { cookies } from 'next/headers';
 import bcrypt from 'bcryptjs';

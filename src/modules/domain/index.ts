@@ -1,11 +1,11 @@
 import {
-    registerDomainInternal,
-    verifyDomainInternal,
-    removeDomainInternal
-} from "./controllers/domain.controller";
+    registerDomain,
+    verifyDomain,
+    removeDomain
+} from "./services/domain.service";
 
 export const DomainClient = {
-    registerDomain: registerDomainInternal,
-    verifyDomain: verifyDomainInternal,
-    removeDomain: removeDomainInternal
+    registerDomain,
+    verifyDomain,
+    removeDomain
 };

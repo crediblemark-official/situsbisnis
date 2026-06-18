@@ -14,7 +14,7 @@ export async function register() {
     const { initPaymentListeners } = await import("@/modules/payment/listeners");
     const { initFinancialListeners } = await import("@/modules/financial/listeners");
     const { initNotificationListeners } = await import("@/modules/notification/listeners");
-    const { initCrudListeners } = await import("@/modules/crud/listeners");
+    const { initProductListeners } = await import("@/modules/catalog/listeners/product.listener");
     
     // Inisialisasi koneksi broker
     await eventBus.init();
@@ -33,8 +33,16 @@ export async function register() {
     await initPaymentListeners();
     await initFinancialListeners();
     await initNotificationListeners();
-    await initCrudListeners();
-    
+    await initProductListeners();
+
     console.log("🚀 Sistem Event-Driven berhasil diinisialisasi.");
+
+    // Inisialisasi periodik outbox dispatcher (setiap 5 detik)
+    const { processPendingEvents } = await import("@/modules/shared/core/outbox-dispatcher");
+    setInterval(() => {
+      processPendingEvents().catch((err) => {
+        console.error("[Outbox Worker Error] Failed to process pending events:", err);
+      });
+    }, 5000);
   }
 }

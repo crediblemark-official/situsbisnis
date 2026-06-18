@@ -1,32 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getApiContext, apiError } from "@/lib/api/utils";
 import crypto from "crypto";
-import { db } from "@/modules/shared/core/db";
 import { IdentityClient } from "../index";
 import { encode } from "next-auth/jwt";
-
-const ALLOWED_HOSTNAMES = new Set([
-    "localhost",
-    "127.0.0.1",
-]);
-
-async function isAllowedTarget(hostname: string, rootDomain: string): Promise<boolean> {
-    if (ALLOWED_HOSTNAMES.has(hostname)) return true;
-    if (hostname === rootDomain) return true;
-    if (hostname.endsWith(`.${rootDomain}`)) return true;
-
-    // Periksa database untuk custom domain yang terverifikasi
-    const site = await db.site.findUnique({
-        where: {
-            customDomain: hostname,
-        },
-        select: {
-            customDomainVerified: true,
-        },
-    });
-
-    return !!site?.customDomainVerified;
-}
 
 /**
  * Handler GET untuk bridge session token.
@@ -50,14 +26,6 @@ export async function getBridgeSessionApi(req: NextRequest) {
         targetUrl = new URL(target);
     } catch {
         return apiError("Invalid target URL", 400);
-    }
-
-    const rootDomain = (process.env.NEXT_PUBLIC_ROOT_DOMAIN || "situsbisnis.com")
-        .replace(/^https?:\/\//, "").split(":")[0];
-    const targetHost = targetUrl.hostname;
-
-    if (!(await isAllowedTarget(targetHost, rootDomain))) {
-        return apiError("Invalid target domain", 400);
     }
 
     const secret = process.env.NEXTAUTH_SECRET!;

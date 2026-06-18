@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { ChevronDown, Globe, Layout, Check, Plus, Search, Home } from "lucide-react";
 import Link from "next/link";
 import { getRootDomain, getProtocol } from "@/lib/domains/utils";
-import { getUserSitesAction } from "@/modules/auth";
+import { getUserSitesAction } from "@/modules/auth/public-actions";
 
 interface Site {
     id: string;

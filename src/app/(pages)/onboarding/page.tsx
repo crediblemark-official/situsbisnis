@@ -5,7 +5,7 @@ import { Globe, Layout, Loader2, ChevronRight, Store, AlertCircle } from "lucide
 import { useHostname } from "@/hooks/use-hostname";
 import Image from "next/image";
 import { usePlatformSettings } from "@/hooks/use-platform-settings";
-import { completeOnboardingAction } from "@/modules/auth";
+import { completeOnboardingAction } from "@/modules/auth/public-actions";
 
 export default function OnboardingPage() {
     const { settings } = usePlatformSettings();

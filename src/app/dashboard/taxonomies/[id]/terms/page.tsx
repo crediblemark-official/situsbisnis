@@ -1,7 +1,7 @@
 
 import React from "react";
 import { db } from "@/lib/core/db";
-import TermsClient from "./TermsClient.client";
+import TermsClient from "@/modules/page/ui/dashboard/taxonomies/TermsClient.client";
 import { PageHeader } from "@/components/ui/PageHeader";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";

@@ -3,7 +3,7 @@
 import { getApiContext } from "@/lib/api/utils";
 import { db } from "@/modules/shared/core/db";
 import { eventBus } from "@/modules/shared/core/event-bus";
-import { productSchema } from "../api/product";
+import { productSchema } from "../services/product.service";
 
 export async function createProductAction(body: any) {
     try {

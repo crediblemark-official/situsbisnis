@@ -42,10 +42,44 @@ export interface SendEmailEvent {
   payload: any;
 }
 
+// ─── Crud Events ────────────────────────────────────
+export interface CrudEventPayload {
+  model: string;
+  id: string;
+  data?: any;
+}
+
 // ─── Event Map ──────────────────────────────────────
 export interface EventMap {
   'user.registered': UserRegisteredEvent;
   'affiliate.commission.awarded': AffiliateCommissionAwardedEvent;
   'billing.payment.completed': PaymentCompletedEvent;
   'notification.email.send': SendEmailEvent;
+
+  // CRUD Events
+  'crud.created': CrudEventPayload;
+  'crud.updated': CrudEventPayload;
+  'crud.deleted': CrudEventPayload;
+
+  // Request-Reply Channels (Sync Queries/Commands)
+  'request.auth.getSiteOwner': { siteId: string };
+  'request.auth.getUserById': { userId: string };
+  'request.auth.getUsersMap': { userIds: string[] };
+  'request.auth.updateUserReferrer': { userId: string; referrerCode: string };
+  'request.tenant.getSiteInfo': { siteId: string };
+  'request.tenant.verifyUserSiteAccess': { userId: string; siteId: string };
+  'request.tenant.registerDomain': { siteId: string; domain: string };
+  'request.tenant.removeDomain': { siteId: string; domain: string };
+  'request.tenant.verifyDomain': { siteId: string; domain: string };
+  'request.catalog.countProducts': { siteId: string };
+  'request.catalog.getProducts': { siteId: string; limit?: number };
+  'request.catalog.getProduct': { siteId: string; productId: string };
+  'request.catalog.searchProducts': { siteId: string; query: string };
+  'request.catalog.getProductsMap': { siteId: string; productIds: string[] };
+  'request.order.countOrders': { siteId: string };
+  'request.content.countPosts': { siteId: string };
+  'request.content.countTestimonials': { siteId: string };
+  'request.content.getMediaSize': { siteId: string };
+  'request.billing.getActiveSubscription': { siteId: string };
+  'request.billing.checkLimit': { siteId: string; limitType: string };
 }

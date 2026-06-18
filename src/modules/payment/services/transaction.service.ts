@@ -4,6 +4,7 @@ import * as transactionRepo from "../repositories/transaction.repository";
 import * as subscriptionRepo from "@/modules/subscription/repositories/subscription.repository";
 import * as couponRepo from "@/modules/financial/repositories/coupon.repository";
 import { eventBus } from "@/modules/shared/core/event-bus";
+import { processPendingEvents } from "@/modules/shared/core/outbox-dispatcher";
 
 /**
  * Memproses transaksi yang disetujui (aktivasi paket/addon slots).
@@ -32,7 +33,6 @@ export async function processApprovedTransaction(transactionId: string) {
             if (coupon.maxUses !== null && coupon.usedCount >= coupon.maxUses) {
                 throw new Error("COUPON_EXHAUSTED");
             }
-            await couponRepo.incrementCouponUses(tx, updated.couponId);
         }
 
         const siteOwner = await eventBus.request<any, any>("request.auth.getSiteOwner", { siteId: updated.siteId });
@@ -57,9 +57,9 @@ export async function processApprovedTransaction(transactionId: string) {
                 } else {
                     ratePercentage = platformSettings?.affiliateCommissionRate ? Number(platformSettings.affiliateCommissionRate) : 20;
                 }
-                
+
                 const commissionAmount = Number(updated.amount) * (ratePercentage / 100);
-                
+
                 const outboxAffiliate = await tx.eventOutbox.create({
                     data: {
                         eventName: "affiliate.commission.awarded",
@@ -84,7 +84,11 @@ export async function processApprovedTransaction(transactionId: string) {
                     transactionId: updated.id,
                     siteId: updated.siteId,
                     amount: Number(updated.amount),
-                    couponId: updated.couponId
+                    couponId: updated.couponId,
+                    planId: updated.planId,
+                    addonType: updated.addonType,
+                    addonQuantity: updated.addonQuantity,
+                    planInterval: updated.plan?.interval || "month"
                 },
                 sourceModule: "billing",
                 status: "pending"
@@ -117,19 +121,19 @@ export async function processApprovedTransaction(transactionId: string) {
                     endDate,
                     addonSlots: Math.max(existingSubOfThisPlan.addonSlots, carryOverSlots)
                 });
+            } else {
+                await subscriptionRepo.createSubscription(tx, {
+                    siteId: updated.siteId,
+                    planId: updated.planId,
+                    status: "active",
+                    startDate: now,
+                    endDate,
+                    addonSlots: carryOverSlots
+                });
+            }
         } else {
-            await subscriptionRepo.createSubscription(tx, {
-                siteId: updated.siteId,
-                planId: updated.planId,
-                status: "active",
-                startDate: now,
-                endDate,
-                addonSlots: carryOverSlots
-            });
-        }
-    } else {
-        console.error(`[processApprovedTransaction] Unknown addonType: '${updated.addonType}' for transaction '${updated.id}'`);
-        throw new Error(`Unknown addonType: ${updated.addonType}`);
+            console.error(`[processApprovedTransaction] Unknown addonType: '${updated.addonType}' for transaction '${updated.id}'`);
+            throw new Error(`Unknown addonType: ${updated.addonType}`);
         }
 
         return updated;
@@ -138,27 +142,8 @@ export async function processApprovedTransaction(transactionId: string) {
         timeout: 45000,
     });
 
-    // Publikasikan semua outbox events yang terkumpul di luar transaksi
-    for (const outbox of outboxEvents) {
-        try {
-            await eventBus.publish(outbox.eventName, outbox.payload, outbox.sourceModule);
-            await db.eventOutbox.update({
-                where: { id: outbox.id },
-                data: {
-                    status: "published",
-                    publishedAt: new Date()
-                }
-            });
-        } catch (publishError: any) {
-            console.error(`[Outbox Error] Gagal mempublikasikan outbox ${outbox.id}:`, publishError);
-            await db.eventOutbox.update({
-                where: { id: outbox.id },
-                data: {
-                    status: "failed",
-                    error: publishError.message || String(publishError)
-                }
-            });
-        }
+    if (outboxEvents.length > 0) {
+        await processPendingEvents({ batchSize: outboxEvents.length });
     }
 
     if (updatedTx && updatedTx.status === "approved") {

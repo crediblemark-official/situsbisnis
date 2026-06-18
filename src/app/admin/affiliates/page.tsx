@@ -1,6 +1,6 @@
 import React from "react";
 import { db } from "@/lib/core/db";
-import AffiliateList from "./AffiliateList";
+import AffiliateList from "@/modules/auth/ui/admin/affiliates/AffiliateList";
 
 export const dynamic = "force-dynamic";
 

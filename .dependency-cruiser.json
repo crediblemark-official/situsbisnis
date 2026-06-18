@@ -10,7 +10,7 @@
       },
       "to": {
         "path": "^src/modules/(?!(shared)/)([^/]+)/.+",
-        "pathNot": "^src/modules/$1/|^src/modules/[^/]+/index\\.ts|^src/modules/[^/]+/ui/.+"
+        "pathNot": "^src/modules/$1/|^src/modules/[^/]+/index\\.ts|^src/modules/[^/]+/public-actions\\.ts|^src/modules/[^/]+/ui/.+"
       }
     },
     {
@@ -22,7 +22,7 @@
       },
       "to": {
         "path": "^src/modules/(auth|catalog|order|tenant|site|domain|infrastructure|notification|subscription|payment|financial|post|media|page)/.+",
-        "pathNot": "^src/modules/[^/]+/index\\.ts|^src/modules/[^/]+/ui/.+|^src/modules/[^/]+/listeners/index\\.ts$"
+        "pathNot": "^src/modules/[^/]+/index\\.ts|^src/modules/[^/]+/public-actions\\.ts|^src/modules/[^/]+/ui/.+|^src/modules/[^/]+/listeners/index\\.ts$"
       }
     }
   ],

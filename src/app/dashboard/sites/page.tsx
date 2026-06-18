@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { Globe, Plus, ArrowUpRight } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { LinkButton } from "@/components/ui/LinkButton";
-import { SiteList } from "./SiteList";
+import { SiteList } from "@/modules/site/ui/dashboard/sites/SiteList";
 
 export default async function MySitesPage() {
     const session = await getServerSession(authOptions);

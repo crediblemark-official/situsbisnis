@@ -1,6 +1,6 @@
 import React from "react";
 import { db } from "@/lib/core/db";
-import SubscriptionList from "./SubscriptionList";
+import SubscriptionList from "@/modules/subscription/ui/admin/subscriptions/SubscriptionList";
 
 export const dynamic = "force-dynamic";
 

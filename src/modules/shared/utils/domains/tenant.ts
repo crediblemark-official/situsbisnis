@@ -1,12 +1,11 @@
 import { headers } from "next/headers";
 import { db } from "@/lib/core/db";
 import { getRootDomain } from "@/lib/domains/utils";
-import { cache } from "react";
 import { isFeatureEnabled } from "@/lib/billing/features";
 import { unstable_cache } from "next/cache";
 import { GRACE_PERIOD_DAYS } from "@/lib/billing/constants";
 
-export const getTenant = cache(async () => {
+export const getTenant = async () => {
     const headerList = await headers();
     const fullHost = headerList.get("host");
     
@@ -46,9 +45,9 @@ export const getTenant = cache(async () => {
     // Otherwise, it might be a custom domain (e.g., example.io)
     // We return the host without port as the "subdomain identifier" for getSiteId to lookup via customDomain
     return fullHost.split(":")[0];
-});
+}
 
-export const getSite = cache(async () => {
+export const getSite = async () => {
     const siteId = await getSiteId();
     if (!siteId) return null;
 
@@ -68,9 +67,9 @@ export const getSite = cache(async () => {
             tags: [`site-${siteId}`] 
         }
     )();
-});
+}
 
-export const getSiteId = cache(async () => {
+export const getSiteId = async () => {
     const headerList = await headers();
     const siteIdFromHeader = headerList.get("x-site-id");
     if (siteIdFromHeader) return siteIdFromHeader;
@@ -115,9 +114,9 @@ export const getSiteId = cache(async () => {
             tags: [`site-id-${tenant}`] 
         }
     )();
-});
+}
 
-export const getSubscription = cache(async () => {
+export const getSubscription = async () => {
     const siteId = await getSiteId();
     if (!siteId) return null;
 
@@ -139,9 +138,9 @@ export const getSubscription = cache(async () => {
             tags: [`site-${siteId}`, "subscription"]
         }
     )();
-});
+}
 
-const getAnySubscription = cache(async () => {
+const getAnySubscription = async () => {
     const siteId = await getSiteId();
     if (!siteId) return null;
 
@@ -171,11 +170,11 @@ const getAnySubscription = cache(async () => {
             tags: [`site-${siteId}`, "subscription"]
         }
     )();
-});
+}
 
 export type SiteAccessStatus = "active" | "expired" | "grace_period" | "no_subscription";
 
-export const getSiteAccessStatus = cache(async (): Promise<SiteAccessStatus> => {
+export const getSiteAccessStatus = async (): Promise<SiteAccessStatus> => {
     const sub = await getAnySubscription();
     if (!sub) return "no_subscription";
 
@@ -213,4 +212,4 @@ export const getSiteAccessStatus = cache(async (): Promise<SiteAccessStatus> => 
     if (sub.status === "cancelled" || sub.status === "expired") return "expired";
     if (sub.status === "past_due") return "grace_period";
     return "active";
-});
+}

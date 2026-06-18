@@ -2,7 +2,7 @@ import React from "react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/core/db";
-import UserFinanceView from "./UserFinanceView";
+import UserFinanceView from "@/modules/financial/ui/dashboard/finance/UserFinanceView";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";

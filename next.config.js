@@ -12,7 +12,8 @@ const nextConfig = {
       { source: '/api/billing/webhook/duitku', destination: '/endpoints/payment/billing/webhook/duitku' },
       
       // Order routes (Public Visitor Checkout)
-      { source: '/api/orders/:path*', destination: '/endpoints/order/orders/:path*' },
+      { source: '/api/orders/:path+', destination: '/endpoints/order/orders/:path+' },
+      { source: '/api/orders', destination: '/endpoints/orders' },
       
       // Post routes (Public Visitor Testimonials)
       { source: '/api/testimonials/:path*', destination: '/endpoints/post/testimonials/:path*' },
@@ -29,7 +30,7 @@ const nextConfig = {
       
       // Page editor helper routes
       { source: '/api/credbuild/:path*', destination: '/endpoints/page/credbuild/:path*' },
-      { source: '/api/ai/:path*', destination: '/endpoints/page/ai/:path*' },
+      { source: '/api/ai/:path*', destination: '/endpoints/ai/:path*' },
 
       // Catch-all mapping untuk sisa /api/* ke /endpoints/*
       { source: '/api/:path*', destination: '/endpoints/:path*' },

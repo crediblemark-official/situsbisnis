@@ -7,7 +7,7 @@ import { Lock, Mail, Loader2, ChevronRight, User, Phone, Eye, EyeOff } from "luc
 import Link from "next/link";
 import Image from "next/image";
 import { usePlatformSettings } from "@/hooks/use-platform-settings";
-import { registerUserAction, checkAffiliateAction } from "@/modules/auth";
+import { registerUserAction, checkAffiliateAction } from "@/modules/auth/public-actions";
 
 function RegisterForm() {
     const router = useRouter();

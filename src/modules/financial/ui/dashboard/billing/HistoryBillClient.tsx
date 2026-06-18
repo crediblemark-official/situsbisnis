@@ -7,7 +7,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { TransactionHistory } from "@/modules/payment/ui/dashboard/billing/TransactionHistory";
 import { PaymentConfirmation } from "@/modules/payment/ui/dashboard/billing/PaymentConfirmation";
 import { Transaction } from "@/modules/subscription/ui/dashboard/billing/types";
-import { confirmManualPaymentAction, cancelTransactionAction } from "@/modules/financial";
+import { confirmManualPaymentAction, cancelTransactionAction } from "@/modules/financial/public-actions";
 
 interface HistoryBillClientProps {
     transactions: Transaction[];

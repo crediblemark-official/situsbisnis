@@ -22,7 +22,7 @@ import {
     getProduct
 } from "./ui/content-display";
 
-export * from "./actions/page.actions";
+
 
 export const PageClient = {
     getPages,

@@ -4,7 +4,7 @@ import { Plus, Layers } from "lucide-react";
 import { db } from "@/lib/core/db";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { LinkButton } from "@/components/ui/LinkButton";
-import TaxonomyList from "./TaxonomyList.client";
+import TaxonomyList from "@/modules/page/ui/dashboard/taxonomies/TaxonomyList.client";
 
 export const dynamic = 'force-dynamic';
 

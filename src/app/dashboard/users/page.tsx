@@ -1,6 +1,6 @@
 import { IdentityClient } from "@/modules/auth";
 import { getApiContext } from "@/lib/api/utils";
-import UsersListClient from "./UsersList.client";
+import UsersListClient from "@/modules/auth/ui/dashboard/users/UsersList.client";
 import { getTenant } from "@/lib/domains/tenant";
 import { redirect } from "next/navigation";
 

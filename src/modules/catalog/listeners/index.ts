@@ -1,5 +1,6 @@
 import { eventBus } from "@/modules/shared/core/event-bus";
 import * as catalogService from "../services/catalog.service";
+import { initProductListeners } from "./product.listener";
 
 /**
  * Menginisialisasi event listener dan reply handler untuk modul catalog.
@@ -49,4 +50,6 @@ export async function initCatalogListeners() {
       return {};
     }
   });
+
+  await initProductListeners();
 }

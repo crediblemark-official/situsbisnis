@@ -152,6 +152,12 @@ export async function findPortfolioItems(siteId: string) {
 /**
  * Mengambil daftar testimoni yang disetujui (approved) di suatu situs.
  */
+export async function findTestimonialById(siteId: string, id: string) {
+    return db.testimonial.findFirst({
+        where: { id, siteId }
+    });
+}
+
 export async function findApprovedTestimonials(siteId: string) {
     return db.testimonial.findMany({
         where: { isApproved: true, siteId },

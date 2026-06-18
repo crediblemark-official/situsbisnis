@@ -3,7 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { Loader2 } from "lucide-react";
-import PageEditor from "@/app/dashboard/pages/PageEditor";
+import PageEditor from "@/modules/page/ui/dashboard/pages/PageEditor";
 
 function NewPageContent() {
     const searchParams = useSearchParams();

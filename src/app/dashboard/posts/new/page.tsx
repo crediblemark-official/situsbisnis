@@ -1,4 +1,4 @@
-import PostEditor from "@/app/dashboard/posts/PostEditor";
+import PostEditor from "@/modules/post/ui/dashboard/posts/PostEditor";
 import { db } from "@/modules/shared/core/db";
 import { getSiteId } from "@/lib/domains/tenant";
 import { notFound } from "next/navigation";

@@ -3,8 +3,8 @@
 import { getApiContext } from "@/lib/api/utils";
 import { db } from "@/modules/shared/core/db";
 import { eventBus } from "@/modules/shared/core/event-bus";
-import { galleryItemSchema } from "../api/gallery";
-import { portfolioItemSchema } from "../api/portfolio";
+import { galleryItemSchema } from "../services/gallery.service";
+import { portfolioItemSchema } from "../services/portfolio.service";
 
 export async function createGalleryItemAction(body: any) {
     try {

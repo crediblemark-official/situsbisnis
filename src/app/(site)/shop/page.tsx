@@ -1,5 +1,5 @@
 
-import { ProductGridItem } from "@/app/dashboard/products/ProductGridItem";
+import { ProductGridItem } from "@/modules/catalog/ui/dashboard/products/ProductGridItem";
 
 import { Metadata } from "next";
 

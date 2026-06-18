@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, use } from "react";
-import PageEditor from "@/app/dashboard/pages/PageEditor";
+import PageEditor from "@/modules/page/ui/dashboard/pages/PageEditor";
 import { Loader2 } from "lucide-react";
 
 export default function EditPageRoute({ params }: { params: Promise<{ id: string }> }) {

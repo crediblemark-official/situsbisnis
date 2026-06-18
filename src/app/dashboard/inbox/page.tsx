@@ -7,7 +7,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { Pagination } from "@/components/ui/Pagination";
 import { SiteClient } from "@/modules/site";
 
-import InboxActions from "./InboxActions";
+import InboxActions from "@/modules/site/ui/dashboard/inbox/InboxActions";
 
 export const dynamic = 'force-dynamic';
 

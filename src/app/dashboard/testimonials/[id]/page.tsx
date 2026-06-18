@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, use } from "react";
-import TestimonialEditor from "@/app/dashboard/testimonials/TestimonialEditor";
+import TestimonialEditor from "@/modules/post/ui/dashboard/testimonials/TestimonialEditor";
 import { getTestimonialAction } from "@/modules/post/actions/post.actions";
 import { Loader2 } from "lucide-react";
 

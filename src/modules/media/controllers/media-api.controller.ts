@@ -217,3 +217,42 @@ export async function proxyMediaApi(req: NextRequest) {
         return new NextResponse(`Proxy error: ${error.message}`, { status: 500 });
     }
 }
+
+/**
+ * Handler DELETE untuk menghapus folder media.
+ */
+export async function deleteMediaFolderApi(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+    try {
+        const { siteId, error, status } = await getApiContext(["admin", "editor"]);
+        if (error) return apiError(error, status);
+
+        const { id } = await params;
+        if (!id) return apiError("ID is required", 400);
+
+        const folder = await MediaClient.deleteMediaFolder(siteId, id);
+        return apiResponse({ success: true });
+    } catch (error: any) {
+        if (error.message?.includes("non-empty")) return apiError(error.message, 400);
+        console.error("Delete Folder Error:", error);
+        return apiError("Failed to delete folder");
+    }
+}
+
+/**
+ * Handler DELETE untuk menghapus media item.
+ */
+export async function deleteMediaApi(req: Request, { params }: { params: Promise<{ id: string }> }) {
+    try {
+        const { siteId, error, status } = await getApiContext(["admin", "editor", "owner"]);
+        if (error) return apiError(error, status);
+
+        const { id } = await params;
+        if (!id) return apiError("ID required", 400);
+
+        await MediaClient.deleteMedia(siteId, id);
+        return apiResponse({ success: true });
+    } catch (error) {
+        console.error("Delete Error:", error);
+        return apiError("Internal Error");
+    }
+}

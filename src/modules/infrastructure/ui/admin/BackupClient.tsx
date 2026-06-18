@@ -15,7 +15,7 @@ import {
     Check
 } from "lucide-react";
 import { toast } from "react-hot-toast";
-import { exportBackupDataAction, importBackupDataAction } from "@/modules/infrastructure";
+import { exportBackupDataAction, importBackupDataAction } from "@/modules/infrastructure/public-actions";
 
 interface BackupClientProps {
     stats: {

@@ -2,12 +2,12 @@ import React from "react";
 import { Plus, ExternalLink, MessageSquare } from "lucide-react";
 import { db } from "@/lib/core/db";
 import { getSiteId } from "@/lib/domains/tenant";
-import TestimonialCard from "./TestimonialCard";
+import TestimonialCard from "@/modules/post/ui/dashboard/testimonials/TestimonialCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Pagination } from "@/components/ui/Pagination";
 import { LinkButton } from "@/components/ui/LinkButton";
-import { ShareLinkPill } from "./ShareLinkPill";
+import { ShareLinkPill } from "@/modules/post/ui/dashboard/testimonials/ShareLinkPill";
 
 export const dynamic = 'force-dynamic';
 

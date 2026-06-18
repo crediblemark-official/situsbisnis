@@ -6,7 +6,7 @@ import { getSiteId } from "@/lib/domains/tenant";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { LinkButton } from "@/components/ui/LinkButton";
 import { Pagination } from "@/components/ui/Pagination";
-import PortfolioList from "./PortfolioList.client";
+import PortfolioList from "@/modules/media/ui/dashboard/portfolios/PortfolioList.client";
 
 export const dynamic = 'force-dynamic';
 

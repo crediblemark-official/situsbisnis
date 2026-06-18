@@ -2,22 +2,40 @@ import {
     countPosts,
     countTestimonials
 } from "./services/content.service";
-export * from "./actions/post.actions";
 import {
     getTerms,
     createTerm,
     deleteTerm,
-    updateTerm
+    updateTerm,
+    listTaxonomies,
+    createTaxonomy,
+    getTaxonomyDetail,
+    updateTaxonomy,
+    deleteTaxonomy,
+    archiveTaxonomy
 } from "./services/taxonomy.service";
 import {
     searchAll
 } from "./services/search.service";
 import {
     getPost,
-    getPosts
+    getPosts,
+    listPosts,
+    createPost,
+    getPostDetail,
+    updatePost,
+    deletePost,
+    archivePost
 } from "./services/post.service";
 import {
-    getTestimonials
+    getTestimonial,
+    getTestimonials,
+    listTestimonials,
+    createTestimonial,
+    getTestimonialDetail,
+    updateTestimonial,
+    deleteTestimonial,
+    archiveTestimonial
 } from "./services/testimonial.service";
 
 export const PostClient = {
@@ -27,8 +45,27 @@ export const PostClient = {
     createTerm,
     deleteTerm,
     updateTerm,
+    listTaxonomies,
+    createTaxonomy,
+    getTaxonomyDetail,
+    updateTaxonomy,
+    deleteTaxonomy,
+    archiveTaxonomy,
     searchAll,
     getPost,
     getPosts,
-    getTestimonials
+    listPosts,
+    createPost,
+    getPostDetail,
+    updatePost,
+    deletePost,
+    archivePost,
+    getTestimonial,
+    getTestimonials,
+    listTestimonials,
+    createTestimonial,
+    getTestimonialDetail,
+    updateTestimonial,
+    deleteTestimonial,
+    archiveTestimonial
 };

@@ -4,7 +4,6 @@ import {
     countPortfolioItems,
     getMediaSize
 } from "./services/content.service";
-export * from "./actions/media.actions";
 import {
     getMediaList,
     uploadMedia,
@@ -14,10 +13,20 @@ import {
     deleteMediaFolder
 } from "./services/media.service";
 import {
-    getGalleryItems
+    getGalleryItems,
+    listGalleryItems,
+    createGalleryItem,
+    getGalleryItemDetail,
+    updateGalleryItem,
+    deleteGalleryItem
 } from "./services/gallery.service";
 import {
-    getPortfolios
+    getPortfolios,
+    listPortfolioItems,
+    createPortfolioItem,
+    getPortfolioItemDetail,
+    updatePortfolioItem,
+    deletePortfolioItem
 } from "./services/portfolio.service";
 
 export const MediaClient = {
@@ -32,5 +41,15 @@ export const MediaClient = {
     createMediaFolder,
     deleteMediaFolder,
     getGalleryItems,
-    getPortfolios
+    listGalleryItems,
+    createGalleryItem,
+    getGalleryItemDetail,
+    updateGalleryItem,
+    deleteGalleryItem,
+    getPortfolios,
+    listPortfolioItems,
+    createPortfolioItem,
+    getPortfolioItemDetail,
+    updatePortfolioItem,
+    deletePortfolioItem
 };

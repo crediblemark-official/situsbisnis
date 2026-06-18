@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { TableContainer, THead, TBody, TR, TH, TD } from "@/components/ui/Table";
 import { Search, CheckCircle2, XCircle, Clock, Banknote, User, Copy, Check } from "lucide-react";
-import { updateWithdrawalStatusAction } from "@/modules/financial";
+import { updateWithdrawalStatusAction } from "@/modules/financial/public-actions";
 
 export default function WithdrawalList({ initialWithdrawals }: { initialWithdrawals: any[] }) {
     const [withdrawals, setWithdrawals] = useState(initialWithdrawals);

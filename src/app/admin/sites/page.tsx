@@ -1,6 +1,6 @@
 import React from "react";
 import { db } from "@/lib/core/db";
-import SiteList from "./SiteList";
+import SiteList from "@/modules/site/ui/admin/sites/SiteList";
 
 export const dynamic = "force-dynamic";
 

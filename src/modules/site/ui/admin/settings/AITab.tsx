@@ -1,6 +1,6 @@
 import React from "react";
 import { Sparkles, Eye, EyeOff, Trash2, Plus } from "lucide-react";
-import { fetchAIModelsAction } from "@/modules/subscription";
+import { fetchAIModelsAction } from "@/modules/subscription/public-actions";
 
 interface AIConfigRow {
     provider: string;

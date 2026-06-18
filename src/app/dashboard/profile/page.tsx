@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/core/db";
 import { redirect } from "next/navigation";
-import { ProfileForm } from "./profile-form";
+import { ProfileForm } from "@/modules/auth/ui/dashboard/profile/profile-form";
 
 
 export default async function ProfilePage() {

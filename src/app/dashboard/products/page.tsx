@@ -10,7 +10,7 @@ import { getPaymentSettings } from "@/lib/settings/payment";
 import { TableSkeleton } from "@/components/ui/Skeleton";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { LinkButton } from "@/components/ui/LinkButton";
-import { ProductListContent } from "./ProductListContent";
+import { ProductListContent } from "@/modules/catalog/ui/dashboard/products/ProductListContent";
 
 export default async function ProductsPage({
     searchParams,

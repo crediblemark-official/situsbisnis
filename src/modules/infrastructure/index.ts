@@ -1,6 +1,6 @@
 import {
-    provisionSiteInternal
-} from "./controllers/provisioning.controller";
+    provisionSite
+} from "./services/provisioning.service";
 import {
     exportBackupData,
     type BackupData
@@ -11,12 +11,12 @@ export { DokployService } from "./services/dokploy.service";
 export type { BackupData };
 
 export const InfrastructureClient = {
-    provisionSite: provisionSiteInternal,
+    provisionSite,
     exportBackupData,
     importBackupData,
     manageSite: manageSiteAction
 };
 
-export * from "./actions/infra.actions";
+
 
 

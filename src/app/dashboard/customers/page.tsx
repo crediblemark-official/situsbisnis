@@ -3,7 +3,7 @@ import { getSiteId } from "@/lib/domains/tenant";
 import { getPaymentSettings } from "@/lib/settings/payment";
 import { getSiteSettings } from "@/modules/site/ui/site-settings";
 import { notFound } from "next/navigation";
-import CustomersClient from "./CustomersClient";
+import CustomersClient from "@/modules/auth/ui/dashboard/customers/CustomersClient";
 
 export const revalidate = 0; // Pastikan data selalu segar (fresh)
 

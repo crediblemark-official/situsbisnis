@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, Package, ShoppingBag, MessageSquare, CreditCard, Building2 } from "lucide-react";
-import OrderStatusManager from "./OrderStatusManager";
+import OrderStatusManager from "@/modules/order/ui/dashboard/orders/OrderStatusManager";
 import { getPaymentSettings } from "@/lib/settings/payment";
 import { formatPrice } from "@/lib/billing/currency";
 import { PageHeader } from "@/components/ui/PageHeader";

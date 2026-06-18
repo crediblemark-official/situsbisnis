@@ -1,5 +1,5 @@
 import React from "react";
-import SettingsForm from "./SettingsForm";
+import SettingsForm from "@/modules/site/ui/admin/settings/SettingsForm";
 import { FinancialClient } from "@/modules/financial";
 
 export const dynamic = "force-dynamic";

@@ -9,9 +9,9 @@ import {
     validateCouponAction, 
     buySlotAction, 
     upgradePlanAction, 
-    confirmManualPaymentAction, 
-    extendTrialAction 
-} from "@/modules/financial";
+    confirmManualPaymentAction,
+    extendTrialAction
+} from "@/modules/financial/public-actions";
 
 // Modular Components
 import { TrialBanner } from "@/modules/subscription/ui/dashboard/billing/TrialBanner";

@@ -1,1 +1,0 @@
-export { productApi } from "./product";

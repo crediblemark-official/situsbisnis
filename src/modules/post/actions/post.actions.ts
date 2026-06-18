@@ -3,8 +3,8 @@
 import { getApiContext } from "@/lib/api/utils";
 import { db } from "@/modules/shared/core/db";
 import { eventBus } from "@/modules/shared/core/event-bus";
-import { postSchema } from "../api/post";
-import { testimonialSchema } from "../api/testimonial";
+import { postSchema } from "../controllers/post.controller";
+import { testimonialSchema } from "../controllers/testimonial.controller";
 import { z } from "zod";
 
 const termSchema = z.object({
@@ -427,8 +427,7 @@ export async function getTestimonialAction(id: string) {
 
         if (!id) return { success: false, error: "ID required" };
 
-        const { db } = await import("@/modules/shared/core/db");
-        const testimonial = await db.testimonial.findFirst({ where: { id, siteId } });
+        const testimonial = await PostClient.getTestimonial(siteId, id);
         if (!testimonial) return { success: false, error: "Testimonial not found" };
 
         return { success: true, data: testimonial };

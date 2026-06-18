@@ -1,6 +1,6 @@
 import { PageClient } from "@/modules/page";
 import { getApiContext } from "@/lib/api/utils";
-import MenuListClient from "./MenuList.client";
+import MenuListClient from "@/modules/page/ui/dashboard/menus/MenuList.client";
 import { redirect } from "next/navigation";
 
 export default async function MenusPage() {

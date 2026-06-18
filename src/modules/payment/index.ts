@@ -15,7 +15,6 @@ import {
     processDuitkuWebhook
 } from "./services/webhook.service";
 
-export * from "./actions/payment.actions";
 
 export const PaymentClient = {
     processApprovedTransaction,

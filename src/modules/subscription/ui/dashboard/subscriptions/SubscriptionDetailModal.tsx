@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { CreditCard, Loader2, Check } from "lucide-react";
-import { getAllPlansAction, manageSubscriptionAction } from "@/modules/subscription";
+import { getAllPlansAction, manageSubscriptionAction } from "@/modules/subscription/public-actions";
 
 interface SubscriptionDetailModalProps {
     selectedSub: any;

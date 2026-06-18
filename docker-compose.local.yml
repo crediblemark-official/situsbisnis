@@ -40,7 +40,7 @@ services:
     container_name: situsbisnis-pgbouncer-local
     restart: unless-stopped
     ports:
-      - "6432:6432" # Mengekspos PgBouncer lokal ke port 6432 laptop Anda
+      - "6432:5432" # host:container — PgBouncer internal listen di 5432
     environment:
       DB_HOST: postgres-local
       DB_PORT: 5432
@@ -50,7 +50,7 @@ services:
       POOL_MODE: transaction
       MAX_CLIENT_CONN: 1000
       DEFAULT_POOL_SIZE: 20
-      AUTH_TYPE: trust
+      AUTH_TYPE: scram-sha-256
     depends_on:
       postgres-local:
         condition: service_healthy

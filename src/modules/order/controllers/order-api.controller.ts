@@ -197,3 +197,69 @@ export async function processOrderWebhookApi(req: Request) {
         return new NextResponse("Internal Server Error", { status: 500 });
     }
 }
+
+/**
+ * Endpoint GET untuk mengambil daftar pesanan.
+ */
+export async function getOrdersApi(req: Request) {
+    try {
+        const { siteId, error, status } = await getApiContext(["admin", "editor", "owner"]);
+        if (error) return apiError(error, status);
+
+        const { searchParams } = new URL(req.url);
+        const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
+        const limit = Math.max(1, Math.min(100, parseInt(searchParams.get("limit") || "50")));
+
+        const result = await OrderClient.getOrders(siteId, { skip: (page - 1) * limit, take: limit });
+        return apiResponse(result);
+    } catch (error) {
+        console.error("[GET_ORDERS]", error);
+        return apiError("Internal Error");
+    }
+}
+
+/**
+ * Endpoint GET untuk mengambil detail pesanan.
+ */
+export async function getOrderDetailApi(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+    try {
+        const { siteId, error, status } = await getApiContext(["admin", "editor", "owner"]);
+        if (error) return apiError(error, status);
+
+        const { id } = await params;
+        if (!id) return apiError("Order ID required", 400);
+
+        const order = await OrderClient.getOrderDetail(id, siteId);
+        if (!order) return apiError("Order not found", 404);
+
+        return apiResponse(order);
+    } catch (error) {
+        console.error("Error fetching order:", error);
+        return apiError("Internal Error");
+    }
+}
+
+/**
+ * Endpoint PATCH untuk memperbarui status pesanan.
+ */
+export async function updateOrderApi(req: Request, { params }: { params: Promise<{ id: string }> }) {
+    try {
+        const { siteId, error, status } = await getApiContext(["admin", "editor", "owner"]);
+        if (error) return apiError(error, status);
+
+        const { id } = await params;
+        const body = await req.json();
+        const { paymentStatus, fulfillmentStatus, status: orderStatus } = body;
+
+        const updateData: Record<string, string> = {};
+        if (paymentStatus) updateData.paymentStatus = paymentStatus;
+        if (fulfillmentStatus) updateData.fulfillmentStatus = fulfillmentStatus;
+        if (orderStatus) updateData.status = orderStatus;
+
+        const updated = await OrderClient.updateOrderFulfillment(id, siteId, updateData);
+        return apiResponse({ success: true, order: updated });
+    } catch (error) {
+        console.error("Error updating order:", error);
+        return apiError("Internal Error");
+    }
+}

@@ -18,7 +18,7 @@ import {
     getPaymentMethodsAction, 
     checkTransactionStatusAction, 
     initializeCheckoutPaymentAction 
-} from "@/modules/financial";
+} from "@/modules/financial/public-actions";
 
 export function CheckoutClient({ transaction, platformName: _platformName, isDuitkuConfigured }: CheckoutClientProps) {
     const router = useRouter();

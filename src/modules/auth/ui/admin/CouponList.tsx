@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { TableContainer, THead, TBody, TR, TH, TD } from "@/components/ui/Table";
 import { Search, Plus, Trash2, Edit, Ticket, Check, X, Percent, Calendar } from "lucide-react";
-import { createCouponAction, updateCouponAction, deleteCouponAction } from "@/modules/financial";
+import { createCouponAction, updateCouponAction, deleteCouponAction } from "@/modules/financial/public-actions";
 
 interface Affiliate {
     id: string;

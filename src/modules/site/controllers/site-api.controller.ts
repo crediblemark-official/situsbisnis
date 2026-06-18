@@ -7,6 +7,7 @@ import { FinancialClient } from "@/modules/financial";
 import { SiteClient } from "../index";
 import { SubscriptionClient } from "@/modules/subscription";
 import { createLogger } from "@/lib/core/logger";
+import { db } from "@/modules/shared/core/db";
 
 const healthLogger = createLogger("health");
 
@@ -186,5 +187,368 @@ export async function getContactApi(_req: Request) {
     } catch (error) {
         console.error("Fetch Submissions Error:", error);
         return apiError("Internal Error");
+    }
+}
+
+const onboardingSchema = z.object({
+    siteName: z.string().min(1, "Site name is required"),
+    subdomain: z.string().min(1, "Subdomain is required"),
+});
+
+/**
+ * Handler POST untuk onboarding (membuat site baru).
+ */
+export async function postOnboardingApi(req: Request) {
+    try {
+        const { session, error, status } = await getApiContext(undefined, { requireSite: false });
+        if (error) return apiError(error, status);
+        if (!session?.user?.id) return apiError("Unauthorized", 401);
+
+        const { data, error: vError, details, status: vStatus } = await validateBody(req, onboardingSchema);
+        if (vError) return apiError(vError, vStatus, details);
+
+        const normalizedSubdomain = data.subdomain.toLowerCase().trim().replace(/[^a-z0-9-]/g, "");
+
+        try {
+            await SiteClient.checkSubdomainAvailability(normalizedSubdomain);
+        } catch (err: any) {
+            if (err.message === "SUBDOMAIN_TAKEN") return apiError("Subdomain already taken", 400);
+            throw err;
+        }
+
+        const { siteIds, count } = await SiteClient.getUserSiteCount(session.user.id);
+        const limitCheck = await SubscriptionClient.checkUserSitesLimit(siteIds, count);
+        if (!limitCheck.allowed) {
+            return apiError(limitCheck.message || "Limit tercapai", 403);
+        }
+
+        const { InfrastructureClient } = await import("@/modules/infrastructure");
+        const site = await InfrastructureClient.provisionSite(session.user.id, data.siteName, normalizedSubdomain);
+
+        return apiResponse({ success: true, site });
+    } catch (error) {
+        console.error("[ONBOARDING_API] Error:", error);
+        return apiError("Failed to create site");
+    }
+}
+
+/**
+ * Handler GET untuk validasi settings (GTM, dll).
+ */
+export async function validateSettingApi(req: Request) {
+    try {
+        const { error, status } = await getApiContext(["admin", "owner", "editor"], { requireSite: false });
+        if (error) return apiError(error, status);
+
+        const { searchParams } = new URL(req.url);
+        const type = searchParams.get("type");
+        const value = searchParams.get("value")?.trim();
+
+        if (!type || !value) {
+            return NextResponse.json({ valid: false, error: "Missing type or value parameter" }, { status: 400 });
+        }
+
+        if (type === "gtm") {
+            if (!/^GTM-[A-Z0-9]{4,8}$/.test(value)) {
+                return NextResponse.json({ valid: false });
+            }
+
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 3000);
+                const res = await fetch(`https://www.googletagmanager.com/gtm.js?id=${value}`, {
+                    method: "HEAD",
+                    signal: controller.signal,
+                    headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" }
+                });
+                clearTimeout(timeoutId);
+                return NextResponse.json({ valid: res.status === 200 });
+            } catch (err) {
+                console.warn("[ValidateGTM:FetchError]", err);
+                return NextResponse.json({ valid: false });
+            }
+        }
+
+        return NextResponse.json({ valid: false, error: "Unsupported validation type" }, { status: 400 });
+    } catch (err) {
+        console.error("[ValidateRouteError]", err);
+        return apiError("Internal server error", 500);
+    }
+}
+
+/**
+ * Handler GET untuk admin settings.
+ */
+export async function getAdminSettingsApi() {
+    try {
+        const { error, status } = await getApiContext(["admin"], { requireSite: false });
+        if (error) return apiError(error, status);
+
+        const settings = await SiteClient.getSiteSettings();
+        return apiResponse(settings);
+    } catch (error) {
+        console.error("Admin Settings Error:", error);
+        return apiError("Failed to fetch admin settings");
+    }
+}
+
+/**
+ * Handler GET untuk mengambil detail site oleh admin.
+ */
+export async function getAdminSiteApi(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+    try {
+        const { error, status } = await getApiContext(["admin"], { requireSite: false });
+        if (error) return apiError(error, status);
+
+        const { id } = await params;
+        const site = await SiteClient.getSiteDetail(id);
+        if (!site) return apiError("Site not found", 404);
+
+        return apiResponse(site);
+    } catch (error) {
+        console.error("Admin Site Error:", error);
+        return apiError("Failed to fetch site");
+    }
+}
+
+/**
+ * Handler POST untuk search endpoint.
+ */
+export async function searchApi(req: Request) {
+    try {
+        const { siteId, error, status } = await getApiContext(["admin", "owner", "editor", "user"]);
+        if (error) return apiError(error, status);
+
+        const { searchParams } = new URL(req.url);
+        const q = searchParams.get("q");
+
+        if (!q) return apiResponse([]);
+
+        const { PostClient } = await import("@/modules/post");
+        const results = await PostClient.searchAll(siteId, q);
+        return apiResponse(results);
+    } catch (error) {
+        console.error("Search API Error:", error);
+        return apiError("Search failed");
+    }
+}
+
+/**
+ * Handler PATCH untuk update site settings.
+ */
+export async function updateSettingsApi(req: Request) {
+    try {
+        const { error: authError, status: authStatus, siteId } = await getApiContext(["admin", "owner"], { requireSite: true });
+        if (authError || !siteId) return apiError(authError || "Unauthorized", authStatus);
+
+        const body = await req.json();
+        const { customDomain: _, ...settingsData } = body;
+
+        const updatedSettings = await SiteClient.updateSiteSettings(settingsData, siteId);
+
+        const currentSite = await db.site.findUnique({
+            where: { id: siteId },
+            select: { customDomain: true }
+        });
+
+        return apiResponse({ ...updatedSettings, customDomain: currentSite?.customDomain });
+    } catch (error) {
+        console.error("Error updating settings:", error);
+        return apiError("Failed to update settings");
+    }
+}
+
+/**
+ * Handler POST untuk update payment settings.
+ */
+export async function updatePaymentSettingsApi(req: Request) {
+    try {
+        const { siteId, error, status } = await getApiContext(["admin", "editor", "owner"]);
+        if (error) return apiError(error, status);
+
+        const body = await req.json();
+        const { bankName, accountNumber, accountHolder, instructions, currency } = body;
+
+        await db.paymentSettings.upsert({
+            where: { siteId },
+            update: { bankName, accountNumber, accountHolder, currency, instructions, updatedAt: new Date() },
+            create: { siteId, bankName, accountNumber, accountHolder, currency, instructions }
+        });
+
+        return apiResponse({ success: true });
+    } catch (error) {
+        console.error("Payment settings error:", error);
+        return apiError("Failed to save settings");
+    }
+}
+
+/**
+ * Handler PATCH untuk update admin settings platform.
+ */
+export async function updateAdminSettingsApi(req: Request) {
+    try {
+        const { error, status } = await getApiContext(["admin"], { requireSite: false });
+        if (error) return apiError(error, status);
+
+        const body = await req.json();
+        const storage = body.storage;
+
+        const adminSite = await db.site.findUnique({ where: { subdomain: "admin" } });
+        if (!adminSite) return apiError("Platform admin site not found", 404);
+
+        if (body.siteName) {
+            await SubscriptionClient.updateAdminSiteBranding(adminSite.id, {
+                siteName: body.siteName,
+                contactEmail: body.contactEmail,
+                contactPhone: body.contactPhone,
+                whatsappNumber: body.whatsappNumber,
+                footerAddress: body.footerAddress,
+                allowRegistration: body.allowRegistration,
+            });
+        }
+
+        if (body.plans && Array.isArray(body.plans)) {
+            await SubscriptionClient.upsertPlans(body.plans);
+        }
+
+        if (body.paymentMethods && Array.isArray(body.paymentMethods)) {
+            await SubscriptionClient.updateAdminPaymentMethods(adminSite.id, body.paymentMethods);
+        }
+
+        if (storage) {
+            await SubscriptionClient.updatePlatformSettings({
+                r2AccessKeyId: storage.accessKeyId,
+                r2SecretAccessKey: storage.secretAccessKey,
+                r2BucketName: storage.bucketName,
+                r2PublicDomain: storage.publicDomain,
+                r2Endpoint: storage.endpoint,
+                affiliateCommissionRate: body.affiliateCommissionRate,
+                affiliateRecurringCommission: body.affiliateRecurringCommission,
+                affiliateRecurringCommissionRate: body.affiliateRecurringCommissionRate,
+                duitkuMerchantCode: body.duitkuMerchantCode,
+                duitkuApiKey: body.duitkuApiKey,
+                duitkuSandbox: body.duitkuSandbox,
+                aiProvider: body.aiProvider,
+                aiApiKey: body.aiApiKey,
+                starsenderApiKey: body.starsenderApiKey,
+                starsenderDeviceKey: body.starsenderDeviceKey,
+                resendApiKey: body.resendApiKey,
+                emailSenderName: body.emailSenderName,
+                emailSenderAddress: body.emailSenderAddress,
+            });
+        }
+
+        const { revalidatePath, revalidateTag } = await import("next/cache");
+        revalidateTag("platform", "default");
+        revalidateTag("pricing-plans", "default");
+        revalidatePath("/pricing");
+        revalidatePath("/about");
+        revalidatePath("/contact");
+
+        return apiResponse({ success: true, message: "Settings updated" });
+    } catch (e) {
+        console.error("Update Admin Settings Error:", e);
+        return apiError("Failed to update platform settings");
+    }
+}
+
+/**
+ * Handler POST untuk fetch AI models by provider.
+ */
+export async function fetchAiModelsApi(req: Request) {
+    try {
+        const { error, status } = await getApiContext(["admin"]);
+        if (error) return NextResponse.json({ error }, { status });
+
+        const { provider, apiKey } = await req.json();
+        if (!apiKey || !apiKey.trim()) {
+            return NextResponse.json({ models: [] });
+        }
+
+        const trimmedKey = apiKey.trim();
+        let models: string[] = [];
+
+        if (provider === "gemini") {
+            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${trimmedKey}`);
+            if (!res.ok) throw new Error(`Gemini API returned status ${res.status}`);
+            const data = await res.json();
+            if (Array.isArray(data.models)) {
+                models = data.models
+                    .map((m: any) => m.name.replace(/^models\//, ""))
+                    .filter((name: string) => name.includes("gemini") || name.includes("text"));
+            }
+        } else {
+            const urls: Record<string, string> = {
+                openai: "https://api.openai.com/v1/models",
+                openrouter: "https://openrouter.ai/api/v1/models",
+                groq: "https://api.groq.com/openai/v1/models",
+                nvidia: "https://integrate.api.nvidia.com/v1/models",
+            };
+            const url = urls[provider] || "https://api.openai.com/v1/models";
+
+            const res = await fetch(url, {
+                headers: { "Authorization": `Bearer ${trimmedKey}` },
+            });
+
+            if (!res.ok) throw new Error(`${provider} API returned status ${res.status}`);
+            const data = await res.json();
+            if (Array.isArray(data.data)) {
+                models = data.data.map((m: any) => m.id);
+            }
+        }
+
+        models.sort();
+        return NextResponse.json({ models });
+    } catch (err: any) {
+        console.error("Fetch models error:", err);
+        return NextResponse.json({ error: err.message || "Failed to fetch models" }, { status: 500 });
+    }
+}
+
+/**
+ * Handler DELETE untuk menghapus site oleh admin.
+ */
+export async function deleteAdminSiteApi(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+    try {
+        const { error, status } = await getApiContext(["admin"], { requireSite: false });
+        if (error) return apiError(error, status);
+
+        const { id } = await params;
+        if (!id) return apiError("Site ID required", 400);
+
+        await SiteClient.deleteSite(id);
+        return apiResponse({ success: true, message: "Site deleted successfully" });
+    } catch (e) {
+        console.error("Delete Site Error:", e);
+        return apiError("Failed to delete site");
+    }
+}
+
+/**
+ * Handler PATCH untuk update site oleh admin (set_free / extend_trial).
+ */
+export async function updateAdminSiteApi(req: Request, { params }: { params: Promise<{ id: string }> }) {
+    try {
+        const { error, status } = await getApiContext(["admin"], { requireSite: false });
+        if (error) return apiError(error, status);
+
+        const { id } = await params;
+        const body = await req.json();
+        const { action, days } = body;
+
+        if (action === "set_free") {
+            const result = await FinancialClient.setSiteToFreePlan(id);
+            return apiResponse(result);
+        }
+
+        if (action === "extend_trial") {
+            const result = await FinancialClient.extendSiteTrial(id, days ?? 7);
+            return apiResponse(result);
+        }
+
+        return apiError("Invalid action", 400);
+    } catch (e) {
+        console.error("Patch Site Error:", e);
+        return apiError("Failed to update site");
     }
 }

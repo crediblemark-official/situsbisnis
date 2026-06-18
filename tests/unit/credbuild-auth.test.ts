@@ -28,8 +28,8 @@ vi.mock('next/headers', () => ({
 }));
 
 // Mock the Client component
-vi.mock('@/app/credbuild/[...credbuildPath]/client', () => ({
-  Client: () => null,
+vi.mock('@/modules/page/ui/credbuild/CredbuildClient', () => ({
+  CredbuildClient: () => null,
 }));
 
 describe('CredBuild Page Authentication Guard', () => {

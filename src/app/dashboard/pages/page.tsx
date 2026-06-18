@@ -10,7 +10,7 @@ import { getSiteId } from "@/lib/domains/tenant";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { LinkButton } from "@/components/ui/LinkButton";
 import { Pagination } from "@/components/ui/Pagination";
-import PageList from "./PageList.client";
+import PageList from "@/modules/page/ui/dashboard/pages/PageList.client";
 
 export const dynamic = 'force-dynamic';
 

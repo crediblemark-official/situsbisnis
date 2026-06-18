@@ -13,7 +13,7 @@
 
 import React from "react";
 import "@crediblemark/build/credbuild.css";
-import { Client } from "./client";
+import { CredbuildClient } from "@/modules/page/ui/credbuild/CredbuildClient";
 import { Metadata } from "next";
 import { getPage } from "@/modules/page/ui/content-display";
 import type { Data } from "@crediblemark/build";
@@ -73,7 +73,7 @@ export default async function Page({
   const path = `/${credbuildPath.join("/")}`;
   const data = await getPage(path);
 
-  return <Client path={path} data={(data?.data as Partial<Data>) || {}} />;
+  return <CredbuildClient path={path} data={(data?.data as Partial<Data>) || {}} />;
 }
 
 export const dynamic = "force-dynamic";

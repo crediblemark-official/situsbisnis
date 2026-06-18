@@ -6,7 +6,7 @@ import { ImageIcon, X, Loader2, Upload, Search, Check } from "lucide-react";
 import Portal from "@/components/ui/Portal";
 import toast from "react-hot-toast";
 import { getProxiedUrl } from "@/lib/media/utils";
-import { getMediaListAction } from "@/modules/media";
+import { getMediaListAction } from "@/modules/media/public-actions";
 
 interface MediaItem {
     id: string;

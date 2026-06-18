@@ -2,7 +2,7 @@ import React from "react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/core/db";
-import UserAffiliateView from "./UserAffiliateView";
+import UserAffiliateView from "@/modules/auth/ui/dashboard/affiliate/UserAffiliateView";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";

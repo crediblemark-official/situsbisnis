@@ -6,7 +6,7 @@ import { getSiteSettings } from "@/modules/site/ui/site-settings";
 import BlogClient from "./BlogClient";
 import { getProducts } from "@/modules/page/ui/content-display";
 import { serializeProducts } from "@/lib/content/serialize";
-import { ProductGridItem } from "@/app/dashboard/products/ProductGridItem";
+import { ProductGridItem } from "@/modules/catalog/ui/dashboard/products/ProductGridItem";
 import Link from "next/link";
 import { ArrowRight, ShoppingCart } from "lucide-react";
 import { IdentityClient } from "@/modules/auth";
