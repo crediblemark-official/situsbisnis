@@ -2,7 +2,7 @@ import React from "react";
 import { FileText, ShoppingBag, Eye, Image as ImageIcon, Plus, MessageSquare, ShieldCheck, Pencil, Store } from "lucide-react";
 import Link from "next/link";
 import { serializeOrders } from "@/lib/content/serialize";
-import { getPaymentSettings } from "@/lib/settings/payment";
+import { getPaymentSettings } from "@/modules/shared/utils/settings/payment";
 import { formatPrice } from "@/lib/billing/currency";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";

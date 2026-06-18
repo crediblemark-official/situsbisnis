@@ -28,7 +28,7 @@ export async function simulateDuitkuAction(body: { transactionId: string }) {
 
 export async function validateCouponAction(body: { code: string; planId: string }) {
     try {
-        const { session, error } = await getApiContext();
+        const { session, error } = await getApiContext(undefined, { requireSite: false });
         if (error || !session) return { success: false, error: error || "Unauthorized" };
 
         const { code, planId } = body;
@@ -53,7 +53,7 @@ export async function validateCouponAction(body: { code: string; planId: string 
 
 export async function buySlotAction(body: { siteId: string; quantity: number; paymentMethod?: string }) {
     try {
-        const { session, error } = await getApiContext();
+        const { session, error } = await getApiContext(undefined, { requireSite: false });
         if (error || !session) return { success: false, error: error || "Unauthorized" };
 
         const { siteId, quantity, paymentMethod = "manual" } = body;
@@ -91,7 +91,7 @@ export async function upgradePlanAction(body: {
     paymentMethod?: string; 
 }) {
     try {
-        const { session, error } = await getApiContext();
+        const { session, error } = await getApiContext(undefined, { requireSite: false });
         if (error || !session) return { success: false, error: error || "Unauthorized" };
 
         const { siteId, planId, couponCode, paymentMethod = "manual" } = body;
@@ -127,7 +127,7 @@ export async function confirmManualPaymentAction(body: {
     proofOfPayment?: string; 
 }) {
     try {
-        const { session, error } = await getApiContext();
+        const { session, error } = await getApiContext(undefined, { requireSite: false });
         if (error || !session) return { success: false, error: error || "Unauthorized" };
 
         const { transactionId, notes, proofOfPayment } = body;
@@ -187,7 +187,7 @@ export async function extendTrialAction(body: { siteId: string }) {
 
 export async function cancelTransactionAction(body: { transactionId: string }) {
     try {
-        const { session, error } = await getApiContext();
+        const { session, error } = await getApiContext(undefined, { requireSite: false });
         if (error || !session) return { success: false, error: error || "Unauthorized" };
 
         const { transactionId } = body;
@@ -215,7 +215,7 @@ export async function cancelTransactionAction(body: { transactionId: string }) {
 
 export async function getPaymentMethodsAction(body: { amount: number }) {
     try {
-        const { session, error } = await getApiContext();
+        const { session, error } = await getApiContext(undefined, { requireSite: false });
         if (error || !session) return { success: false, error: error || "Unauthorized" };
 
         const { amount } = body;
@@ -236,7 +236,7 @@ export async function getPaymentMethodsAction(body: { amount: number }) {
 
 export async function initializeCheckoutPaymentAction(body: { transactionId: string; paymentMethod: string }) {
     try {
-        const { session, error } = await getApiContext();
+        const { session, error } = await getApiContext(undefined, { requireSite: false });
         if (error || !session) return { success: false, error: error || "Unauthorized" };
 
         const { transactionId, paymentMethod } = body;
@@ -265,7 +265,7 @@ export async function initializeCheckoutPaymentAction(body: { transactionId: str
 
 export async function checkTransactionStatusAction(body: { transactionId: string }) {
     try {
-        const { session, error } = await getApiContext();
+        const { session, error } = await getApiContext(undefined, { requireSite: false });
         if (error || !session) return { success: false, error: error || "Unauthorized" };
 
         const { transactionId } = body;

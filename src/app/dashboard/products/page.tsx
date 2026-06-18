@@ -6,7 +6,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getSiteId } from "@/lib/domains/tenant";
 import { serializeProducts } from "@/lib/content/serialize";
-import { getPaymentSettings } from "@/lib/settings/payment";
+import { getPaymentSettings } from "@/modules/shared/utils/settings/payment";
 import { TableSkeleton } from "@/components/ui/Skeleton";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { LinkButton } from "@/components/ui/LinkButton";

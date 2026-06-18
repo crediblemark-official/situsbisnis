@@ -3,7 +3,7 @@ import SettingsForm from "@/modules/site/ui/dashboard/settings/SettingsForm";
 import { getApiContext } from "@/lib/api/utils";
 import { SiteClient } from "@/modules/site";
 import { FinancialClient } from "@/modules/financial";
-import { getPaymentSettings } from "@/lib/settings/payment";
+import { getPaymentSettings } from "@/modules/shared/utils/settings/payment";
 
 export const dynamic = "force-dynamic";
 

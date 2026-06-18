@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { getProduct } from "@/modules/page/ui/content-display";
 import { serializeProduct } from "@/lib/content/serialize";
-import { getPaymentSettings } from "@/lib/settings/payment";
+import { getPaymentSettings } from "@/modules/shared/utils/settings/payment";
 import { getSiteSettings } from "@/modules/site/ui/site-settings";
 import ProductDetailViewClient from "@/components/shop/ProductDetailViewClient";
 import { generateAutoExcerpt } from "@/lib/utils/string";

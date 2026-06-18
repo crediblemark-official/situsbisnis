@@ -4,7 +4,7 @@ import { Eye, Package, MessageSquare, CreditCard, Building2 } from "lucide-react
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { serializeOrders } from "@/lib/content/serialize";
-import { getPaymentSettings } from "@/lib/settings/payment";
+import { getPaymentSettings } from "@/modules/shared/utils/settings/payment";
 import { getSiteId } from "@/lib/domains/tenant";
 import { formatPrice } from "@/lib/billing/currency";
 import { PageHeader } from "@/components/ui/PageHeader";

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getApiContext, apiResponse, apiError, validateBody } from "@/lib/api/utils";
-import { getPaymentSettings } from "@/lib/settings/payment";
+import { getPaymentSettings } from "@/modules/shared/utils/settings/payment";
 import { getSiteId } from "@/lib/domains/tenant";
 import { z } from "zod";
 import { FinancialClient } from "@/modules/financial";
@@ -367,12 +367,25 @@ export async function updatePaymentSettingsApi(req: Request) {
         if (error) return apiError(error, status);
 
         const body = await req.json();
-        const { bankName, accountNumber, accountHolder, instructions, currency } = body;
+        const {
+            bankName, accountNumber, accountHolder, instructions, currency,
+            paymentGateway, gatewayMerchantId, gatewayClientKey, gatewayApiKey,
+            gatewaySandbox
+        } = body;
 
         await db.paymentSettings.upsert({
             where: { siteId },
-            update: { bankName, accountNumber, accountHolder, currency, instructions, updatedAt: new Date() },
-            create: { siteId, bankName, accountNumber, accountHolder, currency, instructions }
+            update: {
+                bankName, accountNumber, accountHolder, currency, instructions,
+                paymentGateway, gatewayMerchantId, gatewayClientKey, gatewayApiKey,
+                gatewaySandbox,
+                updatedAt: new Date()
+            },
+            create: {
+                siteId, bankName, accountNumber, accountHolder, currency, instructions,
+                paymentGateway, gatewayMerchantId, gatewayClientKey, gatewayApiKey,
+                gatewaySandbox
+            }
         });
 
         return apiResponse({ success: true });

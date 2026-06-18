@@ -1,7 +1,7 @@
 import { db } from "@/lib/core/db";
 import { serializeProduct } from "@/lib/content/serialize";
 import ProductDetailViewClient from "@/components/shop/ProductDetailViewClient";
-import { getPaymentSettings } from "@/lib/settings/payment";
+import { getPaymentSettings } from "@/modules/shared/utils/settings/payment";
 import { getSiteSettings } from "@/modules/site/ui/site-settings";
 import Script from "next/script";
 import { headers } from "next/headers";

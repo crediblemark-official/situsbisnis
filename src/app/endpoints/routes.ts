@@ -105,6 +105,7 @@ const endpoints: EndpointRoute[] = [
     { method: "POST", path: "order/orders/payment-methods", handler: getOrderPaymentMethodsApi },
     { method: "POST", path: "order/orders/check-status", handler: checkOrderStatusApi },
     { method: "POST", path: "order/orders/webhook/duitku", handler: processOrderWebhookApi },
+    { method: "POST", path: "order/orders/webhook/payment", handler: processOrderWebhookApi },
 
     // ===== SITE / SETTINGS =====
     { method: "GET", path: "site/settings", handler: getSettingsApi },

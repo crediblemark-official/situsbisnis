@@ -122,7 +122,7 @@ export async function createOrder(
                     email: customerEmail,
                 },
                 returnUrl: `${origin}/checkout/success?orderId=${newOrder.id}`,
-                callbackUrl: `${origin}/api/orders/webhook/duitku`
+                callbackUrl: `${origin}/api/orders/webhook/payment`
             }, {
                 merchantCode,
                 apiKey,
@@ -186,7 +186,7 @@ export async function initializeOrderPayment(orderId: string, paymentMethod: str
         },
         paymentMethod,
         returnUrl: `${origin}/checkout/success?orderId=${order.id}`,
-        callbackUrl: `${origin}/api/orders/webhook/duitku`
+        callbackUrl: `${origin}/api/orders/webhook/payment`
     }, {
         merchantCode,
         apiKey,
