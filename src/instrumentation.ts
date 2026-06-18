@@ -14,7 +14,6 @@ export async function register() {
     const { initPaymentListeners } = await import("@/modules/payment/listeners");
     const { initFinancialListeners } = await import("@/modules/financial/listeners");
     const { initNotificationListeners } = await import("@/modules/notification/listeners");
-    const { initProductListeners } = await import("@/modules/catalog/listeners/product.listener");
     
     // Inisialisasi koneksi broker
     await eventBus.init();
@@ -33,8 +32,6 @@ export async function register() {
     await initPaymentListeners();
     await initFinancialListeners();
     await initNotificationListeners();
-    await initProductListeners();
-
     console.log("🚀 Sistem Event-Driven berhasil diinisialisasi.");
 
     // Inisialisasi periodik outbox dispatcher (setiap 5 detik)

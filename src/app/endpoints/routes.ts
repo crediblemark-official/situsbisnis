@@ -112,7 +112,9 @@ const endpoints: EndpointRoute[] = [
     { method: "GET", path: "settings", handler: getSettingsApi },
     { method: "PATCH", path: "site/settings", handler: updateSettingsApi },
     { method: "GET", path: "site/settings/payments", handler: getPaymentSettingsApi },
+    { method: "GET", path: "settings/payments", handler: getPaymentSettingsApi },
     { method: "POST", path: "site/settings/payments", handler: updatePaymentSettingsApi },
+    { method: "POST", path: "settings/payments", handler: updatePaymentSettingsApi },
     { method: "GET", path: "settings/validate", handler: validateSettingApi },
     { method: "GET", path: "site/analytics", handler: getAnalyticsApi },
     { method: "GET", path: "analytics", handler: getAnalyticsApi },
@@ -329,8 +331,13 @@ const endpoints: EndpointRoute[] = [
     },
     {
         method: "GET", path: "post/taxonomies/*", handler: taxonomyGetDetailApi,
-        match: (_route, routePath) => routePath.startsWith("post/taxonomies/"),
+        match: (_route, routePath) => routePath.startsWith("post/taxonomies/") && _route.length === 3,
         paramIndex: 2
+    },
+    {
+        method: "GET", path: "taxonomies/*", handler: taxonomyGetDetailApi,
+        match: (_route, routePath) => routePath.startsWith("taxonomies/") && _route.length === 2,
+        paramIndex: 1
     },
     {
         method: "PUT", path: "post/taxonomies/*", handler: taxonomyPutApi,
@@ -338,14 +345,29 @@ const endpoints: EndpointRoute[] = [
         paramIndex: 2
     },
     {
+        method: "PUT", path: "taxonomies/*", handler: taxonomyPutApi,
+        match: (_route, routePath) => routePath.startsWith("taxonomies/") && _route.length === 2,
+        paramIndex: 1
+    },
+    {
         method: "PATCH", path: "post/taxonomies/*", handler: taxonomyPatchApi,
         match: (_route, routePath) => routePath.startsWith("post/taxonomies/") && _route.length === 3,
         paramIndex: 2
     },
     {
+        method: "PATCH", path: "taxonomies/*", handler: taxonomyPatchApi,
+        match: (_route, routePath) => routePath.startsWith("taxonomies/") && _route.length === 2,
+        paramIndex: 1
+    },
+    {
         method: "DELETE", path: "post/taxonomies/*", handler: taxonomyDeleteApi,
         match: (_route, routePath) => routePath.startsWith("post/taxonomies/") && _route.length === 3,
         paramIndex: 2
+    },
+    {
+        method: "DELETE", path: "taxonomies/*", handler: taxonomyDeleteApi,
+        match: (_route, routePath) => routePath.startsWith("taxonomies/") && _route.length === 2,
+        paramIndex: 1
     },
     {
         method: "PUT", path: "menus/*", handler: updateMenuApi,
@@ -406,20 +428,40 @@ const endpoints: EndpointRoute[] = [
         match: (_route, routePath) => /^post\/taxonomies\/[^/]+\/terms$/.test(routePath)
     },
     {
+        method: "GET", path: "taxonomies/*/terms", handler: getTermsApi,
+        match: (_route, routePath) => /^taxonomies\/[^/]+\/terms$/.test(routePath)
+    },
+    {
         method: "POST", path: "post/taxonomies/*/terms", handler: createTermApi,
         match: (_route, routePath) => /^post\/taxonomies\/[^/]+\/terms$/.test(routePath)
+    },
+    {
+        method: "POST", path: "taxonomies/*/terms", handler: createTermApi,
+        match: (_route, routePath) => /^taxonomies\/[^/]+\/terms$/.test(routePath)
     },
     {
         method: "PUT", path: "post/taxonomies/*/terms/*", handler: updateTermApi,
         match: (_route, routePath) => /^post\/taxonomies\/[^/]+\/terms\/[^/]+$/.test(routePath)
     },
     {
+        method: "PUT", path: "taxonomies/*/terms/*", handler: updateTermApi,
+        match: (_route, routePath) => /^taxonomies\/[^/]+\/terms\/[^/]+$/.test(routePath)
+    },
+    {
         method: "PATCH", path: "post/taxonomies/*/terms/*", handler: updateTermApi,
         match: (_route, routePath) => /^post\/taxonomies\/[^/]+\/terms\/[^/]+$/.test(routePath)
     },
     {
+        method: "PATCH", path: "taxonomies/*/terms/*", handler: updateTermApi,
+        match: (_route, routePath) => /^taxonomies\/[^/]+\/terms\/[^/]+$/.test(routePath)
+    },
+    {
         method: "DELETE", path: "post/taxonomies/*/terms/*", handler: deleteTermApi,
         match: (_route, routePath) => /^post\/taxonomies\/[^/]+\/terms\/[^/]+$/.test(routePath)
+    },
+    {
+        method: "DELETE", path: "taxonomies/*/terms/*", handler: deleteTermApi,
+        match: (_route, routePath) => /^taxonomies\/[^/]+\/terms\/[^/]+$/.test(routePath)
     },
 ];
 

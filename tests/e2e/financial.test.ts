@@ -96,23 +96,23 @@ test.describe('Orders', () => {
     expect([401, 429]).toContain(res.status());
   });
 
-  test('POST /api/order/orders - requires auth', async ({ request }) => {
-    const res = await request.post('/api/order/orders', { headers: h(), data: {} });
+  test('POST /api/orders - requires auth', async ({ request }) => {
+    const res = await request.post('/api/orders', { headers: h(), data: {} });
     expect([401, 400, 429]).toContain(res.status());
   });
 
-  test('POST /api/order/orders/payment - requires auth', async ({ request }) => {
-    const res = await request.post('/api/order/orders/payment', { headers: h(), data: {} });
+  test('POST /api/orders/payment - requires auth', async ({ request }) => {
+    const res = await request.post('/api/orders/payment', { headers: h(), data: {} });
     expect([401, 400, 429]).toContain(res.status());
   });
 
-  test('POST /api/order/orders/payment-methods - requires auth', async ({ request }) => {
-    const res = await request.post('/api/order/orders/payment-methods', { headers: h(), data: {} });
+  test('POST /api/orders/payment-methods - requires auth', async ({ request }) => {
+    const res = await request.post('/api/orders/payment-methods', { headers: h(), data: {} });
     expect([401, 400, 429]).toContain(res.status());
   });
 
-  test('POST /api/order/orders/check-status - requires auth', async ({ request }) => {
-    const res = await request.post('/api/order/orders/check-status', { headers: h(), data: {} });
+  test('POST /api/orders/check-status - requires auth', async ({ request }) => {
+    const res = await request.post('/api/orders/check-status', { headers: h(), data: {} });
     expect([401, 400, 429]).toContain(res.status());
   });
 });

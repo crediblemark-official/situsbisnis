@@ -13,7 +13,7 @@ const nextConfig = {
       
       // Order routes (Public Visitor Checkout)
       { source: '/api/orders/:path+', destination: '/endpoints/order/orders/:path+' },
-      { source: '/api/orders', destination: '/endpoints/orders' },
+      { source: '/api/orders', destination: '/endpoints/order/orders' },
       
       // Post routes (Public Visitor Testimonials)
       { source: '/api/testimonials/:path*', destination: '/endpoints/post/testimonials/:path*' },
