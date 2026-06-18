@@ -64,90 +64,62 @@ export async function buySlot(
         if (paymentMethod !== "manual") {
             const platformSettings = await SubscriptionClient.getPlatformSettings();
             const gateway = platformSettings?.paymentGateway || "duitku";
+            const gatewayApiKey = platformSettings?.gatewayApiKey;
+            const gatewayMerchantId = platformSettings?.gatewayMerchantId;
+            const gatewaySandbox = platformSettings?.gatewaySandbox ?? true;
+            const gatewayApiType = platformSettings?.gatewayApiType || "snap";
 
-            if (gateway === "midtrans") {
-                if (platformSettings?.midtransServerKey) {
-                    const { paymentManager } = await import("@crediblemark/buayar");
-                    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://situsbisnis.com";
-                    const ownerInfo = await eventBus.request<any, any>("request.auth.getSiteOwner", { siteId });
+            if (gatewayApiKey && gatewayMerchantId) {
+                const { paymentManager } = await import("@crediblemark/buayar");
+                const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://situsbisnis.com";
+                const ownerInfo = await eventBus.request<any, any>("request.auth.getSiteOwner", { siteId });
 
-                    const isCore = platformSettings.midtransApiType === "core";
+                const isCore = gateway === "midtrans" && gatewayApiType === "core";
 
-                    const invoice = await paymentManager.createInvoice("midtrans", {
-                        orderId: transaction.id,
-                        amount: totalAmount,
-                        productDetails: `Pembelian Slot: +${quantity} Tambahan Situs • Utama: ${site.name}`,
-                        customer: {
-                            name: ownerInfo?.name || "Customer",
-                            email: ownerInfo?.email || ""
-                        },
-                        returnUrl: `${appUrl}/dashboard/billing`,
-                        callbackUrl: `${appUrl}/api/payment/billing/webhook/midtrans`,
-                        paymentMethod: isCore && paymentMethod !== "duitku" && paymentMethod !== "midtrans" ? paymentMethod : undefined,
-                    }, {
-                        merchantCode: platformSettings.midtransMerchantId || "",
-                        apiKey: platformSettings.midtransServerKey,
-                        sandbox: platformSettings.midtransSandbox
-                    });
+                const invoice = await paymentManager.createInvoice(gateway as any, {
+                    orderId: transaction.id,
+                    amount: totalAmount,
+                    productDetails: `Pembelian Slot: +${quantity} Tambahan Situs • Utama: ${site.name}`,
+                    customer: {
+                        name: ownerInfo?.name || "Customer",
+                        email: ownerInfo?.email || ""
+                    },
+                    returnUrl: `${appUrl}/dashboard/billing`,
+                    callbackUrl: gateway === "midtrans" 
+                        ? `${appUrl}/api/payment/billing/webhook/midtrans`
+                        : `${appUrl}/api/billing/webhook/duitku`,
+                    paymentMethod: isCore && paymentMethod !== "duitku" && paymentMethod !== "midtrans" ? paymentMethod : undefined,
+                }, {
+                    merchantCode: gatewayMerchantId,
+                    apiKey: gatewayApiKey,
+                    sandbox: gatewaySandbox
+                });
 
-                    if (!invoice.success || (!invoice.paymentUrl && !invoice.vaNumber && !invoice.qrString && !invoice.paymentCode)) {
-                        throw new Error(invoice.error || "Gagal membuat invoice Midtrans");
-                    }
-
-                    let paymentUrl = invoice.paymentUrl || "";
-                    if (isCore && paymentMethod !== "duitku" && paymentMethod !== "midtrans") {
-                        const { getPaymentMethodCategory } = await import("@crediblemark/buayar");
-                        const customPayload = {
-                            vaNumber: invoice.vaNumber || null,
-                            qrString: invoice.qrString || null,
-                            qrCodeUrl: invoice.qrCodeUrl || null,
-                            paymentCode: invoice.paymentCode || null,
-                            paymentMethod,
-                            category: getPaymentMethodCategory(paymentMethod),
-                            reference: invoice.reference,
-                            merchantOrderId: transaction.id
-                        };
-                        paymentUrl = `custom:${JSON.stringify(customPayload)}`;
-                    }
-
-                    transaction = await transactionRepo.updateTransactionPaymentDetails(transaction.id, {
-                        paymentUrl,
-                        paymentReference: invoice.reference,
-                        paymentMethod: "midtrans"
-                    });
+                if (!invoice.success || (!invoice.paymentUrl && !invoice.vaNumber && !invoice.qrString && !invoice.paymentCode)) {
+                    throw new Error(invoice.error || `Gagal membuat invoice ${gateway}`);
                 }
-            } else {
-                if (platformSettings?.duitkuMerchantCode && platformSettings?.duitkuApiKey) {
-                    const { paymentManager } = await import("@crediblemark/buayar");
-                    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://situsbisnis.com";
-                    const ownerInfo = await eventBus.request<any, any>("request.auth.getSiteOwner", { siteId });
 
-                    const invoice = await paymentManager.createInvoice("duitku", {
-                        orderId: transaction.id,
-                        amount: totalAmount,
-                        productDetails: `Pembelian Slot: +${quantity} Tambahan Situs • Utama: ${site.name}`,
-                        customer: {
-                            name: ownerInfo?.name || "Customer",
-                            email: ownerInfo?.email || ""
-                        },
-                        returnUrl: `${appUrl}/dashboard/billing`,
-                        callbackUrl: `${appUrl}/api/billing/webhook/duitku`
-                    }, {
-                        merchantCode: platformSettings.duitkuMerchantCode,
-                        apiKey: platformSettings.duitkuApiKey,
-                        sandbox: platformSettings.duitkuSandbox
-                    });
-
-                    if (!invoice.success || !invoice.paymentUrl) {
-                        throw new Error(invoice.error || "Gagal membuat invoice Duitku");
-                    }
-
-                    transaction = await transactionRepo.updateTransactionPaymentDetails(transaction.id, {
-                        paymentUrl: invoice.paymentUrl,
-                        paymentReference: invoice.reference,
-                        paymentMethod: "duitku"
-                    });
+                let paymentUrl = invoice.paymentUrl || "";
+                if (isCore && paymentMethod !== "duitku" && paymentMethod !== "midtrans") {
+                    const { getPaymentMethodCategory } = await import("@crediblemark/buayar");
+                    const customPayload = {
+                        vaNumber: invoice.vaNumber || null,
+                        qrString: invoice.qrString || null,
+                        qrCodeUrl: invoice.qrCodeUrl || null,
+                        paymentCode: invoice.paymentCode || null,
+                        paymentMethod,
+                        category: getPaymentMethodCategory(paymentMethod),
+                        reference: invoice.reference,
+                        merchantOrderId: transaction.id
+                    };
+                    paymentUrl = `custom:${JSON.stringify(customPayload)}`;
                 }
+
+                transaction = await transactionRepo.updateTransactionPaymentDetails(transaction.id, {
+                    paymentUrl,
+                    paymentReference: invoice.reference,
+                    paymentMethod: gateway
+                });
             }
         }
     } catch (paymentError: any) {
@@ -187,133 +159,78 @@ export async function initializeCheckoutPayment(
 
     const platformSettings = await SubscriptionClient.getPlatformSettings();
     const gateway = platformSettings?.paymentGateway || "duitku";
+    const gatewayApiKey = platformSettings?.gatewayApiKey;
+    const gatewayMerchantId = platformSettings?.gatewayMerchantId;
+    const gatewaySandbox = platformSettings?.gatewaySandbox ?? true;
+    const gatewayApiType = platformSettings?.gatewayApiType || "snap";
 
-    if (gateway === "midtrans") {
-        if (!platformSettings?.midtransServerKey) {
-            throw new Error("Platform payment settings not configured");
-        }
-
-        const { paymentManager, getPaymentMethodCategory } = await import("@crediblemark/buayar");
-        const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://situsbisnis.com";
-
-        const suffix = Date.now().toString().slice(-4);
-        const uniqueMidtransId = `${transaction.id}-${paymentMethod}-${suffix}`;
-
-        const customerEmail = ownerInfo?.email || "";
-        const isCore = platformSettings.midtransApiType === "core";
-
-        const invoice = await paymentManager.createInvoice("midtrans", {
-            orderId: uniqueMidtransId,
-            amount: Number(transaction.amount),
-            productDetails: transaction.plan ? `Upgrade Paket ${transaction.plan.name}` : "Upgrade Layanan SitusBisnis",
-            customer: {
-                name: ownerInfo?.name || site?.name || "Tenant",
-                email: customerEmail,
-            },
-            paymentMethod: isCore ? paymentMethod : undefined,
-            returnUrl: `${appUrl}/dashboard/billing?status=success`,
-            callbackUrl: `${appUrl}/api/payment/billing/webhook/midtrans`
-        }, {
-            merchantCode: platformSettings.midtransMerchantId || "",
-            apiKey: platformSettings.midtransServerKey,
-            sandbox: platformSettings.midtransSandbox
-        });
-
-        if (!invoice.success) {
-            throw new Error(invoice.error || "Failed to create Midtrans invoice");
-        }
-
-        let paymentUrl = invoice.paymentUrl || "";
-        const customPayload = {
-            vaNumber: invoice.vaNumber || null,
-            qrString: invoice.qrString || null,
-            qrCodeUrl: invoice.qrCodeUrl || null,
-            paymentCode: invoice.paymentCode || null,
-            paymentMethod,
-            category: getPaymentMethodCategory(paymentMethod),
-            reference: invoice.reference,
-            merchantOrderId: uniqueMidtransId
-        };
-
-        if (isCore) {
-            paymentUrl = `custom:${JSON.stringify(customPayload)}`;
-        }
-
-        const updatedTransaction = await transactionRepo.updateTransactionPaymentDetails(transaction.id, {
-            paymentUrl: paymentUrl,
-            paymentReference: invoice.reference,
-            paymentMethod: "midtrans"
-        });
-
-        return {
-            success: true,
-            transaction: {
-                id: updatedTransaction.id,
-                paymentUrl: updatedTransaction.paymentUrl,
-                paymentReference: updatedTransaction.paymentReference
-            },
-            paymentDetails: customPayload
-        };
-    } else {
-        if (!platformSettings?.duitkuMerchantCode || !platformSettings?.duitkuApiKey) {
-            throw new Error("Platform payment settings not configured");
-        }
-
-        const { paymentManager, getPaymentMethodCategory } = await import("@crediblemark/buayar");
-        const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://situsbisnis.com";
-
-        const suffix = Date.now().toString().slice(-4);
-        const uniqueDuitkuId = `${transaction.id}-${paymentMethod}-${suffix}`;
-
-        const customerEmail = ownerInfo?.email || "";
-        const invoice = await paymentManager.createInvoice("duitku", {
-            orderId: uniqueDuitkuId,
-            amount: Number(transaction.amount),
-            productDetails: transaction.plan ? `Upgrade Paket ${transaction.plan.name}` : "Upgrade Layanan SitusBisnis",
-            customer: {
-                name: ownerInfo?.name || site?.name || "Tenant",
-                email: customerEmail,
-            },
-            paymentMethod,
-            returnUrl: `${appUrl}/dashboard/billing?status=success`,
-            callbackUrl: `${appUrl}/api/billing/webhook/duitku`
-        }, {
-            merchantCode: platformSettings.duitkuMerchantCode,
-            apiKey: platformSettings.duitkuApiKey,
-            sandbox: platformSettings.duitkuSandbox
-        });
-
-        if (!invoice.success) {
-            throw new Error(invoice.error || "Failed to create Duitku invoice");
-        }
-
-        const customPayload = {
-            vaNumber: invoice.vaNumber || null,
-            qrString: invoice.qrString || null,
-            qrCodeUrl: invoice.qrCodeUrl || null,
-            paymentCode: invoice.paymentCode || null,
-            paymentMethod,
-            category: getPaymentMethodCategory(paymentMethod),
-            reference: invoice.reference,
-            merchantOrderId: uniqueDuitkuId
-        };
-
-        const updatedTransaction = await transactionRepo.updateTransactionPaymentDetails(transaction.id, {
-            paymentUrl: `custom:${JSON.stringify(customPayload)}`,
-            paymentReference: invoice.reference,
-            paymentMethod: "duitku"
-        });
-
-        return {
-            success: true,
-            transaction: {
-                id: updatedTransaction.id,
-                paymentUrl: updatedTransaction.paymentUrl,
-                paymentReference: updatedTransaction.paymentReference
-            },
-            paymentDetails: customPayload
-        };
+    if (!gatewayApiKey || !gatewayMerchantId) {
+        throw new Error("Platform payment settings not configured");
     }
+
+    const { paymentManager, getPaymentMethodCategory } = await import("@crediblemark/buayar");
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://situsbisnis.com";
+
+    const suffix = Date.now().toString().slice(-4);
+    const uniqueOrderId = `${transaction.id}-${paymentMethod}-${suffix}`;
+
+    const customerEmail = ownerInfo?.email || "";
+    const isCore = gateway === "midtrans" && gatewayApiType === "core";
+
+    const invoice = await paymentManager.createInvoice(gateway as any, {
+        orderId: uniqueOrderId,
+        amount: Number(transaction.amount),
+        productDetails: transaction.plan ? `Upgrade Paket ${transaction.plan.name}` : "Upgrade Layanan SitusBisnis",
+        customer: {
+            name: ownerInfo?.name || site?.name || "Tenant",
+            email: customerEmail,
+        },
+        paymentMethod: isCore || gateway === "duitku" ? paymentMethod : undefined,
+        returnUrl: `${appUrl}/dashboard/billing?status=success`,
+        callbackUrl: gateway === "midtrans"
+            ? `${appUrl}/api/payment/billing/webhook/midtrans`
+            : `${appUrl}/api/billing/webhook/duitku`
+    }, {
+        merchantCode: gatewayMerchantId,
+        apiKey: gatewayApiKey,
+        sandbox: gatewaySandbox
+    });
+
+    if (!invoice.success) {
+        throw new Error(invoice.error || `Failed to create ${gateway} invoice`);
+    }
+
+    const customPayload = {
+        vaNumber: invoice.vaNumber || null,
+        qrString: invoice.qrString || null,
+        qrCodeUrl: invoice.qrCodeUrl || null,
+        paymentCode: invoice.paymentCode || null,
+        paymentMethod,
+        category: getPaymentMethodCategory(paymentMethod),
+        reference: invoice.reference,
+        merchantOrderId: uniqueOrderId
+    };
+
+    let paymentUrl = invoice.paymentUrl || "";
+    if (isCore || gateway === "duitku") {
+        paymentUrl = `custom:${JSON.stringify(customPayload)}`;
+    }
+
+    const updatedTransaction = await transactionRepo.updateTransactionPaymentDetails(transaction.id, {
+        paymentUrl: paymentUrl,
+        paymentReference: invoice.reference,
+        paymentMethod: gateway
+    });
+
+    return {
+        success: true,
+        transaction: {
+            id: updatedTransaction.id,
+            paymentUrl: updatedTransaction.paymentUrl,
+            paymentReference: updatedTransaction.paymentReference
+        },
+        paymentDetails: customPayload
+    };
 }
 
 /**
@@ -419,90 +336,62 @@ export async function upgradePlan(
         if (paymentMethod !== "manual") {
             const platformSettings = await SubscriptionClient.getPlatformSettings();
             const gateway = platformSettings?.paymentGateway || "duitku";
+            const gatewayApiKey = platformSettings?.gatewayApiKey;
+            const gatewayMerchantId = platformSettings?.gatewayMerchantId;
+            const gatewaySandbox = platformSettings?.gatewaySandbox ?? true;
+            const gatewayApiType = platformSettings?.gatewayApiType || "snap";
 
-            if (gateway === "midtrans") {
-                if (platformSettings?.midtransServerKey) {
-                    const { paymentManager } = await import("@crediblemark/buayar");
-                    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://situsbisnis.com";
+            if (gatewayApiKey && gatewayMerchantId) {
+                const { paymentManager } = await import("@crediblemark/buayar");
+                const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://situsbisnis.com";
 
-                    const ownerInfo = await eventBus.request<any, any>("request.auth.getSiteOwner", { siteId });
-                    const isCore = platformSettings.midtransApiType === "core";
+                const ownerInfo = await eventBus.request<any, any>("request.auth.getSiteOwner", { siteId });
+                const isCore = gateway === "midtrans" && gatewayApiType === "core";
 
-                    const invoice = await paymentManager.createInvoice("midtrans", {
-                        orderId: transaction.id,
-                        amount: totalAmount,
-                        productDetails: `Peningkatan Paket: Premium ${plan.name.toUpperCase()} • Situs: ${site.name}`,
-                        customer: {
-                            name: ownerInfo?.name || site.name || "Customer",
-                            email: ownerInfo?.email || ""
-                        },
-                        returnUrl: `${appUrl}/dashboard/billing`,
-                        callbackUrl: `${appUrl}/api/payment/billing/webhook/midtrans`,
-                        paymentMethod: isCore && paymentMethod !== "duitku" && paymentMethod !== "midtrans" ? paymentMethod : undefined,
-                    }, {
-                        merchantCode: platformSettings.midtransMerchantId || "",
-                        apiKey: platformSettings.midtransServerKey,
-                        sandbox: platformSettings.midtransSandbox
-                    });
+                const invoice = await paymentManager.createInvoice(gateway as any, {
+                    orderId: transaction.id,
+                    amount: totalAmount,
+                    productDetails: `Peningkatan Paket: Premium ${plan.name.toUpperCase()} • Situs: ${site.name}`,
+                    customer: {
+                        name: ownerInfo?.name || site.name || "Customer",
+                        email: ownerInfo?.email || ""
+                    },
+                    returnUrl: `${appUrl}/dashboard/billing`,
+                    callbackUrl: gateway === "midtrans" 
+                        ? `${appUrl}/api/payment/billing/webhook/midtrans`
+                        : `${appUrl}/api/billing/webhook/duitku`,
+                    paymentMethod: isCore && paymentMethod !== "duitku" && paymentMethod !== "midtrans" ? paymentMethod : undefined,
+                }, {
+                    merchantCode: gatewayMerchantId,
+                    apiKey: gatewayApiKey,
+                    sandbox: gatewaySandbox
+                });
 
-                    if (!invoice.success || (!invoice.paymentUrl && !invoice.vaNumber && !invoice.qrString && !invoice.paymentCode)) {
-                        throw new Error(invoice.error || "Gagal membuat invoice Midtrans");
-                    }
-
-                    let paymentUrl = invoice.paymentUrl || "";
-                    if (isCore && paymentMethod !== "duitku" && paymentMethod !== "midtrans") {
-                        const { getPaymentMethodCategory } = await import("@crediblemark/buayar");
-                        const customPayload = {
-                            vaNumber: invoice.vaNumber || null,
-                            qrString: invoice.qrString || null,
-                            qrCodeUrl: invoice.qrCodeUrl || null,
-                            paymentCode: invoice.paymentCode || null,
-                            paymentMethod,
-                            category: getPaymentMethodCategory(paymentMethod),
-                            reference: invoice.reference,
-                            merchantOrderId: transaction.id
-                        };
-                        paymentUrl = `custom:${JSON.stringify(customPayload)}`;
-                    }
-
-                    transaction = await transactionRepo.updateTransactionPaymentDetails(transaction.id, {
-                        paymentUrl,
-                        paymentReference: invoice.reference,
-                        paymentMethod: "midtrans"
-                    });
+                if (!invoice.success || (!invoice.paymentUrl && !invoice.vaNumber && !invoice.qrString && !invoice.paymentCode)) {
+                    throw new Error(invoice.error || `Gagal membuat invoice ${gateway}`);
                 }
-            } else {
-                if (platformSettings?.duitkuMerchantCode && platformSettings?.duitkuApiKey) {
-                    const { paymentManager } = await import("@crediblemark/buayar");
-                    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://situsbisnis.com";
 
-                    const ownerInfo = await eventBus.request<any, any>("request.auth.getSiteOwner", { siteId });
-                    const invoice = await paymentManager.createInvoice("duitku", {
-                        orderId: transaction.id,
-                        amount: totalAmount,
-                        productDetails: `Peningkatan Paket: Premium ${plan.name.toUpperCase()} • Situs: ${site.name}`,
-                        customer: {
-                            name: ownerInfo?.name || site.name || "Customer",
-                            email: ownerInfo?.email || ""
-                        },
-                        returnUrl: `${appUrl}/dashboard/billing`,
-                        callbackUrl: `${appUrl}/api/billing/webhook/duitku`
-                    }, {
-                        merchantCode: platformSettings.duitkuMerchantCode,
-                        apiKey: platformSettings.duitkuApiKey,
-                        sandbox: platformSettings.duitkuSandbox
-                    });
-
-                    if (!invoice.success || !invoice.paymentUrl) {
-                        throw new Error(invoice.error || "Gagal membuat invoice Duitku");
-                    }
-
-                    transaction = await transactionRepo.updateTransactionPaymentDetails(transaction.id, {
-                        paymentUrl: invoice.paymentUrl,
-                        paymentReference: invoice.reference,
-                        paymentMethod: "duitku"
-                    });
+                let paymentUrl = invoice.paymentUrl || "";
+                if (isCore && paymentMethod !== "duitku" && paymentMethod !== "midtrans") {
+                    const { getPaymentMethodCategory } = await import("@crediblemark/buayar");
+                    const customPayload = {
+                        vaNumber: invoice.vaNumber || null,
+                        qrString: invoice.qrString || null,
+                        qrCodeUrl: invoice.qrCodeUrl || null,
+                        paymentCode: invoice.paymentCode || null,
+                        paymentMethod,
+                        category: getPaymentMethodCategory(paymentMethod),
+                        reference: invoice.reference,
+                        merchantOrderId: transaction.id
+                    };
+                    paymentUrl = `custom:${JSON.stringify(customPayload)}`;
                 }
+
+                transaction = await transactionRepo.updateTransactionPaymentDetails(transaction.id, {
+                    paymentUrl,
+                    paymentReference: invoice.reference,
+                    paymentMethod: gateway
+                });
             }
         }
     } catch (paymentError: any) {

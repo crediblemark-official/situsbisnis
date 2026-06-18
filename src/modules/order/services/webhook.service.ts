@@ -35,16 +35,16 @@ export async function checkOrderStatus(orderId: string) {
     const paymentSettings = await orderRepo.findPaymentSettings(order.siteId);
     const platformSettings = await orderRepo.findPlatformSettings();
 
-    let merchantCode = paymentSettings?.duitkuMerchantCode;
-    let apiKey = paymentSettings?.duitkuApiKey;
-    let sandbox = paymentSettings?.duitkuSandbox ?? true;
+    let gateway = paymentSettings?.paymentGateway;
+    let merchantCode = paymentSettings?.gatewayMerchantId;
+    let apiKey = paymentSettings?.gatewayApiKey;
+    let sandbox = paymentSettings?.gatewaySandbox ?? true;
 
     if (!merchantCode || !apiKey) {
-        if (platformSettings?.duitkuMerchantCode && platformSettings?.duitkuApiKey) {
-            merchantCode = platformSettings.duitkuMerchantCode;
-            apiKey = platformSettings.duitkuApiKey;
-            sandbox = platformSettings.duitkuSandbox;
-        }
+        gateway = platformSettings?.paymentGateway || "duitku";
+        merchantCode = platformSettings?.gatewayMerchantId;
+        apiKey = platformSettings?.gatewayApiKey;
+        sandbox = platformSettings?.gatewaySandbox ?? true;
     }
 
     if (!merchantCode || !apiKey) {
@@ -57,19 +57,19 @@ export async function checkOrderStatus(orderId: string) {
         };
     }
 
-    let merchantOrderIdForDuitku = order.id;
+    let merchantOrderId = order.id;
     if (order.paymentUrl && order.paymentUrl.startsWith("custom:")) {
         try {
             const customData = JSON.parse(order.paymentUrl.substring(7));
             if (customData.merchantOrderId) {
-                merchantOrderIdForDuitku = customData.merchantOrderId;
+                merchantOrderId = customData.merchantOrderId;
             }
         } catch {}
     }
 
     const { paymentManager } = await import("@crediblemark/buayar");
-    const result = await paymentManager.checkTransaction("duitku", {
-        merchantOrderId: merchantOrderIdForDuitku,
+    const result = await paymentManager.checkTransaction(gateway as any, {
+        merchantOrderId: merchantOrderId,
     }, {
         merchantCode,
         apiKey,
@@ -77,7 +77,7 @@ export async function checkOrderStatus(orderId: string) {
     });
 
     if (result.success && result.status === "paid" && order.paymentStatus !== "paid") {
-        const creditOwner = !paymentSettings?.duitkuMerchantCode || !paymentSettings?.duitkuApiKey;
+        const creditOwner = !paymentSettings?.gatewayMerchantId || !paymentSettings?.gatewayApiKey;
         await processOrderPaymentCallback(order.id, order.siteId, Number(order.total), creditOwner);
         console.log(`[ORDER_CHECK_STATUS] Order '${order.id}' marked as paid via polling.`);
     }
@@ -92,7 +92,7 @@ export async function checkOrderStatus(orderId: string) {
 }
 
 /**
- * Memproses Duitku callback webhook untuk pesanan.
+ * Memproses callback webhook untuk pesanan.
  */
 export async function processOrderWebhook(body: Record<string, any>) {
     const { merchantCode, amount, merchantOrderId, signature } = body;
@@ -113,29 +113,31 @@ export async function processOrderWebhook(body: Record<string, any>) {
 
     const expectedAmount = Number(order.total);
     if (Number(amount) !== expectedAmount) {
-        console.error(`[DUITKU] Amount mismatch in order webhook: webhook=${amount}, expected=${expectedAmount}`);
+        console.error(`[ORDER_WEBHOOK] Amount mismatch in order webhook: webhook=${amount}, expected=${expectedAmount}`);
         throw new Error("Amount mismatch");
     }
 
     const paymentSettings = await orderRepo.findPaymentSettings(order.siteId);
+    const platformSettings = await orderRepo.findPlatformSettings();
 
-    let activeMerchantCode = paymentSettings?.duitkuMerchantCode;
-    let apiKey = paymentSettings?.duitkuApiKey;
-    let sandbox = paymentSettings?.duitkuSandbox ?? true;
+    let gateway = paymentSettings?.paymentGateway;
+    let activeMerchantCode = paymentSettings?.gatewayMerchantId;
+    let apiKey = paymentSettings?.gatewayApiKey;
+    let sandbox = paymentSettings?.gatewaySandbox ?? true;
 
     if (!activeMerchantCode || !apiKey) {
-        const platformSettings = await orderRepo.findPlatformSettings();
-        if (platformSettings?.duitkuMerchantCode && platformSettings?.duitkuApiKey) {
-            activeMerchantCode = platformSettings.duitkuMerchantCode;
-            apiKey = platformSettings.duitkuApiKey;
-            sandbox = platformSettings.duitkuSandbox;
-        } else {
-            throw new Error("Site payment not configured");
-        }
+        gateway = platformSettings?.paymentGateway || "duitku";
+        activeMerchantCode = platformSettings?.gatewayMerchantId;
+        apiKey = platformSettings?.gatewayApiKey;
+        sandbox = platformSettings?.gatewaySandbox ?? true;
+    }
+
+    if (!activeMerchantCode || !apiKey) {
+        throw new Error("Site payment not configured");
     }
 
     const { paymentManager } = await import("@crediblemark/buayar");
-    const verification = await paymentManager.verifyCallback("duitku", body, {
+    const verification = await paymentManager.verifyCallback(gateway as any, body, {
         merchantCode: activeMerchantCode || "",
         apiKey,
         sandbox
@@ -147,7 +149,7 @@ export async function processOrderWebhook(body: Record<string, any>) {
 
     if (verification.status === "paid") {
         // creditOwner = true jika site menggunakan payment gateway platform (bukan milik sendiri)
-        const creditOwner = !paymentSettings?.duitkuMerchantCode || !paymentSettings?.duitkuApiKey;
+        const creditOwner = !paymentSettings?.gatewayMerchantId || !paymentSettings?.gatewayApiKey;
         await processOrderPaymentCallback(actualOrderId, order.siteId, Number(order.total), creditOwner);
     }
 

@@ -99,8 +99,9 @@ export default function PaymentMethodInfo({
     );
 
     const hasManual = !!(settings.bankName && settings.accountNumber);
+    const gatewayName = settings.paymentGateway ? (settings.paymentGateway.charAt(0).toUpperCase() + settings.paymentGateway.slice(1)) : "Duitku";
 
-    if (settings.duitkuEnabled && hasManual) {
+    if (settings.gatewayEnabled && hasManual) {
         return (
             <div className="w-full animate-in fade-in duration-300">
                 <h2 className="text-sm font-bold text-slate-800 tracking-tight mb-4 flex items-center gap-2">
@@ -200,7 +201,7 @@ export default function PaymentMethodInfo({
                             <p className="font-semibold text-slate-700 mb-1 flex items-center gap-1 text-xs">
                                 <Info size={12} style={{ color: brandColor }} /> Petunjuk Pembayaran:
                             </p>
-                            <p>Setelah menekan tombol <strong>Konfirmasi Pesanan</strong>, Anda akan diarahkan ke gerbang pembayaran aman Duitku untuk menyelesaikan transaksi.</p>
+                            <p>Setelah menekan tombol <strong>Konfirmasi Pesanan</strong>, Anda akan diarahkan ke gerbang pembayaran aman {gatewayName} untuk menyelesaikan transaksi.</p>
                         </div>
                     </div>
                 ) : (
@@ -256,7 +257,7 @@ export default function PaymentMethodInfo({
         );
     }
 
-    if (settings.duitkuEnabled) {
+    if (settings.gatewayEnabled) {
         return (
             <div className="w-full animate-in fade-in duration-300">
                 <h2 className="text-sm font-bold text-slate-800 tracking-tight mb-4 flex items-center gap-2">
@@ -327,7 +328,7 @@ export default function PaymentMethodInfo({
                     <p className="font-semibold text-slate-700 mb-1 flex items-center gap-1 text-xs">
                         <Info size={12} style={{ color: brandColor }} /> Petunjuk Pembayaran:
                     </p>
-                    <p>Setelah menekan tombol <strong>Konfirmasi Pesanan</strong>, Anda akan diarahkan ke gerbang pembayaran aman Duitku untuk menyelesaikan transaksi.</p>
+                    <p>Setelah menekan tombol <strong>Konfirmasi Pesanan</strong>, Anda akan diarahkan ke gerbang pembayaran aman {gatewayName} untuk menyelesaikan transaksi.</p>
                 </div>
             </div>
         );

@@ -53,14 +53,12 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
     const platform = await db.platformSettings.findUnique({
         where: { id: "global" },
         select: {
-            duitkuMerchantCode: true,
-            duitkuApiKey: true,
-            duitkuSandbox: true,
             paymentGateway: true,
-            midtransServerKey: true,
-            midtransSandbox: true,
-            midtransClientKey: true,
-            midtransApiType: true,
+            gatewayMerchantId: true,
+            gatewayApiKey: true,
+            gatewayClientKey: true,
+            gatewaySandbox: true,
+            gatewayApiType: true,
         }
     });
 
@@ -90,15 +88,11 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         <CheckoutClient
             transaction={serializedTransaction}
             platformName={platformName}
-            isDuitkuConfigured={
-                platform?.paymentGateway === "midtrans"
-                    ? !!platform?.midtransServerKey
-                    : !!(platform?.duitkuMerchantCode && platform?.duitkuApiKey)
-            }
+            isGatewayConfigured={!!(platform?.gatewayMerchantId && platform?.gatewayApiKey)}
             paymentGateway={platform?.paymentGateway || "duitku"}
-            midtransApiType={platform?.midtransApiType || "snap"}
-            midtransClientKey={platform?.midtransClientKey || ""}
-            midtransSandbox={platform?.midtransSandbox ?? true}
+            gatewayApiType={platform?.gatewayApiType || "snap"}
+            gatewayClientKey={platform?.gatewayClientKey || ""}
+            gatewaySandbox={platform?.gatewaySandbox ?? true}
         />
     );
 }

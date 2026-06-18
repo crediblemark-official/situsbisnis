@@ -191,18 +191,20 @@ model OrderItem {
 }
 
 model PaymentSettings {
-  id                 String   @id @default(cuid())
-  bankName           String
-  accountNumber      String
-  accountHolder      String
-  instructions       String?
-  siteId             String   @unique
-  updatedAt          DateTime @updatedAt
-  currency String? @default("IDR")
-  duitkuMerchantCode String?
-  duitkuApiKey       String?
-  duitkuSandbox      Boolean  @default(true)
-  site               Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  id                String   @id @default(cuid())
+  bankName          String
+  accountNumber     String
+  accountHolder     String
+  instructions      String?
+  siteId            String   @unique
+  updatedAt         DateTime @updatedAt
+  currency          String?  @default("IDR")
+  paymentGateway    String?  @default("duitku")
+  gatewayMerchantId String?
+  gatewayApiKey     String?
+  gatewayClientKey  String?
+  gatewaySandbox    Boolean  @default(true)
+  site              Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
 }
 
 model Testimonial {
@@ -603,15 +605,12 @@ model PlatformSettings {
   r2BucketName                     String?
   r2PublicDomain                   String?
   r2Endpoint                       String?
-  duitkuMerchantCode               String?
-  duitkuApiKey                     String?
-  duitkuSandbox                    Boolean  @default(true)
   paymentGateway                   String?  @default("duitku")
-  midtransMerchantId               String?
-  midtransClientKey                String?
-  midtransServerKey                String?
-  midtransSandbox                  Boolean  @default(true)
-  midtransApiType                  String?  @default("snap")
+  gatewayMerchantId                String?
+  gatewayClientKey                 String?
+  gatewayApiKey                    String?
+  gatewaySandbox                   Boolean  @default(true)
+  gatewayApiType                   String?  @default("snap")
   affiliateCommissionRate          Decimal? @default(20.0) @db.Decimal(5, 2)
   affiliateRecurringCommission     Boolean  @default(false)
   affiliateRecurringCommissionRate Decimal? @default(10.0) @db.Decimal(5, 2)

@@ -23,11 +23,11 @@ import {
 export function CheckoutClient({ 
     transaction, 
     platformName: _platformName, 
-    isDuitkuConfigured,
+    isGatewayConfigured,
     paymentGateway = "duitku",
-    midtransApiType = "snap",
-    midtransClientKey = "",
-    midtransSandbox = true,
+    gatewayApiType = "snap",
+    gatewayClientKey = "",
+    gatewaySandbox = true,
 }: CheckoutClientProps) {
     const router = useRouter();
     const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
@@ -54,12 +54,12 @@ export function CheckoutClient({
         return null;
     });
 
-    const isMidtransSnap = paymentGateway === "midtrans" && midtransApiType === "snap";
+    const isMidtransSnap = paymentGateway === "midtrans" && gatewayApiType === "snap";
 
     // Load Snap.js jika Midtrans Snap aktif
     useEffect(() => {
         if (isMidtransSnap) {
-            const snapSrc = midtransSandbox 
+            const snapSrc = gatewaySandbox 
                 ? "https://app.sandbox.midtrans.com/snap/snap.js"
                 : "https://app.midtrans.com/snap/snap.js";
             
@@ -67,11 +67,11 @@ export function CheckoutClient({
             if (!script) {
                 script = document.createElement("script");
                 script.src = snapSrc;
-                script.setAttribute("data-client-key", midtransClientKey || "");
+                script.setAttribute("data-client-key", gatewayClientKey || "");
                 document.body.appendChild(script);
             }
         }
-    }, [isMidtransSnap, midtransSandbox, midtransClientKey]);
+    }, [isMidtransSnap, gatewaySandbox, gatewayClientKey]);
 
     const triggerSnapPopup = useCallback((token: string, redirectUrl: string) => {
         if (typeof window !== "undefined" && (window as any).snap) {
@@ -145,7 +145,7 @@ export function CheckoutClient({
 
     // ── Fetch payment methods ─────────────────────────────────────────────────
     const fetchPaymentMethods = useCallback(async () => {
-        if (!isDuitkuConfigured) return;
+        if (!isGatewayConfigured) return;
         setIsLoadingMethods(true);
         setMethodsError(null);
         try {
@@ -160,7 +160,7 @@ export function CheckoutClient({
         } finally {
             setIsLoadingMethods(false);
         }
-    }, [transaction.amount, isDuitkuConfigured]);
+    }, [transaction.amount, isGatewayConfigured]);
 
     useEffect(() => {
         if (!customPaymentDetails) {
@@ -294,7 +294,7 @@ export function CheckoutClient({
 
                 {/* Right Column: Payment Method & Details */}
                 <div className="lg:col-span-3 space-y-3">
-                    {!isDuitkuConfigured ? (
+                    {!isGatewayConfigured ? (
                         <div className="bg-card border border-border rounded-xl p-6 text-center space-y-3">
                             <AlertCircle size={32} className="mx-auto text-amber-500" />
                             <p className="font-black text-foreground">Payment gateway belum dikonfigurasi</p>

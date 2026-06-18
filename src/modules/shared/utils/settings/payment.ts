@@ -7,23 +7,23 @@ import { cache } from "react";
 
 export type PaymentSettings = Prisma.PaymentSettingsGetPayload<{}>;
 
-export const getPaymentSettings = cache(async (siteId?: string): Promise<PaymentSettings & { duitkuEnabled?: boolean; isPlatformManaged?: boolean }> => {
+export const getPaymentSettings = cache(async (siteId?: string): Promise<PaymentSettings & { gatewayEnabled?: boolean; isPlatformManaged?: boolean }> => {
     try {
         const id = siteId || await getSiteId();
         
         const platformSettings = await db.platformSettings.findUnique({
             where: { id: "global" }
         });
-        const hasPlatformDuitku = !!(platformSettings?.duitkuMerchantCode && platformSettings?.duitkuApiKey);
+        const hasPlatformGateway = !!(platformSettings?.gatewayMerchantId && platformSettings?.gatewayApiKey);
 
         if (!id) {
             const settings = await db.paymentSettings.findFirst();
             if (settings) {
-                const hasTenantDuitku = !!(settings.duitkuMerchantCode && settings.duitkuApiKey);
+                const hasTenantGateway = !!(settings.gatewayMerchantId && settings.gatewayApiKey);
                 return {
                     ...settings,
-                    duitkuEnabled: hasTenantDuitku || hasPlatformDuitku,
-                    isPlatformManaged: !hasTenantDuitku && hasPlatformDuitku
+                    gatewayEnabled: hasTenantGateway || hasPlatformGateway,
+                    isPlatformManaged: !hasTenantGateway && hasPlatformGateway
                 };
             }
         } else {
@@ -31,11 +31,11 @@ export const getPaymentSettings = cache(async (siteId?: string): Promise<Payment
                 where: { siteId: id }
             });
             if (settings) {
-                const hasTenantDuitku = !!(settings.duitkuMerchantCode && settings.duitkuApiKey);
+                const hasTenantGateway = !!(settings.gatewayMerchantId && settings.gatewayApiKey);
                 return {
                     ...settings,
-                    duitkuEnabled: hasTenantDuitku || hasPlatformDuitku,
-                    isPlatformManaged: !hasTenantDuitku && hasPlatformDuitku
+                    gatewayEnabled: hasTenantGateway || hasPlatformGateway,
+                    isPlatformManaged: !hasTenantGateway && hasPlatformGateway
                 };
             }
 
@@ -53,8 +53,8 @@ export const getPaymentSettings = cache(async (siteId?: string): Promise<Payment
                 });
                 return {
                     ...newSettings,
-                    duitkuEnabled: hasPlatformDuitku,
-                    isPlatformManaged: hasPlatformDuitku
+                    gatewayEnabled: hasPlatformGateway,
+                    isPlatformManaged: hasPlatformGateway
                 };
             } catch (createError) {
                 console.error(`[getPaymentSettings] Failed to create payment settings for site '${id}':`, createError);
@@ -71,18 +71,18 @@ export const getPaymentSettings = cache(async (siteId?: string): Promise<Payment
             currency: env.DEFAULT_CURRENCY,
             instructions: env.DEFAULT_INSTRUCTIONS,
             updatedAt: new Date(),
-            duitkuEnabled: hasPlatformDuitku,
-            isPlatformManaged: hasPlatformDuitku
+            gatewayEnabled: hasPlatformGateway,
+            isPlatformManaged: hasPlatformGateway
         } as any;
     } catch (error) {
         console.error("Failed to fetch payment settings, returning defaults:", error);
         
-        let hasPlatformDuitku = false;
+        let hasPlatformGateway = false;
         try {
             const platformSettings = await db.platformSettings.findUnique({
                 where: { id: "global" }
             });
-            hasPlatformDuitku = !!(platformSettings?.duitkuMerchantCode && platformSettings?.duitkuApiKey);
+            hasPlatformGateway = !!(platformSettings?.gatewayMerchantId && platformSettings?.gatewayApiKey);
         } catch (_) {}
 
         return {
@@ -94,8 +94,8 @@ export const getPaymentSettings = cache(async (siteId?: string): Promise<Payment
             currency: env.DEFAULT_CURRENCY,
             instructions: env.DEFAULT_INSTRUCTIONS,
             updatedAt: new Date(),
-            duitkuEnabled: hasPlatformDuitku,
-            isPlatformManaged: hasPlatformDuitku
+            gatewayEnabled: hasPlatformGateway,
+            isPlatformManaged: hasPlatformGateway
         } as any;
     }
 });

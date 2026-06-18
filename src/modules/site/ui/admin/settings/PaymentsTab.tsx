@@ -7,16 +7,12 @@ interface PaymentsTabProps {
     removePaymentMethod: (_id: string) => void;
     updatePaymentMethod: (_id: string, _field: string, _value: any) => void;
     paymentGateway?: string;
-    duitkuMerchantCode?: string;
-    duitkuApiKey?: string;
-    duitkuSandbox?: boolean;
-    onChangeDuitku?: (_field: string, _value: any) => void;
-    midtransMerchantId?: string;
-    midtransClientKey?: string;
-    midtransServerKey?: string;
-    midtransSandbox?: boolean;
-    midtransApiType?: string;
-    onChangeMidtrans?: (_field: string, _value: any) => void;
+    gatewayMerchantId?: string;
+    gatewayClientKey?: string;
+    gatewayApiKey?: string;
+    gatewaySandbox?: boolean;
+    gatewayApiType?: string;
+    onChangeGatewaySettings?: (_field: string, _value: any) => void;
     onChangeGateway?: (_value: string) => void;
 }
 
@@ -26,16 +22,12 @@ export function PaymentsTab({
     removePaymentMethod,
     updatePaymentMethod,
     paymentGateway = "duitku",
-    duitkuMerchantCode,
-    duitkuApiKey,
-    duitkuSandbox,
-    onChangeDuitku,
-    midtransMerchantId,
-    midtransClientKey,
-    midtransServerKey,
-    midtransSandbox,
-    midtransApiType = "snap",
-    onChangeMidtrans,
+    gatewayMerchantId,
+    gatewayClientKey,
+    gatewayApiKey,
+    gatewaySandbox,
+    gatewayApiType = "snap",
+    onChangeGatewaySettings,
     onChangeGateway
 }: PaymentsTabProps) {
     return (
@@ -149,8 +141,8 @@ export function PaymentsTab({
                                     <input
                                         id="duitkuMerchantCode"
                                         type="text"
-                                        value={duitkuMerchantCode || ""}
-                                        onChange={(e) => onChangeDuitku && onChangeDuitku("duitkuMerchantCode", e.target.value)}
+                                        value={gatewayMerchantId || ""}
+                                        onChange={(e) => onChangeGatewaySettings && onChangeGatewaySettings("gatewayMerchantId", e.target.value)}
                                         className="w-full bg-muted/10 border border-border/50 rounded px-4 py-3 text-xs font-bold text-foreground focus:ring-1 focus:ring-primary/40 outline-none"
                                         placeholder="DXXXX"
                                     />
@@ -160,8 +152,8 @@ export function PaymentsTab({
                                     <input
                                         id="duitkuApiKey"
                                         type="password"
-                                        value={duitkuApiKey || ""}
-                                        onChange={(e) => onChangeDuitku && onChangeDuitku("duitkuApiKey", e.target.value)}
+                                        value={gatewayApiKey || ""}
+                                        onChange={(e) => onChangeGatewaySettings && onChangeGatewaySettings("gatewayApiKey", e.target.value)}
                                         className="w-full bg-muted/10 border border-border/50 rounded px-4 py-3 text-xs font-bold text-foreground focus:ring-1 focus:ring-primary/40 outline-none font-mono"
                                         placeholder="Masukkan API Key Duitku..."
                                     />
@@ -171,8 +163,8 @@ export function PaymentsTab({
                                 <input
                                     id="duitkuSandbox"
                                     type="checkbox"
-                                    checked={duitkuSandbox ?? true}
-                                    onChange={(e) => onChangeDuitku && onChangeDuitku("duitkuSandbox", e.target.checked)}
+                                    checked={gatewaySandbox ?? true}
+                                    onChange={(e) => onChangeGatewaySettings && onChangeGatewaySettings("gatewaySandbox", e.target.checked)}
                                     className="rounded border-border text-primary focus:ring-primary h-4 w-4 bg-muted/10"
                                 />
                                 <label htmlFor="duitkuSandbox" className="text-[9px] font-black text-muted-foreground uppercase tracking-widest cursor-pointer select-none">
@@ -191,8 +183,8 @@ export function PaymentsTab({
                                     <input
                                         id="midtransMerchantId"
                                         type="text"
-                                        value={midtransMerchantId || ""}
-                                        onChange={(e) => onChangeMidtrans && onChangeMidtrans("midtransMerchantId", e.target.value)}
+                                        value={gatewayMerchantId || ""}
+                                        onChange={(e) => onChangeGatewaySettings && onChangeGatewaySettings("gatewayMerchantId", e.target.value)}
                                         className="w-full bg-muted/10 border border-border/50 rounded px-4 py-3 text-xs font-bold text-foreground focus:ring-1 focus:ring-primary/40 outline-none"
                                         placeholder="GXXXX"
                                     />
@@ -202,8 +194,8 @@ export function PaymentsTab({
                                     <input
                                         id="midtransClientKey"
                                         type="text"
-                                        value={midtransClientKey || ""}
-                                        onChange={(e) => onChangeMidtrans && onChangeMidtrans("midtransClientKey", e.target.value)}
+                                        value={gatewayClientKey || ""}
+                                        onChange={(e) => onChangeGatewaySettings && onChangeGatewaySettings("gatewayClientKey", e.target.value)}
                                         className="w-full bg-muted/10 border border-border/50 rounded px-4 py-3 text-xs font-bold text-foreground focus:ring-1 focus:ring-primary/40 outline-none font-mono"
                                         placeholder="SB-Mid-client-XXXX"
                                     />
@@ -213,8 +205,8 @@ export function PaymentsTab({
                                     <input
                                         id="midtransServerKey"
                                         type="password"
-                                        value={midtransServerKey || ""}
-                                        onChange={(e) => onChangeMidtrans && onChangeMidtrans("midtransServerKey", e.target.value)}
+                                        value={gatewayApiKey || ""}
+                                        onChange={(e) => onChangeGatewaySettings && onChangeGatewaySettings("gatewayApiKey", e.target.value)}
                                         className="w-full bg-muted/10 border border-border/50 rounded px-4 py-3 text-xs font-bold text-foreground focus:ring-1 focus:ring-primary/40 outline-none font-mono"
                                         placeholder="SB-Mid-server-XXXX"
                                     />
@@ -228,10 +220,10 @@ export function PaymentsTab({
                                     <label className="flex items-center gap-2 text-xs font-bold text-foreground cursor-pointer select-none">
                                         <input
                                             type="radio"
-                                            name="midtransApiType"
+                                            name="gatewayApiType"
                                             value="snap"
-                                            checked={midtransApiType === "snap"}
-                                            onChange={() => onChangeMidtrans && onChangeMidtrans("midtransApiType", "snap")}
+                                            checked={gatewayApiType === "snap"}
+                                            onChange={() => onChangeGatewaySettings && onChangeGatewaySettings("gatewayApiType", "snap")}
                                             className="text-primary focus:ring-primary h-4 w-4 border-border bg-muted/10"
                                         />
                                         Snap API (Popup Redirect)
@@ -239,10 +231,10 @@ export function PaymentsTab({
                                     <label className="flex items-center gap-2 text-xs font-bold text-foreground cursor-pointer select-none">
                                         <input
                                             type="radio"
-                                            name="midtransApiType"
+                                            name="gatewayApiType"
                                             value="core"
-                                            checked={midtransApiType === "core"}
-                                            onChange={() => onChangeMidtrans && onChangeMidtrans("midtransApiType", "core")}
+                                            checked={gatewayApiType === "core"}
+                                            onChange={() => onChangeGatewaySettings && onChangeGatewaySettings("gatewayApiType", "core")}
                                             className="text-primary focus:ring-primary h-4 w-4 border-border bg-muted/10"
                                         />
                                         Core API (Direct Charge)
@@ -254,8 +246,8 @@ export function PaymentsTab({
                                 <input
                                     id="midtransSandbox"
                                     type="checkbox"
-                                    checked={midtransSandbox ?? true}
-                                    onChange={(e) => onChangeMidtrans && onChangeMidtrans("midtransSandbox", e.target.checked)}
+                                    checked={gatewaySandbox ?? true}
+                                    onChange={(e) => onChangeGatewaySettings && onChangeGatewaySettings("gatewaySandbox", e.target.checked)}
                                     className="rounded border-border text-primary focus:ring-primary h-4 w-4 bg-muted/10"
                                 />
                                 <label htmlFor="midtransSandbox" className="text-[9px] font-black text-muted-foreground uppercase tracking-widest cursor-pointer select-none">

@@ -82,16 +82,16 @@ export async function createOrder(
     const paymentSettings = await orderRepo.findPaymentSettings(siteId);
     const platformSettings = await orderRepo.findPlatformSettings();
 
-    let merchantCode = paymentSettings?.duitkuMerchantCode;
-    let apiKey = paymentSettings?.duitkuApiKey;
-    let sandbox = paymentSettings?.duitkuSandbox ?? true;
+    let gateway = paymentSettings?.paymentGateway;
+    let merchantCode = paymentSettings?.gatewayMerchantId;
+    let apiKey = paymentSettings?.gatewayApiKey;
+    let sandbox = paymentSettings?.gatewaySandbox ?? true;
 
     if (!merchantCode || !apiKey) {
-        if (platformSettings?.duitkuMerchantCode && platformSettings?.duitkuApiKey) {
-            merchantCode = platformSettings.duitkuMerchantCode;
-            apiKey = platformSettings.duitkuApiKey;
-            sandbox = platformSettings.duitkuSandbox;
-        }
+        gateway = platformSettings?.paymentGateway || "duitku";
+        merchantCode = platformSettings?.gatewayMerchantId;
+        apiKey = platformSettings?.gatewayApiKey;
+        sandbox = platformSettings?.gatewaySandbox ?? true;
     }
 
     let orderToReturn = newOrder;
@@ -113,7 +113,7 @@ export async function createOrder(
             const { paymentManager } = await import("@crediblemark/buayar");
             const origin = process.env.NEXT_PUBLIC_APP_URL || "https://situsbisnis.com";
             
-            const invoice = await paymentManager.createInvoice("duitku", {
+            const invoice = await paymentManager.createInvoice(gateway as any, {
                 orderId: newOrder.id,
                 amount: total,
                 productDetails: `Pembayaran Pesanan #${newOrder.id} • Toko: ${site?.name || "SitusBisnis"}`,
@@ -132,10 +132,10 @@ export async function createOrder(
             if (invoice.success && invoice.paymentUrl) {
                 orderToReturn = await orderRepo.updateOrderPaymentUrl(newOrder.id, invoice.paymentUrl, invoice.reference);
             } else {
-                console.warn(`[DUITKU_ORDER] Invoice creation failed: ${invoice.error}`);
+                console.warn(`[${gateway.toUpperCase()}_ORDER] Invoice creation failed: ${invoice.error}`);
             }
-        } catch (duitkuError) {
-            console.error("[DUITKU_ORDER_ERROR]", duitkuError);
+        } catch (gatewayError) {
+            console.error(`[${gateway.toUpperCase()}_ORDER_ERROR]`, gatewayError);
         }
     }
 
@@ -155,27 +155,29 @@ export async function initializeOrderPayment(orderId: string, paymentMethod: str
     const paymentSettings = await orderRepo.findPaymentSettings(order.siteId);
     const platformSettings = await orderRepo.findPlatformSettings();
 
-    let merchantCode = paymentSettings?.duitkuMerchantCode;
-    let apiKey = paymentSettings?.duitkuApiKey;
-    let sandbox = paymentSettings?.duitkuSandbox ?? true;
+    let gateway = paymentSettings?.paymentGateway;
+    let merchantCode = paymentSettings?.gatewayMerchantId;
+    let apiKey = paymentSettings?.gatewayApiKey;
+    let sandbox = paymentSettings?.gatewaySandbox ?? true;
 
     if (!merchantCode || !apiKey) {
-        if (platformSettings?.duitkuMerchantCode && platformSettings?.duitkuApiKey) {
-            merchantCode = platformSettings.duitkuMerchantCode;
-            apiKey = platformSettings.duitkuApiKey;
-            sandbox = platformSettings.duitkuSandbox;
-        } else {
-            throw new Error("Payment settings not configured");
-        }
+        gateway = platformSettings?.paymentGateway || "duitku";
+        merchantCode = platformSettings?.gatewayMerchantId;
+        apiKey = platformSettings?.gatewayApiKey;
+        sandbox = platformSettings?.gatewaySandbox ?? true;
+    }
+
+    if (!merchantCode || !apiKey) {
+        throw new Error("Payment settings not configured");
     }
 
     const { paymentManager, getPaymentMethodCategory } = await import("@crediblemark/buayar");
 
     const suffix = Date.now().toString().slice(-4);
-    const uniqueDuitkuId = `${order.id}-${paymentMethod}-${suffix}`;
+    const uniqueOrderId = `${order.id}-${paymentMethod}-${suffix}`;
 
-    const invoice = await paymentManager.createInvoice("duitku", {
-        orderId: uniqueDuitkuId,
+    const invoice = await paymentManager.createInvoice(gateway as any, {
+        orderId: uniqueOrderId,
         amount: Number(order.total),
         productDetails: `Pembayaran Pesanan #${order.id} • Toko: ${site?.name || "SitusBisnis"}`,
         customer: {
@@ -192,7 +194,7 @@ export async function initializeOrderPayment(orderId: string, paymentMethod: str
     });
 
     if (!invoice.success) {
-        throw new Error(invoice.error || "Failed to create Duitku invoice");
+        throw new Error(invoice.error || `Failed to create ${gateway} invoice`);
     }
 
     const customPayload = {
@@ -203,7 +205,7 @@ export async function initializeOrderPayment(orderId: string, paymentMethod: str
         paymentMethod,
         category: getPaymentMethodCategory(paymentMethod),
         reference: invoice.reference,
-        merchantOrderId: uniqueDuitkuId
+        merchantOrderId: uniqueOrderId
     };
 
     const updatedOrder = await orderRepo.updateOrderPaymentUrl(order.id, `custom:${JSON.stringify(customPayload)}`, invoice.reference);
@@ -232,23 +234,25 @@ export async function getOrderPaymentMethods(orderId: string) {
     const paymentSettings = await orderRepo.findPaymentSettings(order.siteId);
     const platformSettings = await orderRepo.findPlatformSettings();
 
-    let merchantCode = paymentSettings?.duitkuMerchantCode;
-    let apiKey = paymentSettings?.duitkuApiKey;
-    let sandbox = paymentSettings?.duitkuSandbox ?? true;
+    let gateway = paymentSettings?.paymentGateway;
+    let merchantCode = paymentSettings?.gatewayMerchantId;
+    let apiKey = paymentSettings?.gatewayApiKey;
+    let sandbox = paymentSettings?.gatewaySandbox ?? true;
 
     if (!merchantCode || !apiKey) {
-        if (platformSettings?.duitkuMerchantCode && platformSettings?.duitkuApiKey) {
-            merchantCode = platformSettings.duitkuMerchantCode;
-            apiKey = platformSettings.duitkuApiKey;
-            sandbox = platformSettings.duitkuSandbox;
-        } else {
-            throw new Error("Payment settings not configured");
-        }
+        gateway = platformSettings?.paymentGateway || "duitku";
+        merchantCode = platformSettings?.gatewayMerchantId;
+        apiKey = platformSettings?.gatewayApiKey;
+        sandbox = platformSettings?.gatewaySandbox ?? true;
+    }
+
+    if (!merchantCode || !apiKey) {
+        throw new Error("Payment settings not configured");
     }
 
     const { paymentManager } = await import("@crediblemark/buayar");
 
-    const result = await paymentManager.getPaymentMethods("duitku", {
+    const result = await paymentManager.getPaymentMethods(gateway as any, {
         amount: Math.round(amount),
     }, {
         merchantCode: merchantCode || "",
@@ -257,7 +261,7 @@ export async function getOrderPaymentMethods(orderId: string) {
     });
 
     if (!result.success) {
-        throw new Error(result.error || "Failed to fetch payment methods");
+        throw new Error(result.error || `Failed to fetch payment methods from ${gateway}`);
     }
 
     const methods = [...result.methods];

@@ -82,7 +82,7 @@ export function ExpressCheckoutModal({
                 .then(data => {
                     if (data) {
                         setPaymentSettings(data);
-                        if (!data.duitkuEnabled && data.bankName) {
+                        if (!data.gatewayEnabled && data.bankName) {
                             setPaymentMethod("manual");
                         }
                     }
@@ -154,7 +154,7 @@ export function ExpressCheckoutModal({
     if (!isOpen) return null;
 
     const hasManual = !!(paymentSettings?.bankName && paymentSettings?.accountNumber);
-    const hasDuitku = !!paymentSettings?.duitkuEnabled;
+    const hasGateway = !!paymentSettings?.gatewayEnabled;
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center font-sans">
@@ -269,11 +269,11 @@ export function ExpressCheckoutModal({
                     </div>
 
                     {/* Payment methods selector */}
-                    {paymentSettings && (hasDuitku || hasManual) && (
+                    {paymentSettings && (hasGateway || hasManual) && (
                         <div className="space-y-3 pt-1 border-t border-slate-100">
                             <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Metode Pembayaran</h4>
                             
-                            {hasDuitku && hasManual && (
+                            {hasGateway && hasManual && (
                                 <div className="grid grid-cols-2 gap-2 bg-slate-100/60 p-1 rounded-xl border border-slate-200/40">
                                     <button
                                         type="button"
@@ -302,7 +302,7 @@ export function ExpressCheckoutModal({
                                 </div>
                             )}
 
-                            {paymentMethod === "system" && hasDuitku ? (
+                            {paymentMethod === "system" && hasGateway ? (
                                 <div className="p-3.5 rounded-xl border border-slate-150 bg-slate-50/50 space-y-3.5 animate-in fade-in duration-300">
                                     <div className="flex items-center justify-between gap-2">
                                         <div>

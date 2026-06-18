@@ -56,7 +56,7 @@ export default async function FinanceDashboardPage() {
 
     // 3. Filter sites that are using the platform's payment gateway fallback
     const fallbackSites = userSites.filter(site => {
-        return !site.paymentSettings?.duitkuMerchantCode || !site.paymentSettings?.duitkuApiKey;
+        return !site.paymentSettings?.gatewayMerchantId || !site.paymentSettings?.gatewayApiKey;
     });
     const fallbackSiteIds = fallbackSites.map(site => site.id);
 

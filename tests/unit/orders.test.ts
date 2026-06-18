@@ -176,11 +176,11 @@ describe('Orders API POST Route', () => {
     vi.mocked(getSiteId).mockResolvedValue('site-123');
     vi.mocked(SubscriptionClient.checkSiteLimit).mockResolvedValue({ allowed: true });
     
-    // Mock valid payment settings so that system checkout would trigger Duitku
+    // Mock valid payment settings so that system checkout would trigger the gateway
     vi.mocked(db.paymentSettings.findUnique).mockResolvedValue({
-      duitkuMerchantCode: 'merchant-123',
-      duitkuApiKey: 'api-key-123',
-      duitkuSandbox: true
+      gatewayMerchantId: 'merchant-123',
+      gatewayApiKey: 'api-key-123',
+      gatewaySandbox: true
     } as any);
 
     vi.mocked(validateBody).mockResolvedValue({
@@ -239,12 +239,12 @@ describe('Orders API POST Route', () => {
     vi.mocked(getSiteId).mockResolvedValue('site-123');
     vi.mocked(SubscriptionClient.checkSiteLimit).mockResolvedValue({ allowed: true });
     
-    // Mock valid payment settings so Duitku could be triggered, but we also have bank details
+    // Mock valid payment settings so gateway could be triggered, but we also have bank details
     vi.mocked(db.paymentSettings.findUnique).mockResolvedValue({
       siteId: 'site-123',
-      duitkuMerchantCode: 'merchant-123',
-      duitkuApiKey: 'api-key-123',
-      duitkuSandbox: true,
+      gatewayMerchantId: 'merchant-123',
+      gatewayApiKey: 'api-key-123',
+      gatewaySandbox: true,
       bankName: 'BCA',
       accountNumber: '123456789',
       accountHolder: 'Jane Doe',
@@ -253,9 +253,9 @@ describe('Orders API POST Route', () => {
 
     const mockPaymentSettings = {
       siteId: 'site-123',
-      duitkuMerchantCode: 'merchant-123',
-      duitkuApiKey: 'api-key-123',
-      duitkuSandbox: true,
+      gatewayMerchantId: 'merchant-123',
+      gatewayApiKey: 'api-key-123',
+      gatewaySandbox: true,
       bankName: 'BCA',
       accountNumber: '123456789',
       accountHolder: 'Jane Doe',
