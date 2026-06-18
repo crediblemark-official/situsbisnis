@@ -1,8 +1,9 @@
 import * as orderRepo from "../repositories/order.repository";
 import { processOrderPaymentCallback } from "./order.service";
+import { MidtransPaymentWrapper } from "@/modules/payment/providers/midtrans";
 
 /**
- * Mengecek status pembayaran pesanan (polling atau status check ke Duitku).
+ * Mengecek status pembayaran pesanan (polling atau status check ke Midtrans).
  */
 export async function checkOrderStatus(orderId: string) {
     const order = await orderRepo.findOrderById(orderId);
@@ -35,13 +36,11 @@ export async function checkOrderStatus(orderId: string) {
     const paymentSettings = await orderRepo.findPaymentSettings(order.siteId);
     const platformSettings = await orderRepo.findPlatformSettings();
 
-    let gateway = paymentSettings?.paymentGateway;
     let merchantCode = paymentSettings?.gatewayMerchantId;
     let apiKey = paymentSettings?.gatewayApiKey;
     let sandbox = paymentSettings?.gatewaySandbox ?? true;
 
     if (!merchantCode || !apiKey) {
-        gateway = platformSettings?.paymentGateway || "duitku";
         merchantCode = platformSettings?.gatewayMerchantId;
         apiKey = platformSettings?.gatewayApiKey;
         sandbox = platformSettings?.gatewaySandbox ?? true;
@@ -67,8 +66,7 @@ export async function checkOrderStatus(orderId: string) {
         } catch {}
     }
 
-    const { paymentManager } = await import("@crediblemark/buayar");
-    const result = await paymentManager.checkTransaction(gateway as any, {
+    const result = await MidtransPaymentWrapper.checkTransaction({
         merchantOrderId: merchantOrderId,
     }, {
         merchantCode,
@@ -92,18 +90,18 @@ export async function checkOrderStatus(orderId: string) {
 }
 
 /**
- * Memproses callback webhook untuk pesanan.
+ * Memproses callback webhook untuk pesanan dari Midtrans.
  */
 export async function processOrderWebhook(body: Record<string, any>) {
-    const { merchantCode, amount, merchantOrderId, signature } = body;
+    const { order_id, status_code, gross_amount, signature_key } = body;
 
-    if (!merchantCode || !amount || !merchantOrderId || !signature) {
+    if (!order_id || !status_code || !gross_amount || !signature_key) {
         throw new Error("Missing parameters");
     }
 
-    const actualOrderId = merchantOrderId.match(/^([^-]+)/)?.[1];
+    const actualOrderId = order_id.match(/^([^-]+)/)?.[1];
     if (!actualOrderId) {
-        throw new Error("Invalid merchantOrderId format");
+        throw new Error("Invalid order_id format");
     }
 
     const order = await orderRepo.findOrderById(actualOrderId);
@@ -112,21 +110,19 @@ export async function processOrderWebhook(body: Record<string, any>) {
     }
 
     const expectedAmount = Number(order.total);
-    if (Number(amount) !== expectedAmount) {
-        console.error(`[ORDER_WEBHOOK] Amount mismatch in order webhook: webhook=${amount}, expected=${expectedAmount}`);
+    if (Math.round(Number(gross_amount)) !== Math.round(expectedAmount)) {
+        console.error(`[ORDER_WEBHOOK] Amount mismatch in order webhook: webhook=${gross_amount}, expected=${expectedAmount}`);
         throw new Error("Amount mismatch");
     }
 
     const paymentSettings = await orderRepo.findPaymentSettings(order.siteId);
     const platformSettings = await orderRepo.findPlatformSettings();
 
-    let gateway = paymentSettings?.paymentGateway;
     let activeMerchantCode = paymentSettings?.gatewayMerchantId;
     let apiKey = paymentSettings?.gatewayApiKey;
     let sandbox = paymentSettings?.gatewaySandbox ?? true;
 
     if (!activeMerchantCode || !apiKey) {
-        gateway = platformSettings?.paymentGateway || "duitku";
         activeMerchantCode = platformSettings?.gatewayMerchantId;
         apiKey = platformSettings?.gatewayApiKey;
         sandbox = platformSettings?.gatewaySandbox ?? true;
@@ -136,8 +132,7 @@ export async function processOrderWebhook(body: Record<string, any>) {
         throw new Error("Site payment not configured");
     }
 
-    const { paymentManager } = await import("@crediblemark/buayar");
-    const verification = await paymentManager.verifyCallback(gateway as any, body, {
+    const verification = await MidtransPaymentWrapper.verifyCallback(body, {
         merchantCode: activeMerchantCode || "",
         apiKey,
         sandbox
@@ -148,7 +143,6 @@ export async function processOrderWebhook(body: Record<string, any>) {
     }
 
     if (verification.status === "paid") {
-        // creditOwner = true jika site menggunakan payment gateway platform (bukan milik sendiri)
         const creditOwner = !paymentSettings?.gatewayMerchantId || !paymentSettings?.gatewayApiKey;
         await processOrderPaymentCallback(actualOrderId, order.siteId, Number(order.total), creditOwner);
     }

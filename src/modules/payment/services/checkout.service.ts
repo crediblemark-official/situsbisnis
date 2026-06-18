@@ -3,6 +3,7 @@ import { FinancialClient } from "@/modules/financial";
 import * as transactionRepo from "../repositories/transaction.repository";
 import { eventBus } from "@/modules/shared/core/event-bus";
 import { db } from "@/modules/shared/core/db";
+import { MidtransPaymentWrapper, getPaymentMethodCategory } from "../providers/midtrans";
 
 /**
  * Membeli slot situs tambahan untuk tenant.
@@ -63,21 +64,20 @@ export async function buySlot(
     try {
         if (paymentMethod !== "manual") {
             const platformSettings = await SubscriptionClient.getPlatformSettings();
-            const gateway = platformSettings?.paymentGateway || "duitku";
+            const gateway = "midtrans";
             const gatewayApiKey = platformSettings?.gatewayApiKey;
             const gatewayMerchantId = platformSettings?.gatewayMerchantId;
             const gatewaySandbox = platformSettings?.gatewaySandbox ?? true;
             const FORCE_SNAP_MODE = true; // Set to false to test Core API
-    const gatewayApiType = FORCE_SNAP_MODE ? "snap" : (platformSettings?.gatewayApiType || "snap");
+            const gatewayApiType = FORCE_SNAP_MODE ? "snap" : (platformSettings?.gatewayApiType || "snap");
 
             if (gatewayApiKey && gatewayMerchantId) {
-                const { paymentManager } = await import("@crediblemark/buayar");
                 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://situsbisnis.com";
                 const ownerInfo = await eventBus.request<any, any>("request.auth.getSiteOwner", { siteId });
 
-                const isCore = gateway === "midtrans" && gatewayApiType === "core";
+                const isCore = gatewayApiType === "core";
 
-                const invoice = await paymentManager.createInvoice(gateway as any, {
+                const invoice = await MidtransPaymentWrapper.createInvoice({
                     orderId: transaction.id,
                     amount: totalAmount,
                     productDetails: `Pembelian Slot: +${quantity} Tambahan Situs • Utama: ${site.name}`,
@@ -86,23 +86,20 @@ export async function buySlot(
                         email: ownerInfo?.email || ""
                     },
                     returnUrl: `${appUrl}/dashboard/billing`,
-                    callbackUrl: gateway === "midtrans" 
-                        ? `${appUrl}/api/payment/billing/webhook/midtrans`
-                        : `${appUrl}/api/billing/webhook/duitku`,
-                    paymentMethod: isCore && paymentMethod !== "duitku" && paymentMethod !== "midtrans" ? paymentMethod : undefined,
+                    callbackUrl: `${appUrl}/api/payment/billing/webhook/midtrans`,
+                    paymentMethod: isCore && paymentMethod !== "midtrans" ? paymentMethod : undefined,
                 }, {
                     merchantCode: gatewayMerchantId,
                     apiKey: gatewayApiKey,
                     sandbox: gatewaySandbox
-                });
+                }, gatewayApiType);
 
                 if (!invoice.success || (!invoice.paymentUrl && !invoice.vaNumber && !invoice.qrString && !invoice.paymentCode)) {
                     throw new Error(invoice.error || `Gagal membuat invoice ${gateway}`);
                 }
 
                 let paymentUrl = invoice.paymentUrl || "";
-                if (isCore && paymentMethod !== "duitku" && paymentMethod !== "midtrans") {
-                    const { getPaymentMethodCategory } = await import("@crediblemark/buayar");
+                if (isCore && paymentMethod !== "midtrans") {
                     const customPayload = {
                         vaNumber: invoice.vaNumber || null,
                         qrString: invoice.qrString || null,
@@ -132,7 +129,7 @@ export async function buySlot(
 }
 
 /**
- * Menginisialisasi checkout pembayaran via Duitku.
+ * Menginisialisasi checkout pembayaran via Midtrans.
  */
 export async function initializeCheckoutPayment(
     userId: string,
@@ -159,26 +156,25 @@ export async function initializeCheckoutPayment(
     }
 
     const platformSettings = await SubscriptionClient.getPlatformSettings();
-    const gateway = platformSettings?.paymentGateway || "duitku";
+    const gateway = "midtrans";
     const gatewayApiKey = platformSettings?.gatewayApiKey;
     const gatewayMerchantId = platformSettings?.gatewayMerchantId;
     const gatewaySandbox = platformSettings?.gatewaySandbox ?? true;
-    const gatewayApiType = (platformSettings?.gatewayApiType || "snap") as "snap" | "core"; // Uses value from platform settings (admin panel)
+    const gatewayApiType = (platformSettings?.gatewayApiType || "snap") as "snap" | "core";
 
     if (!gatewayApiKey || !gatewayMerchantId) {
         throw new Error("Platform payment settings not configured");
     }
 
-    const { paymentManager, getPaymentMethodCategory } = await import("@crediblemark/buayar");
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://situsbisnis.com";
 
     const suffix = Date.now().toString().slice(-4);
     const uniqueOrderId = `${transaction.id}-${paymentMethod}-${suffix}`;
 
     const customerEmail = ownerInfo?.email || "";
-    const isCore = gateway === "midtrans" && gatewayApiType === "core";
+    const isCore = gatewayApiType === "core";
 
-    const invoice = await paymentManager.createInvoice(gateway as any, {
+    const invoice = await MidtransPaymentWrapper.createInvoice({
         orderId: uniqueOrderId,
         amount: Number(transaction.amount),
         productDetails: transaction.plan ? `Upgrade Paket ${transaction.plan.name}` : "Upgrade Layanan SitusBisnis",
@@ -186,14 +182,14 @@ export async function initializeCheckoutPayment(
             name: ownerInfo?.name || site?.name || "Tenant",
             email: customerEmail,
         },
-        paymentMethod: isCore || gateway === "duitku" ? paymentMethod : undefined,
+        paymentMethod: paymentMethod,
         returnUrl: `${appUrl}/dashboard/billing?status=success`,
-        callbackUrl: gateway === "midtrans" ? `${appUrl}/api/payment/billing/webhook/midtrans` : `${appUrl}/api/billing/webhook/duitku`
+        callbackUrl: `${appUrl}/api/payment/billing/webhook/midtrans`
     }, {
         merchantCode: gatewayMerchantId,
         apiKey: gatewayApiKey,
         sandbox: gatewaySandbox
-    });
+    }, gatewayApiType);
 
     if (!invoice.success) {
       throw new Error(invoice.error || `Failed to create ${gateway} invoice`);
@@ -211,7 +207,7 @@ export async function initializeCheckoutPayment(
     };
 
     let paymentUrl = invoice.paymentUrl || "";
-    if (isCore || gateway === "duitku") {
+    if (isCore) {
         paymentUrl = `custom:${JSON.stringify(customPayload)}`;
     }
 
@@ -334,21 +330,20 @@ export async function upgradePlan(
     try {
         if (paymentMethod !== "manual") {
             const platformSettings = await SubscriptionClient.getPlatformSettings();
-            const gateway = platformSettings?.paymentGateway || "duitku";
+            const gateway = "midtrans";
             const gatewayApiKey = platformSettings?.gatewayApiKey;
             const gatewayMerchantId = platformSettings?.gatewayMerchantId;
             const gatewaySandbox = platformSettings?.gatewaySandbox ?? true;
             const FORCE_SNAP_MODE = true; // Set to false to test Core API
-    const gatewayApiType = FORCE_SNAP_MODE ? "snap" : (platformSettings?.gatewayApiType || "snap");
+            const gatewayApiType = FORCE_SNAP_MODE ? "snap" : (platformSettings?.gatewayApiType || "snap");
 
             if (gatewayApiKey && gatewayMerchantId) {
-                const { paymentManager } = await import("@crediblemark/buayar");
                 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://situsbisnis.com";
 
                 const ownerInfo = await eventBus.request<any, any>("request.auth.getSiteOwner", { siteId });
-                const isCore = gateway === "midtrans" && gatewayApiType === "core";
+                const isCore = gatewayApiType === "core";
 
-                const invoice = await paymentManager.createInvoice(gateway as any, {
+                const invoice = await MidtransPaymentWrapper.createInvoice({
                     orderId: transaction.id,
                     amount: totalAmount,
                     productDetails: `Peningkatan Paket: Premium ${plan.name.toUpperCase()} • Situs: ${site.name}`,
@@ -357,23 +352,20 @@ export async function upgradePlan(
                         email: ownerInfo?.email || ""
                     },
                     returnUrl: `${appUrl}/dashboard/billing`,
-                    callbackUrl: gateway === "midtrans" 
-                        ? `${appUrl}/api/payment/billing/webhook/midtrans`
-                        : `${appUrl}/api/billing/webhook/duitku`,
-                    paymentMethod: isCore && paymentMethod !== "duitku" && paymentMethod !== "midtrans" ? paymentMethod : undefined,
+                    callbackUrl: `${appUrl}/api/payment/billing/webhook/midtrans`,
+                    paymentMethod: isCore && paymentMethod !== "midtrans" ? paymentMethod : undefined,
                 }, {
                     merchantCode: gatewayMerchantId,
                     apiKey: gatewayApiKey,
                     sandbox: gatewaySandbox
-                });
+                }, gatewayApiType);
 
                 if (!invoice.success || (!invoice.paymentUrl && !invoice.vaNumber && !invoice.qrString && !invoice.paymentCode)) {
                     throw new Error(invoice.error || `Gagal membuat invoice ${gateway}`);
                 }
 
                 let paymentUrl = invoice.paymentUrl || "";
-                if (isCore && paymentMethod !== "duitku" && paymentMethod !== "midtrans") {
-                    const { getPaymentMethodCategory } = await import("@crediblemark/buayar");
+                if (isCore && paymentMethod !== "midtrans") {
                     const customPayload = {
                         vaNumber: invoice.vaNumber || null,
                         qrString: invoice.qrString || null,

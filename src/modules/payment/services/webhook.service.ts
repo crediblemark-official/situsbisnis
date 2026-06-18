@@ -2,6 +2,7 @@ import { SubscriptionClient } from "@/modules/subscription";
 import * as transactionRepo from "../repositories/transaction.repository";
 import { eventBus } from "@/modules/shared/core/event-bus";
 import { processApprovedTransaction } from "./transaction.service";
+import { MidtransPaymentWrapper } from "../providers/midtrans";
 
 /**
  * Mengecek status transaksi pembayaran.
@@ -47,7 +48,7 @@ export async function checkTransactionStatus(userId: string, userRole: string, t
     }
 
     const platformSettings = await SubscriptionClient.getPlatformSettings();
-    const gateway = platformSettings?.paymentGateway || "duitku";
+    const gateway = "midtrans";
     const gatewayApiKey = platformSettings?.gatewayApiKey;
     const gatewayMerchantId = platformSettings?.gatewayMerchantId;
     const gatewaySandbox = platformSettings?.gatewaySandbox ?? true;
@@ -71,8 +72,7 @@ export async function checkTransactionStatus(userId: string, userRole: string, t
         } catch {}
     }
 
-    const { paymentManager } = await import("@crediblemark/buayar");
-    const result = await paymentManager.checkTransaction(gateway as any, {
+    const result = await MidtransPaymentWrapper.checkTransaction({
         merchantOrderId,
     }, {
         merchantCode: gatewayMerchantId,
@@ -100,10 +100,6 @@ export async function checkTransactionStatus(userId: string, userRole: string, t
     };
 }
 
-// Cache hasil probe Midtrans secara global di process memory
-let midtransProbeCache: { timestamp: number; enabled: string[] } | null = null;
-const PROBE_CACHE_TTL = 1000 * 60 * 30; // 30 menit
-
 /**
  * Mengambil daftar metode pembayaran yang tersedia dari gateway.
  */
@@ -113,29 +109,16 @@ export async function getPaymentMethods(amount: number) {
     }
 
     const platformSettings = await SubscriptionClient.getPlatformSettings();
-    const gateway = platformSettings?.paymentGateway || "duitku";
     const gatewayApiKey = platformSettings?.gatewayApiKey;
     const gatewayMerchantId = platformSettings?.gatewayMerchantId;
-    const gatewaySandbox = platformSettings?.gatewaySandbox ?? true;
-    const gatewayApiType = (platformSettings?.gatewayApiType || "snap") as "snap" | "core"; // Uses value from platform settings (admin panel)
 
     if (!gatewayApiKey || !gatewayMerchantId) {
         throw new Error("Payment gateway not configured");
     }
 
-    const { paymentManager } = await import("@crediblemark/buayar");
-
-    const result = await paymentManager.getPaymentMethods(gateway as any, {
+    const result = await MidtransPaymentWrapper.getPaymentMethods({
         amount: Math.round(Number(amount)),
-    }, {
-        merchantCode: gatewayMerchantId,
-        apiKey: gatewayApiKey,
-        sandbox: gatewaySandbox,
     });
-
-    if (!result.success) {
-        throw new Error(result.error || `Failed to fetch payment methods from ${gateway}`);
-    }
 
     // Mapping payment method images to local assets
     const imageMapping: Record<string, string> = {
@@ -163,126 +146,12 @@ export async function getPaymentMethods(amount: number) {
         "akulaku": "/logo-pembayaran/IR.svg",
     };
 
-    let filteredMethods = (result.methods || []).map(method => ({
+    const filteredMethods = (result.methods || []).map(method => ({
         ...method,
-        paymentImage: imageMapping[method.paymentMethod] || method.paymentImage,
+        paymentImage: imageMapping[method.paymentMethod] || "",
     }));
 
-    if (gateway === "midtrans" && gatewayApiType === "core") {
-        let enabledMethods: string[] = [];
-        const now = Date.now();
-        if (midtransProbeCache && (now - midtransProbeCache.timestamp) < PROBE_CACHE_TTL) {
-            enabledMethods = midtransProbeCache.enabled;
-        } else {
-            try {
-                const midtransProvider = paymentManager.getProvider("midtrans") as any;
-                const probeRes = await midtransProvider.probePaymentMethods({
-                    merchantCode: gatewayMerchantId,
-                    apiKey: gatewayApiKey,
-                    sandbox: gatewaySandbox,
-                });
-                if (probeRes && probeRes.success) {
-                    enabledMethods = probeRes.enabled || [];
-                    midtransProbeCache = {
-                        timestamp: now,
-                        enabled: enabledMethods
-                    };
-                }
-            } catch (probeErr) {
-                console.error("[MIDTRANS_PROBE_ERROR]", probeErr);
-                if (midtransProbeCache) {
-                    enabledMethods = midtransProbeCache.enabled;
-                }
-            }
-        }
-
-        if (enabledMethods.length > 0) {
-            const methodMapping: Record<string, string[]> = {
-                qris: ["qris"],
-                gopay: ["gopay"],
-                shopeepay: ["shopeepay"],
-                ovo: ["ovo"],
-                dana: ["dana"],
-                linkaja: ["linkaja"],
-                bca: ["bca_va"],
-                bni: ["bni_va"],
-                bri: ["bri_va"],
-                cimb: ["cimb_va"],
-                danamon: ["danamon_va"],
-                bsi: ["bsi_va"],
-                seabank: ["seabank_va"],
-                mandiri: ["mandiri_va"],
-                permata: ["permata_va", "other_va"],
-                alfamart: ["alfamart"],
-                indomaret: ["indomaret"],
-                akulaku: ["akulaku"],
-                kredivo: ["kredivo"],
-            };
-
-            const probedKeys = Object.keys(methodMapping);
-            const disabledMethodNames: string[] = [];
-            for (const key of probedKeys) {
-                if (!enabledMethods.includes(key)) {
-                    disabledMethodNames.push(...methodMapping[key]);
-                }
-            }
-
-            filteredMethods = filteredMethods.filter(
-                (m) => !disabledMethodNames.includes(m.paymentMethod)
-            );
-        }
-    }
-
     return { methods: filteredMethods };
-}
-
-/**
- * Memproses callback webhook dari Duitku.
- */
-export async function processDuitkuWebhook(body: Record<string, any>) {
-    const { merchantCode, amount, merchantOrderId, signature } = body;
-
-    if (!merchantCode || !amount || !merchantOrderId || !signature) {
-        throw new Error("Missing parameters");
-    }
-
-    const actualTransactionId = merchantOrderId.match(/^([^-]+)/)?.[1];
-    if (!actualTransactionId) {
-        throw new Error("Invalid merchantOrderId format");
-    }
-
-    const platformSettings = await SubscriptionClient.getPlatformSettings();
-    if (!platformSettings || !platformSettings.gatewayApiKey) {
-        throw new Error("Platform not configured");
-    }
-
-    const transaction = await transactionRepo.findTransactionById(null, actualTransactionId);
-    if (!transaction) {
-        throw new Error("Transaction not found");
-    }
-
-    const expectedAmount = Number(transaction.amount);
-    if (Number(amount) !== expectedAmount) {
-        console.error(`[DUITKU] Amount mismatch: webhook=${amount}, expected=${expectedAmount}`);
-        throw new Error("Amount mismatch");
-    }
-
-    const { paymentManager } = await import("@crediblemark/buayar");
-    const verification = await paymentManager.verifyCallback("duitku", body, {
-        merchantCode: platformSettings.gatewayMerchantId || "",
-        apiKey: platformSettings.gatewayApiKey,
-        sandbox: platformSettings.gatewaySandbox
-    });
-
-    if (!verification.isValid) {
-        throw new Error("Invalid Signature");
-    }
-
-    if (verification.status === "paid") {
-        await processApprovedTransaction(actualTransactionId);
-    }
-
-    return { success: true };
 }
 
 /**
@@ -316,8 +185,7 @@ export async function processMidtransWebhook(body: Record<string, any>) {
         throw new Error("Amount mismatch");
     }
 
-    const { paymentManager } = await import("@crediblemark/buayar");
-    const verification = await paymentManager.verifyCallback("midtrans", body, {
+    const verification = await MidtransPaymentWrapper.verifyCallback(body, {
         merchantCode: platformSettings.gatewayMerchantId || "",
         apiKey: platformSettings.gatewayApiKey,
         sandbox: platformSettings.gatewaySandbox

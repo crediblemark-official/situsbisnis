@@ -1,5 +1,6 @@
 import * as orderRepo from "../repositories/order.repository";
 import { SubscriptionClient } from "@/modules/subscription";
+import { MidtransPaymentWrapper, getPaymentMethodCategory } from "@/modules/payment/providers/midtrans";
 
 // Cache hasil probe Midtrans secara global di process memory
 let midtransProbeCache: { timestamp: number; enabled: string[] } | null = null;
@@ -86,13 +87,11 @@ export async function createOrder(
     const paymentSettings = await orderRepo.findPaymentSettings(siteId);
     const platformSettings = await orderRepo.findPlatformSettings();
 
-    let gateway = paymentSettings?.paymentGateway;
     let merchantCode = paymentSettings?.gatewayMerchantId;
     let apiKey = paymentSettings?.gatewayApiKey;
     let sandbox = paymentSettings?.gatewaySandbox ?? true;
 
     if (!merchantCode || !apiKey) {
-        gateway = platformSettings?.paymentGateway || "duitku";
         merchantCode = platformSettings?.gatewayMerchantId;
         apiKey = platformSettings?.gatewayApiKey;
         sandbox = platformSettings?.gatewaySandbox ?? true;
@@ -114,10 +113,9 @@ export async function createOrder(
         }
     } else if (merchantCode && apiKey && paymentMethod !== "whatsapp") {
         try {
-            const { paymentManager } = await import("@crediblemark/buayar");
             const origin = process.env.NEXT_PUBLIC_APP_URL || "https://situsbisnis.com";
             
-            const invoice = await paymentManager.createInvoice(gateway as any, {
+            const invoice = await MidtransPaymentWrapper.createInvoice({
                 orderId: newOrder.id,
                 amount: total,
                 productDetails: `Pembayaran Pesanan #${newOrder.id} • Toko: ${site?.name || "SitusBisnis"}`,
@@ -131,15 +129,15 @@ export async function createOrder(
                 merchantCode,
                 apiKey,
                 sandbox
-            });
+            }, "snap");
 
             if (invoice.success && invoice.paymentUrl) {
                 orderToReturn = await orderRepo.updateOrderPaymentUrl(newOrder.id, invoice.paymentUrl, invoice.reference);
             } else {
-                console.warn(`[${gateway.toUpperCase()}_ORDER] Invoice creation failed: ${invoice.error}`);
+                console.warn(`[MIDTRANS_ORDER] Invoice creation failed: ${invoice.error}`);
             }
         } catch (gatewayError) {
-            console.error(`[${gateway.toUpperCase()}_ORDER_ERROR]`, gatewayError);
+            console.error(`[MIDTRANS_ORDER_ERROR]`, gatewayError);
         }
     }
 
@@ -159,13 +157,11 @@ export async function initializeOrderPayment(orderId: string, paymentMethod: str
     const paymentSettings = await orderRepo.findPaymentSettings(order.siteId);
     const platformSettings = await orderRepo.findPlatformSettings();
 
-    let gateway = paymentSettings?.paymentGateway;
     let merchantCode = paymentSettings?.gatewayMerchantId;
     let apiKey = paymentSettings?.gatewayApiKey;
     let sandbox = paymentSettings?.gatewaySandbox ?? true;
 
     if (!merchantCode || !apiKey) {
-        gateway = platformSettings?.paymentGateway || "duitku";
         merchantCode = platformSettings?.gatewayMerchantId;
         apiKey = platformSettings?.gatewayApiKey;
         sandbox = platformSettings?.gatewaySandbox ?? true;
@@ -175,12 +171,10 @@ export async function initializeOrderPayment(orderId: string, paymentMethod: str
         throw new Error("Payment settings not configured");
     }
 
-    const { paymentManager, getPaymentMethodCategory } = await import("@crediblemark/buayar");
-
     const suffix = Date.now().toString().slice(-4);
     const uniqueOrderId = `${order.id}-${paymentMethod}-${suffix}`;
 
-    const invoice = await paymentManager.createInvoice(gateway as any, {
+    const invoice = await MidtransPaymentWrapper.createInvoice({
         orderId: uniqueOrderId,
         amount: Number(order.total),
         productDetails: `Pembayaran Pesanan #${order.id} • Toko: ${site?.name || "SitusBisnis"}`,
@@ -195,10 +189,10 @@ export async function initializeOrderPayment(orderId: string, paymentMethod: str
         merchantCode,
         apiKey,
         sandbox
-    });
+    }, "snap");
 
     if (!invoice.success) {
-        throw new Error(invoice.error || `Failed to create ${gateway} invoice`);
+        throw new Error(invoice.error || `Failed to create midtrans invoice`);
     }
 
     const customPayload = {
@@ -234,107 +228,30 @@ export async function getOrderPaymentMethods(orderId: string) {
         throw new Error("Order not found");
     }
 
-    const amount = Number(order.total);
     const paymentSettings = await orderRepo.findPaymentSettings(order.siteId);
     const platformSettings = await orderRepo.findPlatformSettings();
 
-    let gateway = paymentSettings?.paymentGateway;
     let merchantCode = paymentSettings?.gatewayMerchantId;
     let apiKey = paymentSettings?.gatewayApiKey;
-    let sandbox = paymentSettings?.gatewaySandbox ?? true;
-    const gatewayApiType = (platformSettings?.gatewayApiType || "snap") as "snap" | "core"; // Uses value from platform settings (admin panel)
 
     if (!merchantCode || !apiKey) {
-        gateway = platformSettings?.paymentGateway || "duitku";
         merchantCode = platformSettings?.gatewayMerchantId;
         apiKey = platformSettings?.gatewayApiKey;
-        sandbox = platformSettings?.gatewaySandbox ?? true;
     }
 
     if (!merchantCode || !apiKey) {
         throw new Error("Payment settings not configured");
     }
 
-    const { paymentManager } = await import("@crediblemark/buayar");
-
-    const result = await paymentManager.getPaymentMethods(gateway as any, {
-        amount: Math.round(amount),
-    }, {
-        merchantCode: merchantCode || "",
-        apiKey,
-        sandbox,
+    const result = await MidtransPaymentWrapper.getPaymentMethods({
+        amount: Math.round(Number(order.total)),
     });
 
     if (!result.success) {
-        throw new Error(result.error || `Failed to fetch payment methods from ${gateway}`);
+        throw new Error(result.error || `Failed to fetch payment methods from midtrans`);
     }
 
-    let filteredMethods = result.methods || [];
-
-    if (gateway === "midtrans" && gatewayApiType === "core") {
-        let enabledMethods: string[] = [];
-        const now = Date.now();
-        if (midtransProbeCache && (now - midtransProbeCache.timestamp) < PROBE_CACHE_TTL) {
-            enabledMethods = midtransProbeCache.enabled;
-        } else {
-            try {
-                const midtransProvider = paymentManager.getProvider("midtrans") as any;
-                const probeRes = await midtransProvider.probePaymentMethods({
-                    merchantCode: merchantCode || "",
-                    apiKey,
-                    sandbox,
-                });
-                if (probeRes && probeRes.success) {
-                    enabledMethods = probeRes.enabled || [];
-                    midtransProbeCache = {
-                        timestamp: now,
-                        enabled: enabledMethods
-                    };
-                }
-            } catch (probeErr) {
-                console.error("[ORDER_PAYMENT_METHODS_PROBE_ERROR]", probeErr);
-                if (midtransProbeCache) {
-                    enabledMethods = midtransProbeCache.enabled;
-                }
-            }
-        }
-
-        if (enabledMethods.length > 0) {
-            const methodMapping: Record<string, string[]> = {
-                qris: ["qris"],
-                gopay: ["gopay"],
-                shopeepay: ["shopeepay"],
-                ovo: ["ovo"],
-                dana: ["dana"],
-                linkaja: ["linkaja"],
-                bca: ["bca_va"],
-                bni: ["bni_va"],
-                bri: ["bri_va"],
-                cimb: ["cimb_va"],
-                danamon: ["danamon_va"],
-                bsi: ["bsi_va"],
-                seabank: ["seabank_va"],
-                mandiri: ["mandiri_va"],
-                permata: ["permata_va", "other_va"],
-                alfamart: ["alfamart"],
-                indomaret: ["indomaret"],
-                akulaku: ["akulaku"],
-                kredivo: ["kredivo"],
-            };
-
-            const probedKeys = Object.keys(methodMapping);
-            const disabledMethodNames: string[] = [];
-            for (const key of probedKeys) {
-                if (!enabledMethods.includes(key)) {
-                    disabledMethodNames.push(...methodMapping[key]);
-                }
-            }
-
-            filteredMethods = filteredMethods.filter(
-                (m) => !disabledMethodNames.includes(m.paymentMethod)
-            );
-        }
-    }
+    const filteredMethods = result.methods || [];
 
     // Mapping payment method images to local assets
     const imageMapping: Record<string, string> = {
@@ -343,7 +260,7 @@ export async function getOrderPaymentMethods(orderId: string) {
         "bca_va": "/logo-pembayaran/BC.svg",
         "bni_va": "/logo-pembayaran/I1.svg",
         "bri_va": "/logo-pembayaran/BR.svg",
-        "mandiri_va": "/logo-pembayaran/M2.svg",
+        "mandiri_va": "/media/logo-pembayaran/M2.svg",
         "permata_va": "/logo-pembayaran/BT.svg",
         "cimb_va": "/logo-pembayaran/A1.svg",
         "danamon_va": "/logo-pembayaran/A1.svg",
@@ -364,7 +281,7 @@ export async function getOrderPaymentMethods(orderId: string) {
 
     const methods = (filteredMethods || []).map(method => ({
         ...method,
-        paymentImage: imageMapping[method.paymentMethod] || method.paymentImage,
+        paymentImage: imageMapping[method.paymentMethod] || "",
     }));
     
     if (paymentSettings?.bankName && paymentSettings?.accountNumber) {

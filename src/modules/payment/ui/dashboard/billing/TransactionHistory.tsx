@@ -73,7 +73,7 @@ export function TransactionHistory({
                                         {tx.status === 'pending' && (
                                             <div className="flex items-center justify-end gap-2">
 
-                                                {tx.paymentMethod === "duitku" && tx.paymentUrl ? (
+                                                {tx.paymentUrl && !tx.paymentUrl.startsWith("custom:") ? (
                                                     <a
                                                         href={tx.paymentUrl}
                                                         className="text-[9px] font-black text-sky-500 uppercase tracking-widest underline hover:opacity-80 transition-all cursor-pointer"

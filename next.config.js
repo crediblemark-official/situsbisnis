@@ -38,7 +38,7 @@ const nextConfig = {
   },
   output: 'standalone',
   reactStrictMode: true,
-  transpilePackages: ["lucide-react", "@crediblemark/build-ui", "@crediblemark/buayar", "@crediblemark/build-ai", "@crediblemark/starsender"],
+  transpilePackages: ["lucide-react", "@crediblemark/build-ui", "@crediblemark/build-ai", "@crediblemark/starsender"],
   typescript: {
     // Type checking is enforced in production builds
   },
