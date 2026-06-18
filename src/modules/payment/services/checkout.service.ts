@@ -177,7 +177,7 @@ export async function initializeCheckoutPayment(
     const customerEmail = ownerInfo?.email || "";
     const isCore = gateway === "midtrans" && gatewayApiType === "core";
 
-    const invoice = await paymentManager.createInvoice(gateway as any, {
+    const invoiceParams = {
         orderId: uniqueOrderId,
         amount: Number(transaction.amount),
         productDetails: transaction.plan ? `Upgrade Paket ${transaction.plan.name}` : "Upgrade Layanan SitusBisnis",
@@ -190,11 +190,20 @@ export async function initializeCheckoutPayment(
         callbackUrl: gateway === "midtrans"
             ? `${appUrl}/api/payment/billing/webhook/midtrans`
             : `${appUrl}/api/billing/webhook/duitku`
-    }, {
+    };
+
+    const invoiceConfig = {
         merchantCode: gatewayMerchantId,
         apiKey: gatewayApiKey,
         sandbox: gatewaySandbox
-      });
+    };
+
+    console.log("[DEBUG] Midtrans createInvoice - Params:", invoiceParams);
+    console.log("[DEBUG] Midtrans createInvoice - Config:", { ...invoiceConfig, apiKey: "***" });
+
+    const invoice = await paymentManager.createInvoice(gateway as any, invoiceParams, invoiceConfig);
+
+    console.log("[DEBUG] Midtrans createInvoice - Response:", invoice);
 
     if (!invoice.success) {
       throw new Error(invoice.error || `Failed to create ${gateway} invoice`);
