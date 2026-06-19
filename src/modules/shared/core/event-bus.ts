@@ -308,7 +308,4 @@ declare const globalThis: {
 } & typeof global;
 
 export const eventBus = globalThis.eventBusGlobal ?? new EventBus();
-
-if (process.env.NODE_ENV !== "production") {
-  globalThis.eventBusGlobal = eventBus;
-}
+globalThis.eventBusGlobal = eventBus;

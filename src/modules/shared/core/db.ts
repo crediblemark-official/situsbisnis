@@ -44,8 +44,5 @@ declare const globalThis: {
 // Use globalThis pattern to prevent connection proliferation during HMR
 // This ensures only ONE PrismaClient instance exists across all hot reloads
 export const db: PrismaClient = globalThis.prismaGlobal ?? createPrismaClient();
-
-if (process.env.NODE_ENV !== "production") {
-    globalThis.prismaGlobal = db;
-}
+globalThis.prismaGlobal = db;
 
