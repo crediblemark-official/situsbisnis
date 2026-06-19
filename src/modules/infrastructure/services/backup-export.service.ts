@@ -125,21 +125,17 @@ export async function exportBackupData(): Promise<BackupData> {
             };
         });
 
-        // Fetch terms with their implicit many-to-many pages, posts, and products
+        // Fetch terms with their implicit many-to-many posts
         const terms = await db.term.findMany({
             include: {
-                pages: { select: { id: true } },
-                posts: { select: { id: true } },
-                products: { select: { id: true } }
+                posts: { select: { id: true } }
             }
         });
         const formattedTerms = terms.map(term => {
-            const { pages, posts: termPosts, products: termProducts, ...termFields } = term;
+            const { posts: termPosts, ...termFields } = term;
             return {
                 ...termFields,
-                pageIds: pages.map(p => p.id),
-                postIds: termPosts.map(p => p.id),
-                productIds: termProducts.map(p => p.id)
+                postIds: termPosts.map(p => p.id)
             };
         });
 

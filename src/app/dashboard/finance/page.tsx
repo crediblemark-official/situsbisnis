@@ -46,13 +46,13 @@ export default async function FinanceDashboardPage() {
     // 2. Query all sites owned by this user along with their payment settings
     const siteLinks = await db.siteUser.findMany({
         where: { userId },
-        select: {
-            site: {
-                include: { paymentSettings: true }
-            }
-        }
+        select: { siteId: true }
     });
-    const userSites = siteLinks.map(link => link.site);
+    const userSiteIds = siteLinks.map(l => l.siteId);
+    const userSites = await db.site.findMany({
+        where: { id: { in: userSiteIds } },
+        include: { paymentSettings: true }
+    });
 
     // 3. Filter sites that are using the platform's payment gateway fallback
     const fallbackSites = userSites.filter(site => {
@@ -67,13 +67,15 @@ export default async function FinanceDashboardPage() {
             paymentStatus: "paid",
             paymentMethod: { notIn: ["manual", "whatsapp"] }
         },
-        orderBy: { createdAt: "desc" },
-        include: {
-            site: {
-                select: { name: true }
-            }
-        }
+        orderBy: { createdAt: "desc" }
     });
+
+    const orderSiteIds = [...new Set(paidFallbackOrders.map(o => o.siteId))];
+    const orderSites = await db.site.findMany({
+        where: { id: { in: orderSiteIds } },
+        select: { id: true, name: true }
+    });
+    const orderSiteMap = new Map(orderSites.map(s => [s.id, s.name]));
 
     // 5. Self-Healing Balance Synchronization:
     // Recalculate what the user's balance should be (Commissions + Platform Gateway Sales - Withdrawals)
@@ -97,9 +99,9 @@ export default async function FinanceDashboardPage() {
     const sales = paidFallbackOrders.map(order => ({
         id: order.id,
         amount: Number(order.total),
-        description: `Penjualan Toko: ${order.site.name} (Pesanan #${order.id.slice(0, 8).toUpperCase()})`,
+        description: `Penjualan Toko: ${orderSiteMap.get(order.siteId) || ''} (Pesanan #${order.id.slice(0, 8).toUpperCase()})`,
         createdAt: order.createdAt,
-        siteName: order.site.name
+        siteName: orderSiteMap.get(order.siteId) || ''
     }));
 
     // Serialize all values for the client component

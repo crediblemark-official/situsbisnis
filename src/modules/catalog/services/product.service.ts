@@ -24,7 +24,6 @@ export const productSchema = z.object({
 const listSelect = {
     id: true, name: true, slug: true, price: true, originalPrice: true,
     currency: true, stock: true, isArchived: true, createdAt: true, images: true,
-    terms: { select: { id: true, name: true, slug: true, taxonomyId: true } }
 } as const;
 
 function transformData(data: Record<string, unknown>, _session?: unknown): Record<string, unknown> {

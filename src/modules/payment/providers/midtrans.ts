@@ -37,18 +37,33 @@ export class MidtransPaymentWrapper {
             if (apiType === "core") {
                 const coreApi = new (midtransClient as any).CoreApi({
                     isProduction,
-                    serverKey
+                    serverKey,
+                    clientKey: config.clientKey
                 });
+
+                const customerDetails: any = {
+                    first_name: params.customer.name,
+                    email: params.customer.email,
+                };
+                if (params.customer.phone) {
+                    customerDetails.phone = params.customer.phone;
+                }
 
                 const parameter: any = {
                     transaction_details: {
                         order_id: params.orderId,
                         gross_amount: Math.round(params.amount)
                     },
-                    customer_details: {
-                        first_name: params.customer.name,
-                        email: params.customer.email
-                    }
+                    customer_details: customerDetails,
+                    item_details: [
+                        {
+                            id: params.orderId,
+                            price: Math.round(params.amount),
+                            quantity: 1,
+                            name: params.productDetails || "Pembayaran SitusBisnis",
+                            merchant_name: "SitusBisnis"
+                        }
+                    ]
                 };
 
                 const method = (params.paymentMethod || "").toLowerCase();
@@ -69,6 +84,7 @@ export class MidtransPaymentWrapper {
                     parameter.bank_transfer = { bank: "permata" };
                 } else if (method === "qris") {
                     parameter.payment_type = "qris";
+                    parameter.qris = { acquirer: "gopay" };
                 } else if (method === "gopay") {
                     parameter.payment_type = "gopay";
                 } else if (method === "shopeepay") {
@@ -77,6 +93,13 @@ export class MidtransPaymentWrapper {
                     parameter.payment_type = "bank_transfer";
                     parameter.bank_transfer = { bank: "bca" };
                 }
+
+                console.log("[MIDTRANS] Core API request:", JSON.stringify({
+                    isProduction,
+                    serverKeyPrefix: serverKey?.substring(0, 14) + "...",
+                    url: isProduction ? "https://api.midtrans.com/v2/charge" : "https://api.sandbox.midtrans.com/v2/charge",
+                    parameter
+                }, null, 2));
 
                 const response = await coreApi.charge(parameter);
 
@@ -153,9 +176,15 @@ export class MidtransPaymentWrapper {
                 };
             }
         } catch (error: any) {
+            const detail = {
+                statusCode: error.httpStatusCode,
+                apiResponse: error.ApiResponse,
+                message: error.message
+            };
+            console.error("[MIDTRANS] createInvoice failed:", JSON.stringify(detail, null, 2));
             return {
                 success: false,
-                error: error.message || "Midtrans error",
+                error: error.ApiResponse?.status_message || error.message || "Midtrans error",
                 paymentUrl: "",
                 reference: "",
                 vaNumber: undefined,

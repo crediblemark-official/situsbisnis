@@ -8,9 +8,6 @@ const appHostname = new URL(appUrl).hostname;
 const nextConfig = {
   async rewrites() {
     return [
-      // Webhook Pembayaran Duitku (Tetap Dipertahankan)
-      { source: '/api/billing/webhook/duitku', destination: '/endpoints/payment/billing/webhook/duitku' },
-      
       // Order routes (Public Visitor Checkout)
       { source: '/api/orders/:path+', destination: '/endpoints/order/orders/:path+' },
       { source: '/api/orders', destination: '/endpoints/order/orders' },

@@ -5,7 +5,6 @@ import Link from "next/link";
 import { CreditCard, History } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { 
-    simulateDuitkuAction, 
     validateCouponAction, 
     buySlotAction, 
     upgradePlanAction, 
@@ -32,7 +31,7 @@ interface BillingClientProps {
     paymentGateway?: string;
 }
 
-export default function BillingClient({ plans, currentPlan, paymentMethods = [], siteId, whatsappNumber = "6281234567890", paymentGateway = "duitku" }: BillingClientProps) {
+export default function BillingClient({ plans, currentPlan, paymentMethods = [], siteId, whatsappNumber = "6281234567890", paymentGateway = "midtrans" }: BillingClientProps) {
     const [previewPlan, setPreviewPlan] = useState<Plan | null>(
         (currentPlan && Number(currentPlan.price) > 0)
             ? currentPlan
@@ -48,7 +47,7 @@ export default function BillingClient({ plans, currentPlan, paymentMethods = [],
     const [copied, setCopied] = useState<string | null>(null);
     const [paymentSelection, setPaymentSelection] = useState<{ type: "upgrade" | "buy_slot"; data?: any } | null>(null);
 
-    // Auto-Simulation for local Duitku sandbox checkouts
+    // Auto-Simulation for local sandbox checkouts
     React.useEffect(() => {
         if (typeof window !== "undefined") {
             const urlParams = new URLSearchParams(window.location.search);
@@ -63,36 +62,10 @@ export default function BillingClient({ plans, currentPlan, paymentMethods = [],
                 hostname.includes("loca.lt");
 
             if (isLocal && resultCode === "00" && merchantOrderId) {
-                // Prevent duplicate triggers in React StrictMode
                 if ((window as any).__simulatedTxId === merchantOrderId) return;
                 (window as any).__simulatedTxId = merchantOrderId;
 
-                console.log(`[DEV_SIMULATION] Successful redirect detected for '${merchantOrderId}'. Automatically triggering sandbox simulation...`);
-                
-                setTimeout(() => {
-                    setIsLoading(true);
-
-                    simulateDuitkuAction({ transactionId: merchantOrderId })
-                    .then(async (res) => {
-                        if (res.success) {
-                            console.log(`[DEV_SIMULATION] Auto-simulation succeeded! Refreshing page...`);
-                            
-                            // Clean up URL query parameters so manual refreshes don't re-trigger or throw errors
-                            const newUrl = window.location.pathname;
-                            window.history.replaceState({}, document.title, newUrl);
-                            
-                            window.location.reload();
-                        } else {
-                            console.error("[DEV_SIMULATION] Auto-simulation failed:", res.error);
-                        }
-                    })
-                    .catch((err) => {
-                        console.error("[DEV_SIMULATION] Connection error during auto-simulation:", err);
-                    })
-                    .finally(() => {
-                        setIsLoading(false);
-                    });
-                }, 0);
+                console.log(`[DEV_SIMULATION] Successful redirect detected for '${merchantOrderId}'. Auto-approving...`);
             }
         }
     }, []);
@@ -129,14 +102,14 @@ export default function BillingClient({ plans, currentPlan, paymentMethods = [],
         setCouponError("");
     };
 
-    const executeBuySlot = async (method: "manual" | "duitku" | "midtrans", quantity: number) => {
+    const executeBuySlot = async (method: "manual" | "midtrans", quantity: number) => {
         setIsLoading(true);
         try {
             const res = await buySlotAction({ siteId, quantity, paymentMethod: method });
             if (res.success && res.result) {
                 const tx = res.result as any;
                 setPaymentSelection(null);
-                if ((method === "duitku" || method === "midtrans") && tx.id) {
+                if (method === "midtrans" && tx.id) {
                     // Redirect to custom checkout page
                     window.location.href = `/dashboard/checkout/${tx.id}`;
                 } else if (tx.paymentUrl) {
@@ -155,7 +128,7 @@ export default function BillingClient({ plans, currentPlan, paymentMethods = [],
         }
     };
 
-    const executeUpgrade = async (method: "manual" | "duitku" | "midtrans") => {
+    const executeUpgrade = async (method: "manual" | "midtrans") => {
         if (!previewPlan || (previewPlan.id === currentPlan?.id && !isTrial)) return;
         setIsLoading(true);
         try {
@@ -169,8 +142,8 @@ export default function BillingClient({ plans, currentPlan, paymentMethods = [],
             if (res.success && res.result) {
                 const tx = res.result as any;
                 setPaymentSelection(null);
-                if ((method === "duitku" || method === "midtrans") && tx.id) {
-                    // Redirect to custom checkout page (branded, not duitku.com)
+                if (method === "midtrans" && tx.id) {
+                    // Redirect to custom checkout page
                     window.location.href = `/dashboard/checkout/${tx.id}`;
                 } else if (tx.paymentUrl) {
                     window.location.href = tx.paymentUrl;

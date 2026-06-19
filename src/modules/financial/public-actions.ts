@@ -6,7 +6,7 @@ export {
 } from "./actions/financial.actions";
 
 export {
-    simulateDuitkuAction,
+    simulateAutoApproveAction,
     validateCouponAction,
     buySlotAction,
     upgradePlanAction,

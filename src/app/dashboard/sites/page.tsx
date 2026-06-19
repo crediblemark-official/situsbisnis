@@ -14,20 +14,20 @@ export default async function MySitesPage() {
 
     const siteLinks = await db.siteUser.findMany({
         where: { userId: (session.user as any).id },
-        select: {
-            site: {
-                select: {
-                    id: true,
-                    name: true,
-                    subdomain: true,
-                    customDomain: true,
-                    customDomainVerified: true
-                }
-            }
-        }
+        select: { siteId: true }
     });
 
-    const rawSites = siteLinks.map(link => link.site);
+    const userSiteIds = siteLinks.map(l => l.siteId);
+    const rawSites = await db.site.findMany({
+        where: { id: { in: userSiteIds } },
+        select: {
+            id: true,
+            name: true,
+            subdomain: true,
+            customDomain: true,
+            customDomainVerified: true
+        }
+    });
     
     // Dapatkan data subscription untuk masing-masing siteId
     const sites = await Promise.all(rawSites.map(async (site) => {

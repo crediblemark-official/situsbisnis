@@ -20,7 +20,7 @@ export default async function AdminSettingsPage() {
         affiliateRecurringCommission: platformSettings?.affiliateRecurringCommission ?? false,
         affiliateRecurringCommissionRate: platformSettings?.affiliateRecurringCommissionRate ? Number(platformSettings.affiliateRecurringCommissionRate) : 10,
         paymentMethods: adminSite?.paymentSettings ? [adminSite.paymentSettings] : [],
-        paymentGateway: platformSettings?.paymentGateway || "duitku",
+        paymentGateway: platformSettings?.paymentGateway || "midtrans",
         gatewayMerchantId: platformSettings?.gatewayMerchantId || "",
         gatewayClientKey: platformSettings?.gatewayClientKey || "",
         gatewayApiKey: platformSettings?.gatewayApiKey || "",

@@ -49,8 +49,8 @@ export async function createMediaItem(data: {
 }) {
     return db.mediaItem.create({
         data: {
-            site: { connect: { id: data.siteId } },
-            folder: data.folderId && data.folderId !== "root" ? { connect: { id: data.folderId } } : undefined,
+            siteId: data.siteId,
+            folderId: data.folderId && data.folderId !== "root" ? data.folderId : null,
             url: data.url,
             filename: data.filename,
             mimeType: data.mimeType,

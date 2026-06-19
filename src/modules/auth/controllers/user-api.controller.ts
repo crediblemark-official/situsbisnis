@@ -133,10 +133,10 @@ export async function verifyUserSiteApi(req: Request) {
 
         const { siteId, domain } = data;
 
-        const siteOwner = await db.site.findFirst({
-            where: { id: siteId, siteUsers: { some: { userId } } }
+        const siteUser = await db.siteUser.findFirst({
+            where: { siteId, userId }
         });
-        if (!siteOwner) return apiError("Site not found or access denied", 404);
+        if (!siteUser) return apiError("Site not found or access denied", 404);
 
         const { SubscriptionClient } = await import("@/modules/subscription");
         const subscription = await SubscriptionClient.findLatestSubscription(siteId);

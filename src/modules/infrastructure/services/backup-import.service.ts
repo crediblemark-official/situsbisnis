@@ -497,14 +497,8 @@ export async function importBackupData(backupData: BackupData, currentAdminId?: 
                     where: { id: term.id },
                     data: {
                         parentId: parentVal,
-                        pages: validPageIds.length > 0 ? {
-                            connect: validPageIds.map(id => ({ id }))
-                        } : undefined,
                         posts: validPostIds.length > 0 ? {
                             connect: validPostIds.map(id => ({ id }))
-                        } : undefined,
-                        products: validProductIds.length > 0 ? {
-                            connect: validProductIds.map(id => ({ id }))
                         } : undefined
                     }
                 });

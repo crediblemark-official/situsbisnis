@@ -24,7 +24,7 @@ export function CheckoutClient({
     transaction, 
     platformName: _platformName, 
     isGatewayConfigured,
-    paymentGateway = "duitku",
+    paymentGateway = "midtrans",
     gatewayApiType = "snap",
     gatewayClientKey = "",
     gatewaySandbox = true,
@@ -207,17 +207,25 @@ export function CheckoutClient({
             if (res.success && res.result) {
                 const data = res.result as any;
                 if (data.success && data.transaction?.paymentUrl && !data.transaction.paymentUrl.startsWith("custom:")) {
-                    setIsRedirecting(true);
-                    window.location.href = data.transaction.paymentUrl;
+                    if (paymentGateway === "midtrans" && data.transaction.paymentReference) {
+                        triggerSnapPopup(data.transaction.paymentReference, data.transaction.paymentUrl);
+                    } else {
+                        setIsRedirecting(true);
+                        window.location.href = data.transaction.paymentUrl;
+                    }
                     return;
                 }
                 if (data.success && data.paymentDetails) {
                     setCustomPaymentDetails(data.paymentDetails);
                 } else {
-                    alert(data.error || "Gagal memproses pembayaran.");
+                    const errMsg = data.error || "Gagal memproses pembayaran.";
+                    console.error("[CHECKOUT] Payment error:", errMsg, data);
+                    alert(errMsg);
                 }
             } else {
-                alert(res.error || "Gagal memproses pembayaran kustom.");
+                const errMsg = res.error || "Gagal memproses pembayaran.";
+                console.error("[CHECKOUT] Payment action error:", errMsg, res);
+                alert(errMsg);
             }
         } catch {
             alert("Terjadi kesalahan jaringan.");
@@ -271,7 +279,7 @@ export function CheckoutClient({
                 </button>
                 <div className="flex items-center gap-2">
                     <ShieldCheck size={14} className="text-emerald-500" />
-                    <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Secured by {paymentGateway === "midtrans" ? "Midtrans" : "Duitku"}</span>
+                    <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Secured by Midtrans</span>
                 </div>
                 {/* Spacer to keep middle element centered */}
                 <div className="w-[70px] shrink-0" />

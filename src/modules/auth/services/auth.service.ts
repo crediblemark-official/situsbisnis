@@ -2,6 +2,7 @@ import * as userRepo from "../repositories/user.repository";
 import * as affiliateRepo from "../repositories/affiliate.repository";
 import * as tenantUserRepo from "../repositories/tenant-user.repository";
 import { eventBus } from "@/modules/shared/core/event-bus";
+import { db } from "@/modules/shared/core/db";
 import { SiteOwnerInfo } from "../index";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
@@ -149,12 +150,13 @@ export async function verifyBridgeToken(token: string) {
  */
 export async function getUserSites(userId: string) {
     const userSites = await tenantUserRepo.findUserSites(userId);
-    const sites = (userSites || []).map(us => ({
-        id: us.site.id,
-        name: us.site.name,
-        subdomain: us.site.subdomain,
-        customDomain: us.site.customDomain
-    }));
+    const siteIds = (userSites || []).map(us => us.siteId);
+    const sites = siteIds.length > 0
+        ? await db.site.findMany({
+            where: { id: { in: siteIds } },
+            select: { id: true, name: true, subdomain: true, customDomain: true }
+        })
+        : [];
     return { sites };
 }
 

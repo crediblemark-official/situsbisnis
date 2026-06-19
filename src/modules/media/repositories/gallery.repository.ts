@@ -28,7 +28,7 @@ export async function createGalleryItem(data: any, siteId: string) {
     return db.galleryItem.create({
         data: {
             ...data,
-            site: { connect: { id: siteId } }
+            siteId: siteId
         }
     });
 }

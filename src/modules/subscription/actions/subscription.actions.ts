@@ -69,7 +69,7 @@ export async function updateAdminSettingsAction(body: any) {
                 affiliateCommissionRate: body.affiliateCommissionRate,
                 affiliateRecurringCommission: body.affiliateRecurringCommission,
                 affiliateRecurringCommissionRate: body.affiliateRecurringCommissionRate,
-                paymentGateway: paymentGateway || "duitku",
+                paymentGateway: paymentGateway || "midtrans",
                 gatewayMerchantId,
                 gatewayClientKey,
                 gatewayApiKey,

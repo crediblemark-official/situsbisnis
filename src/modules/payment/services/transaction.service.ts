@@ -22,6 +22,9 @@ export async function processApprovedTransaction(transactionId: string) {
 
         const updated = await transactionRepo.updateTransactionStatus(tx, transactionId, "approved");
 
+        const plan = await tx.plan.findUnique({ where: { id: updated.planId } });
+        const planInterval = plan?.interval || "month";
+
         if (updated.couponId) {
             const coupon = await tx.coupon.findUnique({
                 where: { id: updated.couponId }
@@ -87,7 +90,7 @@ export async function processApprovedTransaction(transactionId: string) {
                     planId: updated.planId,
                     addonType: updated.addonType,
                     addonQuantity: updated.addonQuantity,
-                    planInterval: updated.plan?.interval || "month"
+                    planInterval: planInterval
                 },
                 sourceModule: "billing",
                 status: "pending"
@@ -108,7 +111,7 @@ export async function processApprovedTransaction(transactionId: string) {
 
             const now = new Date();
             const endDate = new Date(now);
-            if (updated.plan.interval === "year") {
+            if (planInterval === "year") {
                 endDate.setFullYear(endDate.getFullYear() + 1);
             } else {
                 endDate.setMonth(endDate.getMonth() + 1);

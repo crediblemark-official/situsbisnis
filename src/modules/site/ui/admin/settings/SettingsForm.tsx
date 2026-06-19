@@ -36,7 +36,7 @@ export default function SettingsForm({ initialData }: { initialData: any }) {
         emailSenderAddress: initialData?.emailSenderAddress || "",
         plans: [],
         paymentMethods: [],
-        paymentGateway: initialData?.paymentGateway || "duitku",
+        paymentGateway: initialData?.paymentGateway || "midtrans",
         gatewayMerchantId: initialData?.gatewayMerchantId || "",
         gatewayClientKey: initialData?.gatewayClientKey || "",
         gatewayApiKey: initialData?.gatewayApiKey || "",
@@ -216,14 +216,12 @@ export default function SettingsForm({ initialData }: { initialData: any }) {
                             addPaymentMethod={addPaymentMethod}
                             removePaymentMethod={removePaymentMethod}
                             updatePaymentMethod={(id, field, value) => updatePaymentMethod(id, { [field]: value })}
-                            paymentGateway={config.paymentGateway}
                             gatewayMerchantId={config.gatewayMerchantId}
                             gatewayClientKey={config.gatewayClientKey}
                             gatewayApiKey={config.gatewayApiKey}
                             gatewaySandbox={config.gatewaySandbox}
                             gatewayApiType={config.gatewayApiType}
                             onChangeGatewaySettings={(field, value) => setConfig({ ...config, [field]: value })}
-                            onChangeGateway={(value) => setConfig({ ...config, paymentGateway: value })}
                         />
                     )}
 

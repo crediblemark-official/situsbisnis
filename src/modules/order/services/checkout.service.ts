@@ -89,11 +89,13 @@ export async function createOrder(
 
     let merchantCode = paymentSettings?.gatewayMerchantId;
     let apiKey = paymentSettings?.gatewayApiKey;
+    let clientKey = paymentSettings?.gatewayClientKey;
     let sandbox = paymentSettings?.gatewaySandbox ?? true;
 
     if (!merchantCode || !apiKey) {
         merchantCode = platformSettings?.gatewayMerchantId;
         apiKey = platformSettings?.gatewayApiKey;
+        clientKey = platformSettings?.gatewayClientKey;
         sandbox = platformSettings?.gatewaySandbox ?? true;
     }
 
@@ -128,6 +130,7 @@ export async function createOrder(
             }, {
                 merchantCode,
                 apiKey,
+                clientKey,
                 sandbox
             }, "snap");
 
@@ -159,11 +162,13 @@ export async function initializeOrderPayment(orderId: string, paymentMethod: str
 
     let merchantCode = paymentSettings?.gatewayMerchantId;
     let apiKey = paymentSettings?.gatewayApiKey;
+    let clientKey = paymentSettings?.gatewayClientKey;
     let sandbox = paymentSettings?.gatewaySandbox ?? true;
 
     if (!merchantCode || !apiKey) {
         merchantCode = platformSettings?.gatewayMerchantId;
         apiKey = platformSettings?.gatewayApiKey;
+        clientKey = platformSettings?.gatewayClientKey;
         sandbox = platformSettings?.gatewaySandbox ?? true;
     }
 
@@ -188,6 +193,7 @@ export async function initializeOrderPayment(orderId: string, paymentMethod: str
     }, {
         merchantCode,
         apiKey,
+        clientKey,
         sandbox
     }, "snap");
 

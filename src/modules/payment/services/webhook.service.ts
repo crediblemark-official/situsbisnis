@@ -29,12 +29,17 @@ export async function checkTransactionStatus(userId: string, userRole: string, t
         throw new Error("Forbidden");
     }
 
+    const plan = transaction.planId
+        ? await SubscriptionClient.findPlanById(transaction.planId).catch(() => null)
+        : null;
+    const planName = plan?.name || "";
+
     if (transaction.status === "approved" || transaction.status === "rejected") {
         return {
             transactionId: transaction.id,
             status: transaction.status,
             amount: Number(transaction.amount),
-            planName: (transaction.plan as any)?.name || "",
+            planName,
         };
     }
 
@@ -43,7 +48,7 @@ export async function checkTransactionStatus(userId: string, userRole: string, t
             transactionId: transaction.id,
             status: transaction.status,
             amount: Number(transaction.amount),
-            planName: (transaction.plan as any)?.name || "",
+            planName,
         };
     }
 
@@ -58,7 +63,7 @@ export async function checkTransactionStatus(userId: string, userRole: string, t
             transactionId: transaction.id,
             status: transaction.status,
             amount: Number(transaction.amount),
-            planName: (transaction.plan as any)?.name || "",
+            planName,
         };
     }
 
@@ -96,7 +101,7 @@ export async function checkTransactionStatus(userId: string, userRole: string, t
         status: result.success ? result.status : transaction.status,
         statusCode: result.statusCode || "",
         amount: Number(transaction.amount),
-        planName: (transaction.plan as any)?.name || "",
+        planName,
     };
 }
 

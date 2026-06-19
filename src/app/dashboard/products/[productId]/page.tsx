@@ -11,9 +11,12 @@ export default async function EditProductPage({ params }: { params: Promise<{ pr
     if (!siteId) return notFound();
 
     const data = await db.product.findFirst({
-        where: { id: productId, siteId },
-        include: { metaData: true }
+        where: { id: productId, siteId }
     });
+    const metaData = data ? await db.metaData.findMany({ where: { productId: data.id } }) : [];
+    if (data) {
+        (data as any).metaData = metaData;
+    }
 
     if (!data) {
         return (

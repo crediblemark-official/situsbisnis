@@ -141,7 +141,7 @@ export async function getSubscriptionContext(siteId: string) {
         currentPlan: serializedCurrentPlan,
         paymentMethods,
         whatsappNumber,
-        paymentGateway: platformSettings?.paymentGateway || "duitku"
+        paymentGateway: platformSettings?.paymentGateway || "midtrans"
     };
 }
 

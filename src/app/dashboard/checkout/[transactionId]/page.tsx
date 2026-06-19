@@ -17,15 +17,17 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
     }
 
     const transaction = await db.paymentTransaction.findUnique({
-        where: { id: transactionId },
-        include: {
-            plan: { select: { id: true, name: true, description: true } }
-        }
+        where: { id: transactionId }
     });
 
     if (!transaction) {
         notFound();
     }
+
+    const plan = transaction.planId ? await db.plan.findUnique({
+        where: { id: transaction.planId },
+        select: { id: true, name: true, description: true }
+    }) : null;
 
     // Security: only site members or admin
     const isAdmin = (session.user as any).role === "admin";
@@ -73,10 +75,10 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         paymentUrl: transaction.paymentUrl || null,
         paymentReference: transaction.paymentReference || null,
         createdAt: transaction.createdAt.toISOString(),
-        plan: transaction.plan ? {
-            id: transaction.plan.id,
-            name: transaction.plan.name,
-            description: transaction.plan.description,
+        plan: plan ? {
+            id: plan.id,
+            name: plan.name,
+            description: plan.description,
         } : null,
         site: site ? {
             id: site.id,
@@ -89,7 +91,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
             transaction={serializedTransaction}
             platformName={platformName}
             isGatewayConfigured={!!(platform?.gatewayMerchantId && platform?.gatewayApiKey)}
-            paymentGateway={platform?.paymentGateway || "duitku"}
+            paymentGateway={platform?.paymentGateway || "midtrans"}
             gatewayApiType={platform?.gatewayApiType || "snap"}
             gatewayClientKey={platform?.gatewayClientKey || ""}
             gatewaySandbox={platform?.gatewaySandbox ?? true}

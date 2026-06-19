@@ -66,10 +66,10 @@ export async function buySlot(
             const platformSettings = await SubscriptionClient.getPlatformSettings();
             const gateway = "midtrans";
             const gatewayApiKey = platformSettings?.gatewayApiKey;
+            const gatewayClientKey = platformSettings?.gatewayClientKey;
             const gatewayMerchantId = platformSettings?.gatewayMerchantId;
             const gatewaySandbox = platformSettings?.gatewaySandbox ?? true;
-            const FORCE_SNAP_MODE = true; // Set to false to test Core API
-            const gatewayApiType = FORCE_SNAP_MODE ? "snap" : (platformSettings?.gatewayApiType || "snap");
+            const gatewayApiType = (platformSettings?.gatewayApiType || "snap") as "snap" | "core";
 
             if (gatewayApiKey && gatewayMerchantId) {
                 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://situsbisnis.com";
@@ -91,6 +91,7 @@ export async function buySlot(
                 }, {
                     merchantCode: gatewayMerchantId,
                     apiKey: gatewayApiKey,
+                    clientKey: gatewayClientKey,
                     sandbox: gatewaySandbox
                 }, gatewayApiType);
 
@@ -158,6 +159,7 @@ export async function initializeCheckoutPayment(
     const platformSettings = await SubscriptionClient.getPlatformSettings();
     const gateway = "midtrans";
     const gatewayApiKey = platformSettings?.gatewayApiKey;
+    const gatewayClientKey = platformSettings?.gatewayClientKey;
     const gatewayMerchantId = platformSettings?.gatewayMerchantId;
     const gatewaySandbox = platformSettings?.gatewaySandbox ?? true;
     const gatewayApiType = (platformSettings?.gatewayApiType || "snap") as "snap" | "core";
@@ -174,10 +176,14 @@ export async function initializeCheckoutPayment(
     const customerEmail = ownerInfo?.email || "";
     const isCore = gatewayApiType === "core";
 
+    const plan = transaction.planId
+        ? await SubscriptionClient.findPlanById(transaction.planId).catch(() => null)
+        : null;
+
     const invoice = await MidtransPaymentWrapper.createInvoice({
         orderId: uniqueOrderId,
         amount: Number(transaction.amount),
-        productDetails: transaction.plan ? `Upgrade Paket ${transaction.plan.name}` : "Upgrade Layanan SitusBisnis",
+        productDetails: plan ? `Upgrade Paket ${plan.name}` : "Upgrade Layanan SitusBisnis",
         customer: {
             name: ownerInfo?.name || site?.name || "Tenant",
             email: customerEmail,
@@ -188,6 +194,7 @@ export async function initializeCheckoutPayment(
     }, {
         merchantCode: gatewayMerchantId,
         apiKey: gatewayApiKey,
+        clientKey: gatewayClientKey,
         sandbox: gatewaySandbox
     }, gatewayApiType);
 
@@ -332,10 +339,10 @@ export async function upgradePlan(
             const platformSettings = await SubscriptionClient.getPlatformSettings();
             const gateway = "midtrans";
             const gatewayApiKey = platformSettings?.gatewayApiKey;
+            const gatewayClientKey = platformSettings?.gatewayClientKey;
             const gatewayMerchantId = platformSettings?.gatewayMerchantId;
             const gatewaySandbox = platformSettings?.gatewaySandbox ?? true;
-            const FORCE_SNAP_MODE = true; // Set to false to test Core API
-            const gatewayApiType = FORCE_SNAP_MODE ? "snap" : (platformSettings?.gatewayApiType || "snap");
+            const gatewayApiType = (platformSettings?.gatewayApiType || "snap") as "snap" | "core";
 
             if (gatewayApiKey && gatewayMerchantId) {
                 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://situsbisnis.com";
@@ -357,6 +364,7 @@ export async function upgradePlan(
                 }, {
                     merchantCode: gatewayMerchantId,
                     apiKey: gatewayApiKey,
+                    clientKey: gatewayClientKey,
                     sandbox: gatewaySandbox
                 }, gatewayApiType);
 

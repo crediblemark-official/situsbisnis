@@ -54,21 +54,31 @@ export default async function HistoryBillPage() {
             paymentUrl: true,
             createdAt: true,
             updatedAt: true,
-            plan: {
-                select: {
-                    id: true,
-                    name: true,
-                    price: true,
-                    priceYearly: true,
-                    originalPrice: true,
-                    originalPriceYearly: true,
-                    createdAt: true,
-                    updatedAt: true
-                }
-            }
+            planId: true,
         },
         orderBy: { createdAt: "desc" }
     });
+
+    const planIds = [...new Set(transactions.map(tx => tx.planId))];
+    const planDataMap = new Map();
+    if (planIds.length > 0) {
+        const plans = await db.plan.findMany({
+            where: { id: { in: planIds } },
+            select: {
+                id: true,
+                name: true,
+                price: true,
+                priceYearly: true,
+                originalPrice: true,
+                originalPriceYearly: true,
+                createdAt: true,
+                updatedAt: true
+            }
+        });
+        for (const p of plans) {
+            planDataMap.set(p.id, p);
+        }
+    }
 
     // Fetch Admin Site for payment settings
     const adminSite = await db.site.findUnique({
@@ -91,19 +101,22 @@ export default async function HistoryBillPage() {
     const whatsappNumber = platform.whatsappNumber || "6281234567890";
 
     // Serialize data
-    const serializedTransactions = transactions.map(tx => ({
-        ...tx,
-        amount: tx.amount.toNumber(),
-        createdAt: tx.createdAt.toISOString(),
-        updatedAt: tx.updatedAt.toISOString(),
-        plan: {
-            ...tx.plan,
-            price: tx.plan.price.toNumber(),
-            priceYearly: (tx.plan as any).priceYearly ? (tx.plan as any).priceYearly.toNumber() : null,
-            originalPrice: (tx.plan as any).originalPrice ? (tx.plan as any).originalPrice.toNumber() : 0,
-            originalPriceYearly: (tx.plan as any).originalPriceYearly ? (tx.plan as any).originalPriceYearly.toNumber() : 0,
-        }
-    }));
+    const serializedTransactions = transactions.map(tx => {
+        const p = planDataMap.get(tx.planId);
+        return {
+            ...tx,
+            amount: tx.amount.toNumber(),
+            createdAt: tx.createdAt.toISOString(),
+            updatedAt: tx.updatedAt.toISOString(),
+            plan: p ? {
+                ...p,
+                price: p.price.toNumber(),
+                priceYearly: p.priceYearly ? p.priceYearly.toNumber() : null,
+                originalPrice: p.originalPrice ? p.originalPrice.toNumber() : 0,
+                originalPriceYearly: p.originalPriceYearly ? p.originalPriceYearly.toNumber() : 0,
+            } : null
+        };
+    });
 
     return (
         <HistoryBillClient

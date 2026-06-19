@@ -120,17 +120,7 @@ export async function deleteSiteUserLinks(siteId: string, userId: string) {
  */
 export async function findUserSites(userId: string) {
     return db.siteUser.findMany({
-        where: { userId },
-        select: {
-            site: {
-                select: {
-                    id: true,
-                    name: true,
-                    subdomain: true,
-                    customDomain: true,
-                }
-            }
-        }
+        where: { userId }
     });
 }
 

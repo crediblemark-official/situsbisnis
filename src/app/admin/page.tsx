@@ -63,7 +63,6 @@ async function getSystemActivities() {
                     amount: true,
                     status: true,
                     createdAt: true,
-                    plan: { select: { name: true } },
                     siteId: true
                 }
             }),

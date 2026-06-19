@@ -18,9 +18,16 @@ export default async function AdminTransactionsPage() {
             addonType: true,
             addonQuantity: true,
             siteId: true,
-            plan: { select: { name: true, interval: true } }
+            planId: true,
         }
     });
+
+    const planIds = Array.from(new Set(rawTransactions.map(tx => tx.planId)));
+    const plans = await db.plan.findMany({
+        where: { id: { in: planIds } },
+        select: { id: true, name: true, interval: true }
+    });
+    const planMap = new Map(plans.map(p => [p.id, p]));
 
     const siteIds = Array.from(new Set(rawTransactions.map(tx => tx.siteId)));
     const sites = await db.site.findMany({
@@ -31,6 +38,7 @@ export default async function AdminTransactionsPage() {
 
     const transactions = rawTransactions.map(tx => ({
         ...tx,
+        plan: planMap.get(tx.planId) || null,
         site: siteMap.get(tx.siteId) || null
     }));
 

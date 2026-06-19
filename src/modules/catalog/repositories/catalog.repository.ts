@@ -13,7 +13,7 @@ export async function countProducts(siteId: string): Promise<number> {
  * Mengambil informasi produk berdasarkan daftar productId.
  */
 export async function findProductsByIds(productIds: string[]) {
-    return db.product.findMany({
+    const products = await db.product.findMany({
         where: { id: { in: productIds } },
         select: {
             id: true,
@@ -21,14 +21,18 @@ export async function findProductsByIds(productIds: string[]) {
             images: true,
             price: true,
             currency: true,
-            metaData: {
-                select: {
-                    key: true,
-                    value: true
-                }
-            }
         }
     });
+    const metaData = await db.metaData.findMany({
+        where: { productId: { in: productIds } },
+        select: { key: true, value: true, productId: true }
+    });
+    const metaMap = new Map<string, { key: string; value: string }[]>();
+    for (const md of metaData) {
+        if (!metaMap.has(md.productId)) metaMap.set(md.productId, []);
+        metaMap.get(md.productId)!.push({ key: md.key, value: md.value });
+    }
+    return products.map(p => ({ ...p, metaData: metaMap.get(p.id) ?? [] }));
 }
 
 /**
@@ -72,8 +76,11 @@ export async function findPublishedProducts(siteId: string) {
  * Mencari produk berdasarkan slug lengkap dengan metadata, term, dan seoMeta.
  */
 export async function findProductBySlug(siteId: string, slug: string) {
-    return db.product.findUnique({
-        where: { siteId_slug: { siteId, slug } },
-        include: { metaData: true, terms: true, seoMeta: true }
+    const product = await db.product.findUnique({
+        where: { siteId_slug: { siteId, slug } }
     });
+    if (!product) return null;
+    const metaData = await db.metaData.findMany({ where: { productId: product.id } });
+    const seoMeta = await db.seoMeta.findFirst({ where: { productId: product.id } });
+    return { ...product, metaData, seoMeta };
 }

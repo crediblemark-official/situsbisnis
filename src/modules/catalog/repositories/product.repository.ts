@@ -29,10 +29,12 @@ export async function findProducts(
 }
 
 export async function findProductById(id: string, siteId: string) {
-    return db.product.findFirst({
-        where: { id, siteId },
-        include: { metaData: true }
+    const product = await db.product.findFirst({
+        where: { id, siteId }
     });
+    if (!product) return null;
+    const metaData = await db.metaData.findMany({ where: { productId: product.id } });
+    return { ...product, metaData };
 }
 
 export async function createProduct(data: Prisma.ProductUncheckedCreateInput, siteId: string) {

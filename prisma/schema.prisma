@@ -42,21 +42,9 @@ model Site {
   updatedAt            DateTime             @updatedAt
   customDomainVerified Boolean              @default(false)
   contactSubmissions   ContactSubmission[]
-  pages                CredBuildPage[]
-  galleryItems         GalleryItem[]
-  mediaFolders         MediaFolder[]
-  mediaItems           MediaItem[]
-  menus                Menu[]
-  orders               Order[]
   paymentSettings      PaymentSettings?
-  portfolioItems       PortfolioItem[]
-  posts                Post[]
-  products             Product[]
   siteSettings         SiteSettings?
   siteStatistics       SiteStatistics?
-  taxonomies           Taxonomy[]
-  testimonials         Testimonial[]
-  siteUsers            SiteUser[]
 
   @@index([customDomainVerified])
   @@index([createdAt])
@@ -113,7 +101,6 @@ model Post {
   updatedAt DateTime   @updatedAt
   imageUrl  String?
   metaData  MetaData[]
-  site      Site       @relation(fields: [siteId], references: [id], onDelete: Cascade)
   seoMeta   SeoMeta?
   terms     Term[]     @relation("PostToTerm")
 
@@ -121,6 +108,7 @@ model Post {
   @@index([published])
   @@index([createdAt])
   @@index([authorId])
+  @@index([siteId])
 }
 
 model Product {
@@ -139,14 +127,11 @@ model Product {
   isArchived     Boolean     @default(false)
   variantOptions Json?       @default("[]")
   variants       Json?       @default("[]")
-  metaData       MetaData[]
-  site           Site        @relation(fields: [siteId], references: [id], onDelete: Cascade)
-  seoMeta        SeoMeta?
-  terms          Term[]      @relation("ProductToTerm")
 
   @@unique([siteId, slug])
   @@index([isArchived])
   @@index([createdAt])
+  @@index([siteId])
 }
 
 model Order {
@@ -167,7 +152,6 @@ model Order {
   qrString          String?
   qrCodeUrl         String?
   paymentCode       String?
-  site              Site              @relation(fields: [siteId], references: [id], onDelete: Cascade)
   items             OrderItem[]
 
   @@index([siteId])
@@ -199,7 +183,7 @@ model PaymentSettings {
   siteId            String   @unique
   updatedAt         DateTime @updatedAt
   currency          String?  @default("IDR")
-  paymentGateway    String?  @default("duitku")
+  paymentGateway    String?  @default("midtrans")
   gatewayMerchantId String?
   gatewayApiKey     String?
   gatewayClientKey  String?
@@ -218,7 +202,6 @@ model Testimonial {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   isApproved Boolean? @default(false)
-  site       Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
 
   @@index([siteId])
   @@index([isApproved])
@@ -305,7 +288,6 @@ model Menu {
   siteId    String
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  site      Site       @relation(fields: [siteId], references: [id], onDelete: Cascade)
   items     MenuItem[]
 
   @@unique([siteId, slug])
@@ -349,7 +331,6 @@ model GalleryItem {
   description String?
   siteId      String
   createdAt   DateTime @default(now())
-  site        Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
 
   @@index([siteId])
   @@index([createdAt])
@@ -365,7 +346,6 @@ model PortfolioItem {
   siteId      String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  site        Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
 
   @@index([siteId])
   @@index([category])
@@ -379,7 +359,6 @@ model MediaFolder {
   createdAt DateTime      @default(now())
   parent    MediaFolder?  @relation("SubFolders", fields: [parentId], references: [id])
   children  MediaFolder[] @relation("SubFolders")
-  site      Site          @relation(fields: [siteId], references: [id], onDelete: Cascade)
   items     MediaItem[]
 
   @@index([siteId])
@@ -399,7 +378,6 @@ model MediaItem {
   blurDataURL String?
   createdAt   DateTime     @default(now())
   folder      MediaFolder? @relation(fields: [folderId], references: [id])
-  site        Site         @relation(fields: [siteId], references: [id], onDelete: Cascade)
 
   @@index([siteId])
   @@index([folderId])
@@ -420,14 +398,11 @@ model CredBuildPage {
   siteId      String
   updatedAt   DateTime   @updatedAt
   createdAt   DateTime   @default(now())
-  site        Site       @relation(fields: [siteId], references: [id], onDelete: Cascade)
-  metaData    MetaData[]
-  seoMeta     SeoMeta?
-  terms       Term[]     @relation("CredBuildPageToTerm")
 
   @@unique([siteId, path])
   @@index([isPublished])
   @@index([createdAt])
+  @@index([siteId])
 }
 
 model Taxonomy {
@@ -438,7 +413,6 @@ model Taxonomy {
   siteId      String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  site        Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
   terms       Term[]
 
   @@unique([siteId, slug])
@@ -446,20 +420,18 @@ model Taxonomy {
 }
 
 model Term {
-  id          String          @id @default(cuid())
-  name        String
-  slug        String
+  id         String   @id @default(cuid())
+  name       String
+  slug       String
   description String?
-  taxonomyId  String
-  parentId    String?
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
-  parent      Term?           @relation("TermToTerm", fields: [parentId], references: [id])
-  children    Term[]          @relation("TermToTerm")
-  taxonomy    Taxonomy        @relation(fields: [taxonomyId], references: [id], onDelete: Cascade)
-  pages       CredBuildPage[] @relation("CredBuildPageToTerm")
-  posts       Post[]          @relation("PostToTerm")
-  products    Product[]       @relation("ProductToTerm")
+  taxonomyId String
+  parentId   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  parent     Term?    @relation("TermToTerm", fields: [parentId], references: [id])
+  children   Term[]   @relation("TermToTerm")
+  taxonomy   Taxonomy @relation(fields: [taxonomyId], references: [id], onDelete: Cascade)
+  posts      Post[]   @relation("PostToTerm")
 
   @@unique([taxonomyId, slug])
   @@index([taxonomyId])
@@ -467,18 +439,16 @@ model Term {
 }
 
 model MetaData {
-  id        String         @id @default(cuid())
+  id        String   @id @default(cuid())
   key       String
   value     String?
-  type      String?        @default("string")
+  type      String?  @default("string")
   postId    String?
   pageId    String?
   productId String?
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
-  page      CredBuildPage? @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  post      Post?          @relation(fields: [postId], references: [id], onDelete: Cascade)
-  product   Product?       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@index([key])
   @@index([postId])
@@ -487,20 +457,18 @@ model MetaData {
 }
 
 model SeoMeta {
-  id          String         @id @default(cuid())
+  id          String   @id @default(cuid())
   title       String?
   description String?
   keywords    String?
   ogImage     String?
   canonical   String?
-  noIndex     Boolean        @default(false)
-  postId      String?        @unique
-  pageId      String?        @unique
-  productId   String?        @unique
-  updatedAt   DateTime       @updatedAt
-  page        CredBuildPage? @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  post        Post?          @relation(fields: [postId], references: [id], onDelete: Cascade)
-  product     Product?       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  noIndex     Boolean  @default(false)
+  postId      String?  @unique
+  pageId      String?  @unique
+  productId   String?  @unique
+  updatedAt   DateTime @updatedAt
+  post        Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
 
 model Plan {
@@ -524,7 +492,6 @@ model Plan {
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
   showInPricing       Boolean              @default(true)
-  transactions        PaymentTransaction[]
   subscriptions       Subscription[]
 }
 
@@ -568,8 +535,6 @@ model PaymentTransaction {
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
   couponId         String?
-  coupon           Coupon?           @relation(fields: [couponId], references: [id])
-  plan             Plan              @relation(fields: [planId], references: [id])
 
   @@index([siteId])
   @@index([planId])
@@ -589,8 +554,6 @@ model Coupon {
   isActive      Boolean              @default(true)
   createdAt     DateTime             @default(now())
   updatedAt     DateTime             @updatedAt
-  transactions  PaymentTransaction[]
-
   @@index([affiliateId])
   @@index([code])
   @@index([expiryDate])
@@ -605,7 +568,7 @@ model PlatformSettings {
   r2BucketName                     String?
   r2PublicDomain                   String?
   r2Endpoint                       String?
-  paymentGateway                   String?  @default("duitku")
+  paymentGateway                   String?  @default("midtrans")
   gatewayMerchantId                String?
   gatewayClientKey                 String?
   gatewayApiKey                    String?
@@ -656,11 +619,9 @@ model Withdrawal {
 model SiteUser {
   id        String   @id @default(cuid())
   siteId    String
-  userId    String   // String polos tanpa foreign key fisik ke User
-  role      String   @default("owner") // owner, editor, dll.
+  userId    String
+  role      String   @default("owner")
   createdAt DateTime @default(now())
-
-  site      Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
 
   @@unique([siteId, userId])
   @@index([siteId])

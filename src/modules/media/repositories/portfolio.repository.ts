@@ -28,7 +28,7 @@ export async function createPortfolioItem(data: any, siteId: string) {
     return db.portfolioItem.create({
         data: {
             ...data,
-            site: { connect: { id: siteId } }
+            siteId: siteId
         }
     });
 }

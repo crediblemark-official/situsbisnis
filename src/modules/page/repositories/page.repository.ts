@@ -23,13 +23,13 @@ export async function findPagesBySite(siteId: string) {
  * Mencari halaman berdasarkan ID beserta metadata dan seoMeta.
  */
 export async function findPageById(id: string) {
-    return db.credBuildPage.findUnique({
-        where: { id },
-        include: {
-            metaData: true,
-            seoMeta: true,
-        }
+    const page = await db.credBuildPage.findUnique({
+        where: { id }
     });
+    if (!page) return null;
+    const metaData = await db.metaData.findMany({ where: { pageId: page.id } });
+    const seoMeta = await db.seoMeta.findFirst({ where: { pageId: page.id } });
+    return { ...page, metaData, seoMeta };
 }
 
 /**
@@ -153,12 +153,12 @@ export async function upsertCredBuildPage(siteId: string, path: string, data: an
  * Mencari halaman berdasarkan siteId dan path beserta metadatanya.
  */
 export async function findPageBySiteAndPathWithMeta(siteId: string, path: string) {
-    return db.credBuildPage.findUnique({
+    const page = await db.credBuildPage.findUnique({
         where: {
             siteId_path: { siteId, path }
-        },
-        include: {
-            metaData: true
         }
     });
+    if (!page) return null;
+    const metaData = await db.metaData.findMany({ where: { pageId: page.id } });
+    return { ...page, metaData };
 }

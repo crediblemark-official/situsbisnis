@@ -6,8 +6,7 @@ import { db } from "@/modules/shared/core/db";
 export async function findTransactionById(tx, id: string) {
     const client = tx || db;
     return client.paymentTransaction.findUnique({
-        where: { id },
-        include: { plan: true }
+        where: { id }
     });
 }
 
@@ -18,8 +17,7 @@ export async function updateTransactionStatus(tx, id: string, status: any) {
     const client = tx || db;
     return client.paymentTransaction.update({
         where: { id },
-        data: { status },
-        include: { plan: true }
+        data: { status }
     });
 }
 

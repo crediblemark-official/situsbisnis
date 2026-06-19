@@ -10,15 +10,17 @@ export default async function CheckoutPaymentPage({ params }: CheckoutPaymentPag
     const { orderId } = await params;
 
     const order = await db.order.findUnique({
-        where: { id: orderId },
-        include: {
-            site: { select: { name: true } }
-        }
+        where: { id: orderId }
     });
 
     if (!order) {
         notFound();
     }
+
+    const site = await db.site.findUnique({
+        where: { id: order.siteId },
+        select: { name: true }
+    });
 
     // Already paid → redirect to success
     if (order.paymentStatus === "paid" || order.paymentStatus === "approved") {
@@ -40,7 +42,7 @@ export default async function CheckoutPaymentPage({ params }: CheckoutPaymentPag
         paymentUrl: order.paymentUrl || null,
         paymentReference: order.paymentReference || null,
         customerName: order.customerName,
-        siteName: order.site?.name || "",
+        siteName: site?.name || "",
         createdAt: order.createdAt.toISOString(),
     };
 

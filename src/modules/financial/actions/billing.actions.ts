@@ -6,7 +6,7 @@ import { SubscriptionClient } from "@/modules/subscription";
 import { FinancialClient } from "@/modules/financial";
 import { serializeTransaction } from "@/lib/content/serialize";
 
-export async function simulateDuitkuAction(body: { transactionId: string }) {
+export async function simulateAutoApproveAction(body: { transactionId: string }) {
     try {
         if (process.env.NODE_ENV !== "development") {
             return { success: false, error: "Forbidden in production" };
