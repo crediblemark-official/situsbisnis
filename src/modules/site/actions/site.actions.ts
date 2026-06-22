@@ -72,6 +72,8 @@ const paymentSchema = z.object({
     accountHolder: z.string().optional(),
     instructions: z.string().optional(),
     currency: z.string().optional(),
+    gatewayEnabled: z.boolean().optional(),
+    manualEnabled: z.boolean().optional(),
 });
 
 export async function updateSiteSettingsAction(body: any) {

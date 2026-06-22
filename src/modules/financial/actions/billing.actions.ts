@@ -21,7 +21,7 @@ export async function simulateAutoApproveAction(body: { transactionId: string })
         await PaymentClient.processApprovedTransaction(transactionId);
         return { success: true, message: "Transaction approved successfully" };
     } catch (err: any) {
-        console.error("[SIMULATE_DUITKU_ACTION] Error:", err);
+        console.error("[SIMULATE_AUTO_APPROVE_ACTION] Error:", err);
         return { success: false, error: err.message || "Internal Server Error" };
     }
 }

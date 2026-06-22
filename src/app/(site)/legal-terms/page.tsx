@@ -74,7 +74,7 @@ function DefaultTermsPage({ siteName, brandColor, contactEmail }: { siteName: st
                 Guna memberikan kemudahan dan kenyamanan belanja, pembayaran pesanan diproses dengan ketentuan berikut:
               </p>
               <ul className="list-disc pl-6 space-y-2 text-sm leading-relaxed">
-                <li><strong>Pembayaran Otomatis (Instant):</strong> Diproses melalui gerbang pembayaran aman <strong>Duitku</strong>. Pembeli wajib menyelesaikan transaksi sebelum batas waktu kedaluwarsa instruksi pembayaran berakhir agar pesanan tidak dibatalkan otomatis oleh sistem.</li>
+                <li><strong>Pembayaran Otomatis (Instant):</strong> Diproses melalui gerbang pembayaran aman <strong>Midtrans</strong>. Pembeli wajib menyelesaikan transaksi sebelum batas waktu kedaluwarsa instruksi pembayaran berakhir agar pesanan tidak dibatalkan otomatis oleh sistem.</li>
                 <li><strong>Transfer Bank Manual:</strong> Pembeli wajib mengirimkan bukti transfer yang valid ke kontak resmi toko apabila memilih metode transfer manual agar proses verifikasi dapat diselesaikan oleh admin.</li>
                 <li>Setiap biaya tambahan administrasi yang dibebankan oleh penyedia metode pembayaran (apabila ada) merupakan tanggung jawab pembeli sepenuhnya.</li>
               </ul>

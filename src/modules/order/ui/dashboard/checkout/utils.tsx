@@ -63,8 +63,8 @@ export function getPaymentInstructions(method: string, payCode: string, isQris: 
     if (m === "I1") { // Mandiri
         return [
             "Buka aplikasi Livin' by Mandiri",
-            "Pilih menu 'Bayar' > 'Buat Pembayaran Baru' > 'Multipayment'",
-            "Cari penyedia jasa / institusi Duitku",
+            "Pilih menu 'Transfer' > 'Virtual Account' atau 'Bayar'",
+            "Masukkan nomor Virtual Account Mandiri",
             `Masukkan nomor Virtual Account: ${payCode}`,
             "Detail tagihan akan muncul. Konfirmasi pembayaran dan masukkan PIN Livin' Anda"
         ];
@@ -98,7 +98,7 @@ export function getPaymentInstructions(method: string, payCode: string, isQris: 
     if (m === "FT") { // Indomaret
         return [
             "Kunjungi gerai Indomaret terdekat",
-            "Sampaikan ke kasir bahwa Anda ingin melakukan pembayaran Duitku / Merchant",
+            "Sampaikan ke kasir bahwa Anda ingin melakukan pembayaran Merchant",
             `Berikan kode pembayaran berikut kepada kasir: ${payCode}`,
             "Lakukan pembayaran sesuai nominal yang disebutkan oleh kasir dan simpan struk pembayaran Anda"
         ];
@@ -106,7 +106,7 @@ export function getPaymentInstructions(method: string, payCode: string, isQris: 
     if (m === "AL") { // Alfamart
         return [
             "Kunjungi gerai Alfamart terdekat",
-            "Sampaikan ke kasir bahwa Anda ingin melakukan pembayaran Duitku / Merchant",
+            "Sampaikan ke kasir bahwa Anda ingin melakukan pembayaran Merchant",
             `Berikan kode pembayaran berikut kepada kasir: ${payCode}`,
             "Lakukan pembayaran sesuai nominal dan pastikan Anda menerima struk tanda terima resmi"
         ];

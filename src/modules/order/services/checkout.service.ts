@@ -172,6 +172,11 @@ export async function initializeOrderPayment(orderId: string, paymentMethod: str
         sandbox = platformSettings?.gatewaySandbox ?? true;
     }
 
+    const isGatewayEnabled = paymentSettings ? (paymentSettings.gatewayEnabled !== false) : true;
+    if (!isGatewayEnabled && paymentMethod !== "manual") {
+        throw new Error("Pembayaran otomatis sedang dinonaktifkan.");
+    }
+
     if (!merchantCode || !apiKey) {
         throw new Error("Payment settings not configured");
     }
@@ -237,6 +242,9 @@ export async function getOrderPaymentMethods(orderId: string) {
     const paymentSettings = await orderRepo.findPaymentSettings(order.siteId);
     const platformSettings = await orderRepo.findPlatformSettings();
 
+    const isGatewayEnabled = paymentSettings ? (paymentSettings.gatewayEnabled !== false) : true;
+    const isManualEnabled = paymentSettings ? (paymentSettings.manualEnabled !== false) : true;
+
     let merchantCode = paymentSettings?.gatewayMerchantId;
     let apiKey = paymentSettings?.gatewayApiKey;
 
@@ -245,19 +253,18 @@ export async function getOrderPaymentMethods(orderId: string) {
         apiKey = platformSettings?.gatewayApiKey;
     }
 
-    if (!merchantCode || !apiKey) {
-        throw new Error("Payment settings not configured");
+    let filteredMethods: any[] = [];
+    if (isGatewayEnabled && merchantCode && apiKey) {
+        const result = await MidtransPaymentWrapper.getPaymentMethods({
+            amount: Math.round(Number(order.total)),
+        });
+
+        if (!result.success) {
+            throw new Error(result.error || `Failed to fetch payment methods from midtrans`);
+        }
+
+        filteredMethods = result.methods || [];
     }
-
-    const result = await MidtransPaymentWrapper.getPaymentMethods({
-        amount: Math.round(Number(order.total)),
-    });
-
-    if (!result.success) {
-        throw new Error(result.error || `Failed to fetch payment methods from midtrans`);
-    }
-
-    const filteredMethods = result.methods || [];
 
     // Mapping payment method images to local assets
     const imageMapping: Record<string, string> = {
@@ -290,7 +297,7 @@ export async function getOrderPaymentMethods(orderId: string) {
         paymentImage: imageMapping[method.paymentMethod] || "",
     }));
     
-    if (paymentSettings?.bankName && paymentSettings?.accountNumber) {
+    if (isManualEnabled && paymentSettings?.bankName && paymentSettings?.accountNumber) {
         methods.push({
             paymentMethod: "manual",
             paymentName: `Transfer Bank Manual (${paymentSettings.bankName})`,

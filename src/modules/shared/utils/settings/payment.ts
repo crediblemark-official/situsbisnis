@@ -20,9 +20,10 @@ export const getPaymentSettings = cache(async (siteId?: string): Promise<Payment
             const settings = await db.paymentSettings.findFirst();
             if (settings) {
                 const hasTenantGateway = !!(settings.gatewayMerchantId && settings.gatewayApiKey);
+                const isGatewayConfigured = hasTenantGateway || hasPlatformGateway;
                 return {
                     ...settings,
-                    gatewayEnabled: hasTenantGateway || hasPlatformGateway,
+                    gatewayEnabled: settings.gatewayEnabled && isGatewayConfigured,
                     isPlatformManaged: !hasTenantGateway && hasPlatformGateway
                 };
             }
@@ -32,13 +33,14 @@ export const getPaymentSettings = cache(async (siteId?: string): Promise<Payment
             });
             if (settings) {
                 const hasTenantGateway = !!(settings.gatewayMerchantId && settings.gatewayApiKey);
+                const isGatewayConfigured = hasTenantGateway || hasPlatformGateway;
                 return {
                     ...settings,
-                    gatewayEnabled: hasTenantGateway || hasPlatformGateway,
+                    gatewayEnabled: settings.gatewayEnabled && isGatewayConfigured,
                     isPlatformManaged: !hasTenantGateway && hasPlatformGateway
                 };
             }
-
+ 
             // Create default settings if none exist
             try {
                 const newSettings = await db.paymentSettings.create({
@@ -48,7 +50,9 @@ export const getPaymentSettings = cache(async (siteId?: string): Promise<Payment
                         accountNumber: env.DEFAULT_BANK_ACCOUNT,
                         accountHolder: env.DEFAULT_BANK_HOLDER,
                         currency: env.DEFAULT_CURRENCY,
-                        instructions: env.DEFAULT_INSTRUCTIONS
+                        instructions: env.DEFAULT_INSTRUCTIONS,
+                        gatewayEnabled: true,
+                        manualEnabled: true
                     }
                 });
                 return {
@@ -60,7 +64,7 @@ export const getPaymentSettings = cache(async (siteId?: string): Promise<Payment
                 console.error(`[getPaymentSettings] Failed to create payment settings for site '${id}':`, createError);
             }
         }
-
+ 
         // Fallback to platform defaults if no site
         return {
             id: "default",
@@ -72,6 +76,7 @@ export const getPaymentSettings = cache(async (siteId?: string): Promise<Payment
             instructions: env.DEFAULT_INSTRUCTIONS,
             updatedAt: new Date(),
             gatewayEnabled: hasPlatformGateway,
+            manualEnabled: true,
             isPlatformManaged: hasPlatformGateway
         } as any;
     } catch (error) {

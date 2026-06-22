@@ -35,6 +35,8 @@ export async function savePaymentSettings(siteId: string, data: {
     accountHolder?: string;
     currency?: string;
     instructions?: string;
+    gatewayEnabled?: boolean;
+    manualEnabled?: boolean;
 }) {
     return tenantRepo.upsertPaymentSettings(siteId, data);
 }

@@ -64,17 +64,17 @@ function DefaultPrivacyPage({ siteName, brandColor, contactEmail }: { siteName: 
                 <div className="p-1 rounded bg-slate-100 text-slate-800">
                   <Lock size={16} />
                 </div>
-                2. Keamanan Pembayaran (Duitku Payment Gateway)
+                2. Keamanan Pembayaran (Midtrans Payment Gateway)
               </h2>
               <p className="leading-relaxed text-sm">
                 Keamanan transaksi Anda adalah prioritas utama kami. Oleh karena itu:
               </p>
               <div className="bg-slate-50 border border-slate-100 p-4 rounded-xl text-xs sm:text-sm leading-relaxed space-y-2">
                 <p>
-                  Semua transaksi pembayaran otomatis diproses secara aman melalui payment gateway berlisensi resmi <strong>Duitku</strong>. 
+                  Semua transaksi pembayaran otomatis diproses secara aman melalui payment gateway berlisensi resmi <strong>Midtrans</strong>. 
                 </p>
                 <p className="font-semibold text-slate-800">
-                  Toko kami tidak pernah menyimpan data sensitif seperti nomor kartu kredit atau detail akun perbankan Anda. Semua data pembayaran langsung dikirimkan dan diproses secara terenkripsi oleh sistem Duitku.
+                  Toko kami tidak pernah menyimpan data sensitif seperti nomor kartu kredit atau detail akun perbankan Anda. Semua data pembayaran langsung dikirimkan dan diproses secara terenkripsi oleh sistem Midtrans.
                 </p>
               </div>
             </section>

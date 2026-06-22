@@ -183,7 +183,7 @@ export default function TransactionList({ initialTransactions }: { initialTransa
                                             <CheckCircle2 size={16} className="text-blue-500 shrink-0 mt-0.5" />
                                             <div>
                                                 <p className="text-[10px] font-black text-blue-500 uppercase tracking-wider leading-none">Verifikasi Sistem</p>
-                                                <p className="text-[9px] text-muted-foreground mt-1 leading-tight">Transaksi otomatis tervalidasi via Duitku Gateway.</p>
+                                                <p className="text-[9px] text-muted-foreground mt-1 leading-tight">Transaksi otomatis tervalidasi via Midtrans Gateway.</p>
                                                 <p className="text-[8px] font-bold text-muted-foreground/75 uppercase tracking-tight mt-1">
                                                     {new Date(tx.createdAt).toLocaleString()}
                                                 </p>

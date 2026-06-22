@@ -200,6 +200,8 @@ export async function upsertPaymentSettings(siteId: string, data: {
     accountHolder?: string;
     currency?: string;
     instructions?: string;
+    gatewayEnabled?: boolean;
+    manualEnabled?: boolean;
 }) {
     return db.paymentSettings.upsert({
         where: { siteId },

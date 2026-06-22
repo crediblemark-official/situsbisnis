@@ -370,7 +370,7 @@ export async function updatePaymentSettingsApi(req: Request) {
         const {
             bankName, accountNumber, accountHolder, instructions, currency,
             paymentGateway, gatewayMerchantId, gatewayClientKey, gatewayApiKey,
-            gatewaySandbox
+            gatewaySandbox, gatewayEnabled, manualEnabled
         } = body;
 
         await db.paymentSettings.upsert({
@@ -378,13 +378,13 @@ export async function updatePaymentSettingsApi(req: Request) {
             update: {
                 bankName, accountNumber, accountHolder, currency, instructions,
                 paymentGateway, gatewayMerchantId, gatewayClientKey, gatewayApiKey,
-                gatewaySandbox,
+                gatewaySandbox, gatewayEnabled, manualEnabled,
                 updatedAt: new Date()
             },
             create: {
                 siteId, bankName, accountNumber, accountHolder, currency, instructions,
                 paymentGateway, gatewayMerchantId, gatewayClientKey, gatewayApiKey,
-                gatewaySandbox
+                gatewaySandbox, gatewayEnabled, manualEnabled
             }
         });
 

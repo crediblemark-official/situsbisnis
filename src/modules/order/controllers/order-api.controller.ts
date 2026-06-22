@@ -118,7 +118,7 @@ export async function getOrderPaymentMethodsApi(req: Request) {
                 return NextResponse.json({ error: "Payment settings not configured" }, { status: 500 });
             }
             if (message.includes("Failed to fetch payment methods")) {
-                console.warn("[SHOP_PAYMENT_METHODS] Failed to fetch from Duitku:", message);
+                console.warn("[SHOP_PAYMENT_METHODS] Failed to fetch from Midtrans:", message);
                 return NextResponse.json({ error: message }, { status: 502 });
             }
             throw err;
@@ -154,7 +154,7 @@ export async function checkOrderStatusApi(req: Request) {
 }
 
 /**
- * Endpoint POST untuk menerima webhook callback dari Duitku terkait pesanan.
+ * Endpoint POST untuk menerima webhook callback dari Midtrans terkait pesanan.
  */
 export async function processOrderWebhookApi(req: Request) {
     try {
@@ -193,7 +193,7 @@ export async function processOrderWebhookApi(req: Request) {
             headers: { "Content-Type": "text/plain" }
         });
     } catch (error) {
-        console.error("[DUITKU_ORDER_CALLBACK_ERROR]", error);
+        console.error("[MIDTRANS_ORDER_CALLBACK_ERROR]", error);
         return new NextResponse("Internal Server Error", { status: 500 });
     }
 }

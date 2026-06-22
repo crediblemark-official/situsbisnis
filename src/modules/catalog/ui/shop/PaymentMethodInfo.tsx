@@ -99,7 +99,7 @@ export default function PaymentMethodInfo({
     );
 
     const hasManual = !!(settings.bankName && settings.accountNumber);
-    const gatewayName = settings.paymentGateway ? (settings.paymentGateway.charAt(0).toUpperCase() + settings.paymentGateway.slice(1)) : "Duitku";
+    const gatewayName = settings.paymentGateway ? (settings.paymentGateway.charAt(0).toUpperCase() + settings.paymentGateway.slice(1)) : "Midtrans";
 
     if (settings.gatewayEnabled && hasManual) {
         return (
@@ -138,7 +138,7 @@ export default function PaymentMethodInfo({
                 </div>
 
                 {activeMethod === "system" ? (
-                    /* Duitku Automatic */
+                    /* Midtrans Automatic */
                     <div className="space-y-3 animate-in fade-in duration-300">
                         <div 
                             className="p-4 rounded-xl border transition-all animate-none"

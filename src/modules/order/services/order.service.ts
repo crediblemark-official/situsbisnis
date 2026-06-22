@@ -30,7 +30,7 @@ export async function getPaymentSettings(siteId: string) {
 }
 
 /**
- * Memproses callback pembayaran pesanan dari Duitku.
+ * Memproses callback pembayaran pesanan dari Midtrans.
  */
 export async function processOrderPaymentCallback(orderId: string, siteId: string, amount: number, creditOwner: boolean) {
     return orderRepo.processOrderPayment(orderId, siteId, amount, creditOwner);

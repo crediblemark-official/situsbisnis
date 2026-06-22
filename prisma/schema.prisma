@@ -188,6 +188,8 @@ model PaymentSettings {
   gatewayApiKey     String?
   gatewayClientKey  String?
   gatewaySandbox    Boolean  @default(true)
+  gatewayEnabled    Boolean  @default(true)
+  manualEnabled     Boolean  @default(true)
   site              Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
 }
 

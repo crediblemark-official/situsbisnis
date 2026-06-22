@@ -44,6 +44,8 @@ export default function SettingsForm({ initialSettings, initialPaymentData }: Se
         accountHolder: initialPaymentData?.accountHolder || "",
         currency: initialPaymentData?.currency || "USD",
         instructions: initialPaymentData?.instructions || "",
+        gatewayEnabled: initialPaymentData?.gatewayEnabled ?? true,
+        manualEnabled: initialPaymentData?.manualEnabled ?? true,
     });
 
     const [plan] = useState<string>(initialSettings?.plan || "Free");

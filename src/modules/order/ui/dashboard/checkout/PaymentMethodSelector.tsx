@@ -72,7 +72,7 @@ export function PaymentMethodSelector({
             <div className="bg-card border border-border rounded-xl p-4 space-y-4">
                 <div>
                     <h3 className="text-[10px] font-black text-foreground uppercase tracking-widest">Pilih Metode Pembayaran</h3>
-                    <p className="text-xs text-muted-foreground mt-0.5">Semua transaksi diproses secara aman melalui Duitku.</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Semua transaksi diproses secara aman melalui Midtrans.</p>
                 </div>
 
                 <div className="space-y-2">

@@ -127,7 +127,7 @@ export default function CheckoutPage() {
                 // 3. Jika metodenya adalah sistem pesanan biasa, arahkan ke gerbang pembayaran
                 clearCart();
                 if (data.paymentUrl) {
-                    // Redirect to custom branded checkout page instead of Duitku directly
+                    // Redirect to custom branded checkout page instead of Midtrans directly
                     router.push(`/checkout/payment/${orderId}`);
                 } else {
                     router.push(`/checkout/success?orderId=${orderId}`);
