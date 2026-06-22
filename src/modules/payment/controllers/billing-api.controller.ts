@@ -108,7 +108,11 @@ export async function checkBillingStatusApi(req: Request) {
         const { transactionId } = body;
         if (!transactionId) return apiError("transactionId is required", 400);
 
-        const result = await PaymentClient.checkTransactionStatus(transactionId, session?.user?.id || "", (session?.user as any)?.role || "user");
+        const result = await PaymentClient.checkTransactionStatus(
+            session?.user?.id || "",
+            (session?.user as any)?.role || "user",
+            transactionId
+        );
         return NextResponse.json(result);
     } catch (error: any) {
         console.error("[CHECK_STATUS]", error);
