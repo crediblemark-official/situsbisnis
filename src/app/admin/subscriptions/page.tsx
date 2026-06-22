@@ -82,7 +82,7 @@ export default async function AdminSubscriptionsPage() {
                 }
             };
         })
-        .filter(sub => sub.site !== null);
+        .filter((sub): sub is Exclude<typeof sub, null> => sub !== null);
 
     const serializedSubscriptions = JSON.parse(JSON.stringify(subscriptions));
 
