@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getApiContext, apiResponse, apiError } from "@/lib/api/utils";
 import { PaymentClient } from "../index";
+import { db } from "@/modules/shared/core/db";
 
 export async function checkoutPaymentApi(req: Request) {
     try {
@@ -128,6 +129,16 @@ export async function updateTransactionStatusApi(req: Request) {
         const body = await req.json();
         const { transactionId, status: txStatus } = body;
         if (!transactionId || !txStatus) return apiError("Missing data", 400);
+
+        // Validasi transaksi dan metode pembayaran
+        const transaction = await db.paymentTransaction.findUnique({
+            where: { id: transactionId }
+        });
+        if (!transaction) return apiError("Transaction not found", 404);
+
+        if (transaction.paymentMethod !== "manual") {
+            return apiError("Transaksi dengan Payment Gateway tidak dapat disetujui atau ditolak secara manual.", 400);
+        }
 
         let result;
         if (txStatus === "approved") {

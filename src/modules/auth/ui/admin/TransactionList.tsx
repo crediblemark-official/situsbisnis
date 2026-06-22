@@ -211,7 +211,7 @@ export default function TransactionList({ initialTransactions }: { initialTransa
                                 )}
                             </TD>
                             <TD align="right">
-                                {tx.status === 'pending' && (
+                                {tx.status === 'pending' && tx.paymentMethod === 'manual' && (
                                     <div className="flex items-center justify-end gap-2">
                                         <button
                                             onClick={() => {

@@ -2,6 +2,7 @@
 
 import { getApiContext } from "@/lib/api/utils";
 import { PaymentClient } from "@/modules/payment";
+import { db } from "@/modules/shared/core/db";
 
 export async function updateTransactionStatusAction(body: { transactionId: string; status: string }) {
     try {
@@ -10,6 +11,18 @@ export async function updateTransactionStatusAction(body: { transactionId: strin
 
         const { transactionId, status } = body;
         if (!transactionId || !status) return { success: false, error: "Missing data" };
+
+        // Cari transaksi terlebih dahulu untuk memvalidasi metode pembayaran
+        const transaction = await db.paymentTransaction.findUnique({
+            where: { id: transactionId }
+        });
+        if (!transaction) {
+            return { success: false, error: "Transaction not found" };
+        }
+
+        if (transaction.paymentMethod !== "manual") {
+            return { success: false, error: "Transaksi dengan Payment Gateway tidak dapat disetujui atau ditolak secara manual." };
+        }
 
         let result;
         if (status === "approved") {
