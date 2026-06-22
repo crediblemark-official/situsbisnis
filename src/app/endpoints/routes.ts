@@ -99,7 +99,7 @@ const endpoints: EndpointRoute[] = [
     { method: "POST", path: "page/credbuild", handler: postCredBuildPageApi },
 
     // ===== ORDERS =====
-    { method: "GET", path: "orders", handler: getOrdersApi },
+    { method: "GET", path: "order/orders", handler: getOrdersApi },
     { method: "POST", path: "order/orders", handler: createOrderApi },
     { method: "POST", path: "order/orders/payment", handler: initializeOrderPaymentApi },
     { method: "POST", path: "order/orders/payment-methods", handler: getOrderPaymentMethodsApi },
@@ -218,14 +218,14 @@ const endpoints: EndpointRoute[] = [
         paramIndex: 1
     },
     {
-        method: "GET", path: "orders/*", handler: getOrderDetailApi,
-        match: (_route, routePath) => routePath.startsWith("orders/") && _route.length === 2,
-        paramIndex: 1
+        method: "GET", path: "order/orders/*", handler: getOrderDetailApi,
+        match: (_route, routePath) => routePath.startsWith("order/orders/") && _route.length === 3,
+        paramIndex: 2
     },
     {
-        method: "PATCH", path: "orders/*", handler: updateOrderApi,
-        match: (_route, routePath) => routePath.startsWith("orders/") && _route.length === 2,
-        paramIndex: 1
+        method: "PATCH", path: "order/orders/*", handler: updateOrderApi,
+        match: (_route, routePath) => routePath.startsWith("order/orders/") && _route.length === 3,
+        paramIndex: 2
     },
     {
         method: "GET", path: "media/gallery/*", handler: galleryGetDetailApi,
@@ -485,7 +485,7 @@ const knownParamPrefixes = [
     { prefix: "pages/", idx: 1 },
     { prefix: "posts/", idx: 1 },
     { prefix: "products/", idx: 1 },
-    { prefix: "orders/", idx: 1 },
+    { prefix: "order/orders/", idx: 2 },
     { prefix: "menus/", idx: 1 },
     { prefix: "users/", idx: 1 },
     { prefix: "media/gallery/", idx: 2 },
