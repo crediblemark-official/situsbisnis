@@ -116,8 +116,8 @@ model Product {
   name           String
   slug           String
   description    String?
-  price          Decimal           @db.Decimal(10, 2)
-  originalPrice  Decimal?          @db.Decimal(10, 2)
+  price          Decimal           @db.Decimal(15, 2)
+  originalPrice  Decimal?          @db.Decimal(15, 2)
   currency       String?           @default("IDR")
   images         String[]
   stock          Int?        @default(0)
@@ -139,7 +139,7 @@ model Order {
   customerName      String
   customerEmail     String
   customerAddress   String
-  total             Decimal           @db.Decimal(10, 2)
+  total             Decimal           @db.Decimal(15, 2)
   status            String?           @default("pending")
   siteId            String
   createdAt         DateTime          @default(now())
@@ -167,7 +167,7 @@ model OrderItem {
   orderId   String
   productId String
   quantity  Int               @default(1)
-  price     Decimal           @db.Decimal(10, 2)
+  price     Decimal           @db.Decimal(15, 2)
   order     Order             @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   @@index([orderId])
