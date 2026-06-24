@@ -2,9 +2,6 @@ import * as orderRepo from "../repositories/order.repository";
 import { SubscriptionClient } from "@/modules/subscription";
 import { MidtransPaymentWrapper, getPaymentMethodCategory } from "@/modules/payment/providers/midtrans";
 
-// Cache hasil probe Midtrans secara global di process memory
-let midtransProbeCache: { timestamp: number; enabled: string[] } | null = null;
-const PROBE_CACHE_TTL = 1000 * 60 * 30; // 30 menit
 
 /**
  * Membuat pesanan baru dan menghitung total harga secara aman.

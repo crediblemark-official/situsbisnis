@@ -251,7 +251,7 @@ export class MidtransPaymentWrapper {
         }
     }
 
-    static async getPaymentMethods(params: any) {
+    static async getPaymentMethods(_params: any) {
         return {
             success: true,
             error: undefined,

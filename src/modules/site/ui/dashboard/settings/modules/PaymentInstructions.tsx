@@ -15,33 +15,35 @@ export function PaymentInstructions({ paymentData, onPaymentChange }: PaymentIns
             <div className="space-y-6 p-2">
                 {/* Switch / Checkbox Status Pembayaran */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-b border-border/50 pb-4">
-                    <label className="flex items-center gap-3 p-4 rounded-xl border border-border/80 bg-muted/5 hover:bg-muted/10 cursor-pointer select-none transition-all">
+                    <div className="flex items-center gap-3 p-4 rounded-xl border border-border/80 bg-muted/5 hover:bg-muted/10 cursor-pointer select-none transition-all">
                         <input 
+                            id="gatewayEnabledInput"
                             type="checkbox" 
                             name="gatewayEnabled" 
                             checked={paymentData.gatewayEnabled} 
                             onChange={onPaymentChange} 
                             className="rounded border-border text-primary focus:ring-primary h-4 w-4 bg-muted/10"
                         />
-                        <div>
-                            <p className="text-xs font-bold text-foreground">Pembayaran Otomatis (Midtrans)</p>
-                            <p className="text-[10px] text-muted-foreground mt-0.5">Pelanggan membayar instan melalui Virtual Account, QRIS, dll.</p>
-                        </div>
-                    </label>
-
-                    <label className="flex items-center gap-3 p-4 rounded-xl border border-border/80 bg-muted/5 hover:bg-muted/10 cursor-pointer select-none transition-all">
+                        <label htmlFor="gatewayEnabledInput" className="cursor-pointer">
+                            <span className="text-xs font-bold text-foreground block">Pembayaran Otomatis (Midtrans)</span>
+                            <span className="text-[10px] text-muted-foreground mt-0.5 block">Pelanggan membayar instan melalui Virtual Account, QRIS, dll.</span>
+                        </label>
+                    </div>
+ 
+                    <div className="flex items-center gap-3 p-4 rounded-xl border border-border/80 bg-muted/5 hover:bg-muted/10 cursor-pointer select-none transition-all">
                         <input 
+                            id="manualEnabledInput"
                             type="checkbox" 
                             name="manualEnabled" 
                             checked={paymentData.manualEnabled} 
                             onChange={onPaymentChange} 
                             className="rounded border-border text-primary focus:ring-primary h-4 w-4 bg-muted/10"
                         />
-                        <div>
-                            <p className="text-xs font-bold text-foreground">Transfer Bank Manual</p>
-                            <p className="text-[10px] text-muted-foreground mt-0.5">Pelanggan mentransfer secara manual ke rekening bank Anda.</p>
-                        </div>
-                    </label>
+                        <label htmlFor="manualEnabledInput" className="cursor-pointer">
+                            <span className="text-xs font-bold text-foreground block">Transfer Bank Manual</span>
+                            <span className="text-[10px] text-muted-foreground mt-0.5 block">Pelanggan mentransfer secara manual ke rekening bank Anda.</span>
+                        </label>
+                    </div>
                 </div>
 
                 {/* Form Rekening Manual (hanya tampil jika manualEnabled aktif) */}

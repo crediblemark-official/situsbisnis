@@ -19,7 +19,7 @@ export function PaymentMethodSelector({
     previewPlan,
     appliedCoupon,
     isLoading,
-    paymentGateway = "midtrans",
+    paymentGateway: _paymentGateway = "midtrans",
     onCancel,
     onProceed
 }: PaymentMethodSelectorProps) {

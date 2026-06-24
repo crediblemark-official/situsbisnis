@@ -449,10 +449,10 @@ export async function importBackupData(backupData: BackupData, currentAdminId?: 
             }
         }
 
-        // 2.3 Perbarui Term.parentId dan relasi implisit (pageIds, postIds, productIds)
+        // 2.3 Perbarui Term.parentId dan relasi implisit (postIds)
         if (d.terms && d.terms.length > 0) {
             for (const term of d.terms) {
-                const { parentId, pageIds, postIds, productIds } = term;
+                const { parentId, postIds } = term;
                 
                 // Pastikan parent ada
                 let parentVal = null;
@@ -463,16 +463,6 @@ export async function importBackupData(backupData: BackupData, currentAdminId?: 
                     }
                 }
 
-                // Pastikan pageIds ada sebelum menghubungkan
-                let validPageIds: string[] = [];
-                if (pageIds && Array.isArray(pageIds) && pageIds.length > 0) {
-                    const existing = await db.credBuildPage.findMany({
-                        where: { id: { in: pageIds } },
-                        select: { id: true }
-                    });
-                    validPageIds = existing.map(x => x.id);
-                }
-
                 // Pastikan postIds ada sebelum menghubungkan
                 let validPostIds: string[] = [];
                 if (postIds && Array.isArray(postIds) && postIds.length > 0) {
@@ -481,16 +471,6 @@ export async function importBackupData(backupData: BackupData, currentAdminId?: 
                         select: { id: true }
                     });
                     validPostIds = existing.map(x => x.id);
-                }
-
-                // Pastikan productIds ada sebelum menghubungkan
-                let validProductIds: string[] = [];
-                if (productIds && Array.isArray(productIds) && productIds.length > 0) {
-                    const existing = await db.product.findMany({
-                        where: { id: { in: productIds } },
-                        select: { id: true }
-                    });
-                    validProductIds = existing.map(x => x.id);
                 }
 
                 await db.term.update({
