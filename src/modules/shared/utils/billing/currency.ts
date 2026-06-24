@@ -27,3 +27,4 @@ export function formatPrice(price: any, code: string = "USD"): string {
         maximumFractionDigits: config.decimals,
     }).format(numPrice);
 }
+

@@ -42,6 +42,7 @@ export const IdentityTab = ({ settings, onChange }: IdentityTabProps) => {
                             { label: "SGD (Singapore Dollar)", value: "SGD" },
                         ]} 
                     />
+
                     <FormTextArea 
                         label="Slogan (Tagline)" 
                         name="tagline" 
