@@ -135,8 +135,12 @@ export function ShopCheckoutPayment({ order, platformName: _platformName }: Shop
             });
             if (res.ok) {
                 const data = await res.json();
-                if (data.success && data.paymentDetails) {
-                    setCustomPaymentDetails(data.paymentDetails);
+                if (data.success) {
+                    if (data.order?.paymentUrl && !data.order.paymentUrl.startsWith("custom:")) {
+                        window.location.href = data.order.paymentUrl;
+                    } else if (data.paymentDetails) {
+                        setCustomPaymentDetails(data.paymentDetails);
+                    }
                 } else {
                     alert(data.error || "Gagal memproses pembayaran.");
                 }

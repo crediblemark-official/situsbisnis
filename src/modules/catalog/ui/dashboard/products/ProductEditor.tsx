@@ -80,7 +80,9 @@ export default function ProductEditor({ productId, initialData }: { productId?: 
     const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let newPrice = e.target.value;
         if (currency === "IDR" && newPrice.includes(".")) {
-            const numericPrice = parseFloat(newPrice);
+            // Hapus titik pemisah ribuan agar tidak salah dipotong oleh parseFloat
+            const cleanPrice = newPrice.replace(/\./g, "");
+            const numericPrice = parseFloat(cleanPrice);
             if (!isNaN(numericPrice)) {
                 newPrice = Math.round(numericPrice).toString();
             }
@@ -91,7 +93,9 @@ export default function ProductEditor({ productId, initialData }: { productId?: 
     const handleOriginalPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let newPrice = e.target.value;
         if (currency === "IDR" && newPrice.includes(".")) {
-            const numericPrice = parseFloat(newPrice);
+            // Hapus titik pemisah ribuan agar tidak salah dipotong oleh parseFloat
+            const cleanPrice = newPrice.replace(/\./g, "");
+            const numericPrice = parseFloat(cleanPrice);
             if (!isNaN(numericPrice)) {
                 newPrice = Math.round(numericPrice).toString();
             }

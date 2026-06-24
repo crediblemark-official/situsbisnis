@@ -181,6 +181,8 @@ export async function initializeOrderPayment(orderId: string, paymentMethod: str
     const suffix = Date.now().toString().slice(-4);
     const uniqueOrderId = `${order.id}-${paymentMethod}-${suffix}`;
 
+    const gatewayApiType = (platformSettings?.gatewayApiType || "snap") as "snap" | "core";
+
     const invoice = await MidtransPaymentWrapper.createInvoice({
         orderId: uniqueOrderId,
         amount: Number(order.total),
@@ -197,7 +199,7 @@ export async function initializeOrderPayment(orderId: string, paymentMethod: str
         apiKey,
         clientKey,
         sandbox
-    }, "snap");
+    }, gatewayApiType);
 
     if (!invoice.success) {
         throw new Error(invoice.error || `Failed to create midtrans invoice`);
@@ -214,7 +216,10 @@ export async function initializeOrderPayment(orderId: string, paymentMethod: str
         merchantOrderId: uniqueOrderId
     };
 
-    const updatedOrder = await orderRepo.updateOrderPaymentUrl(order.id, `custom:${JSON.stringify(customPayload)}`, invoice.reference);
+    const isCore = gatewayApiType === "core";
+    const paymentUrl = isCore ? `custom:${JSON.stringify(customPayload)}` : (invoice.paymentUrl || "");
+
+    const updatedOrder = await orderRepo.updateOrderPaymentUrl(order.id, paymentUrl, invoice.reference);
 
     return {
         success: true,
