@@ -44,7 +44,7 @@ export async function createOrder(
 
     const productIds = items.map(item => item.productId);
     const dbProducts = await orderRepo.findProductsForSite(siteId, productIds);
-    const productMap = new Map(dbProducts.map(p => [p.id, p]));
+    const productMap = new Map<string, any>(dbProducts.map(p => [p.id, p]));
 
     let total = 0;
     const orderItemsData = [];
