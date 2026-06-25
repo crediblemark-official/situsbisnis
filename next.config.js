@@ -120,6 +120,7 @@ const nextConfig = {
     root: process.cwd(),
     resolveAlias: {
       "lucide-react/dynamicIconImports": "lucide-react/dynamicIconImports.mjs",
+      "isomorphic-dompurify": "./src/lib/dompurify-mock.ts",
     },
   },
   onDemandEntries: {
@@ -134,6 +135,7 @@ const nextConfig = {
     config.resolve.alias = {
       ...config.resolve.alias,
       '@crediblemark/build': path.resolve('./node_modules/@crediblemark/build'),
+      'isomorphic-dompurify': path.resolve('./src/lib/dompurify-mock.ts'),
     };
 
     if (!isServer) {
