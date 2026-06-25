@@ -100,7 +100,12 @@ export async function upsertPlans(plans: PlanUpdateData[]): Promise<void> {
             }
         };
 
-        if (plan.id && !plan.id.startsWith("new-")) {
+        // Cek ketersediaan nama plan untuk menghindari error Unique Constraint pada database
+        const existingPlan = await planRepo.findPlanByName(plan.name);
+
+        if (existingPlan) {
+            await planRepo.updatePlan(existingPlan.id, planData);
+        } else if (plan.id && !plan.id.startsWith("new-")) {
             await planRepo.updatePlan(plan.id, planData);
         } else {
             await planRepo.createPlan(planData);
