@@ -189,6 +189,20 @@ export default function PostEditor({ postId, initialData, initialCategories }: {
         }
     }
 
+    // Helper to extract text from HTML safely without regex
+    const getPlainTextFromHtml = (html: string) => {
+        if (typeof window === "undefined" || typeof DOMParser === "undefined") {
+            return html.replace(/<[^>]*>/g, ''); // simple fallback
+        }
+        try {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            return doc.body.textContent || "";
+        } catch {
+            return html.replace(/<[^>]*>/g, '');
+        }
+    };
+
     // Dynamic SEO Scoring for Blog Posts
     const getContentLength = (textOrJson: string) => {
         if (!textOrJson) return 0;
@@ -206,7 +220,7 @@ export default function PostEditor({ postId, initialData, initialCategories }: {
             };
             return getTextLen(parsed);
         } catch {
-            return textOrJson.replace(/<[^>]*>/g, '').length;
+            return getPlainTextFromHtml(textOrJson).length;
         }
     };
 
@@ -227,7 +241,7 @@ export default function PostEditor({ postId, initialData, initialCategories }: {
             };
             text = extractText(parsed);
         } catch {
-            text = formData.content.replace(/<[^>]*>/g, ' ');
+            text = getPlainTextFromHtml(formData.content);
         }
         text = text.replace(/\s+/g, ' ').trim();
         if (text.length <= 150) return text;

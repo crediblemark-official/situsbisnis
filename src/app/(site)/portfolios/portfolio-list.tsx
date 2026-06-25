@@ -31,7 +31,18 @@ const getExcerpt = (content: string | null) => {
     }
 
     // Strip HTML tags if any
-    const stripped = content.replace(/<[^>]*>?/gm, '');
+    let stripped = content;
+    if (typeof window !== "undefined" && typeof DOMParser !== "undefined") {
+        try {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(content, 'text/html');
+            stripped = doc.body.textContent || content;
+        } catch {
+            stripped = content.replace(/<[^>]*>?/gm, '');
+        }
+    } else {
+        stripped = content.replace(/<[^>]*>?/gm, '');
+    }
     return stripped.slice(0, 150) + (stripped.length > 150 ? '...' : '');
 };
 

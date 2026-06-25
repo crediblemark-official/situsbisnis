@@ -135,7 +135,7 @@ export const DokployService = {
             console.log(`[DOKPLOY_SERVICE] Berhasil menghapus domain ${domainLower} dari Dokploy.`);
             return true;
         } catch (error) {
-            console.error(`[DOKPLOY_SERVICE] Error saat menghapus domain ${domainLower}:`, error);
+            console.error("[DOKPLOY_SERVICE] Error saat menghapus domain:", domainLower, error);
             throw error;
         }
     }

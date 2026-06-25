@@ -74,15 +74,23 @@ export default async function TestimonialsPage() {
                                     <div className="relative h-12 w-12 rounded-full overflow-hidden bg-blue-50 flex-shrink-0 border-2 border-white shadow-sm">
                                         {item.avatarUrl ? (() => {
                                             const isExternal = item.avatarUrl.startsWith("http://") || item.avatarUrl.startsWith("https://");
-                                            const isWhitelisted = isExternal && (
-                                                item.avatarUrl.includes("localhost") || 
-                                                item.avatarUrl.includes("images.unsplash.com") || 
-                                                item.avatarUrl.includes(".r2.dev") || 
-                                                item.avatarUrl.includes("cdn.univedpress.id") || 
-                                                item.avatarUrl.includes("ui-avatars.com") || 
-                                                item.avatarUrl.includes("i.pravatar.cc") || 
-                                                item.avatarUrl.includes("file.crediblemark.com")
-                                            );
+                                            let isWhitelisted = false;
+                                            if (isExternal) {
+                                                try {
+                                                    const urlObj = new URL(item.avatarUrl);
+                                                    const hostname = urlObj.hostname;
+                                                    isWhitelisted = 
+                                                        hostname === "localhost" ||
+                                                        hostname === "images.unsplash.com" ||
+                                                        hostname.endsWith(".r2.dev") ||
+                                                        hostname === "cdn.univedpress.id" ||
+                                                        hostname === "ui-avatars.com" ||
+                                                        hostname === "i.pravatar.cc" ||
+                                                        hostname === "file.crediblemark.com";
+                                                } catch {
+                                                    isWhitelisted = false;
+                                                }
+                                            }
                                             const useNextImage = !isExternal || isWhitelisted;
 
                                             return useNextImage ? (

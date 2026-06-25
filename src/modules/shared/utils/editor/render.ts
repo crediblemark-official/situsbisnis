@@ -2,18 +2,10 @@ import { generateHTML } from '@tiptap/html';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import { getProxiedUrl } from '@/lib/media/utils';
+import DOMPurify from 'isomorphic-dompurify';
 
 function sanitizeHtml(html: string): string {
-    return html
-        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
-        .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "")
-        .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, "")
-        .replace(/<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi, "")
-        .replace(/on\w+="[^"]*"/gi, "")
-        .replace(/on\w+='[^']*'/gi, "")
-        .replace(/on\w+=\S+/gi, "")
-        .replace(/href=["']javascript:/gi, 'href="#"')
-        .replace(/src=["']javascript:/gi, 'src="#"');
+    return DOMPurify.sanitize(html);
 }
 
 /**

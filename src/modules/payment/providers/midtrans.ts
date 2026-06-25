@@ -229,6 +229,7 @@ export class MidtransPaymentWrapper {
     static async verifyCallback(body: any, config: any) {
         try {
             const stringToHash = body.order_id + body.status_code + body.gross_amount + config.apiKey;
+            // codeql[js/insufficient-password-hash] - Midtrans webhook signature verification requires SHA-512, this is not a password hash.
             const hash = crypto.createHash("sha512").update(stringToHash).digest("hex");
             const isValid = hash === body.signature_key;
 
