@@ -33,6 +33,34 @@ jobs:
         run: bun run lint || true
 
   # ============================================
+  # CODE QUALITY
+  # ============================================
+  code-quality:
+    name: Code Quality & Security
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Security Audit
+        run: bun run security:audit
+
+      - name: Architecture Test
+        run: bun run test:architecture
+
+      - name: Check Dependencies
+        run: bun run deps:check
+
+  # ============================================
   # UNIT TESTS
   # ============================================
   unit-tests:

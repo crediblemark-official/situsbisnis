@@ -1,11 +1,9 @@
 {
-  "css.lint.unknownAtRules": "ignore",
-  "json.schemas": [
-    {
-      "fileMatch": ["launch.json"],
-      "schema": {
-        "type": "object"
-      }
-    }
+  "github-actions.workflows.pinned.secrets": [
+    "CODECOV_TOKEN",
+    "DATABASE_URL",
+    "NEXTAUTH_SECRET",
+    "NEXTAUTH_URL",
+    "NEXT_PUBLIC_APP_URL"
   ]
 }
