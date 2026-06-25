@@ -63,12 +63,20 @@ export async function updateUserProfile(email: string, body: any) {
  */
 export async function getUsers(sessionRole: string, isTenantContext: boolean, siteId?: string) {
     let rawUsers;
+    let siteUserRoleMap = new Map<string, string>();
+
     if (sessionRole === "admin" && !isTenantContext) {
         rawUsers = await userRepo.findAllUsers();
     } else {
         if (!siteId) throw new Error("Site ID required");
         const userIds = await tenantUserRepo.findSiteUserIds(siteId);
         rawUsers = await tenantUserRepo.findSiteUsersExceptAdmin(userIds);
+
+        // Ambil pemetaan role dari tabel SiteUser
+        const siteUserLinks = await tenantUserRepo.findSiteUserLinks(siteId);
+        siteUserLinks.forEach(link => {
+            siteUserRoleMap.set(link.userId, link.role);
+        });
     }
 
     const postCounts = await userRepo.countPostsGroupedByAuthor(isTenantContext ? siteId : undefined);
@@ -76,6 +84,7 @@ export async function getUsers(sessionRole: string, isTenantContext: boolean, si
 
     const users = rawUsers.map(user => ({
         ...user,
+        role: siteUserRoleMap.get(user.id) || user.role, // Gunakan role dari SiteUser jika ada
         _count: {
             posts: postCountMap.get(user.id) || 0
         }
@@ -215,6 +224,11 @@ export async function updateUserByAdmin(
     }
 
     await userRepo.updateUser(userId, updateData);
+
+    if (role && siteId) {
+        await tenantUserRepo.upsertSiteUser(siteId, userId, role);
+    }
+
     return { success: true };
 }
 

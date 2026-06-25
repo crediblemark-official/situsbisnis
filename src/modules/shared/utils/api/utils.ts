@@ -20,50 +20,62 @@ export async function getApiContext(requiredRoles?: Role[], options: { isPublic?
         return { error: "Unauthorized", status: 401 };
     }
 
-    if (requiredRoles && (!session?.user || !requiredRoles.includes((session?.user as any).role as Role))) {
-        apiLogger.warn({ 
-            userId: (session?.user as any)?.id, 
-            role: (session?.user as any)?.role,
-            requiredRoles 
-        }, "Forbidden: Insufficient permissions");
-        return { error: "Forbidden: Insufficient permissions", status: 403 };
-    }
+    const userId = (session?.user as any)?.id as string;
+    const globalRole = (session?.user as any)?.role as Role;
 
     const siteId = await getSiteId();
     const status = await getSiteAccessStatus();
     
-    if (!siteId && requireSite && (session?.user as any)?.role !== "admin") {
-        apiLogger.debug({ userId: (session?.user as any)?.id }, "Access denied: Site context required but missing");
+    if (!siteId && requireSite && globalRole !== "admin") {
+        apiLogger.debug({ userId }, "Access denied: Site context required but missing");
         return { error: "Site context required", status: 400 };
     }
 
-    // Non-admin access checks
-    if (siteId && session && (session.user as any).role !== "admin" && !isPublic) {
-        // Enforce subscription status
-        if (status === "expired") {
-            apiLogger.warn({ siteId, status }, "Access denied: Site subscription expired");
-            return { error: "Langganan Anda telah berakhir. Silakan perbarui langganan untuk melanjutkan.", status: 403 };
-        }
+    // Tentukan role efektif untuk request ini (default ke role global)
+    let effectiveRole: Role = globalRole;
 
-        // Verifikasi user milik situs ini — di-cache 5 menit per pasangan user-site
-        const userId = (session.user as any).id as string;
-        const isUserLinkedToSite = await unstable_cache(
-            async () => db.siteUser.count({
+    if (siteId && session && globalRole !== "admin" && !isPublic) {
+        // Ambil link SiteUser (di-cache 5 menit untuk performa)
+        const siteUserLink = await unstable_cache(
+            async () => db.siteUser.findUnique({
                 where: {
-                    siteId,
-                    userId
+                    siteId_userId: {
+                        siteId,
+                        userId
+                    }
+                },
+                select: {
+                    role: true
                 }
             }),
             [`site-user-link-${siteId}-${userId}`],
             { revalidate: 300, tags: [`site-${siteId}`] }
         )();
 
-        if (isUserLinkedToSite === 0) {
-            apiLogger.warn({
-                userId,
-                siteId
-            }, "Access denied: User does not belong to this site");
+        if (!siteUserLink) {
+            apiLogger.warn({ userId, siteId }, "Access denied: User does not belong to this site");
             return { error: "Forbidden: Anda tidak memiliki akses ke situs ini", status: 403 };
+        }
+
+        // Set role efektif sesuai dengan role di situs ini
+        effectiveRole = siteUserLink.role as Role;
+
+        // Enforce subscription status
+        if (status === "expired") {
+            apiLogger.warn({ siteId, status }, "Access denied: Site subscription expired");
+            return { error: "Langganan Anda telah berakhir. Silakan perbarui langganan untuk melanjutkan.", status: 403 };
+        }
+    }
+
+    // Validasi permission berdasarkan role efektif
+    if (requiredRoles && !isPublic) {
+        if (!session?.user || !requiredRoles.includes(effectiveRole)) {
+            apiLogger.warn({ 
+                userId, 
+                role: effectiveRole,
+                requiredRoles 
+            }, "Forbidden: Insufficient permissions");
+            return { error: "Forbidden: Insufficient permissions", status: 403 };
         }
     }
 

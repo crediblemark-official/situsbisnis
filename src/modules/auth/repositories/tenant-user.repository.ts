@@ -154,3 +154,13 @@ export async function findSiteActiveSubscription(siteId: string) {
         include: { plan: true }
     });
 }
+
+/**
+ * Mengambil seluruh relasi SiteUser untuk situs tertentu.
+ */
+export async function findSiteUserLinks(siteId: string) {
+    return db.siteUser.findMany({
+        where: { siteId }
+    });
+}
+
