@@ -145,6 +145,33 @@ export async function processOrderWebhook(body: Record<string, any>) {
     if (verification.status === "paid") {
         const creditOwner = !paymentSettings?.gatewayMerchantId || !paymentSettings?.gatewayApiKey;
         await processOrderPaymentCallback(actualOrderId, order.siteId, Number(order.total), creditOwner);
+    } else if (["cancel", "deny", "expire", "cancelled", "expired", "failed"].includes(verification.status)) {
+        if (order.paymentStatus !== "cancelled") {
+            await orderRepo.updateOrderFulfillment(actualOrderId, { paymentStatus: "cancelled", status: "cancelled" });
+            await orderRepo.restoreOrderStock(actualOrderId);
+
+            // Notifikasi ke penjual (Site Owner)
+            try {
+                const { eventBus } = await import("@/modules/shared/core/event-bus");
+                const siteOwner = await eventBus.request<any, any>("request.auth.getSiteOwner", { siteId: order.siteId });
+                if (siteOwner && siteOwner.email) {
+                    const siteName = (await orderRepo.findSiteById(order.siteId))?.name || "Toko Anda";
+                    await eventBus.publish("notification.email.send", {
+                        template: "orderCancelledSeller",
+                        payload: {
+                            toEmail: siteOwner.email,
+                            userName: siteOwner.name || "Pemilik Toko",
+                            siteName: siteName,
+                            orderId: actualOrderId,
+                            customerName: order.customerName,
+                            total: order.total
+                        }
+                    }, "order");
+                }
+            } catch (err) {
+                console.error("[ORDER_WEBHOOK_CANCEL_NOTIF_ERROR]", err);
+            }
+        }
     }
 
     return { success: true };

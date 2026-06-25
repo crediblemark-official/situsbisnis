@@ -148,7 +148,7 @@ export default function Footer({ initialSettings, initialMenuItems = [], isTenan
                                         console.log("Share failed or cancelled", err);
                                     }
                                 }}
-                                className="flex items-center gap-2 px-4 py-2 bg-white text-primary hover:bg-slate-50 transition-all rounded-full border border-white group"
+                                className="flex items-center gap-2 px-4 py-2 bg-white text-primary hover:bg-slate-50 transition-all rounded-full border border-white group cursor-pointer"
                             >
                                 <Share2 size={18} className="group-hover:scale-110 transition-transform" />
                                 <span className="font-bold text-sm">Bagikan ke Teman</span>
@@ -157,10 +157,12 @@ export default function Footer({ initialSettings, initialMenuItems = [], isTenan
                     </div>
 
                     {/* View Count */}
-                    <div className="bg-background text-foreground px-6 py-3 rounded-lg shadow-md border border-border/10 flex items-center gap-2 text-sm font-medium">
-                        <Eye size={18} />
-                        <span>{stats.totalViews} total views, {stats.todayViews} views today</span>
-                    </div>
+                    {isTenant && (
+                        <div className="bg-background text-foreground px-6 py-3 rounded-lg shadow-md border border-border/10 flex items-center gap-2 text-sm font-medium">
+                            <Eye size={18} />
+                            <span>{stats.totalViews} total views, {stats.todayViews} views today</span>
+                        </div>
+                    )}
 
                 </div>
             </div>
@@ -169,8 +171,8 @@ export default function Footer({ initialSettings, initialMenuItems = [], isTenan
             <div
                 className="backdrop-blur-sm py-4 border-y border-border/50 shadow-sm relative z-10"
                 style={{
-                    backgroundColor: settings?.footerAddressBackgroundColor || "#1e293b",
-                    color: settings?.footerAddressTextColor || "#ffffff"
+                    backgroundColor: settings?.footerAddressBackgroundColor || "#ffffff",
+                    color: settings?.footerAddressTextColor || "#0f172a"
                 }}
             >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm md:text-base font-bold">

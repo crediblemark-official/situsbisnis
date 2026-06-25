@@ -335,3 +335,49 @@ export async function sendSubscriptionCancelledEmail({
 
   return sendEmail({ to: toEmail, subject, html });
 }
+
+/**
+ * Notify seller that an order was cancelled/expired and stock was restored
+ */
+export async function sendOrderCancelledSellerEmail({
+  toEmail,
+  userName,
+  siteName,
+  orderId,
+  customerName,
+  total,
+}: {
+  toEmail: string;
+  userName: string;
+  siteName: string;
+  orderId: string;
+  customerName: string;
+  total: string | number;
+}) {
+  const safeSiteName = escapeHtml(siteName);
+  const safeUserName = escapeHtml(userName);
+  const safeCustomerName = escapeHtml(customerName);
+  const safeOrderId = escapeHtml(orderId);
+  const safeTotal = typeof total === 'number' ? total.toLocaleString('id-ID') : total;
+  
+  const subject = `Pesanan Dibatalkan di ${safeSiteName} ⚠️`;
+  const html = `
+    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #1e293b;">
+      <h2 style="color: #ef4444; margin-bottom: 20px;">Pesanan Dibatalkan</h2>
+      <p style="font-size: 16px; line-height: 1.6;">Halo <strong>${safeUserName}</strong>,</p>
+      <p style="font-size: 16px; line-height: 1.6;">Kami menginformasikan bahwa pesanan <strong>#${safeOrderId}</strong> dari pelanggan <strong>${safeCustomerName}</strong> senilai Rp ${safeTotal} telah dibatalkan (atau waktu pembayarannya telah habis).</p>
+      
+      <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin: 25px 0; font-size: 15px; line-height: 1.6;">
+        <p style="margin-top: 0; color: #0f172a;"><strong>Kabar Baik:</strong> Stok produk untuk pesanan ini telah otomatis dikembalikan (di-restore) ke toko Anda.</p>
+        <p style="margin-bottom: 0;">Anda tidak perlu melakukan penyesuaian stok manual.</p>
+      </div>
+
+      <p style="font-size: 16px; line-height: 1.6;">Silakan cek Dashboard toko Anda untuk melihat detail lebih lanjut.</p>
+      
+      <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 30px 0;" />
+      <p style="font-size: 12px; color: #64748b; text-align: center;">© ${new Date().getFullYear()} ${safeSiteName}. All rights reserved.</p>
+    </div>
+  `;
+
+  return sendEmail({ to: toEmail, subject, html });
+}

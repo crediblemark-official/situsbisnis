@@ -60,6 +60,16 @@ export async function initNotificationListeners() {
             domain: payload.domain
           });
           break;
+        case "orderCancelledSeller":
+          await emailTemplates.sendOrderCancelledSellerEmail({
+            toEmail: payload.toEmail,
+            userName: payload.userName,
+            siteName: payload.siteName,
+            orderId: payload.orderId,
+            customerName: payload.customerName,
+            total: payload.total
+          });
+          break;
         case "subscriptionCancelled":
           await emailTemplates.sendSubscriptionCancelledEmail({
             toEmail: payload.toEmail,

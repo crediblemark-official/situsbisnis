@@ -221,3 +221,11 @@ Seluruh dokumentasi teknis ada di folder [docs/](docs/):
 ---
 
 _Terakhir Diperbarui: 18 Juni 2026_
+
+## 📋 Project Board & Roadmap
+
+Setiap kali menyelesaikan pengembangan fitur atau perbaikan _bug_ di repositori ini, kontributor **DIWAJIBKAN** untuk memperbarui GitHub Project Board ([Situs Bisnis Roadmap](https://github.com/orgs/crediblemark-official/projects/1)).
+
+1. Tambahkan fitur yang dikerjakan sebagai _Draft Issue_ di papan (jika belum ada).
+2. Ubah status _Draft Issue_ tersebut menjadi **Done**.
+3. Halaman rilis (`/roadmap`) pada situs utama membaca data dari _board_ ini secara langsung (_real-time_).

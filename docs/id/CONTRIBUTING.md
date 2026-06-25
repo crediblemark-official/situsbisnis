@@ -143,3 +143,11 @@ bun run test:e2e           # Menjalankan Playwright tests
 
 - Buka [Diskusi](https://github.com/crediblemark-official/situsbisnis/discussions)
 - Hubungi tim di support@SitusBisnis.id
+
+## Papan Proyek (Project Board)
+
+Setiap kali Anda menyelesaikan pengerjaan fitur baru atau perbaikan _bug_ yang di-merge ke repositori ini, Anda **DIWAJIBKAN** untuk memperbarui GitHub Project Board ([Situs Bisnis Roadmap](https://github.com/orgs/crediblemark-official/projects/1)).
+
+1. Tambahkan item tiket baru ke papan (jika belum ada).
+2. Ubah status item tersebut menjadi **Done**.
+3. Halaman `/roadmap` di aplikasi akan otomatis ter-sinkronisasi dengan papan proyek ini.

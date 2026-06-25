@@ -80,6 +80,36 @@ export async function updateOrderFulfillment(
     if (body.status) updateData.status = body.status;
 
     const updated = await orderRepo.updateOrderFulfillment(orderId, updateData);
+
+    // Jika pesanan dibatalkan (paymentStatus atau status), dan sebelumnya belum dibatalkan
+    if (
+        (body.paymentStatus === "cancelled" && order.paymentStatus !== "cancelled") ||
+        (body.status === "cancelled" && order.status !== "cancelled")
+    ) {
+        await orderRepo.restoreOrderStock(orderId);
+
+        // Notifikasi ke penjual (Site Owner)
+        try {
+            const siteOwner = await eventBus.request<any, any>("request.auth.getSiteOwner", { siteId });
+            if (siteOwner && siteOwner.email) {
+                const siteName = (await orderRepo.findSiteById(siteId))?.name || "Toko Anda";
+                await eventBus.publish("notification.email.send", {
+                    template: "orderCancelledSeller",
+                    payload: {
+                        toEmail: siteOwner.email,
+                        userName: siteOwner.name || "Pemilik Toko",
+                        siteName: siteName,
+                        orderId: orderId,
+                        customerName: order.customerName,
+                        total: order.total
+                    }
+                }, "order");
+            }
+        } catch (err) {
+            console.error("[ORDER_CANCEL_NOTIF_ERROR]", err);
+        }
+    }
+
     return { success: true, order: updated };
 }
 

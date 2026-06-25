@@ -135,6 +135,56 @@ export async function updateProductVariants(productId: string, variants: any) {
 }
 
 /**
+ * Menambah stok base product (untuk restore)
+ */
+export async function incrementProductStock(productId: string, quantity: number) {
+    return db.product.update({
+        where: { id: productId },
+        data: {
+            stock: {
+                increment: quantity
+            }
+        }
+    });
+}
+
+/**
+ * Mengembalikan stok produk dan varian jika pesanan dibatalkan/expired
+ */
+export async function restoreOrderStock(orderId: string) {
+    const order = await db.order.findUnique({
+        where: { id: orderId },
+        include: { items: true }
+    });
+
+    if (!order) return;
+
+    for (const item of order.items) {
+        const product = await db.product.findUnique({ where: { id: item.productId } });
+        if (!product) continue;
+
+        if (item.variantName && product.variants) {
+            const variants = typeof product.variants === 'string' ? JSON.parse(product.variants) : product.variants;
+            let variantUpdated = false;
+            if (Array.isArray(variants)) {
+                for (const v of variants) {
+                    if (v.name === item.variantName) {
+                        v.stock = (v.stock || 0) + item.quantity;
+                        variantUpdated = true;
+                        break;
+                    }
+                }
+            }
+            if (variantUpdated) {
+                await updateProductVariants(item.productId, variants);
+            }
+        } else {
+            await incrementProductStock(item.productId, item.quantity);
+        }
+    }
+}
+
+/**
  * Membuat entri pesanan baru.
  */
 export async function createOrder(data: {

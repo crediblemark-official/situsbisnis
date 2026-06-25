@@ -17,6 +17,7 @@ import { LazyLink as Link } from "@/components/ui/LazyLink";
 import Image from "next/image";
 import { getPlatformSettings } from "@/lib/settings/platform";
 import { getTenant } from "@/lib/domains/tenant";
+import { fetchRoadmapData } from "@/lib/github/project";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 
@@ -38,16 +39,18 @@ export default async function RoadmapPage() {
     const platform = await getPlatformSettings();
     const siteName = platform.siteName;
 
-    const roadmapData = [
+    const githubData = await fetchRoadmapData();
+
+    let roadmapData = [
         {
             status: "Launched",
             title: "Q1 2026: Pondasi Kuat",
             description: "Fokus pada stabilitas sistem dan fitur inti e-commerce.",
             items: [
-                { title: "Sistem Manajemen Produk", icon: <Store className="w-5 h-5" />, completed: true },
-                { title: "Checkout & Billing Terpadu", icon: <CreditCard className="w-5 h-5" />, completed: true },
-                { title: "Editor Halaman Visual", icon: <Zap className="w-5 h-5" />, completed: true },
-                { title: "Optimasi SEO Otomatis", icon: <Globe className="w-5 h-5" />, completed: true },
+                { title: "Sistem Manajemen Produk", icon: <Store className="w-4 h-4" />, completed: true },
+                { title: "Checkout & Billing Terpadu", icon: <CreditCard className="w-4 h-4" />, completed: true },
+                { title: "Editor Halaman Visual", icon: <Zap className="w-4 h-4" />, completed: true },
+                { title: "Optimasi SEO Otomatis", icon: <Globe className="w-4 h-4" />, completed: true },
             ],
             color: "bg-green-500",
             lightColor: "bg-green-50",
@@ -58,10 +61,10 @@ export default async function RoadmapPage() {
             title: "Q2 2026: Inovasi & AI",
             description: "Membawa kecerdasan buatan untuk membantu operasional UMKM.",
             items: [
-                { title: "AI Chatbot Customer Service", icon: <Bot className="w-5 h-5" />, completed: false },
-                { title: "Aplikasi Mobile Merchant", icon: <Smartphone className="w-5 h-5" />, completed: false },
-                { title: "Integrasi Logistik Nasional", icon: <Rocket className="w-5 h-5" />, completed: false },
-                { title: "Dashboard Analitik Pro", icon: <BarChart3 className="w-5 h-5" />, completed: false },
+                { title: "AI Chatbot Customer Service", icon: <Bot className="w-4 h-4" />, completed: false },
+                { title: "Aplikasi Mobile Merchant", icon: <Smartphone className="w-4 h-4" />, completed: false },
+                { title: "Integrasi Logistik Nasional", icon: <Rocket className="w-4 h-4" />, completed: false },
+                { title: "Dashboard Analitik Pro", icon: <BarChart3 className="w-4 h-4" />, completed: false },
             ],
             color: "bg-primary",
             lightColor: "bg-sky-50",
@@ -72,16 +75,64 @@ export default async function RoadmapPage() {
             title: "Q3 - Q4 2026: Ekspansi Ekosistem",
             description: "Menghubungkan UMKM ke pasar global dan sistem offline.",
             items: [
-                { title: "Sistem Point of Sale (POS)", icon: <Store className="w-5 h-5" />, completed: false },
-                { title: "Portal Grosir & B2B", icon: <Zap className="w-5 h-5" />, completed: false },
-                { title: "Multi-Language & Currency", icon: <Globe className="w-5 h-5" />, completed: false },
-                { title: "Prediksi Stok Berbasis AI", icon: <Bot className="w-5 h-5" />, completed: false },
+                { title: "Sistem Point of Sale (POS)", icon: <Store className="w-4 h-4" />, completed: false },
+                { title: "Portal Grosir & B2B", icon: <Zap className="w-4 h-4" />, completed: false },
+                { title: "Multi-Language & Currency", icon: <Globe className="w-4 h-4" />, completed: false },
+                { title: "Prediksi Stok Berbasis AI", icon: <Bot className="w-4 h-4" />, completed: false },
             ],
             color: "bg-slate-400",
             lightColor: "bg-slate-50",
             textColor: "text-slate-600"
         }
     ];
+
+    if (githubData && githubData.length > 0) {
+        const doneItems = githubData.filter(item => item.status === "Done");
+        const inProgressItems = githubData.filter(item => item.status === "In Progress");
+        const todoItems = githubData.filter(item => item.status === "Todo");
+
+        roadmapData = [
+            {
+                status: "Launched",
+                title: "Telah Selesai",
+                description: "Pembaruan sistem dan fitur yang telah berhasil diluncurkan ke platform.",
+                items: doneItems.map(item => ({
+                    title: item.title,
+                    icon: <CheckCircle2 className="w-4 h-4" />,
+                    completed: true
+                })),
+                color: "bg-green-500",
+                lightColor: "bg-green-50",
+                textColor: "text-green-700"
+            },
+            {
+                status: "In Progress",
+                title: "Sedang Dikerjakan",
+                description: "Tugas dan fitur yang saat ini sedang aktif dalam tahap pengembangan tim.",
+                items: inProgressItems.map(item => ({
+                    title: item.title,
+                    icon: <Rocket className="w-4 h-4" />,
+                    completed: false
+                })),
+                color: "bg-primary",
+                lightColor: "bg-sky-50",
+                textColor: "text-primary"
+            },
+            {
+                status: "Planned",
+                title: "Direncanakan",
+                description: "Daftar permintaan fitur dan ide cemerlang yang telah masuk ke antrean kami.",
+                items: todoItems.map(item => ({
+                    title: item.title,
+                    icon: <Clock className="w-4 h-4" />,
+                    completed: false
+                })),
+                color: "bg-slate-400",
+                lightColor: "bg-slate-50",
+                textColor: "text-slate-600"
+            }
+        ].filter(group => group.items.length > 0);
+    }
 
     return (
         <div className="min-h-screen bg-white">
@@ -103,11 +154,11 @@ export default async function RoadmapPage() {
 
                 {/* Roadmap Grid */}
                 <section className="px-4">
-                    <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
                         {roadmapData.map((phase, idx) => (
                             <div key={idx} className="relative group">
                                 {/* Status Header */}
-                                <div className={`flex items-center justify-between mb-6 p-4 rounded-2xl ${phase.lightColor}`}>
+                                <div className={`flex items-center justify-between mb-4 p-3 rounded-xl ${phase.lightColor}`}>
                                     <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${phase.textColor}`}>
                                         {phase.status}
                                     </span>
@@ -115,25 +166,25 @@ export default async function RoadmapPage() {
                                 </div>
 
                                 {/* Content Card */}
-                                <div className="bg-white border border-slate-100 rounded-[2.5rem] p-8 shadow-[0_20px_50px_rgba(0,0,0,0.05)] group-hover:shadow-[0_40px_80px_rgba(0,0,0,0.1)] transition-all duration-500 min-h-[500px] flex flex-col">
-                                    <h2 className="text-xl font-bold text-slate-900 mb-2">{phase.title}</h2>
-                                    <p className="text-sm text-slate-500 leading-relaxed mb-8">{phase.description}</p>
+                                <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-[0_10px_30px_rgba(0,0,0,0.03)] group-hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] transition-all duration-300 flex flex-col h-full">
+                                    <h2 className="text-lg font-bold text-slate-900 mb-2">{phase.title}</h2>
+                                    <p className="text-xs text-slate-500 leading-relaxed mb-6">{phase.description}</p>
                                     
-                                    <div className="space-y-6 flex-1">
+                                    <div className="space-y-4 flex-1">
                                         {phase.items.map((item, iidx) => (
-                                            <div key={iidx} className="flex items-start gap-4">
-                                                <div className={`p-3 rounded-xl ${item.completed ? 'bg-green-50 text-green-600' : 'bg-slate-50 text-slate-400'}`}>
+                                            <div key={iidx} className="flex items-start gap-3">
+                                                <div className={`p-2 rounded-lg ${item.completed ? 'bg-green-50 text-green-600' : 'bg-slate-50 text-slate-400'}`}>
                                                     {item.icon}
                                                 </div>
                                                 <div className="flex-1 pt-1">
                                                     <div className="flex items-center justify-between gap-2 mb-1">
-                                                        <h4 className={`text-sm font-bold ${item.completed ? 'text-slate-900' : 'text-slate-500'}`}>
+                                                        <h4 className={`text-xs font-bold leading-tight ${item.completed ? 'text-slate-900' : 'text-slate-500'}`}>
                                                             {item.title}
                                                         </h4>
                                                         {item.completed ? (
-                                                            <CheckCircle2 size={16} className="text-green-500 shrink-0" />
+                                                            <CheckCircle2 size={14} className="text-green-500 shrink-0" />
                                                         ) : (
-                                                            <Circle size={16} className="text-slate-200 shrink-0" />
+                                                            <Circle size={14} className="text-slate-200 shrink-0" />
                                                         )}
                                                     </div>
                                                 </div>
@@ -142,20 +193,20 @@ export default async function RoadmapPage() {
                                     </div>
 
                                     {/* Bottom Decorative Element */}
-                                    <div className="mt-8 pt-8 border-t border-slate-50 flex items-center justify-between">
-                                        <div className="flex -space-x-2">
+                                    <div className="mt-6 pt-4 border-t border-slate-50 flex items-center justify-between">
+                                        <div className="flex -space-x-1.5">
                                             {[1, 2, 3].map(i => (
-                                                <div key={i} className="relative w-8 h-8 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center overflow-hidden">
+                                                <div key={i} className="relative w-6 h-6 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center overflow-hidden">
                                                     <Image 
                                                         src={`https://i.pravatar.cc/100?img=${i + 10}`} 
                                                         alt="dev" 
-                                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" fill
+                                                        sizes="24px" fill
                                                         className="object-cover grayscale" 
                                                     />
                                                 </div>
                                             ))}
                                         </div>
-                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic">Dev Team</span>
+                                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest italic">Dev Team</span>
                                     </div>
                                 </div>
                             </div>

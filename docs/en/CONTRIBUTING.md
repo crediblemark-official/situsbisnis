@@ -143,3 +143,11 @@ bun run test:e2e           # Run Playwright tests
 
 - Open a [Discussion](https://github.com/crediblemark-official/situsbisnis/discussions)
 - Contact the team at support@SitusBisnis.id
+
+## Project Board
+
+Whenever you complete a new feature or bug fix that is merged into this repository, you are **REQUIRED** to update the GitHub Project Board ([Situs Bisnis Roadmap](https://github.com/orgs/crediblemark-official/projects/1)).
+
+1. Add a new ticket item to the board (if it doesn't exist yet).
+2. Update the status of the item to **Done**.
+3. The `/roadmap` page in the app will automatically sync with this project board.

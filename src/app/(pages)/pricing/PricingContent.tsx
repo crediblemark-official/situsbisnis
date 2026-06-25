@@ -23,7 +23,7 @@ export default function PricingContent({ plans, currency }: PricingContentProps)
                 <button
                     type="button"
                     onClick={() => setBillingInterval(billingInterval === 'month' ? 'year' : 'month')}
-                    className="w-16 h-8 bg-slate-200/80 rounded-full p-1 transition-colors duration-300 relative cursor-pointer focus:outline-none focus:ring-2 focus:ring-sky-500/50 hover:bg-slate-300/80 border border-slate-300/40"
+                    className="w-16 h-8 bg-slate-200/80 rounded-full p-1 transition-colors duration-300 relative cursor-pointer focus:outline-none focus:ring-2 focus:ring-sky-500/50 hover:bg-slate-300/80 border border-slate-300/40 flex items-center"
                     aria-label="Toggle interval penagihan"
                 >
                     <div className={`w-6 h-6 bg-sky-550 rounded-full transition-transform duration-300 shadow-md ${billingInterval === 'year' ? 'translate-x-8' : 'translate-x-0'}`} />
@@ -33,7 +33,7 @@ export default function PricingContent({ plans, currency }: PricingContentProps)
                     <span className={`text-[12px] md:text-sm font-black uppercase tracking-widest transition-colors duration-300 ${billingInterval === 'year' ? 'text-slate-900' : 'text-slate-400'}`}>
                         Tahunan
                     </span>
-                    <span className="px-2.5 py-1 rounded-full bg-emerald-500 text-white text-[9px] font-black uppercase tracking-wider animate-bounce">
+                    <span className="px-2.5 py-1 rounded-full bg-emerald-500 text-white text-[9px] font-black uppercase tracking-wider flex items-center shadow-sm">
                         Hemat ~20% 🔥
                     </span>
                 </div>
@@ -86,7 +86,7 @@ function PricingCard({ plan, currency, billingInterval }: { plan: any; currency:
             )}
 
             {isPopular && (
-                <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-sky-500 via-blue-500 to-indigo-650 text-white text-[9px] font-black uppercase tracking-[0.18em] px-6 py-2.5 rounded-full shadow-lg shadow-sky-500/20 z-20 border border-white/10 flex items-center gap-1.5 whitespace-nowrap">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-sky-500 via-blue-500 to-indigo-650 text-white text-[9px] font-black uppercase tracking-[0.18em] px-4 py-1.5 rounded-full shadow-lg shadow-sky-500/20 z-20 border border-sky-400/30 flex items-center gap-1.5 whitespace-nowrap">
                     <Sparkles size={11} className="animate-spin-slow" /> Paling Populer
                 </div>
             )}
