@@ -3,8 +3,12 @@
 import React from "react";
 import { Monitor, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { usePlatformSettings } from "@/hooks/use-platform-settings";
 
 export function DesktopOnly() {
+  const { settings } = usePlatformSettings();
+  const platformName = settings?.siteName || "SitusBisnis";
+
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#0a0a0a] text-white p-6 overflow-hidden font-sans">
       {/* Background Decorative Elements */}
@@ -38,7 +42,7 @@ export function DesktopOnly() {
         </div>
         
         <p className="text-[10px] text-gray-600 font-bold uppercase tracking-widest pt-8">
-          Powered by CredBuild
+          Powered by {platformName}
         </p>
       </div>
     </div>

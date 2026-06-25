@@ -54,7 +54,7 @@ export const ExpiredSiteView = ({ status, siteName, platformName = "SitusBisnis"
 
                 <div className="bg-slate-50 px-8 py-4 text-center">
                     <p className="text-[9px] text-slate-400 font-medium uppercase tracking-widest">
-                        Powered by {platformName} Platform
+                        Powered by {platformName}
                     </p>
                 </div>
             </div>
