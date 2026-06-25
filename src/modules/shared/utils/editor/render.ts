@@ -2,10 +2,10 @@ import { generateHTML } from '@tiptap/html';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import { getProxiedUrl } from '@/lib/media/utils';
-import DOMPurify from 'isomorphic-dompurify';
+import filterXSS from 'xss';
 
 function sanitizeHtml(html: string): string {
-    return DOMPurify.sanitize(html);
+    return filterXSS(html);
 }
 
 /**
