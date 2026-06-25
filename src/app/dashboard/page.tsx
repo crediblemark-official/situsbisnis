@@ -109,16 +109,20 @@ export default async function DashboardPage() {
     // Ambil role efektif pengguna di situs ini
     let userRole = "user";
     if (siteId && session?.user?.id) {
-        const link = await db.siteUser.findUnique({
-            where: {
-                siteId_userId: {
-                    siteId,
-                    userId: session.user.id
-                }
-            },
-            select: { role: true }
-        });
-        userRole = link?.role || "user";
+        if (session.user.role === "admin") {
+            userRole = "owner";
+        } else {
+            const link = await db.siteUser.findUnique({
+                where: {
+                    siteId_userId: {
+                        siteId,
+                        userId: session.user.id
+                    }
+                },
+                select: { role: true }
+            });
+            userRole = link?.role || "user";
+        }
     } else if (!siteId && session?.user?.role === "admin") {
         userRole = "admin";
     } else if (!siteId) {
