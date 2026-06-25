@@ -57,14 +57,14 @@ export async function createOrderApi(req: Request) {
         if (error.message === "Email is required") {
             return apiError("Email is required", 400);
         }
-        if (error.message.includes("Product not found")) {
+        if (error.message.includes("Product not found") || error.message.includes("Stok tidak mencukupi") || error.message.includes("Stok")) {
             return apiError(error.message, 400);
         }
         const lowerMsg = error.message.toLowerCase();
         if (lowerMsg.includes("langganan") || lowerMsg.includes("limit")) {
             return apiError(error.message, 403);
         }
-        return apiError("Internal Error");
+        return apiError(error.message || "Internal Error", 500);
     }
 }
 
