@@ -80,10 +80,7 @@ function PricingCard({ plan, currency, billingInterval }: { plan: any; currency:
     return (
         <div className={`snap-center shrink-0 w-[82vw] md:w-[45vw] lg:w-auto h-full group relative ${isPopular ? 'lg:-translate-y-3' : ''} transition-all duration-500 flex flex-col`}>
             
-            {/* Glowing Accent Shadow behind popular card */}
-            {isPopular && (
-                <div className="absolute -inset-1 bg-gradient-to-r from-sky-500 via-blue-500 to-indigo-500 rounded-[2.5rem] blur-xl opacity-35 group-hover:opacity-55 transition duration-1000 group-hover:duration-200 pointer-events-none" />
-            )}
+            {/* Glowing Accent Shadow behind popular card removed based on user request */}
 
             {isPopular && (
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-sky-500 via-blue-500 to-indigo-650 text-white text-[9px] font-black uppercase tracking-[0.18em] px-4 py-1.5 rounded-full shadow-lg shadow-sky-500/20 z-20 border border-sky-400/30 flex items-center gap-1.5 whitespace-nowrap">
