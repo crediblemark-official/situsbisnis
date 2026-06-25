@@ -9,6 +9,7 @@ import { SubscriptionClient } from "@/modules/subscription";
 import { cookies } from "next/headers";
 import { z } from "zod";
 import { getApiContext } from "@/lib/api/utils";
+import { serializeUser } from "@/modules/shared/utils/content/serialize";
 
 const profileUpdateSchema = z.object({
     name: z.string().min(1, "Name is required").optional(),
@@ -252,7 +253,7 @@ export async function createUserAction(body: any) {
 
         try {
             const user = await IdentityClient.createUserByAdmin(siteId, parsed.data, session.user.role);
-            return { success: true, user };
+            return { success: true, user: serializeUser(user) };
         } catch (err: any) {
             return { success: false, error: err.message };
         }

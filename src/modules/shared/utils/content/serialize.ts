@@ -68,4 +68,19 @@ export function serializeTransactions(transactions: any[]) {
     return transactions.map(serializeTransaction);
 }
 
+export function serializeUser(user: any) {
+    if (!user) return null;
+    return {
+        ...user,
+        affiliateBalance: user.affiliateBalance ? Number(user.affiliateBalance) : 0,
+        createdAt: user.createdAt ? new Date(user.createdAt).toISOString() : undefined,
+        emailVerified: user.emailVerified ? new Date(user.emailVerified).toISOString() : null,
+    };
+}
+
+export function serializeUsers(users: any[]) {
+    return users.map(serializeUser);
+}
+
+
 
