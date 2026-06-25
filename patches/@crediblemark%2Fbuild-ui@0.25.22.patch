@@ -1,0 +1,2104 @@
+diff --git a/dist/AboutCompanyRender-4ME6YRIS.mjs b/dist/AboutCompanyRender-4ME6YRIS.mjs
+index abcf595d87094231261985c4b7198f3ce716080e..54480eb592f8b3c69e9ae0dc40079b2997e71a06 100644
+--- a/dist/AboutCompanyRender-4ME6YRIS.mjs
++++ b/dist/AboutCompanyRender-4ME6YRIS.mjs
+@@ -21,10 +21,10 @@ var AboutCompanyRender = ({
+     padding = { desktop: 48, tablet: 32, mobile: 24 },
+     textColor = "#374151",
+     gap = { desktop: 32, tablet: 24, mobile: 16 }
+-  } = styling;
++  } = styling || {};
+   const {
+     fontSize = { desktop: 18, tablet: 16, mobile: 16 }
+-  } = typography;
++  } = typography || {};
+   const id = useId().replace(/:/g, "");
+   const uniqueClass = `about-company-${id}`;
+   return /* @__PURE__ */ jsxs("section", { className: uniqueClass, style: { backgroundColor }, children: [
+diff --git a/dist/AccordionRender-ZC7AFFGO.mjs b/dist/AccordionRender-ZC7AFFGO.mjs
+index 12046c872aabef67822e1933c14465d611880bb5..c7bead8743a42352980cdd3c75d91823dcf2c921 100644
+--- a/dist/AccordionRender-ZC7AFFGO.mjs
++++ b/dist/AccordionRender-ZC7AFFGO.mjs
+@@ -14,9 +14,9 @@ var AccordionRender = ({
+   typography,
+   styling
+ }) => {
+-  const { title, items } = content;
+-  const { titleFont = "inherit", bodyFont = "inherit" } = typography;
+-  const { backgroundColor, titleColor, itemBgColor, textColor, activeColor, padding, borderRadius } = styling;
++  const { title, items } = content || {};
++  const { titleFont = "inherit", bodyFont = "inherit" } = typography || {};
++  const { backgroundColor, titleColor, itemBgColor, textColor, activeColor, padding, borderRadius } = styling || {};
+   const id = "accordion-" + useId().replace(/:/g, "");
+   const finalActiveColor = activeColor || "#2563eb";
+   return /* @__PURE__ */ jsxs("section", { className: id, style: { padding: `${getVal(padding, 80)}px 20px`, backgroundColor: backgroundColor || "#ffffff" }, children: [
+@@ -70,7 +70,7 @@ var AccordionRender = ({
+         fontFamily: titleFont !== "inherit" ? `"${titleFont}", sans-serif` : "inherit",
+         lineHeight: 1.2
+       }, children: title }),
+-      /* @__PURE__ */ jsx("div", { style: { display: "flex", flexDirection: "column", gap: "16px" }, children: items.map((item, i) => /* @__PURE__ */ jsxs(
++      /* @__PURE__ */ jsx("div", { style: { display: "flex", flexDirection: "column", gap: "16px" }, children: (items || []).map((item, i) => /* @__PURE__ */ jsxs(
+         "details",
+         {
+           style: {
+diff --git a/dist/AgencyRender-5NPJK7HD.mjs b/dist/AgencyRender-5NPJK7HD.mjs
+index 5b95d787625d4505b3bb8b19f58c2e198747b69c..093759a886dbe15ef35aac60536bcf6e50321443 100644
+--- a/dist/AgencyRender-5NPJK7HD.mjs
++++ b/dist/AgencyRender-5NPJK7HD.mjs
+@@ -18,12 +18,12 @@ var HeroAgencyRender = ({
+     subtitle,
+     ctaText,
+     ctaLink
+-  } = content;
++  } = content || {};
+   const {
+     project1ImageUrl,
+     project2ImageUrl,
+     project3ImageUrl
+-  } = media;
++  } = media || {};
+   const {
+     titleFont,
+     titleSize,
+@@ -31,7 +31,7 @@ var HeroAgencyRender = ({
+     titleColor,
+     subtitleSize,
+     subtitleColor
+-  } = typography;
++  } = typography || {};
+   const {
+     backgroundColor,
+     accentColor,
+@@ -46,7 +46,7 @@ var HeroAgencyRender = ({
+     projectShadow,
+     paddingTop,
+     paddingBottom
+-  } = styling;
++  } = styling || {};
+   const id = "agency-" + useId().replace(/:/g, "");
+   const getVal = (obj, key) => {
+     if (typeof obj === "number") return obj;
+diff --git a/dist/AutoServiceRender-KX4JU2LI.mjs b/dist/AutoServiceRender-KX4JU2LI.mjs
+index 9831c47dc6b7bf194b331f740ddb1c4f869c6e2c..794fd4a63a4eabba9b352009372cfc3fb54898bf 100644
+--- a/dist/AutoServiceRender-KX4JU2LI.mjs
++++ b/dist/AutoServiceRender-KX4JU2LI.mjs
+@@ -20,13 +20,13 @@ var HeroAutoServiceRender = ({
+     ctaText,
+     ctaLink,
+     secondaryButtonText
+-  } = content;
+-  const { imageUrl } = media;
++  } = content || {};
++  const { imageUrl } = media || {};
+   const {
+     titleSize,
+     titleWeight,
+     bulletSize
+-  } = typography;
++  } = typography || {};
+   const {
+     backgroundColor,
+     primaryColor,
+@@ -40,7 +40,7 @@ var HeroAutoServiceRender = ({
+     paddingBottom,
+     btnPaddingHorizontal,
+     btnPaddingVertical
+-  } = styling;
++  } = styling || {};
+   const id = "auto-service-" + useId().replace(/:/g, "");
+   const getVal = (obj, key) => {
+     if (typeof obj === "number") return obj;
+diff --git a/dist/BlogListRender-HPEN3JVQ.mjs b/dist/BlogListRender-HPEN3JVQ.mjs
+index 20c5fd84a7d49092c020098e1f1755f21823fcf9..64b9c6cac36250f8f531f007165f792807b630d5 100644
+--- a/dist/BlogListRender-HPEN3JVQ.mjs
++++ b/dist/BlogListRender-HPEN3JVQ.mjs
+@@ -89,9 +89,9 @@ var BlogListRender = ({
+   styling,
+   initialPosts
+ }) => {
+-  const { title, description, limit = 3 } = content;
+-  const { titleColor = "#111827", descriptionColor = "#4b5563", cardTitleColor = "#111827", cardTextColor = "#4b5563", cardDateColor = "#9ca3af", linkColor = "#2563eb" } = typography;
+-  const { columns, backgroundColor = "#ffffff", padding = { desktop: 80, tablet: 60, mobile: 40 }, cardBackgroundColor = "#ffffff", cardBorderColor = "#f3f4f6" } = styling;
++  const { title, description, limit = 3 } = content || {};
++  const { titleColor = "#111827", descriptionColor = "#4b5563", cardTitleColor = "#111827", cardTextColor = "#4b5563", cardDateColor = "#9ca3af", linkColor = "#2563eb" } = typography || {};
++  const { columns, backgroundColor = "#ffffff", padding = { desktop: 80, tablet: 60, mobile: 40 }, cardBackgroundColor = "#ffffff", cardBorderColor = "#f3f4f6" } = styling || {};
+   const [posts, setPosts] = useState(initialPosts || []);
+   const [loading, setLoading] = useState(!initialPosts);
+   const mounted = useHasMounted();
+diff --git a/dist/BoxRender-HJ5VHYUA.mjs b/dist/BoxRender-HJ5VHYUA.mjs
+index e3e4a1ee0faebc6dd7654fcf87f9b708bfae27d7..20dd44b2ed971169fb548f748ba38962c83ee25d 100644
+--- a/dist/BoxRender-HJ5VHYUA.mjs
++++ b/dist/BoxRender-HJ5VHYUA.mjs
+@@ -125,9 +125,9 @@ var BoxPricingRender = ({
+   typography,
+   styling
+ }) => {
+-  const { title, description, items } = content;
+-  const { titleFont = "inherit", bodyFont = "inherit" } = typography;
+-  const { columnsDesktop, columnsTablet, columnsMobile, columns, mainColor, padding, backgroundColor } = styling;
++  const { title, description, items } = content || {};
++  const { titleFont = "inherit", bodyFont = "inherit" } = typography || {};
++  const { columnsDesktop, columnsTablet, columnsMobile, columns, mainColor, padding, backgroundColor } = styling || {};
+   const id = "box-pricing-" + useId().replace(/:/g, "");
+   const primaryColor = mainColor || "#2563eb";
+   const colDesktop = getVal(columns, columnsDesktop || 3);
+@@ -177,7 +177,7 @@ var BoxPricingRender = ({
+         margin: "0 auto 60px",
+         fontFamily: bodyFont !== "inherit" ? `"${bodyFont}", sans-serif` : "inherit"
+       }, children: description }),
+-      /* @__PURE__ */ jsx2("div", { className: "grid-container", children: items.map((item, i) => /* @__PURE__ */ jsx2(
++      /* @__PURE__ */ jsx2("div", { className: "grid-container", children: (items || []).map((item, i) => /* @__PURE__ */ jsx2(
+         BoxPricingCard,
+         {
+           item,
+diff --git a/dist/ButtonRender-AYV6PZWJ.mjs b/dist/ButtonRender-AYV6PZWJ.mjs
+index e92fe4e5bbd1e0c41aa06f0cedbda5ef773eeaa0..6c02b69d6376aef5ff09f08fd184fa2695ecf525 100644
+--- a/dist/ButtonRender-AYV6PZWJ.mjs
++++ b/dist/ButtonRender-AYV6PZWJ.mjs
+@@ -20,7 +20,7 @@ var ButtonRender = ({
+   content,
+   styling
+ }) => {
+-  const { text = "Click Me", link = "#", pixelEvent = "" } = content;
++  const { text = "Click Me", link = "#", pixelEvent = "" } = content || {};
+   const {
+     align = "center",
+     buttonColor = "#0ea5e9",
+@@ -31,7 +31,7 @@ var ButtonRender = ({
+     borderRadius,
+     marginTop,
+     marginBottom
+-  } = styling;
++  } = styling || {};
+   const id = useId().replace(/:/g, "");
+   const uniqueClass = `btn-${id}`;
+   return /* @__PURE__ */ jsxs("div", { className: uniqueClass, style: {
+diff --git a/dist/CTARender-QUTGLYOW.mjs b/dist/CTARender-QUTGLYOW.mjs
+index 07256987061ab36fac3e75ed3c30b6ceabb34296..0c60329b49fab41bbf5166ecec3bb1b31b53e62a 100644
+--- a/dist/CTARender-QUTGLYOW.mjs
++++ b/dist/CTARender-QUTGLYOW.mjs
+@@ -21,8 +21,8 @@ var CTARender = ({
+   typography,
+   styling
+ }) => {
+-  const { title, subtitle, buttonText, buttonLink } = content;
+-  const { titleSize = { desktop: 56, tablet: 48, mobile: 32 }, descriptionSize = { desktop: 20, tablet: 18, mobile: 16 } } = typography;
++  const { title, subtitle, buttonText, buttonLink } = content || {};
++  const { titleSize = { desktop: 56, tablet: 48, mobile: 32 }, descriptionSize = { desktop: 20, tablet: 18, mobile: 16 } } = typography || {};
+   const {
+     backgroundColor = "linear-gradient(135deg, #dc2626 0%, #7f1d1d 100%)",
+     padding = { desktop: 100, tablet: 80, mobile: 60 },
+@@ -30,7 +30,7 @@ var CTARender = ({
+     descriptionColor = "rgba(255, 255, 255, 0.95)",
+     buttonColor = "#ffffff",
+     buttonTextColor = "#dc2626"
+-  } = styling;
++  } = styling || {};
+   const id = useId().replace(/:/g, "");
+   const uniqueClass = `cta-${id}`;
+   return /* @__PURE__ */ jsxs("section", { className: uniqueClass, style: {
+diff --git a/dist/ComparisonTableRender-FAMTOFGO.mjs b/dist/ComparisonTableRender-FAMTOFGO.mjs
+index d9126c3a40741c2a59591fed4d34db4231460666..c92dbb119c52f0b00216fa50b55dff2cf18e0ed2 100644
+--- a/dist/ComparisonTableRender-FAMTOFGO.mjs
++++ b/dist/ComparisonTableRender-FAMTOFGO.mjs
+@@ -9,8 +9,8 @@ import "./chunk-GOS24TXO.mjs";
+ import { useId } from "react";
+ import { jsx, jsxs } from "react/jsx-runtime";
+ var ComparisonTableRender = ({ content, styling }) => {
+-  const { title, plans, features } = content;
+-  const { backgroundColor, padding, headerColor, headerTextColor, rowAlternateColor, textColor, accentColor } = styling;
++  const { title, plans, features } = content || {};
++  const { backgroundColor, padding, headerColor, headerTextColor, rowAlternateColor, textColor, accentColor } = styling || {};
+   const id = useId().replace(/:/g, "");
+   const uniqueClass = `comparison-${id}`;
+   return /* @__PURE__ */ jsxs("section", { className: uniqueClass, style: { background: backgroundColor, color: textColor }, children: [
+@@ -101,7 +101,7 @@ var ComparisonTableRender = ({ content, styling }) => {
+           /* @__PURE__ */ jsx("th", { children: "Fitur" }),
+           plans.map((plan, i) => /* @__PURE__ */ jsx("th", { children: plan.name }, i))
+         ] }) }),
+-        /* @__PURE__ */ jsx("tbody", { children: features.map((feature, i) => /* @__PURE__ */ jsxs("tr", { children: [
++        /* @__PURE__ */ jsx("tbody", { children: (features || []).map((feature, i) => /* @__PURE__ */ jsxs("tr", { children: [
+           /* @__PURE__ */ jsx("td", { children: feature.name }),
+           feature.values.map((item, j) => /* @__PURE__ */ jsx("td", { children: String(item.value) === "true" ? /* @__PURE__ */ jsx("span", { className: "check-icon", children: "\u2713" }) : String(item.value) === "false" ? /* @__PURE__ */ jsx("span", { className: "cross-icon", children: "\u2715" }) : item.value }, j))
+         ] }, i)) })
+diff --git a/dist/ContactFormRender-4LJSX4U6.mjs b/dist/ContactFormRender-4LJSX4U6.mjs
+index 9ebedf4e4424773bb048cafd02d3fcbd644647da..579b0810b4a2f46cf5d1466d29a5e279ad46cfc0 100644
+--- a/dist/ContactFormRender-4LJSX4U6.mjs
++++ b/dist/ContactFormRender-4LJSX4U6.mjs
+@@ -10,7 +10,7 @@ import "./chunk-GOS24TXO.mjs";
+ import React, { useId } from "react";
+ import { jsx, jsxs } from "react/jsx-runtime";
+ var ContactFormRender = ({ content, styling }) => {
+-  const { title, description, submitText } = content;
++  const { title, description, submitText } = content || {};
+   const {
+     backgroundColor = "#ffffff",
+     padding,
+diff --git a/dist/ContainerRender-O3MFJFHW.mjs b/dist/ContainerRender-O3MFJFHW.mjs
+index 607fbb6243e95393066212bba228d2202eab70af..e6c8f0ad6f523ccbef3caf3d264ff372ead8f38c 100644
+--- a/dist/ContainerRender-O3MFJFHW.mjs
++++ b/dist/ContainerRender-O3MFJFHW.mjs
+@@ -15,8 +15,8 @@ var ContainerRender = ({
+   media,
+   styling
+ }) => {
+-  const { contentWidth, width } = content;
+-  const { backgroundImage } = media;
++  const { contentWidth, width } = content || {};
++  const { backgroundImage } = media || {};
+   const {
+     containerLayout,
+     minHeight,
+@@ -64,7 +64,7 @@ var ContainerRender = ({
+     position,
+     top,
+     animation
+-  } = styling;
++  } = styling || {};
+   const s = (val) => {
+     if (typeof val === "string") return parseInt(val) || 0;
+     return val;
+diff --git a/dist/CustomEmbedRender-RQR4CUJ4.mjs b/dist/CustomEmbedRender-RQR4CUJ4.mjs
+index ff8506e923ba2a6db4dc242305891efc0e1e83e3..b3b9433013cb088ab7ec970b1a7f78ddcfb8e53b 100644
+--- a/dist/CustomEmbedRender-RQR4CUJ4.mjs
++++ b/dist/CustomEmbedRender-RQR4CUJ4.mjs
+@@ -9,8 +9,8 @@ import "./chunk-GOS24TXO.mjs";
+ import { useId, useState, useEffect } from "react";
+ import { jsx, jsxs } from "react/jsx-runtime";
+ var CustomEmbedRender = ({ content, styling }) => {
+-  const { html, script, renderMode } = content;
+-  const { backgroundColor, padding, maxWidth, alignment } = styling;
++  const { html, script, renderMode } = content || {};
++  const { backgroundColor, padding, maxWidth, alignment } = styling || {};
+   const id = useId().replace(/:/g, "");
+   const uniqueClass = `embed-${id}`;
+   const [iframeHeight, setIframeHeight] = useState("150px");
+diff --git a/dist/DentalRender-VAE4HLE2.mjs b/dist/DentalRender-VAE4HLE2.mjs
+index 118d3e9e306fc1bb9e791df0fd3e5e96453ecbfb..61ea5fb7ebdd950cd895ad33049e72e7595020ac 100644
+--- a/dist/DentalRender-VAE4HLE2.mjs
++++ b/dist/DentalRender-VAE4HLE2.mjs
+@@ -22,13 +22,13 @@ var HeroDentalRender = ({
+     service2Desc,
+     service3Title,
+     service3Desc
+-  } = content;
++  } = content || {};
+   const {
+     titleFont,
+     titleSize,
+     titleWeight,
+     subtitleSize
+-  } = typography;
++  } = typography || {};
+   const {
+     titleColor,
+     highlightColor,
+@@ -45,7 +45,7 @@ var HeroDentalRender = ({
+     serviceCardBg,
+     paddingTop,
+     paddingBottom
+-  } = styling;
++  } = styling || {};
+   const id = "dental-" + useId().replace(/:/g, "");
+   const getVal = (obj, key) => {
+     if (typeof obj === "number") return obj;
+diff --git a/dist/FeatureItemRender-3ZFW7642.mjs b/dist/FeatureItemRender-3ZFW7642.mjs
+index 58ee83c26821cf5346602fca91941979b3fb4feb..d7809d7e4f87bc48986d7656b45bfefebfe3bbe7 100644
+--- a/dist/FeatureItemRender-3ZFW7642.mjs
++++ b/dist/FeatureItemRender-3ZFW7642.mjs
+@@ -210,7 +210,7 @@ var FeatureItemRender = ({ content, styling }) => {
+                 }
+                 ` : ""}
+             ` } }),
+-        /* @__PURE__ */ jsx("div", { className: `mx-auto ${containerMaxWidth || "max-w-screen-xl"}`, children: /* @__PURE__ */ jsx("div", { className: "feature-grid", children: items.map((item, index) => {
++        /* @__PURE__ */ jsx("div", { className: `mx-auto ${containerMaxWidth || "max-w-screen-xl"}`, children: /* @__PURE__ */ jsx("div", { className: "feature-grid", children: (items || []).map((item, index) => {
+           return /* @__PURE__ */ jsx("div", { className: "feature-card-wrapper", children: /* @__PURE__ */ jsxs(
+             "div",
+             {
+diff --git a/dist/FitnessRender-4CDRWF3I.mjs b/dist/FitnessRender-4CDRWF3I.mjs
+index 61479475b987ef4ff6054eb47d55c289dd08a65f..a8a9294b3a2cac5e2c2c42e0c98331015f836d27 100644
+--- a/dist/FitnessRender-4CDRWF3I.mjs
++++ b/dist/FitnessRender-4CDRWF3I.mjs
+@@ -17,19 +17,19 @@ var HeroFitnessRender = ({
+     title,
+     subtitle,
+     ctaText
+-  } = content;
++  } = content || {};
+   const {
+     imageUrl1,
+     imageUrl2,
+     imageUrl3,
+     imageUrl4
+-  } = media;
++  } = media || {};
+   const {
+     titleFont,
+     titleSize,
+     titleWeight,
+     subtitleSize
+-  } = typography;
++  } = typography || {};
+   const {
+     titleColor,
+     subtitleColor,
+@@ -46,7 +46,7 @@ var HeroFitnessRender = ({
+     paddingTop,
+     paddingBottom,
+     gap
+-  } = styling;
++  } = styling || {};
+   const id = "fitness-" + useId().replace(/:/g, "");
+   const getVal = (obj, key) => {
+     if (typeof obj === "number") return obj;
+diff --git a/dist/FlexBlockRender-PEOHHGOD.mjs b/dist/FlexBlockRender-PEOHHGOD.mjs
+index d874e5b4af65be5d5864e36af110a2d8fe05f94b..e7e4d9b76a93509f2d2b79007db6d9241e42d1d3 100644
+--- a/dist/FlexBlockRender-PEOHHGOD.mjs
++++ b/dist/FlexBlockRender-PEOHHGOD.mjs
+@@ -11,9 +11,9 @@ var FlexBlockRender = ({
+   typography,
+   styling
+ }) => {
+-  const { title, description } = content;
+-  const { image, backgroundImage } = media;
+-  const { titleFontFamily, titleSize, titleWeight, titleColor, descFontFamily, descSize, descColor } = typography;
++  const { title, description } = content || {};
++  const { image, backgroundImage } = media || {};
++  const { titleFontFamily, titleSize, titleWeight, titleColor, descFontFamily, descSize, descColor } = typography || {};
+   const {
+     alignContent,
+     width,
+@@ -28,7 +28,7 @@ var FlexBlockRender = ({
+     borderRadius,
+     borderWidth,
+     borderColor
+-  } = styling;
++  } = styling || {};
+   const getVal = (prop, key, def = 0) => {
+     if (!prop) return def;
+     if (typeof prop === "number") return prop;
+diff --git a/dist/GalleryRender-ZOAK7ZXU.mjs b/dist/GalleryRender-ZOAK7ZXU.mjs
+index 3eaebe0fe06b2c186277ec244590df58f1c83822..9d60b3af5e0a7699db485012a06256e289b06031 100644
+--- a/dist/GalleryRender-ZOAK7ZXU.mjs
++++ b/dist/GalleryRender-ZOAK7ZXU.mjs
+@@ -104,8 +104,8 @@ var GalleryRender = ({
+   styling,
+   initialItems
+ }) => {
+-  const { title, description } = content;
+-  const { titleFont = "inherit", titleColor } = typography;
++  const { title, description } = content || {};
++  const { titleFont = "inherit", titleColor } = typography || {};
+   const {
+     variant,
+     scrollMode,
+@@ -119,7 +119,7 @@ var GalleryRender = ({
+     gap,
+     borderRadius,
+     padding
+-  } = styling;
++  } = styling || {};
+   const id = "gallery-" + useId().replace(/:/g, "");
+   const [items, setItems] = useState(initialItems || []);
+   const [loading, setLoading] = useState(!initialItems);
+@@ -300,7 +300,7 @@ var GalleryRender = ({
+         minWidth: "min-content",
+         margin: "0 auto",
+         justifyContent: "center"
+-      }, children: items.map((item, i) => /* @__PURE__ */ jsx2(
++      }, children: (items || []).map((item, i) => /* @__PURE__ */ jsx2(
+         GalleryItem,
+         {
+           item,
+@@ -311,7 +311,7 @@ var GalleryRender = ({
+           onClick: () => setSelectedIdx(i)
+         },
+         i
+-      )) }) }) : /* @__PURE__ */ jsx2("div", { className: "gallery-container", children: /* @__PURE__ */ jsx2("div", { className: isMasonry ? "gallery-masonry" : "gallery-grid", children: items.map((item, i) => /* @__PURE__ */ jsx2(
++      )) }) }) : /* @__PURE__ */ jsx2("div", { className: "gallery-container", children: /* @__PURE__ */ jsx2("div", { className: isMasonry ? "gallery-masonry" : "gallery-grid", children: (items || []).map((item, i) => /* @__PURE__ */ jsx2(
+         GalleryItem,
+         {
+           item,
+diff --git a/dist/GoogleMapsRender-5SWB2CU2.mjs b/dist/GoogleMapsRender-5SWB2CU2.mjs
+index 7ebaa77b657c10f5fc0bd6d75747d341047923b2..67152d177aa456aa40bbda86472e98fe56d9395b 100644
+--- a/dist/GoogleMapsRender-5SWB2CU2.mjs
++++ b/dist/GoogleMapsRender-5SWB2CU2.mjs
+@@ -10,8 +10,8 @@ import "./chunk-GOS24TXO.mjs";
+ import { useId } from "react";
+ import { jsx, jsxs } from "react/jsx-runtime";
+ var GoogleMapsRender = ({ content, styling }) => {
+-  const { address, zoom } = content;
+-  const { height, padding, backgroundColor, borderRadius, grayscale } = styling;
++  const { address, zoom } = content || {};
++  const { height, padding, backgroundColor, borderRadius, grayscale } = styling || {};
+   const id = useId().replace(/:/g, "");
+   const uniqueClass = `maps-${id}`;
+   const encodedAddress = encodeURIComponent(address);
+diff --git a/dist/GradientRender-5AHUBVCT.mjs b/dist/GradientRender-5AHUBVCT.mjs
+index 0f7082026b693c1c8c2df5055543115a2c80be4b..0427b34b61a78ed25e8d2bf9ea37393c8445fb80 100644
+--- a/dist/GradientRender-5AHUBVCT.mjs
++++ b/dist/GradientRender-5AHUBVCT.mjs
+@@ -138,9 +138,9 @@ var GradientPricingRender = ({
+   typography,
+   styling
+ }) => {
+-  const { title, description, items } = content;
+-  const { titleFont = "inherit", bodyFont = "inherit" } = typography;
+-  const { columnsDesktop, columnsTablet, columnsMobile, columns, mainColor } = styling;
++  const { title, description, items } = content || {};
++  const { titleFont = "inherit", bodyFont = "inherit" } = typography || {};
++  const { columnsDesktop, columnsTablet, columnsMobile, columns, mainColor } = styling || {};
+   const id = "gradient-pricing-" + useId().replace(/:/g, "");
+   const primaryColor = mainColor || "#8b5cf6";
+   const colDesktop = getVal(columns, columnsDesktop || 3);
+@@ -182,7 +182,7 @@ var GradientPricingRender = ({
+         lineHeight: 1.6,
+         fontFamily: bodyFont !== "inherit" ? `"${bodyFont}", sans-serif` : "inherit"
+       }, children: description }),
+-      /* @__PURE__ */ jsx2("div", { className: "grid-container", children: items.map((item, i) => /* @__PURE__ */ jsx2(
++      /* @__PURE__ */ jsx2("div", { className: "grid-container", children: (items || []).map((item, i) => /* @__PURE__ */ jsx2(
+         GradientPricingCard,
+         {
+           item,
+diff --git a/dist/HeadingBlockRender-75Z3OOL2.mjs b/dist/HeadingBlockRender-75Z3OOL2.mjs
+index 0255c882bb2f360746524b22e25dc611e7882349..f4fcbd8ca8f05c17e92087bdf924c3431d27f5c6 100644
+--- a/dist/HeadingBlockRender-75Z3OOL2.mjs
++++ b/dist/HeadingBlockRender-75Z3OOL2.mjs
+@@ -32,7 +32,7 @@ var HeadingBlockRender = (props) => {
+   const typography = props.typography || {
+     fontSize: { desktop: 48, tablet: 40, mobile: 32 }
+   };
+-  const { title, level: Tag = "h1" } = content;
++  const { title, level: Tag = "h1" } = content || {};
+   const {
+     font,
+     fontWeight,
+@@ -50,8 +50,8 @@ var HeadingBlockRender = (props) => {
+     textTransform,
+     maxWidth,
+     animation
+-  } = styling;
+-  const { fontSize } = typography;
++  } = styling || {};
++  const { fontSize } = typography || {};
+   const id = useId().replace(/:/g, "");
+   const uniqueClass = `heading-${id}`;
+   const animationClasses = {
+diff --git a/dist/IconGridRender-6MFJT4KA.mjs b/dist/IconGridRender-6MFJT4KA.mjs
+index b2537e4733aa909f4390e887a07da59d4dcb9418..5111e9c1b8e1122398fa272b4b086c17a1989e38 100644
+--- a/dist/IconGridRender-6MFJT4KA.mjs
++++ b/dist/IconGridRender-6MFJT4KA.mjs
+@@ -9,9 +9,9 @@ var IconGridRender = ({
+   typography,
+   styling
+ }) => {
+-  const { title, items } = content;
+-  const { titleSize, titleColor, iconSize, iconColor, itemTitleSize, itemDescriptionSize, itemTextColor } = typography;
+-  const { columns, mobileLayout, backgroundColor, padding, cardBackgroundColor, cardBorderColor } = styling;
++  const { title, items } = content || {};
++  const { titleSize, titleColor, iconSize, iconColor, itemTitleSize, itemDescriptionSize, itemTextColor } = typography || {};
++  const { columns, mobileLayout, backgroundColor, padding, cardBackgroundColor, cardBorderColor } = styling || {};
+   const id = useId().replace(/:/g, "");
+   const uniqueClass = `icon-grid-${id}`;
+   const getVal = (val, fallback) => {
+@@ -124,7 +124,7 @@ var IconGridRender = ({
+         fontWeight: "800",
+         letterSpacing: "-0.02em"
+       }, children: title }),
+-      /* @__PURE__ */ jsx("div", { className: "icon-grid-container", children: items.map((item, i) => /* @__PURE__ */ jsxs(
++      /* @__PURE__ */ jsx("div", { className: "icon-grid-container", children: (items || []).map((item, i) => /* @__PURE__ */ jsxs(
+         "div",
+         {
+           className: "icon-grid-item",
+diff --git a/dist/ImageRender-CFFTQXQV.mjs b/dist/ImageRender-CFFTQXQV.mjs
+index 728f8fc80ffc7dfd5c1f320f712b76911cab9048..e24c8018ab2a36144e1bd613ae896c1b2cff07f1 100644
+--- a/dist/ImageRender-CFFTQXQV.mjs
++++ b/dist/ImageRender-CFFTQXQV.mjs
+@@ -91,9 +91,9 @@ var ImagePricingRender = (props) => {
+     typography,
+     styling
+   } = props;
+-  const { title } = content;
+-  const { items } = media;
+-  const { titleColor, titleFont = "inherit" } = typography;
++  const { title } = content || {};
++  const { items } = media || {};
++  const { titleColor, titleFont = "inherit" } = typography || {};
+   const {
+     sectionBg,
+     scrollMode,
+@@ -107,7 +107,7 @@ var ImagePricingRender = (props) => {
+     cardObjectFit,
+     cardShadow,
+     hoverLift
+-  } = styling;
++  } = styling || {};
+   const id = "image-pricing-" + useId().replace(/:/g, "");
+   const isHorizontal = scrollMode === "horizontal";
+   const commonCardProps = {
+@@ -174,7 +174,7 @@ var ImagePricingRender = (props) => {
+         gap: "var(--gap)",
+         minWidth: "min-content",
+         padding: "10px 0"
+-      }, children: items.map((item, i) => /* @__PURE__ */ jsx2(ImagePricingCard, { item, ...commonCardProps }, i)) }) }) : /* @__PURE__ */ jsx2("div", { className: "grid-container", children: items.map((item, i) => /* @__PURE__ */ jsx2(ImagePricingCard, { item, ...commonCardProps }, i)) })
++      }, children: (items || []).map((item, i) => /* @__PURE__ */ jsx2(ImagePricingCard, { item, ...commonCardProps }, i)) }) }) : /* @__PURE__ */ jsx2("div", { className: "grid-container", children: (items || []).map((item, i) => /* @__PURE__ */ jsx2(ImagePricingCard, { item, ...commonCardProps }, i)) })
+     ] })
+   ] });
+ };
+diff --git a/dist/InfoGridRender-S6GLI2XC.mjs b/dist/InfoGridRender-S6GLI2XC.mjs
+index 64dad9e996ae652faafb39cb2c63b72b189be3ee..67be54b2410fddedfa074f1aadbeb73e1974228c 100644
+--- a/dist/InfoGridRender-S6GLI2XC.mjs
++++ b/dist/InfoGridRender-S6GLI2XC.mjs
+@@ -15,7 +15,7 @@ import { jsx, jsxs } from "react/jsx-runtime";
+ var InfoGridRender = ({ content, styling }) => {
+   const id = useId().replace(/:/g, "");
+   const uniqueClass = `info-grid-${id}`;
+-  const { title, items = [] } = content;
++  const { title, items = [] } = content || {};
+   const s = styling;
+   return /* @__PURE__ */ jsxs("section", { className: `${uniqueClass} overflow-hidden`, style: { backgroundColor: s.sectionBg }, children: [
+     /* @__PURE__ */ jsx("style", { dangerouslySetInnerHTML: {
+@@ -126,7 +126,7 @@ var InfoGridRender = ({ content, styling }) => {
+           children: title
+         }
+       ),
+-      /* @__PURE__ */ jsx("div", { className: "grid-container", children: items.map((item, index) => {
++      /* @__PURE__ */ jsx("div", { className: "grid-container", children: (items || []).map((item, index) => {
+         return /* @__PURE__ */ jsxs("div", { className: "info-card", children: [
+           /* @__PURE__ */ jsx("div", { className: "icon-box", children: /* @__PURE__ */ jsx(DynamicIcon_default, { name: item.icon || "Info" }) }),
+           /* @__PURE__ */ jsxs("div", { className: "flex-1 min-w-0", children: [
+diff --git a/dist/ListBlockRender-4W7RJCPO.mjs b/dist/ListBlockRender-4W7RJCPO.mjs
+index 13c7ffbd656a5032701798cf53d3866f795f9c63..a4a7048645d3b02ad6db179ec77410df8306176c 100644
+--- a/dist/ListBlockRender-4W7RJCPO.mjs
++++ b/dist/ListBlockRender-4W7RJCPO.mjs
+@@ -87,7 +87,7 @@ var ListBlockRender = ({ content, styling }) => {
+     } }),
+     /* @__PURE__ */ jsxs("div", { className: "list-container border border-zinc-200/50 shadow-[0_8px_30px_rgb(0,0,0,0.015)]", children: [
+       title && /* @__PURE__ */ jsx("h3", { className: "text-lg font-bold mb-4 tracking-tight", style: { color: titleColor }, children: title }),
+-      items.length > 0 ? /* @__PURE__ */ jsx("ul", { className: "space-y-3.5", children: items.map((item, idx) => /* @__PURE__ */ jsxs("li", { className: "list-item flex items-start gap-3 leading-relaxed", children: [
++      items.length > 0 ? /* @__PURE__ */ jsx("ul", { className: "space-y-3.5", children: (items || []).map((item, idx) => /* @__PURE__ */ jsxs("li", { className: "list-item flex items-start gap-3 leading-relaxed", children: [
+         /* @__PURE__ */ jsx("span", { className: "flex-shrink-0 mt-0.5", style: { color: iconColor }, children: /* @__PURE__ */ jsx(DynamicIcon_default, { name: iconName, size: getVal(iconSize, 22) }) }),
+         /* @__PURE__ */ jsx("span", { children: item.text })
+       ] }, idx)) }) : /* @__PURE__ */ jsx("p", { className: "text-xs text-zinc-400 font-normal italic", children: "Belum ada item daftar." })
+diff --git a/dist/LogoMarqueeRender-4QDGWDLR.mjs b/dist/LogoMarqueeRender-4QDGWDLR.mjs
+index dbbbbdc7931335a5c9e09b42b48cc6a52d2d6e0b..f5f469f8350396b8c2c109d9aeeb2efab71b96cf 100644
+--- a/dist/LogoMarqueeRender-4QDGWDLR.mjs
++++ b/dist/LogoMarqueeRender-4QDGWDLR.mjs
+@@ -15,8 +15,8 @@ var LogoMarqueeRender = ({
+   media,
+   styling
+ }) => {
+-  const { title } = content;
+-  const { logos } = media;
++  const { title } = content || {};
++  const { logos } = media || {};
+   const {
+     speed = 30,
+     backgroundColor = "#ffffff",
+@@ -24,7 +24,7 @@ var LogoMarqueeRender = ({
+     titleColor = "#475569",
+     titleSize,
+     grayscale = false
+-  } = styling;
++  } = styling || {};
+   const id = "logo-marquee-" + useId().replace(/:/g, "");
+   const validLogos = logos?.filter(
+     (logo) => logo && logo.src && typeof logo.src === "string" && logo.src.trim() !== ""
+diff --git a/dist/MedicalRender-UETN6YXI.mjs b/dist/MedicalRender-UETN6YXI.mjs
+index e65a575cdde766c537066ebf7177866259853ec2..0a1ca53552fb57db805157d903abdbadf3014513 100644
+--- a/dist/MedicalRender-UETN6YXI.mjs
++++ b/dist/MedicalRender-UETN6YXI.mjs
+@@ -22,12 +22,12 @@ var HeroMedicalRender = ({
+     secondaryButtonLink,
+     badge1Text,
+     badge2Text
+-  } = content;
+-  const { imageUrl } = media;
++  } = content || {};
++  const { imageUrl } = media || {};
+   const {
+     titleSize,
+     titleWeight
+-  } = typography;
++  } = typography || {};
+   const {
+     backgroundColor,
+     titleColor,
+@@ -45,7 +45,7 @@ var HeroMedicalRender = ({
+     paddingBottom,
+     btnPaddingHorizontal,
+     btnPaddingVertical
+-  } = styling;
++  } = styling || {};
+   const id = "medical-" + useId().replace(/:/g, "");
+   const getVal = (obj, key) => {
+     if (typeof obj === "number") return obj;
+diff --git a/dist/ModernRender-4UFDKTJF.mjs b/dist/ModernRender-4UFDKTJF.mjs
+index 8db0c7a7dbd2967f9e2ea56251bd63a82deb3816..a9239fa49a8f7e8466593fa993484e9206153816 100644
+--- a/dist/ModernRender-4UFDKTJF.mjs
++++ b/dist/ModernRender-4UFDKTJF.mjs
+@@ -147,9 +147,9 @@ var ModernPricingRender = ({
+   typography,
+   styling
+ }) => {
+-  const { title, description, items } = content;
+-  const { titleFont = "inherit", bodyFont = "inherit" } = typography;
+-  const { columnsDesktop, columnsTablet, columnsMobile, columns, mainColor, padding, backgroundColor } = styling;
++  const { title, description, items } = content || {};
++  const { titleFont = "inherit", bodyFont = "inherit" } = typography || {};
++  const { columnsDesktop, columnsTablet, columnsMobile, columns, mainColor, padding, backgroundColor } = styling || {};
+   const id = "modern-pricing-" + useId().replace(/:/g, "");
+   const colDesktop = getVal(columns, columnsDesktop || 3);
+   const colTablet = getTabletVal(columns, columnsTablet || 2);
+@@ -199,7 +199,7 @@ var ModernPricingRender = ({
+         lineHeight: 1.6,
+         fontFamily: bodyFont !== "inherit" ? `"${bodyFont}", sans-serif` : "inherit"
+       }, children: description }),
+-      /* @__PURE__ */ jsx2("div", { className: "grid-container", children: items.map((item, i) => /* @__PURE__ */ jsx2(
++      /* @__PURE__ */ jsx2("div", { className: "grid-container", children: (items || []).map((item, i) => /* @__PURE__ */ jsx2(
+         ModernPricingCard,
+         {
+           item,
+diff --git a/dist/OpeningHoursRender-5OPBR3MK.mjs b/dist/OpeningHoursRender-5OPBR3MK.mjs
+index a9a2edc986abac4c8a78dabf1cebfefb7961aa06..a55ad9a8e5a37d00f6d98714ea83084c96286423 100644
+--- a/dist/OpeningHoursRender-5OPBR3MK.mjs
++++ b/dist/OpeningHoursRender-5OPBR3MK.mjs
+@@ -9,8 +9,8 @@ import "./chunk-GOS24TXO.mjs";
+ import { useId } from "react";
+ import { jsx, jsxs } from "react/jsx-runtime";
+ var OpeningHoursRender = ({ content, styling }) => {
+-  const { title, hours } = content;
+-  const { backgroundColor, padding, cardBackgroundColor, titleColor, textColor, highlightColor, borderRadius } = styling;
++  const { title, hours } = content || {};
++  const { backgroundColor, padding, cardBackgroundColor, titleColor, textColor, highlightColor, borderRadius } = styling || {};
+   const id = useId().replace(/:/g, "");
+   const uniqueClass = `hours-${id}`;
+   return /* @__PURE__ */ jsxs("section", { className: uniqueClass, style: { background: backgroundColor }, children: [
+diff --git a/dist/PixelTrackerRender-5V4PHY3B.mjs b/dist/PixelTrackerRender-5V4PHY3B.mjs
+index c8b60aa878bd44072f0b1d8da1c7c84696ebeea6..9529fc390ca9c9b8df14d8312ec627d648570d31 100644
+--- a/dist/PixelTrackerRender-5V4PHY3B.mjs
++++ b/dist/PixelTrackerRender-5V4PHY3B.mjs
+@@ -5,7 +5,7 @@ import "./chunk-GOS24TXO.mjs";
+ import { useEffect, useState } from "react";
+ import { Fragment, jsx, jsxs } from "react/jsx-runtime";
+ var PixelTrackerRender = ({ content }) => {
+-  const { metaPixelId = "", tiktokPixelId = "", googleAnalyticsId = "" } = content;
++  const { metaPixelId = "", tiktokPixelId = "", googleAnalyticsId = "" } = content || {};
+   const [isMounted, setIsMounted] = useState(false);
+   useEffect(() => {
+     setIsMounted(true);
+diff --git a/dist/PortfolioRender-F3BVYVQA.mjs b/dist/PortfolioRender-F3BVYVQA.mjs
+index ff5a0dbdca24d569c52cf26631ee91aa27787814..ce759b4178e8cba4be44705eaaf1195ba5b46d65 100644
+--- a/dist/PortfolioRender-F3BVYVQA.mjs
++++ b/dist/PortfolioRender-F3BVYVQA.mjs
+@@ -15,7 +15,7 @@ import Link from "next/link";
+ import Image from "next/image";
+ import { jsx, jsxs } from "react/jsx-runtime";
+ var PortfolioRender = ({ content, initialItems = [], styling }) => {
+-  const { title, subtitle } = content;
++  const { title, subtitle } = content || {};
+   const {
+     backgroundColor = "#f9fafb",
+     titleColor = "#111827",
+@@ -77,7 +77,7 @@ var PortfolioRender = ({ content, initialItems = [], styling }) => {
+         /* @__PURE__ */ jsx("h2", { style: { color: titleColor }, className: "text-3xl md:text-4xl font-extrabold mb-4", children: title }),
+         /* @__PURE__ */ jsx("p", { style: { color: subtitleColor }, className: "text-xl max-w-2xl mx-auto", children: subtitle })
+       ] }),
+-      /* @__PURE__ */ jsx("div", { className: "portfolio-grid", children: items.map((item, i) => /* @__PURE__ */ jsxs(
++      /* @__PURE__ */ jsx("div", { className: "portfolio-grid", children: (items || []).map((item, i) => /* @__PURE__ */ jsxs(
+         Link,
+         {
+           href: item.link || "#",
+diff --git a/dist/ProcessStepsRender-WR6IKBF6.mjs b/dist/ProcessStepsRender-WR6IKBF6.mjs
+index 5afd48f7eb751377076d1c03e7749b6f91c820d4..d4e2bbd10a8a00926a6e7797035ef504b8d70e9e 100644
+--- a/dist/ProcessStepsRender-WR6IKBF6.mjs
++++ b/dist/ProcessStepsRender-WR6IKBF6.mjs
+@@ -9,9 +9,9 @@ import "./chunk-GOS24TXO.mjs";
+ import { useId } from "react";
+ import { jsx, jsxs } from "react/jsx-runtime";
+ var ProcessStepsRender = ({ content, typography, styling }) => {
+-  const { title, steps } = content;
+-  const { titleSize, titleColor, stepTitleSize, stepDescriptionSize, textColor } = typography;
+-  const { backgroundColor, padding, stepColor, stepNumberColor, layout } = styling;
++  const { title, steps } = content || {};
++  const { titleSize, titleColor, stepTitleSize, stepDescriptionSize, textColor } = typography || {};
++  const { backgroundColor, padding, stepColor, stepNumberColor, layout } = styling || {};
+   const id = useId().replace(/:/g, "");
+   const uniqueClass = `steps-${id}`;
+   return /* @__PURE__ */ jsxs("section", { className: uniqueClass, style: { background: backgroundColor, color: textColor }, children: [
+diff --git a/dist/ProductListRender-QICP2VEN.mjs b/dist/ProductListRender-QICP2VEN.mjs
+index 03917c51818a7794c0e9b2c102abb66e143feebc..9731d2d45aa74327b005cf7e6e5fba1d4f7e6cd9 100644
+--- a/dist/ProductListRender-QICP2VEN.mjs
++++ b/dist/ProductListRender-QICP2VEN.mjs
+@@ -233,13 +233,13 @@ var ProductListRender = ({
+     showBadges = true,
+     showTitleAccent = true,
+     actionType = "details"
+-  } = content;
++  } = content || {};
+   const {
+     titleFont = "inherit",
+     bodyFont = "inherit",
+     titleColor = "#111827",
+     descriptionColor = "#4b5563"
+-  } = typography;
++  } = typography || {};
+   const {
+     columns,
+     backgroundColor = "#ffffff",
+@@ -254,7 +254,7 @@ var ProductListRender = ({
+     imageAspectRatio = "aspect-[4/5]",
+     imageFit = "cover",
+     padding
+-  } = styling;
++  } = styling || {};
+   const id = "product-list-" + useId().replace(/:/g, "");
+   const [products, setProducts] = useState2(initialProducts);
+   const [loading, setLoading] = useState2(initialProducts.length === 0);
+diff --git a/dist/PublisherRender-DNHJUEPM.mjs b/dist/PublisherRender-DNHJUEPM.mjs
+index 54522397e582940c818afa56876fd9efa7caac70..da6f2ed55fb90ccc6eccbebeb9e003f3259d91c8 100644
+--- a/dist/PublisherRender-DNHJUEPM.mjs
++++ b/dist/PublisherRender-DNHJUEPM.mjs
+@@ -13,21 +13,21 @@ var HeroPublisherRender = ({
+   typography,
+   styling
+ }) => {
+-  const { title, description, date, author } = content;
+-  const { imageUrl } = media;
++  const { title, description, date, author } = content || {};
++  const { imageUrl } = media || {};
+   const {
+     titleFont,
+     titleSize,
+     titleWeight,
+     subtitleFont,
+     subtitleSize
+-  } = typography;
++  } = typography || {};
+   const {
+     backgroundColor,
+     textColor,
+     paddingTop,
+     paddingBottom
+-  } = styling;
++  } = styling || {};
+   const id = "publisher-" + useId().replace(/:/g, "");
+   const getVal = (obj, key) => {
+     if (typeof obj === "number") return obj;
+diff --git a/dist/PublisherTwoRender-4ZQX2QTM.mjs b/dist/PublisherTwoRender-4ZQX2QTM.mjs
+index f7dcc1ad961e82ddc62ceee62abca7a2686c34c1..7cadc343c495bae3bec57dd9559bebfd4f1866cf 100644
+--- a/dist/PublisherTwoRender-4ZQX2QTM.mjs
++++ b/dist/PublisherTwoRender-4ZQX2QTM.mjs
+@@ -13,15 +13,15 @@ var HeroPublisherTwoRender = ({
+   typography,
+   styling
+ }) => {
+-  const { title, description } = content;
+-  const { imageUrl } = media;
++  const { title, description } = content || {};
++  const { imageUrl } = media || {};
+   const {
+     titleSize,
+     titleWeight,
+     subtitleSize,
+     titleFont = "inherit",
+     descFont = "inherit"
+-  } = typography;
++  } = typography || {};
+   const {
+     backgroundColor,
+     textColor,
+@@ -36,7 +36,7 @@ var HeroPublisherTwoRender = ({
+     gap,
+     paddingTop,
+     paddingBottom
+-  } = styling;
++  } = styling || {};
+   const id = "publisher-two-" + useId().replace(/:/g, "");
+   const getVal = (obj, key) => {
+     if (typeof obj === "number") return obj;
+diff --git a/dist/RealEstateRender-ZOI6AS7F.mjs b/dist/RealEstateRender-ZOI6AS7F.mjs
+index 9e2903a94073ed1bc482096d3cdad8b1b5019ba4..f393a6de5e35aa08f08693e127629b01a30e1e86 100644
+--- a/dist/RealEstateRender-ZOI6AS7F.mjs
++++ b/dist/RealEstateRender-ZOI6AS7F.mjs
+@@ -25,12 +25,12 @@ var HeroRealEstateRender = ({
+     stat2Label,
+     stat3Value,
+     stat3Label
+-  } = content;
+-  const { imageUrl } = media;
++  } = content || {};
++  const { imageUrl } = media || {};
+   const {
+     titleSize,
+     titleWeight
+-  } = typography;
++  } = typography || {};
+   const {
+     backgroundColor,
+     titleColor,
+@@ -45,7 +45,7 @@ var HeroRealEstateRender = ({
+     gap,
+     paddingTop,
+     paddingBottom
+-  } = styling;
++  } = styling || {};
+   const id = "real-estate-" + useId().replace(/:/g, "");
+   const getVal = (obj, key) => {
+     if (typeof obj === "number") return obj;
+diff --git a/dist/RichTextRender-EXLWYVKY.mjs b/dist/RichTextRender-EXLWYVKY.mjs
+index 46bb7f463b806efcdd785c203cf50b6c59db6f7b..ebef4ac63ffad68c9662cb92f71b712892455792 100644
+--- a/dist/RichTextRender-EXLWYVKY.mjs
++++ b/dist/RichTextRender-EXLWYVKY.mjs
+@@ -9,8 +9,8 @@ import "./chunk-GOS24TXO.mjs";
+ import { useId } from "react";
+ import { jsx, jsxs } from "react/jsx-runtime";
+ var RichTextRender = ({ content, styling }) => {
+-  const { html } = content;
+-  const { maxWidth, paddingTop, paddingBottom } = styling;
++  const { html } = content || {};
++  const { maxWidth, paddingTop, paddingBottom } = styling || {};
+   const id = "rich-text-" + useId().replace(/:/g, "");
+   const padTopDesktop = getVal(paddingTop, 64);
+   const padTopTablet = getTabletVal(paddingTop, 48);
+diff --git a/dist/SectionHeaderRender-DEQQXIHD.mjs b/dist/SectionHeaderRender-DEQQXIHD.mjs
+index 189c673196a4a6539db1ce9b9cc7ebbd1b1824ad..6ed69dd4de854e31f9ebfe9f259ab21a20418440 100644
+--- a/dist/SectionHeaderRender-DEQQXIHD.mjs
++++ b/dist/SectionHeaderRender-DEQQXIHD.mjs
+@@ -10,9 +10,9 @@ import "./chunk-GOS24TXO.mjs";
+ import { useId } from "react";
+ import { jsx, jsxs } from "react/jsx-runtime";
+ var SectionHeaderRender = ({ content, styling, typography }) => {
+-  const { badge, title, subtitle } = content;
+-  const { alignment, backgroundColor, padding, titleColor, subtitleColor, badgeColor, badgeTextColor, maxWidth, showAccent } = styling;
+-  const { titleSize, subtitleSize } = typography;
++  const { badge, title, subtitle } = content || {};
++  const { alignment, backgroundColor, padding, titleColor, subtitleColor, badgeColor, badgeTextColor, maxWidth, showAccent } = styling || {};
++  const { titleSize, subtitleSize } = typography || {};
+   const id = useId().replace(/:/g, "");
+   const uniqueClass = `header-${id}`;
+   const alignMap = {
+diff --git a/dist/SecurityRender-FID4CE4Z.mjs b/dist/SecurityRender-FID4CE4Z.mjs
+index 4ab41ef3316e550415af05db0862dc49c5a355a5..893b3044df5ee68cacff473fa561d6cc67e32e28 100644
+--- a/dist/SecurityRender-FID4CE4Z.mjs
++++ b/dist/SecurityRender-FID4CE4Z.mjs
+@@ -22,12 +22,12 @@ var HeroSecurityRender = ({
+     feature3Icon,
+     feature3Title,
+     feature3Description
+-  } = content;
++  } = content || {};
+   const {
+     titleSize,
+     titleWeight,
+     featureIconSize
+-  } = typography;
++  } = typography || {};
+   const {
+     gradientStart,
+     gradientEnd,
+@@ -45,7 +45,7 @@ var HeroSecurityRender = ({
+     paddingBottom,
+     btnPaddingHorizontal,
+     btnPaddingVertical
+-  } = styling;
++  } = styling || {};
+   const id = "security-" + useId().replace(/:/g, "");
+   const getVal = (obj, key) => {
+     if (typeof obj === "number") return obj;
+diff --git a/dist/SimpleRender-E2VPRUM5.mjs b/dist/SimpleRender-E2VPRUM5.mjs
+index f78c283576d82da37ac7f9e7ef8e20cc34985a8c..8a8e5800795bebe07225a144eff5b056a059574f 100644
+--- a/dist/SimpleRender-E2VPRUM5.mjs
++++ b/dist/SimpleRender-E2VPRUM5.mjs
+@@ -192,9 +192,9 @@ var SimplePricingRender = ({
+   typography,
+   styling
+ }) => {
+-  const { title, items } = content;
+-  const { titleFont = "inherit", bodyFont = "inherit", titleColor, textColor, cardFontSize } = typography;
+-  const { mainColor, gap, sectionBg, cardBg, scrollMode, columnsDesktop, columnsTablet, columnsMobile, columns } = styling;
++  const { title, items } = content || {};
++  const { titleFont = "inherit", bodyFont = "inherit", titleColor, textColor, cardFontSize } = typography || {};
++  const { mainColor, gap, sectionBg, cardBg, scrollMode, columnsDesktop, columnsTablet, columnsMobile, columns } = styling || {};
+   const id = "simple-pricing-" + useId().replace(/:/g, "");
+   const isHorizontal = scrollMode === "horizontal";
+   const primaryColor = mainColor || "#dc2626";
+@@ -274,7 +274,7 @@ var SimplePricingRender = ({
+         gap: "var(--gap)",
+         minWidth: "min-content",
+         paddingTop: "20px"
+-      }, children: items.map((item, i) => /* @__PURE__ */ jsx2(
++      }, children: (items || []).map((item, i) => /* @__PURE__ */ jsx2(
+         SimplePricingCard,
+         {
+           item,
+@@ -286,7 +286,7 @@ var SimplePricingRender = ({
+           textColor
+         },
+         i
+-      )) }) }) : /* @__PURE__ */ jsx2("div", { className: "grid-container", children: items.map((item, i) => /* @__PURE__ */ jsx2(
++      )) }) }) : /* @__PURE__ */ jsx2("div", { className: "grid-container", children: (items || []).map((item, i) => /* @__PURE__ */ jsx2(
+         SimplePricingCard,
+         {
+           item,
+diff --git a/dist/SingleImageRender-MVA5KDZY.mjs b/dist/SingleImageRender-MVA5KDZY.mjs
+index 57528148ce3758a725761a41a025451cfd524d21..312d845fd131e7fac1aa0f72e555a40be6c15767 100644
+--- a/dist/SingleImageRender-MVA5KDZY.mjs
++++ b/dist/SingleImageRender-MVA5KDZY.mjs
+@@ -16,7 +16,7 @@ var SingleImageRender = ({
+   content,
+   styling
+ }) => {
+-  const { imageUrl, altText = "Image", linkUrl, openInNewTab = false } = content;
++  const { imageUrl, altText = "Image", linkUrl, openInNewTab = false } = content || {};
+   const {
+     align = "center",
+     imageWidth = { desktop: 100, tablet: 100, mobile: 100 },
+@@ -30,7 +30,7 @@ var SingleImageRender = ({
+     paddingLeft = { desktop: 0, tablet: 0, mobile: 0 },
+     paddingRight = { desktop: 0, tablet: 0, mobile: 0 },
+     borderRadius = { desktop: 0, tablet: 0, mobile: 0 }
+-  } = styling;
++  } = styling || {};
+   const id = "single-image-" + useId().replace(/:/g, "");
+   const padTopDesktop = getVal(paddingTop, 0);
+   const padTopTablet = getTabletVal(paddingTop, 0);
+diff --git a/dist/SocialFeedRender-C2GD45GQ.mjs b/dist/SocialFeedRender-C2GD45GQ.mjs
+index 02935e3662b4c82cdd36a0d442ad257c8ca7adb5..348c078347be93ac68ef5221d260b6d46be728df 100644
+--- a/dist/SocialFeedRender-C2GD45GQ.mjs
++++ b/dist/SocialFeedRender-C2GD45GQ.mjs
+@@ -125,8 +125,8 @@ function ProfileCard({ item }) {
+ }
+ var SocialFeedRender = ({ content, styling }) => {
+   const id = useId().replace(/:/g, "");
+-  const { title, description, items } = content;
+-  const { backgroundColor = "#f8fafc", titleColor = "#0f172a", cardBackground = "#ffffff", columns, showCaptions, padding, cardBorderRadius } = styling;
++  const { title, description, items } = content || {};
++  const { backgroundColor = "#f8fafc", titleColor = "#0f172a", cardBackground = "#ffffff", columns, showCaptions, padding, cardBorderRadius } = styling || {};
+   return /* @__PURE__ */ jsxs("section", { className: `sfs-${id}`, children: [
+     /* @__PURE__ */ jsx("style", { dangerouslySetInnerHTML: { __html: `
+                 .sfs-${id} {
+diff --git a/dist/StatsRender-EHQBJNI5.mjs b/dist/StatsRender-EHQBJNI5.mjs
+index c5380d75ca0aa6e26a443e93d8ed1120c1303dc3..ccf617b6b2af11e27b26360866a8e7c3350209d1 100644
+--- a/dist/StatsRender-EHQBJNI5.mjs
++++ b/dist/StatsRender-EHQBJNI5.mjs
+@@ -13,8 +13,8 @@ var StatsRender = ({
+   typography,
+   styling
+ }) => {
+-  const { items } = content;
+-  const { valueFont = "inherit", labelFont = "inherit" } = typography;
++  const { items } = content || {};
++  const { valueFont = "inherit", labelFont = "inherit" } = typography || {};
+   const {
+     mobileLayout = "stack",
+     backgroundColor = "#ffffff",
+@@ -24,7 +24,7 @@ var StatsRender = ({
+     labelColor = "#475569",
+     padding,
+     cardBorderRadius
+-  } = styling;
++  } = styling || {};
+   const id = "stats-" + useId().replace(/:/g, "");
+   return /* @__PURE__ */ jsxs("section", { className: id, children: [
+     /* @__PURE__ */ jsx("style", { dangerouslySetInnerHTML: {
+@@ -136,7 +136,7 @@ var StatsRender = ({
+                 }
+             `
+     } }),
+-    /* @__PURE__ */ jsx("div", { className: "container", children: /* @__PURE__ */ jsx("div", { className: `grid mobile-${mobileLayout}`, children: items.map((item, i) => /* @__PURE__ */ jsxs("div", { className: "card", children: [
++    /* @__PURE__ */ jsx("div", { className: "container", children: /* @__PURE__ */ jsx("div", { className: `grid mobile-${mobileLayout}`, children: (items || []).map((item, i) => /* @__PURE__ */ jsxs("div", { className: "card", children: [
+       /* @__PURE__ */ jsx("div", { className: "value", style: { color: item.valueColor ? item.valueColor : void 0 }, children: item.value }),
+       /* @__PURE__ */ jsx("div", { className: "label", style: { color: item.labelColor ? item.labelColor : void 0 }, children: item.label })
+     ] }, i)) }) })
+diff --git a/dist/TeamRender-2X6FSWM4.mjs b/dist/TeamRender-2X6FSWM4.mjs
+index 71934b163e83fdc76d9192451c21648833660311..a069fc0857d3b4c833d59bccc4cbd1a5bbb9bc33 100644
+--- a/dist/TeamRender-2X6FSWM4.mjs
++++ b/dist/TeamRender-2X6FSWM4.mjs
+@@ -11,9 +11,9 @@ import { useId } from "react";
+ import Image from "next/image";
+ import { jsx, jsxs } from "react/jsx-runtime";
+ var TeamRender = ({ content, typography, styling }) => {
+-  const { title, subtitle, members } = content;
+-  const { titleSize, titleColor, memberNameSize, memberRoleSize, textColor } = typography;
+-  const { columns, backgroundColor, padding, cardBackgroundColor, cardBorderColor, imageRadius } = styling;
++  const { title, subtitle, members } = content || {};
++  const { titleSize, titleColor, memberNameSize, memberRoleSize, textColor } = typography || {};
++  const { columns, backgroundColor, padding, cardBackgroundColor, cardBorderColor, imageRadius } = styling || {};
+   const id = useId().replace(/:/g, "");
+   const uniqueClass = `team-${id}`;
+   return /* @__PURE__ */ jsxs("section", { className: uniqueClass, style: { background: backgroundColor, color: textColor }, children: [
+diff --git a/dist/TestimonialsRender-2ZCDVPHX.mjs b/dist/TestimonialsRender-2ZCDVPHX.mjs
+index 4fe3a8e2f427f7ae0a820bae8d77152208a9823e..23cf60e4717d3bada699217ea574f7b08064f156 100644
+--- a/dist/TestimonialsRender-2ZCDVPHX.mjs
++++ b/dist/TestimonialsRender-2ZCDVPHX.mjs
+@@ -85,8 +85,8 @@ var TestimonialsRender = ({
+   typography,
+   styling
+ }) => {
+-  const { title, description, items = [], limit = 6 } = content;
+-  const { titleFont = "inherit", quoteFont = "inherit" } = typography;
++  const { title, description, items = [], limit = 6 } = content || {};
++  const { titleFont = "inherit", quoteFont = "inherit" } = typography || {};
+   const {
+     scrollMode,
+     columns,
+@@ -99,7 +99,7 @@ var TestimonialsRender = ({
+     quoteColor = "#475569",
+     authorColor = "#1e293b",
+     roleColor = "#94a3b8"
+-  } = styling;
++  } = styling || {};
+   const isHorizontal = scrollMode === "horizontal";
+   const [apiItems, setApiItems] = React.useState([]);
+   const mounted = useHasMounted();
+diff --git a/dist/VideoEmbedRender-RVBWYDCG.mjs b/dist/VideoEmbedRender-RVBWYDCG.mjs
+index 6311288f2d5b8443841f5e18280851cb7b837bb1..7a1ca7fc5e6b8e2ce553956f9853bdda43d86cb4 100644
+--- a/dist/VideoEmbedRender-RVBWYDCG.mjs
++++ b/dist/VideoEmbedRender-RVBWYDCG.mjs
+@@ -10,8 +10,8 @@ import "./chunk-GOS24TXO.mjs";
+ import { useId } from "react";
+ import { jsx, jsxs } from "react/jsx-runtime";
+ var VideoEmbedRender = ({ content, styling }) => {
+-  const { url, title, aspectRatio } = content;
+-  const { maxWidth, padding, backgroundColor, borderRadius, boxShadow } = styling;
++  const { url, title, aspectRatio } = content || {};
++  const { maxWidth, padding, backgroundColor, borderRadius, boxShadow } = styling || {};
+   const id = useId().replace(/:/g, "");
+   const uniqueClass = `video-${id}`;
+   const getEmbedUrl = (url2) => {
+diff --git a/dist/WeddingRender-XGMLZECS.mjs b/dist/WeddingRender-XGMLZECS.mjs
+index 99be74bc62b9535181df2016c428b2281da0b130..7d45c87a20d4e63cc0c71719a0c403f8cd1d635c 100644
+--- a/dist/WeddingRender-XGMLZECS.mjs
++++ b/dist/WeddingRender-XGMLZECS.mjs
+@@ -26,17 +26,17 @@ var HeroWeddingRender = ({
+     stat2Label,
+     stat3Value,
+     stat3Label
+-  } = content;
++  } = content || {};
+   const {
+     imageUrl1,
+     imageUrl2
+-  } = media;
++  } = media || {};
+   const {
+     titleFont,
+     titleSize,
+     titleWeight,
+     subtitleSize
+-  } = typography;
++  } = typography || {};
+   const {
+     titleColor,
+     subtitleColor,
+@@ -48,7 +48,7 @@ var HeroWeddingRender = ({
+     paddingTop,
+     paddingBottom,
+     imageOverlap
+-  } = styling;
++  } = styling || {};
+   const id = "wedding-" + useId().replace(/:/g, "");
+   const getVal = (obj, key) => {
+     if (typeof obj === "number") return obj;
+diff --git a/dist/YogaRender-XTTDLYGG.mjs b/dist/YogaRender-XTTDLYGG.mjs
+index 3534e86baece37b402a784337cecaf7229b14132..11da8c0d30ca9118bb76b8e9a44409ed75e30067 100644
+--- a/dist/YogaRender-XTTDLYGG.mjs
++++ b/dist/YogaRender-XTTDLYGG.mjs
+@@ -26,13 +26,13 @@ var HeroYogaRender = ({
+     stat2Label,
+     stat3Value,
+     stat3Label
+-  } = content;
+-  const { imageUrl } = media;
++  } = content || {};
++  const { imageUrl } = media || {};
+   const {
+     titleSize,
+     titleWeight,
+     subtitleSize
+-  } = typography;
++  } = typography || {};
+   const {
+     subtitleColor,
+     backgroundColor,
+@@ -48,7 +48,7 @@ var HeroYogaRender = ({
+     paddingBottom,
+     btnPaddingHorizontal,
+     btnPaddingVertical
+-  } = styling;
++  } = styling || {};
+   const id = "yoga-" + useId().replace(/:/g, "");
+   const getVal = (obj, key) => {
+     if (typeof obj === "number") return obj;
+diff --git a/dist/index.js b/dist/index.js
+index 4ef791e8019f7f6f38d29243f7db6a492d3a6e85..7940c7e66fca55a1dfcac8da84550d7281edd468 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -97,7 +97,7 @@ var init_HeadingBlockRender = __esm({
+       const typography = props.typography || {
+         fontSize: { desktop: 48, tablet: 40, mobile: 32 }
+       };
+-      const { title, level: Tag = "h1" } = content;
++      const { title, level: Tag = "h1" } = content || {};
+       const {
+         font,
+         fontWeight,
+@@ -115,8 +115,8 @@ var init_HeadingBlockRender = __esm({
+         textTransform,
+         maxWidth,
+         animation
+-      } = styling;
+-      const { fontSize } = typography;
++      } = styling || {};
++      const { fontSize } = typography || {};
+       const id = (0, import_react2.useId)().replace(/:/g, "");
+       const uniqueClass = `heading-${id}`;
+       const animationClasses = {
+@@ -264,21 +264,21 @@ var init_PublisherRender = __esm({
+       typography,
+       styling
+     }) => {
+-      const { title, description, date, author } = content;
+-      const { imageUrl } = media;
++      const { title, description, date, author } = content || {};
++      const { imageUrl } = media || {};
+       const {
+         titleFont,
+         titleSize,
+         titleWeight,
+         subtitleFont,
+         subtitleSize
+-      } = typography;
++      } = typography || {};
+       const {
+         backgroundColor,
+         textColor,
+         paddingTop,
+         paddingBottom
+-      } = styling;
++      } = styling || {};
+       const id = "publisher-" + (0, import_react5.useId)().replace(/:/g, "");
+       const getVal2 = (obj, key) => {
+         if (typeof obj === "number") return obj;
+@@ -418,15 +418,15 @@ var init_PublisherTwoRender = __esm({
+       typography,
+       styling
+     }) => {
+-      const { title, description } = content;
+-      const { imageUrl } = media;
++      const { title, description } = content || {};
++      const { imageUrl } = media || {};
+       const {
+         titleSize,
+         titleWeight,
+         subtitleSize,
+         titleFont = "inherit",
+         descFont = "inherit"
+-      } = typography;
++      } = typography || {};
+       const {
+         backgroundColor,
+         textColor,
+@@ -441,7 +441,7 @@ var init_PublisherTwoRender = __esm({
+         gap,
+         paddingTop,
+         paddingBottom
+-      } = styling;
++      } = styling || {};
+       const id = "publisher-two-" + (0, import_react6.useId)().replace(/:/g, "");
+       const getVal2 = (obj, key) => {
+         if (typeof obj === "number") return obj;
+@@ -618,19 +618,19 @@ var init_FitnessRender = __esm({
+         title,
+         subtitle,
+         ctaText
+-      } = content;
++      } = content || {};
+       const {
+         imageUrl1,
+         imageUrl2,
+         imageUrl3,
+         imageUrl4
+-      } = media;
++      } = media || {};
+       const {
+         titleFont,
+         titleSize,
+         titleWeight,
+         subtitleSize
+-      } = typography;
++      } = typography || {};
+       const {
+         titleColor,
+         subtitleColor,
+@@ -647,7 +647,7 @@ var init_FitnessRender = __esm({
+         paddingTop,
+         paddingBottom,
+         gap
+-      } = styling;
++      } = styling || {};
+       const id = "fitness-" + (0, import_react7.useId)().replace(/:/g, "");
+       const getVal2 = (obj, key) => {
+         if (typeof obj === "number") return obj;
+@@ -862,13 +862,13 @@ var init_DentalRender = __esm({
+         service2Desc,
+         service3Title,
+         service3Desc
+-      } = content;
++      } = content || {};
+       const {
+         titleFont,
+         titleSize,
+         titleWeight,
+         subtitleSize
+-      } = typography;
++      } = typography || {};
+       const {
+         titleColor,
+         highlightColor,
+@@ -885,7 +885,7 @@ var init_DentalRender = __esm({
+         serviceCardBg,
+         paddingTop,
+         paddingBottom
+-      } = styling;
++      } = styling || {};
+       const id = "dental-" + (0, import_react8.useId)().replace(/:/g, "");
+       const getVal2 = (obj, key) => {
+         if (typeof obj === "number") return obj;
+@@ -1128,17 +1128,17 @@ var init_WeddingRender = __esm({
+         stat2Label,
+         stat3Value,
+         stat3Label
+-      } = content;
++      } = content || {};
+       const {
+         imageUrl1,
+         imageUrl2
+-      } = media;
++      } = media || {};
+       const {
+         titleFont,
+         titleSize,
+         titleWeight,
+         subtitleSize
+-      } = typography;
++      } = typography || {};
+       const {
+         titleColor,
+         subtitleColor,
+@@ -1150,7 +1150,7 @@ var init_WeddingRender = __esm({
+         paddingTop,
+         paddingBottom,
+         imageOverlap
+-      } = styling;
++      } = styling || {};
+       const id = "wedding-" + (0, import_react9.useId)().replace(/:/g, "");
+       const getVal2 = (obj, key) => {
+         if (typeof obj === "number") return obj;
+@@ -1429,12 +1429,12 @@ var init_AgencyRender = __esm({
+         subtitle,
+         ctaText,
+         ctaLink
+-      } = content;
++      } = content || {};
+       const {
+         project1ImageUrl,
+         project2ImageUrl,
+         project3ImageUrl
+-      } = media;
++      } = media || {};
+       const {
+         titleFont,
+         titleSize,
+@@ -1442,7 +1442,7 @@ var init_AgencyRender = __esm({
+         titleColor,
+         subtitleSize,
+         subtitleColor
+-      } = typography;
++      } = typography || {};
+       const {
+         backgroundColor,
+         accentColor,
+@@ -1457,7 +1457,7 @@ var init_AgencyRender = __esm({
+         projectShadow,
+         paddingTop,
+         paddingBottom
+-      } = styling;
++      } = styling || {};
+       const id = "agency-" + (0, import_react10.useId)().replace(/:/g, "");
+       const getVal2 = (obj, key) => {
+         if (typeof obj === "number") return obj;
+@@ -1702,13 +1702,13 @@ var init_YogaRender = __esm({
+         stat2Label,
+         stat3Value,
+         stat3Label
+-      } = content;
+-      const { imageUrl } = media;
++      } = content || {};
++      const { imageUrl } = media || {};
+       const {
+         titleSize,
+         titleWeight,
+         subtitleSize
+-      } = typography;
++      } = typography || {};
+       const {
+         subtitleColor,
+         backgroundColor,
+@@ -1724,7 +1724,7 @@ var init_YogaRender = __esm({
+         paddingBottom,
+         btnPaddingHorizontal,
+         btnPaddingVertical
+-      } = styling;
++      } = styling || {};
+       const id = "yoga-" + (0, import_react11.useId)().replace(/:/g, "");
+       const getVal2 = (obj, key) => {
+         if (typeof obj === "number") return obj;
+@@ -1987,13 +1987,13 @@ var init_AutoServiceRender = __esm({
+         ctaText,
+         ctaLink,
+         secondaryButtonText
+-      } = content;
+-      const { imageUrl } = media;
++      } = content || {};
++      const { imageUrl } = media || {};
+       const {
+         titleSize,
+         titleWeight,
+         bulletSize
+-      } = typography;
++      } = typography || {};
+       const {
+         backgroundColor,
+         primaryColor,
+@@ -2007,7 +2007,7 @@ var init_AutoServiceRender = __esm({
+         paddingBottom,
+         btnPaddingHorizontal,
+         btnPaddingVertical
+-      } = styling;
++      } = styling || {};
+       const id = "auto-service-" + (0, import_react12.useId)().replace(/:/g, "");
+       const getVal2 = (obj, key) => {
+         if (typeof obj === "number") return obj;
+@@ -2246,12 +2246,12 @@ var init_SecurityRender = __esm({
+         feature3Icon,
+         feature3Title,
+         feature3Description
+-      } = content;
++      } = content || {};
+       const {
+         titleSize,
+         titleWeight,
+         featureIconSize
+-      } = typography;
++      } = typography || {};
+       const {
+         gradientStart,
+         gradientEnd,
+@@ -2269,7 +2269,7 @@ var init_SecurityRender = __esm({
+         paddingBottom,
+         btnPaddingHorizontal,
+         btnPaddingVertical
+-      } = styling;
++      } = styling || {};
+       const id = "security-" + (0, import_react13.useId)().replace(/:/g, "");
+       const getVal2 = (obj, key) => {
+         if (typeof obj === "number") return obj;
+@@ -2481,12 +2481,12 @@ var init_MedicalRender = __esm({
+         secondaryButtonLink,
+         badge1Text,
+         badge2Text
+-      } = content;
+-      const { imageUrl } = media;
++      } = content || {};
++      const { imageUrl } = media || {};
+       const {
+         titleSize,
+         titleWeight
+-      } = typography;
++      } = typography || {};
+       const {
+         backgroundColor,
+         titleColor,
+@@ -2504,7 +2504,7 @@ var init_MedicalRender = __esm({
+         paddingBottom,
+         btnPaddingHorizontal,
+         btnPaddingVertical
+-      } = styling;
++      } = styling || {};
+       const id = "medical-" + (0, import_react14.useId)().replace(/:/g, "");
+       const getVal2 = (obj, key) => {
+         if (typeof obj === "number") return obj;
+@@ -2769,12 +2769,12 @@ var init_RealEstateRender = __esm({
+         stat2Label,
+         stat3Value,
+         stat3Label
+-      } = content;
+-      const { imageUrl } = media;
++      } = content || {};
++      const { imageUrl } = media || {};
+       const {
+         titleSize,
+         titleWeight
+-      } = typography;
++      } = typography || {};
+       const {
+         backgroundColor,
+         titleColor,
+@@ -2789,7 +2789,7 @@ var init_RealEstateRender = __esm({
+         gap,
+         paddingTop,
+         paddingBottom
+-      } = styling;
++      } = styling || {};
+       const id = "real-estate-" + (0, import_react15.useId)().replace(/:/g, "");
+       const getVal2 = (obj, key) => {
+         if (typeof obj === "number") return obj;
+@@ -3040,8 +3040,8 @@ var init_StatsRender = __esm({
+       typography,
+       styling
+     }) => {
+-      const { items } = content;
+-      const { valueFont = "inherit", labelFont = "inherit" } = typography;
++      const { items } = content || {};
++      const { valueFont = "inherit", labelFont = "inherit" } = typography || {};
+       const {
+         mobileLayout = "stack",
+         backgroundColor = "#ffffff",
+@@ -3051,7 +3051,7 @@ var init_StatsRender = __esm({
+         labelColor = "#475569",
+         padding,
+         cardBorderRadius
+-      } = styling;
++      } = styling || {};
+       const id = "stats-" + (0, import_react16.useId)().replace(/:/g, "");
+       return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("section", { className: id, children: [
+         /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("style", { dangerouslySetInnerHTML: {
+@@ -3163,7 +3163,7 @@ var init_StatsRender = __esm({
+                 }
+             `
+         } }),
+-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "container", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: `grid mobile-${mobileLayout}`, children: items.map((item, i) => /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "card", children: [
++        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "container", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: `grid mobile-${mobileLayout}`, children: (items || []).map((item, i) => /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "card", children: [
+           /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "value", style: { color: item.valueColor ? item.valueColor : void 0 }, children: item.value }),
+           /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "label", style: { color: item.labelColor ? item.labelColor : void 0 }, children: item.label })
+         ] }, i)) }) })
+@@ -3190,9 +3190,9 @@ var init_IconGridRender = __esm({
+       typography,
+       styling
+     }) => {
+-      const { title, items } = content;
+-      const { titleSize, titleColor, iconSize, iconColor, itemTitleSize, itemDescriptionSize, itemTextColor } = typography;
+-      const { columns, mobileLayout, backgroundColor, padding, cardBackgroundColor, cardBorderColor } = styling;
++      const { title, items } = content || {};
++      const { titleSize, titleColor, iconSize, iconColor, itemTitleSize, itemDescriptionSize, itemTextColor } = typography || {};
++      const { columns, mobileLayout, backgroundColor, padding, cardBackgroundColor, cardBorderColor } = styling || {};
+       const id = (0, import_react17.useId)().replace(/:/g, "");
+       const uniqueClass = `icon-grid-${id}`;
+       const getVal2 = (val, fallback) => {
+@@ -3305,7 +3305,7 @@ var init_IconGridRender = __esm({
+             fontWeight: "800",
+             letterSpacing: "-0.02em"
+           }, children: title }),
+-          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "icon-grid-container", children: items.map((item, i) => /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(
++          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "icon-grid-container", children: (items || []).map((item, i) => /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(
+             "div",
+             {
+               className: "icon-grid-item",
+@@ -3456,8 +3456,8 @@ var init_GalleryRender = __esm({
+       styling,
+       initialItems
+     }) => {
+-      const { title, description } = content;
+-      const { titleFont = "inherit", titleColor } = typography;
++      const { title, description } = content || {};
++      const { titleFont = "inherit", titleColor } = typography || {};
+       const {
+         variant,
+         scrollMode,
+@@ -3471,7 +3471,7 @@ var init_GalleryRender = __esm({
+         gap,
+         borderRadius,
+         padding
+-      } = styling;
++      } = styling || {};
+       const id = "gallery-" + (0, import_react18.useId)().replace(/:/g, "");
+       const [items, setItems] = (0, import_react18.useState)(initialItems || []);
+       const [loading, setLoading] = (0, import_react18.useState)(!initialItems);
+@@ -3652,7 +3652,7 @@ var init_GalleryRender = __esm({
+             minWidth: "min-content",
+             margin: "0 auto",
+             justifyContent: "center"
+-          }, children: items.map((item, i) => /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
++          }, children: (items || []).map((item, i) => /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+             GalleryItem,
+             {
+               item,
+@@ -3663,7 +3663,7 @@ var init_GalleryRender = __esm({
+               onClick: () => setSelectedIdx(i)
+             },
+             i
+-          )) }) }) : /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("div", { className: "gallery-container", children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("div", { className: isMasonry ? "gallery-masonry" : "gallery-grid", children: items.map((item, i) => /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
++          )) }) }) : /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("div", { className: "gallery-container", children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("div", { className: isMasonry ? "gallery-masonry" : "gallery-grid", children: (items || []).map((item, i) => /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+             GalleryItem,
+             {
+               item,
+@@ -3753,9 +3753,9 @@ var init_AccordionRender = __esm({
+       typography,
+       styling
+     }) => {
+-      const { title, items } = content;
+-      const { titleFont = "inherit", bodyFont = "inherit" } = typography;
+-      const { backgroundColor, titleColor, itemBgColor, textColor, activeColor, padding, borderRadius } = styling;
++      const { title, items } = content || {};
++      const { titleFont = "inherit", bodyFont = "inherit" } = typography || {};
++      const { backgroundColor, titleColor, itemBgColor, textColor, activeColor, padding, borderRadius } = styling || {};
+       const id = "accordion-" + (0, import_react19.useId)().replace(/:/g, "");
+       const finalActiveColor = activeColor || "#2563eb";
+       return /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("section", { className: id, style: { padding: `${getVal(padding, 80)}px 20px`, backgroundColor: backgroundColor || "#ffffff" }, children: [
+@@ -3809,7 +3809,7 @@ var init_AccordionRender = __esm({
+             fontFamily: titleFont !== "inherit" ? `"${titleFont}", sans-serif` : "inherit",
+             lineHeight: 1.2
+           }, children: title }),
+-          /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("div", { style: { display: "flex", flexDirection: "column", gap: "16px" }, children: items.map((item, i) => /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(
++          /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("div", { style: { display: "flex", flexDirection: "column", gap: "16px" }, children: (items || []).map((item, i) => /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(
+             "details",
+             {
+               style: {
+@@ -3980,8 +3980,8 @@ var init_TestimonialsRender = __esm({
+       typography,
+       styling
+     }) => {
+-      const { title, description, items = [], limit = 6 } = content;
+-      const { titleFont = "inherit", quoteFont = "inherit" } = typography;
++      const { title, description, items = [], limit = 6 } = content || {};
++      const { titleFont = "inherit", quoteFont = "inherit" } = typography || {};
+       const {
+         scrollMode,
+         columns,
+@@ -3994,7 +3994,7 @@ var init_TestimonialsRender = __esm({
+         quoteColor = "#475569",
+         authorColor = "#1e293b",
+         roleColor = "#94a3b8"
+-      } = styling;
++      } = styling || {};
+       const isHorizontal = scrollMode === "horizontal";
+       const [apiItems, setApiItems] = import_react21.default.useState([]);
+       const mounted = useHasMounted();
+@@ -4146,8 +4146,8 @@ var init_CTARender = __esm({
+       typography,
+       styling
+     }) => {
+-      const { title, subtitle, buttonText, buttonLink } = content;
+-      const { titleSize = { desktop: 56, tablet: 48, mobile: 32 }, descriptionSize = { desktop: 20, tablet: 18, mobile: 16 } } = typography;
++      const { title, subtitle, buttonText, buttonLink } = content || {};
++      const { titleSize = { desktop: 56, tablet: 48, mobile: 32 }, descriptionSize = { desktop: 20, tablet: 18, mobile: 16 } } = typography || {};
+       const {
+         backgroundColor = "linear-gradient(135deg, #dc2626 0%, #7f1d1d 100%)",
+         padding = { desktop: 100, tablet: 80, mobile: 60 },
+@@ -4155,7 +4155,7 @@ var init_CTARender = __esm({
+         descriptionColor = "rgba(255, 255, 255, 0.95)",
+         buttonColor = "#ffffff",
+         buttonTextColor = "#dc2626"
+-      } = styling;
++      } = styling || {};
+       const id = (0, import_react22.useId)().replace(/:/g, "");
+       const uniqueClass = `cta-${id}`;
+       return /* @__PURE__ */ (0, import_jsx_runtime37.jsxs)("section", { className: uniqueClass, style: {
+@@ -4283,9 +4283,9 @@ var init_FlexBlockRender = __esm({
+       typography,
+       styling
+     }) => {
+-      const { title, description } = content;
+-      const { image, backgroundImage } = media;
+-      const { titleFontFamily, titleSize, titleWeight, titleColor, descFontFamily, descSize, descColor } = typography;
++      const { title, description } = content || {};
++      const { image, backgroundImage } = media || {};
++      const { titleFontFamily, titleSize, titleWeight, titleColor, descFontFamily, descSize, descColor } = typography || {};
+       const {
+         alignContent,
+         width,
+@@ -4300,7 +4300,7 @@ var init_FlexBlockRender = __esm({
+         borderRadius,
+         borderWidth,
+         borderColor
+-      } = styling;
++      } = styling || {};
+       const getVal2 = (prop, key, def = 0) => {
+         if (!prop) return def;
+         if (typeof prop === "number") return prop;
+@@ -4443,8 +4443,8 @@ var init_ContainerRender = __esm({
+       media,
+       styling
+     }) => {
+-      const { contentWidth, width } = content;
+-      const { backgroundImage } = media;
++      const { contentWidth, width } = content || {};
++      const { backgroundImage } = media || {};
+       const {
+         containerLayout,
+         minHeight,
+@@ -4492,7 +4492,7 @@ var init_ContainerRender = __esm({
+         position,
+         top,
+         animation
+-      } = styling;
++      } = styling || {};
+       const s = (val) => {
+         if (typeof val === "string") return parseInt(val) || 0;
+         return val;
+@@ -4921,9 +4921,9 @@ var init_SimpleRender = __esm({
+       typography,
+       styling
+     }) => {
+-      const { title, items } = content;
+-      const { titleFont = "inherit", bodyFont = "inherit", titleColor, textColor, cardFontSize } = typography;
+-      const { mainColor, gap, sectionBg, cardBg, scrollMode, columnsDesktop, columnsTablet, columnsMobile, columns } = styling;
++      const { title, items } = content || {};
++      const { titleFont = "inherit", bodyFont = "inherit", titleColor, textColor, cardFontSize } = typography || {};
++      const { mainColor, gap, sectionBg, cardBg, scrollMode, columnsDesktop, columnsTablet, columnsMobile, columns } = styling || {};
+       const id = "simple-pricing-" + (0, import_react25.useId)().replace(/:/g, "");
+       const isHorizontal = scrollMode === "horizontal";
+       const primaryColor = mainColor || "#dc2626";
+@@ -5003,7 +5003,7 @@ var init_SimpleRender = __esm({
+             gap: "var(--gap)",
+             minWidth: "min-content",
+             paddingTop: "20px"
+-          }, children: items.map((item, i) => /* @__PURE__ */ (0, import_jsx_runtime44.jsx)(
++          }, children: (items || []).map((item, i) => /* @__PURE__ */ (0, import_jsx_runtime44.jsx)(
+             SimplePricingCard,
+             {
+               item,
+@@ -5015,7 +5015,7 @@ var init_SimpleRender = __esm({
+               textColor
+             },
+             i
+-          )) }) }) : /* @__PURE__ */ (0, import_jsx_runtime44.jsx)("div", { className: "grid-container", children: items.map((item, i) => /* @__PURE__ */ (0, import_jsx_runtime44.jsx)(
++          )) }) }) : /* @__PURE__ */ (0, import_jsx_runtime44.jsx)("div", { className: "grid-container", children: (items || []).map((item, i) => /* @__PURE__ */ (0, import_jsx_runtime44.jsx)(
+             SimplePricingCard,
+             {
+               item,
+@@ -5192,9 +5192,9 @@ var init_ModernRender = __esm({
+       typography,
+       styling
+     }) => {
+-      const { title, description, items } = content;
+-      const { titleFont = "inherit", bodyFont = "inherit" } = typography;
+-      const { columnsDesktop, columnsTablet, columnsMobile, columns, mainColor, padding, backgroundColor } = styling;
++      const { title, description, items } = content || {};
++      const { titleFont = "inherit", bodyFont = "inherit" } = typography || {};
++      const { columnsDesktop, columnsTablet, columnsMobile, columns, mainColor, padding, backgroundColor } = styling || {};
+       const id = "modern-pricing-" + (0, import_react26.useId)().replace(/:/g, "");
+       const colDesktop = getVal(columns, columnsDesktop || 3);
+       const colTablet = getTabletVal(columns, columnsTablet || 2);
+@@ -5244,7 +5244,7 @@ var init_ModernRender = __esm({
+             lineHeight: 1.6,
+             fontFamily: bodyFont !== "inherit" ? `"${bodyFont}", sans-serif` : "inherit"
+           }, children: description }),
+-          /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("div", { className: "grid-container", children: items.map((item, i) => /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(
++          /* @__PURE__ */ (0, import_jsx_runtime47.jsx)("div", { className: "grid-container", children: (items || []).map((item, i) => /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(
+             ModernPricingCard,
+             {
+               item,
+@@ -5395,9 +5395,9 @@ var init_BoxRender = __esm({
+       typography,
+       styling
+     }) => {
+-      const { title, description, items } = content;
+-      const { titleFont = "inherit", bodyFont = "inherit" } = typography;
+-      const { columnsDesktop, columnsTablet, columnsMobile, columns, mainColor, padding, backgroundColor } = styling;
++      const { title, description, items } = content || {};
++      const { titleFont = "inherit", bodyFont = "inherit" } = typography || {};
++      const { columnsDesktop, columnsTablet, columnsMobile, columns, mainColor, padding, backgroundColor } = styling || {};
+       const id = "box-pricing-" + (0, import_react27.useId)().replace(/:/g, "");
+       const primaryColor = mainColor || "#2563eb";
+       const colDesktop = getVal(columns, columnsDesktop || 3);
+@@ -5447,7 +5447,7 @@ var init_BoxRender = __esm({
+             margin: "0 auto 60px",
+             fontFamily: bodyFont !== "inherit" ? `"${bodyFont}", sans-serif` : "inherit"
+           }, children: description }),
+-          /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "grid-container", children: items.map((item, i) => /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
++          /* @__PURE__ */ (0, import_jsx_runtime50.jsx)("div", { className: "grid-container", children: (items || []).map((item, i) => /* @__PURE__ */ (0, import_jsx_runtime50.jsx)(
+             BoxPricingCard,
+             {
+               item,
+@@ -5611,9 +5611,9 @@ var init_GradientRender = __esm({
+       typography,
+       styling
+     }) => {
+-      const { title, description, items } = content;
+-      const { titleFont = "inherit", bodyFont = "inherit" } = typography;
+-      const { columnsDesktop, columnsTablet, columnsMobile, columns, mainColor } = styling;
++      const { title, description, items } = content || {};
++      const { titleFont = "inherit", bodyFont = "inherit" } = typography || {};
++      const { columnsDesktop, columnsTablet, columnsMobile, columns, mainColor } = styling || {};
+       const id = "gradient-pricing-" + (0, import_react28.useId)().replace(/:/g, "");
+       const primaryColor = mainColor || "#8b5cf6";
+       const colDesktop = getVal(columns, columnsDesktop || 3);
+@@ -5655,7 +5655,7 @@ var init_GradientRender = __esm({
+             lineHeight: 1.6,
+             fontFamily: bodyFont !== "inherit" ? `"${bodyFont}", sans-serif` : "inherit"
+           }, children: description }),
+-          /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "grid-container", children: items.map((item, i) => /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
++          /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("div", { className: "grid-container", children: (items || []).map((item, i) => /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
+             GradientPricingCard,
+             {
+               item,
+@@ -5772,9 +5772,9 @@ var init_ImageRender = __esm({
+         typography,
+         styling
+       } = props;
+-      const { title } = content;
+-      const { items } = media;
+-      const { titleColor, titleFont = "inherit" } = typography;
++      const { title } = content || {};
++      const { items } = media || {};
++      const { titleColor, titleFont = "inherit" } = typography || {};
+       const {
+         sectionBg,
+         scrollMode,
+@@ -5788,7 +5788,7 @@ var init_ImageRender = __esm({
+         cardObjectFit,
+         cardShadow,
+         hoverLift
+-      } = styling;
++      } = styling || {};
+       const id = "image-pricing-" + (0, import_react29.useId)().replace(/:/g, "");
+       const isHorizontal = scrollMode === "horizontal";
+       const commonCardProps = {
+@@ -5855,7 +5855,7 @@ var init_ImageRender = __esm({
+             gap: "var(--gap)",
+             minWidth: "min-content",
+             padding: "10px 0"
+-          }, children: items.map((item, i) => /* @__PURE__ */ (0, import_jsx_runtime56.jsx)(ImagePricingCard, { item, ...commonCardProps }, i)) }) }) : /* @__PURE__ */ (0, import_jsx_runtime56.jsx)("div", { className: "grid-container", children: items.map((item, i) => /* @__PURE__ */ (0, import_jsx_runtime56.jsx)(ImagePricingCard, { item, ...commonCardProps }, i)) })
++          }, children: (items || []).map((item, i) => /* @__PURE__ */ (0, import_jsx_runtime56.jsx)(ImagePricingCard, { item, ...commonCardProps }, i)) }) }) : /* @__PURE__ */ (0, import_jsx_runtime56.jsx)("div", { className: "grid-container", children: (items || []).map((item, i) => /* @__PURE__ */ (0, import_jsx_runtime56.jsx)(ImagePricingCard, { item, ...commonCardProps }, i)) })
+         ] })
+       ] });
+     };
+@@ -5960,9 +5960,9 @@ var init_BlogListRender = __esm({
+       styling,
+       initialPosts
+     }) => {
+-      const { title, description, limit = 3 } = content;
+-      const { titleColor = "#111827", descriptionColor = "#4b5563", cardTitleColor = "#111827", cardTextColor = "#4b5563", cardDateColor = "#9ca3af", linkColor = "#2563eb" } = typography;
+-      const { columns, backgroundColor = "#ffffff", padding = { desktop: 80, tablet: 60, mobile: 40 }, cardBackgroundColor = "#ffffff", cardBorderColor = "#f3f4f6" } = styling;
++      const { title, description, limit = 3 } = content || {};
++      const { titleColor = "#111827", descriptionColor = "#4b5563", cardTitleColor = "#111827", cardTextColor = "#4b5563", cardDateColor = "#9ca3af", linkColor = "#2563eb" } = typography || {};
++      const { columns, backgroundColor = "#ffffff", padding = { desktop: 80, tablet: 60, mobile: 40 }, cardBackgroundColor = "#ffffff", cardBorderColor = "#f3f4f6" } = styling || {};
+       const [posts, setPosts] = (0, import_react30.useState)(initialPosts || []);
+       const [loading, setLoading] = (0, import_react30.useState)(!initialPosts);
+       const mounted = useHasMounted();
+@@ -6070,10 +6070,10 @@ var init_AboutCompanyRender = __esm({
+         padding = { desktop: 48, tablet: 32, mobile: 24 },
+         textColor = "#374151",
+         gap = { desktop: 32, tablet: 24, mobile: 16 }
+-      } = styling;
++      } = styling || {};
+       const {
+         fontSize = { desktop: 18, tablet: 16, mobile: 16 }
+-      } = typography;
++      } = typography || {};
+       const id = (0, import_react31.useId)().replace(/:/g, "");
+       const uniqueClass = `about-company-${id}`;
+       return /* @__PURE__ */ (0, import_jsx_runtime61.jsxs)("section", { className: uniqueClass, style: { backgroundColor }, children: [
+@@ -6395,13 +6395,13 @@ var init_ProductListRender = __esm({
+         showBadges = true,
+         showTitleAccent = true,
+         actionType = "details"
+-      } = content;
++      } = content || {};
+       const {
+         titleFont = "inherit",
+         bodyFont = "inherit",
+         titleColor = "#111827",
+         descriptionColor = "#4b5563"
+-      } = typography;
++      } = typography || {};
+       const {
+         columns,
+         backgroundColor = "#ffffff",
+@@ -6416,7 +6416,7 @@ var init_ProductListRender = __esm({
+         imageAspectRatio = "aspect-[4/5]",
+         imageFit = "cover",
+         padding
+-      } = styling;
++      } = styling || {};
+       const id = "product-list-" + (0, import_react33.useId)().replace(/:/g, "");
+       const [products, setProducts] = (0, import_react33.useState)(initialProducts);
+       const [loading, setLoading] = (0, import_react33.useState)(initialProducts.length === 0);
+@@ -6560,8 +6560,8 @@ var init_LogoMarqueeRender = __esm({
+       media,
+       styling
+     }) => {
+-      const { title } = content;
+-      const { logos } = media;
++      const { title } = content || {};
++      const { logos } = media || {};
+       const {
+         speed = 30,
+         backgroundColor = "#ffffff",
+@@ -6569,7 +6569,7 @@ var init_LogoMarqueeRender = __esm({
+         titleColor = "#475569",
+         titleSize,
+         grayscale = false
+-      } = styling;
++      } = styling || {};
+       const id = "logo-marquee-" + (0, import_react34.useId)().replace(/:/g, "");
+       const validLogos = logos?.filter(
+         (logo) => logo && logo.src && typeof logo.src === "string" && logo.src.trim() !== ""
+@@ -6674,7 +6674,7 @@ var init_ContactFormRender = __esm({
+     init_utils();
+     import_jsx_runtime68 = require("react/jsx-runtime");
+     ContactFormRender = ({ content, styling }) => {
+-      const { title, description, submitText } = content;
++      const { title, description, submitText } = content || {};
+       const {
+         backgroundColor = "#ffffff",
+         padding,
+@@ -6821,7 +6821,7 @@ var init_PortfolioRender = __esm({
+     init_utils();
+     import_jsx_runtime70 = require("react/jsx-runtime");
+     PortfolioRender = ({ content, initialItems = [], styling }) => {
+-      const { title, subtitle } = content;
++      const { title, subtitle } = content || {};
+       const {
+         backgroundColor = "#f9fafb",
+         titleColor = "#111827",
+@@ -6883,7 +6883,7 @@ var init_PortfolioRender = __esm({
+             /* @__PURE__ */ (0, import_jsx_runtime70.jsx)("h2", { style: { color: titleColor }, className: "text-3xl md:text-4xl font-extrabold mb-4", children: title }),
+             /* @__PURE__ */ (0, import_jsx_runtime70.jsx)("p", { style: { color: subtitleColor }, className: "text-xl max-w-2xl mx-auto", children: subtitle })
+           ] }),
+-          /* @__PURE__ */ (0, import_jsx_runtime70.jsx)("div", { className: "portfolio-grid", children: items.map((item, i) => /* @__PURE__ */ (0, import_jsx_runtime70.jsxs)(
++          /* @__PURE__ */ (0, import_jsx_runtime70.jsx)("div", { className: "portfolio-grid", children: (items || []).map((item, i) => /* @__PURE__ */ (0, import_jsx_runtime70.jsxs)(
+             import_link3.default,
+             {
+               href: item.link || "#",
+@@ -6932,8 +6932,8 @@ var init_RichTextRender = __esm({
+     init_utils();
+     import_jsx_runtime73 = require("react/jsx-runtime");
+     RichTextRender = ({ content, styling }) => {
+-      const { html } = content;
+-      const { maxWidth, paddingTop, paddingBottom } = styling;
++      const { html } = content || {};
++      const { maxWidth, paddingTop, paddingBottom } = styling || {};
+       const id = "rich-text-" + (0, import_react38.useId)().replace(/:/g, "");
+       const padTopDesktop = getVal(paddingTop, 64);
+       const padTopTablet = getTabletVal(paddingTop, 48);
+@@ -6989,8 +6989,8 @@ var init_VideoEmbedRender = __esm({
+     init_utils();
+     import_jsx_runtime75 = require("react/jsx-runtime");
+     VideoEmbedRender = ({ content, styling }) => {
+-      const { url, title, aspectRatio } = content;
+-      const { maxWidth, padding, backgroundColor, borderRadius, boxShadow } = styling;
++      const { url, title, aspectRatio } = content || {};
++      const { maxWidth, padding, backgroundColor, borderRadius, boxShadow } = styling || {};
+       const id = (0, import_react39.useId)().replace(/:/g, "");
+       const uniqueClass = `video-${id}`;
+       const getEmbedUrl = (url2) => {
+@@ -7101,9 +7101,9 @@ var init_ProcessStepsRender = __esm({
+     init_utils();
+     import_jsx_runtime77 = require("react/jsx-runtime");
+     ProcessStepsRender = ({ content, typography, styling }) => {
+-      const { title, steps } = content;
+-      const { titleSize, titleColor, stepTitleSize, stepDescriptionSize, textColor } = typography;
+-      const { backgroundColor, padding, stepColor, stepNumberColor, layout } = styling;
++      const { title, steps } = content || {};
++      const { titleSize, titleColor, stepTitleSize, stepDescriptionSize, textColor } = typography || {};
++      const { backgroundColor, padding, stepColor, stepNumberColor, layout } = styling || {};
+       const id = (0, import_react40.useId)().replace(/:/g, "");
+       const uniqueClass = `steps-${id}`;
+       return /* @__PURE__ */ (0, import_jsx_runtime77.jsxs)("section", { className: uniqueClass, style: { background: backgroundColor, color: textColor }, children: [
+@@ -7222,8 +7222,8 @@ var init_GoogleMapsRender = __esm({
+     init_utils();
+     import_jsx_runtime79 = require("react/jsx-runtime");
+     GoogleMapsRender = ({ content, styling }) => {
+-      const { address, zoom } = content;
+-      const { height, padding, backgroundColor, borderRadius, grayscale } = styling;
++      const { address, zoom } = content || {};
++      const { height, padding, backgroundColor, borderRadius, grayscale } = styling || {};
+       const id = (0, import_react41.useId)().replace(/:/g, "");
+       const uniqueClass = `maps-${id}`;
+       const encodedAddress = encodeURIComponent(address);
+@@ -7297,9 +7297,9 @@ var init_TeamRender = __esm({
+     init_utils();
+     import_jsx_runtime81 = require("react/jsx-runtime");
+     TeamRender = ({ content, typography, styling }) => {
+-      const { title, subtitle, members } = content;
+-      const { titleSize, titleColor, memberNameSize, memberRoleSize, textColor } = typography;
+-      const { columns, backgroundColor, padding, cardBackgroundColor, cardBorderColor, imageRadius } = styling;
++      const { title, subtitle, members } = content || {};
++      const { titleSize, titleColor, memberNameSize, memberRoleSize, textColor } = typography || {};
++      const { columns, backgroundColor, padding, cardBackgroundColor, cardBorderColor, imageRadius } = styling || {};
+       const id = (0, import_react42.useId)().replace(/:/g, "");
+       const uniqueClass = `team-${id}`;
+       return /* @__PURE__ */ (0, import_jsx_runtime81.jsxs)("section", { className: uniqueClass, style: { background: backgroundColor, color: textColor }, children: [
+@@ -7441,8 +7441,8 @@ var init_OpeningHoursRender = __esm({
+     init_utils();
+     import_jsx_runtime83 = require("react/jsx-runtime");
+     OpeningHoursRender = ({ content, styling }) => {
+-      const { title, hours } = content;
+-      const { backgroundColor, padding, cardBackgroundColor, titleColor, textColor, highlightColor, borderRadius } = styling;
++      const { title, hours } = content || {};
++      const { backgroundColor, padding, cardBackgroundColor, titleColor, textColor, highlightColor, borderRadius } = styling || {};
+       const id = (0, import_react43.useId)().replace(/:/g, "");
+       const uniqueClass = `hours-${id}`;
+       return /* @__PURE__ */ (0, import_jsx_runtime83.jsxs)("section", { className: uniqueClass, style: { background: backgroundColor }, children: [
+@@ -7537,8 +7537,8 @@ var init_ComparisonTableRender = __esm({
+     init_utils();
+     import_jsx_runtime85 = require("react/jsx-runtime");
+     ComparisonTableRender = ({ content, styling }) => {
+-      const { title, plans, features } = content;
+-      const { backgroundColor, padding, headerColor, headerTextColor, rowAlternateColor, textColor, accentColor } = styling;
++      const { title, plans, features } = content || {};
++      const { backgroundColor, padding, headerColor, headerTextColor, rowAlternateColor, textColor, accentColor } = styling || {};
+       const id = (0, import_react44.useId)().replace(/:/g, "");
+       const uniqueClass = `comparison-${id}`;
+       return /* @__PURE__ */ (0, import_jsx_runtime85.jsxs)("section", { className: uniqueClass, style: { background: backgroundColor, color: textColor }, children: [
+@@ -7629,7 +7629,7 @@ var init_ComparisonTableRender = __esm({
+               /* @__PURE__ */ (0, import_jsx_runtime85.jsx)("th", { children: "Fitur" }),
+               plans.map((plan, i) => /* @__PURE__ */ (0, import_jsx_runtime85.jsx)("th", { children: plan.name }, i))
+             ] }) }),
+-            /* @__PURE__ */ (0, import_jsx_runtime85.jsx)("tbody", { children: features.map((feature, i) => /* @__PURE__ */ (0, import_jsx_runtime85.jsxs)("tr", { children: [
++            /* @__PURE__ */ (0, import_jsx_runtime85.jsx)("tbody", { children: (features || []).map((feature, i) => /* @__PURE__ */ (0, import_jsx_runtime85.jsxs)("tr", { children: [
+               /* @__PURE__ */ (0, import_jsx_runtime85.jsx)("td", { children: feature.name }),
+               feature.values.map((item, j) => /* @__PURE__ */ (0, import_jsx_runtime85.jsx)("td", { children: String(item.value) === "true" ? /* @__PURE__ */ (0, import_jsx_runtime85.jsx)("span", { className: "check-icon", children: "\u2713" }) : String(item.value) === "false" ? /* @__PURE__ */ (0, import_jsx_runtime85.jsx)("span", { className: "cross-icon", children: "\u2715" }) : item.value }, j))
+             ] }, i)) })
+@@ -7655,8 +7655,8 @@ var init_CustomEmbedRender = __esm({
+     init_utils();
+     import_jsx_runtime87 = require("react/jsx-runtime");
+     CustomEmbedRender = ({ content, styling }) => {
+-      const { html, script, renderMode } = content;
+-      const { backgroundColor, padding, maxWidth, alignment } = styling;
++      const { html, script, renderMode } = content || {};
++      const { backgroundColor, padding, maxWidth, alignment } = styling || {};
+       const id = (0, import_react45.useId)().replace(/:/g, "");
+       const uniqueClass = `embed-${id}`;
+       const [iframeHeight, setIframeHeight] = (0, import_react45.useState)("150px");
+@@ -7863,9 +7863,9 @@ var init_SectionHeaderRender = __esm({
+     init_utils();
+     import_jsx_runtime89 = require("react/jsx-runtime");
+     SectionHeaderRender = ({ content, styling, typography }) => {
+-      const { badge, title, subtitle } = content;
+-      const { alignment, backgroundColor, padding, titleColor, subtitleColor, badgeColor, badgeTextColor, maxWidth, showAccent } = styling;
+-      const { titleSize, subtitleSize } = typography;
++      const { badge, title, subtitle } = content || {};
++      const { alignment, backgroundColor, padding, titleColor, subtitleColor, badgeColor, badgeTextColor, maxWidth, showAccent } = styling || {};
++      const { titleSize, subtitleSize } = typography || {};
+       const id = (0, import_react46.useId)().replace(/:/g, "");
+       const uniqueClass = `header-${id}`;
+       const alignMap = {
+@@ -8238,7 +8238,7 @@ var init_FeatureItemRender = __esm({
+                 }
+                 ` : ""}
+             ` } }),
+-            /* @__PURE__ */ (0, import_jsx_runtime92.jsx)("div", { className: `mx-auto ${containerMaxWidth || "max-w-screen-xl"}`, children: /* @__PURE__ */ (0, import_jsx_runtime92.jsx)("div", { className: "feature-grid", children: items.map((item, index) => {
++            /* @__PURE__ */ (0, import_jsx_runtime92.jsx)("div", { className: `mx-auto ${containerMaxWidth || "max-w-screen-xl"}`, children: /* @__PURE__ */ (0, import_jsx_runtime92.jsx)("div", { className: "feature-grid", children: (items || []).map((item, index) => {
+               return /* @__PURE__ */ (0, import_jsx_runtime92.jsx)("div", { className: "feature-card-wrapper", children: /* @__PURE__ */ (0, import_jsx_runtime92.jsxs)(
+                 "div",
+                 {
+@@ -8340,7 +8340,7 @@ var init_InfoGridRender = __esm({
+     InfoGridRender = ({ content, styling }) => {
+       const id = (0, import_react49.useId)().replace(/:/g, "");
+       const uniqueClass = `info-grid-${id}`;
+-      const { title, items = [] } = content;
++      const { title, items = [] } = content || {};
+       const s = styling;
+       return /* @__PURE__ */ (0, import_jsx_runtime94.jsxs)("section", { className: `${uniqueClass} overflow-hidden`, style: { backgroundColor: s.sectionBg }, children: [
+         /* @__PURE__ */ (0, import_jsx_runtime94.jsx)("style", { dangerouslySetInnerHTML: {
+@@ -8451,7 +8451,7 @@ var init_InfoGridRender = __esm({
+               children: title
+             }
+           ),
+-          /* @__PURE__ */ (0, import_jsx_runtime94.jsx)("div", { className: "grid-container", children: items.map((item, index) => {
++          /* @__PURE__ */ (0, import_jsx_runtime94.jsx)("div", { className: "grid-container", children: (items || []).map((item, index) => {
+             return /* @__PURE__ */ (0, import_jsx_runtime94.jsxs)("div", { className: "info-card", children: [
+               /* @__PURE__ */ (0, import_jsx_runtime94.jsx)("div", { className: "icon-box", children: /* @__PURE__ */ (0, import_jsx_runtime94.jsx)(DynamicIcon_default, { name: item.icon || "Info" }) }),
+               /* @__PURE__ */ (0, import_jsx_runtime94.jsxs)("div", { className: "flex-1 min-w-0", children: [
+@@ -8610,8 +8610,8 @@ var init_SocialFeedRender = __esm({
+     };
+     SocialFeedRender = ({ content, styling }) => {
+       const id = (0, import_react50.useId)().replace(/:/g, "");
+-      const { title, description, items } = content;
+-      const { backgroundColor = "#f8fafc", titleColor = "#0f172a", cardBackground = "#ffffff", columns, showCaptions, padding, cardBorderRadius } = styling;
++      const { title, description, items } = content || {};
++      const { backgroundColor = "#f8fafc", titleColor = "#0f172a", cardBackground = "#ffffff", columns, showCaptions, padding, cardBorderRadius } = styling || {};
+       return /* @__PURE__ */ (0, import_jsx_runtime96.jsxs)("section", { className: `sfs-${id}`, children: [
+         /* @__PURE__ */ (0, import_jsx_runtime96.jsx)("style", { dangerouslySetInnerHTML: { __html: `
+                 .sfs-${id} {
+@@ -8733,7 +8733,7 @@ var init_ButtonRender = __esm({
+       content,
+       styling
+     }) => {
+-      const { text = "Click Me", link = "#", pixelEvent = "" } = content;
++      const { text = "Click Me", link = "#", pixelEvent = "" } = content || {};
+       const {
+         align = "center",
+         buttonColor = "#0ea5e9",
+@@ -8744,7 +8744,7 @@ var init_ButtonRender = __esm({
+         borderRadius,
+         marginTop,
+         marginBottom
+-      } = styling;
++      } = styling || {};
+       const id = (0, import_react51.useId)().replace(/:/g, "");
+       const uniqueClass = `btn-${id}`;
+       return /* @__PURE__ */ (0, import_jsx_runtime98.jsxs)("div", { className: uniqueClass, style: {
+@@ -8825,7 +8825,7 @@ var init_SingleImageRender = __esm({
+       content,
+       styling
+     }) => {
+-      const { imageUrl, altText = "Image", linkUrl, openInNewTab = false } = content;
++      const { imageUrl, altText = "Image", linkUrl, openInNewTab = false } = content || {};
+       const {
+         align = "center",
+         imageWidth = { desktop: 100, tablet: 100, mobile: 100 },
+@@ -8839,7 +8839,7 @@ var init_SingleImageRender = __esm({
+         paddingLeft = { desktop: 0, tablet: 0, mobile: 0 },
+         paddingRight = { desktop: 0, tablet: 0, mobile: 0 },
+         borderRadius = { desktop: 0, tablet: 0, mobile: 0 }
+-      } = styling;
++      } = styling || {};
+       const id = "single-image-" + (0, import_react52.useId)().replace(/:/g, "");
+       const padTopDesktop = getVal(paddingTop, 0);
+       const padTopTablet = getTabletVal(paddingTop, 0);
+@@ -9907,7 +9907,7 @@ var init_ListBlockRender = __esm({
+         } }),
+         /* @__PURE__ */ (0, import_jsx_runtime107.jsxs)("div", { className: "list-container border border-zinc-200/50 shadow-[0_8px_30px_rgb(0,0,0,0.015)]", children: [
+           title && /* @__PURE__ */ (0, import_jsx_runtime107.jsx)("h3", { className: "text-lg font-bold mb-4 tracking-tight", style: { color: titleColor }, children: title }),
+-          items.length > 0 ? /* @__PURE__ */ (0, import_jsx_runtime107.jsx)("ul", { className: "space-y-3.5", children: items.map((item, idx) => /* @__PURE__ */ (0, import_jsx_runtime107.jsxs)("li", { className: "list-item flex items-start gap-3 leading-relaxed", children: [
++          items.length > 0 ? /* @__PURE__ */ (0, import_jsx_runtime107.jsx)("ul", { className: "space-y-3.5", children: (items || []).map((item, idx) => /* @__PURE__ */ (0, import_jsx_runtime107.jsxs)("li", { className: "list-item flex items-start gap-3 leading-relaxed", children: [
+             /* @__PURE__ */ (0, import_jsx_runtime107.jsx)("span", { className: "flex-shrink-0 mt-0.5", style: { color: iconColor }, children: /* @__PURE__ */ (0, import_jsx_runtime107.jsx)(DynamicIcon_default, { name: iconName, size: getVal(iconSize, 22) }) }),
+             /* @__PURE__ */ (0, import_jsx_runtime107.jsx)("span", { children: item.text })
+           ] }, idx)) }) : /* @__PURE__ */ (0, import_jsx_runtime107.jsx)("p", { className: "text-xs text-zinc-400 font-normal italic", children: "Belum ada item daftar." })
+@@ -10114,7 +10114,7 @@ var init_PixelTrackerRender = __esm({
+     import_react58 = require("react");
+     import_jsx_runtime111 = require("react/jsx-runtime");
+     PixelTrackerRender = ({ content }) => {
+-      const { metaPixelId = "", tiktokPixelId = "", googleAnalyticsId = "" } = content;
++      const { metaPixelId = "", tiktokPixelId = "", googleAnalyticsId = "" } = content || {};
+       const [isMounted, setIsMounted] = (0, import_react58.useState)(false);
+       (0, import_react58.useEffect)(() => {
+         setIsMounted(true);
+@@ -15695,7 +15695,7 @@ var MenuBar = ({ editor }) => {
+     { icon: import_lucide_react6.Undo, action: () => editor.chain().focus().undo().run(), active: null },
+     { icon: import_lucide_react6.Redo, action: () => editor.chain().focus().redo().run(), active: null }
+   ];
+-  return /* @__PURE__ */ (0, import_jsx_runtime72.jsx)("div", { className: "flex flex-wrap gap-0.5 p-1 border-b border-white/5 bg-white/5 sticky top-0 z-10", children: items.map((item, i) => /* @__PURE__ */ (0, import_jsx_runtime72.jsx)(
++  return /* @__PURE__ */ (0, import_jsx_runtime72.jsx)("div", { className: "flex flex-wrap gap-0.5 p-1 border-b border-white/5 bg-white/5 sticky top-0 z-10", children: (items || []).map((item, i) => /* @__PURE__ */ (0, import_jsx_runtime72.jsx)(
+     "button",
+     {
+       onClick: (e) => {
+diff --git a/dist/index.mjs b/dist/index.mjs
+index c1846de9f84c81c88e0a326363f2abba94ec3126..2184abba88de584c1a7d613241e0eb8ce5684680 100644
+--- a/dist/index.mjs
++++ b/dist/index.mjs
+@@ -5301,7 +5301,7 @@ var MenuBar = ({ editor }) => {
+     { icon: Undo, action: () => editor.chain().focus().undo().run(), active: null },
+     { icon: Redo, action: () => editor.chain().focus().redo().run(), active: null }
+   ];
+-  return /* @__PURE__ */ jsx33("div", { className: "flex flex-wrap gap-0.5 p-1 border-b border-white/5 bg-white/5 sticky top-0 z-10", children: items.map((item, i) => /* @__PURE__ */ jsx33(
++  return /* @__PURE__ */ jsx33("div", { className: "flex flex-wrap gap-0.5 p-1 border-b border-white/5 bg-white/5 sticky top-0 z-10", children: (items || []).map((item, i) => /* @__PURE__ */ jsx33(
+     "button",
+     {
+       onClick: (e) => {

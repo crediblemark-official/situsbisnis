@@ -117,6 +117,7 @@
     "happy-dom": "^20.0.0"
   },
   "patchedDependencies": {
-    "@crediblemark/build@0.25.21": "patches/@crediblemark%2Fbuild@0.25.21.patch"
+    "@crediblemark/build@0.25.21": "patches/@crediblemark%2Fbuild@0.25.21.patch",
+    "@crediblemark/build-ui@0.25.22": "patches/@crediblemark%2Fbuild-ui@0.25.22.patch"
   }
 }
