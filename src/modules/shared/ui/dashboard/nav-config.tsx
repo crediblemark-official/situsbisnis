@@ -88,12 +88,12 @@ export const getNavConfig = (siteId: string | null, settings?: SiteSettings | nu
         {
             title: "Platform",
             items: [
-                { href: "/dashboard/sites", icon: <LayoutDashboard size={18} />, label: "Situs Saya", roles: ["owner", "user"] },
-                { href: "/onboarding", icon: <Plus size={18} />, label: "Situs Baru", roles: ["owner", "user"] },
-                { href: "/dashboard/billing", icon: <CreditCard size={18} />, label: "Tagihan", roles: ["owner", "user"] },
-                { href: "/dashboard/history-bill", icon: <FileText size={18} />, label: "Langganan", roles: ["owner", "user"] },
-                { href: "/dashboard/finance", icon: <Wallet size={18} />, label: "Keuangan", roles: ["owner", "user", "admin"] },
-                { href: "/dashboard/affiliate", icon: <Network size={18} />, label: "Program Afiliasi", roles: ["owner", "user", "admin"] },
+                { href: "/dashboard/sites", icon: <LayoutDashboard size={18} />, label: "Situs Saya", roles: ["owner", "editor", "user", "admin"] },
+                { href: "/onboarding", icon: <Plus size={18} />, label: "Situs Baru", roles: ["owner", "editor", "user", "admin"] },
+                { href: "/dashboard/billing", icon: <CreditCard size={18} />, label: "Tagihan", roles: ["owner", "editor", "user", "admin"] },
+                { href: "/dashboard/history-bill", icon: <FileText size={18} />, label: "Langganan", roles: ["owner", "editor", "user", "admin"] },
+                { href: "/dashboard/finance", icon: <Wallet size={18} />, label: "Keuangan", roles: ["owner", "editor", "user", "admin"] },
+                { href: "/dashboard/affiliate", icon: <Network size={18} />, label: "Program Afiliasi", roles: ["owner", "editor", "user", "admin"] },
             ]
         },
         {
