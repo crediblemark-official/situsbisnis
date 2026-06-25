@@ -18,13 +18,11 @@ const mockSend = vi.fn();
 // Mock the Resend library
 vi.mock('resend', () => {
   return {
-    Resend: vi.fn().mockImplementation(() => {
-      return {
-        emails: {
-          send: mockSend,
-        },
+    Resend: vi.fn().mockImplementation(class {
+      emails = {
+        send: mockSend,
       };
-    }),
+    } as any),
   };
 });
 
