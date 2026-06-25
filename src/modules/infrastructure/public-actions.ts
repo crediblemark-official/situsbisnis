@@ -2,5 +2,7 @@ export {
     exportBackupDataAction,
     importBackupDataAction,
     deleteSiteAction,
-    manageSiteAction
+    manageSiteAction,
+    assignSiteOwnerAction
 } from "./actions/infra.actions";
+

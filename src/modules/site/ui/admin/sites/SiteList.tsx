@@ -11,13 +11,16 @@ import {
     Loader2,
     CheckCircle2,
     Gift,
-    CalendarPlus
+    CalendarPlus,
+    UserPlus
 } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
+import { AssignOwnerModal } from "@/components/ui/AssignOwnerModal";
 import Link from "next/link";
 import { TableContainer, THead, TBody, TR, TH, TD } from "@/components/ui/Table";
-import { deleteSiteAction, manageSiteAction } from "@/modules/infrastructure/public-actions";
+import { deleteSiteAction, manageSiteAction, assignSiteOwnerAction } from "@/modules/infrastructure/public-actions";
+
 
 export default function SiteList({ initialSites }: { initialSites: any[] }) {
     const [sites, setSites] = useState(initialSites);
@@ -27,6 +30,9 @@ export default function SiteList({ initialSites }: { initialSites: any[] }) {
     // Modal state
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [siteToDelete, setSiteToDelete] = useState<any | null>(null);
+    const [showAssignModal, setShowAssignModal] = useState(false);
+    const [siteToAssign, setSiteToAssign] = useState<any | null>(null);
+    const [assignLoading, setAssignLoading] = useState(false);
 
     const filteredSites = useMemo(() => {
         return sites.filter(site =>
@@ -98,7 +104,26 @@ export default function SiteList({ initialSites }: { initialSites: any[] }) {
         }
     };
 
+    const handleAssignOwner = async (email: string) => {
+        if (!siteToAssign) return;
+        setAssignLoading(true);
+        try {
+            const res = await assignSiteOwnerAction(siteToAssign.id, email);
+            if (res.success) {
+                window.location.reload();
+            } else {
+                throw new Error((res as any).error || "Gagal menghubungkan pemilik");
+            }
+        } catch (err: any) {
+            throw err;
+        } finally {
+            setAssignLoading(false);
+        }
+    };
+
+
     const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "localhost:3000";
+
 
     return (
         <div className="w-full animate-in fade-in duration-700 pb-20 space-y-6 text-foreground">
@@ -212,12 +237,23 @@ export default function SiteList({ initialSites }: { initialSites: any[] }) {
                                         ) : (
                                             <>
                                                 <button
+                                                    onClick={() => {
+                                                        setSiteToAssign(site);
+                                                        setShowAssignModal(true);
+                                                    }}
+                                                    className="p-2 hover:bg-blue-500/10 text-muted-foreground hover:text-blue-500 rounded-xl transition-all"
+                                                    title="Hubungkan Pemilik"
+                                                >
+                                                    <UserPlus size={14} />
+                                                </button>
+                                                <button
                                                     onClick={() => handleAction(site.id, "set_free")}
                                                     className="p-2 hover:bg-green-500/10 text-muted-foreground hover:text-green-500 rounded-xl transition-all"
                                                     title="Set ke Paket Gratis"
                                                 >
                                                     <Gift size={14} />
                                                 </button>
+
                                                 {isTrial && !sub?.trialExtended && (
                                                     <button
                                                         onClick={() => handleAction(site.id, "extend_trial")}
@@ -281,6 +317,19 @@ export default function SiteList({ initialSites }: { initialSites: any[] }) {
                 confirmText="Ya, Hapus Segalanya"
                 variant="danger"
             />
+
+            <AssignOwnerModal
+                isOpen={showAssignModal}
+                onClose={() => {
+                    setShowAssignModal(false);
+                    setSiteToAssign(null);
+                }}
+                onConfirm={handleAssignOwner}
+                title="Hubungkan Pemilik Baru"
+                message={siteToAssign ? `Masukkan email pemilik baru untuk situs "${siteToAssign.name}" (${siteToAssign.subdomain})` : ""}
+                loading={assignLoading}
+            />
         </div>
     );
 }
+

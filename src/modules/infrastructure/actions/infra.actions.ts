@@ -79,3 +79,28 @@ export async function manageSiteAction(id: string, action: string) {
     }
 }
 
+export async function assignSiteOwnerAction(siteId: string, email: string) {
+    try {
+        const { error, session } = await getApiContext(["admin"], { requireSite: false });
+        if (error || !session) return { success: false, error: error || "Unauthorized" };
+
+        if (!siteId || !email) {
+            return { success: false, error: "Data tidak lengkap", status: 400 };
+        }
+
+        const result = await InfrastructureClient.assignSiteOwner(siteId, email.trim().toLowerCase());
+        return result;
+    } catch (serviceError: any) {
+        console.error("[ASSIGN_SITE_OWNER_ACTION] Error:", serviceError);
+        const msg = serviceError?.message || "";
+        if (msg === "SITE_NOT_FOUND") {
+            return { success: false, error: "Situs tidak ditemukan", status: 404 };
+        }
+        if (msg === "USER_NOT_FOUND") {
+            return { success: false, error: "User dengan email tersebut tidak ditemukan", status: 404 };
+        }
+        return { success: false, error: "Gagal menghubungkan pemilik" };
+    }
+}
+
+

@@ -47,3 +47,54 @@ export async function manageSiteAction(siteId: string, action: "set_free" | "ext
 
     throw new Error("INVALID_ACTION");
 }
+
+export async function assignSiteOwner(siteId: string, email: string) {
+    const { db } = await import("@/modules/shared/core/db");
+
+    // 1. Validasi site
+    const site = await db.site.findUnique({
+        where: { id: siteId }
+    });
+    if (!site) {
+        throw new Error("SITE_NOT_FOUND");
+    }
+
+    // 2. Cari user berdasarkan email
+    const user = await db.user.findUnique({
+        where: { email }
+    });
+    if (!user) {
+        throw new Error("USER_NOT_FOUND");
+    }
+
+    // 3. Proses penghubungan pemilik
+    // Hapus relasi pemilik (owner) lama jika ada
+    await db.siteUser.deleteMany({
+        where: {
+            siteId,
+            role: "owner"
+        }
+    });
+
+    // Hapus relasi user terpilih pada situs ini (jika ada sebagai editor/role lain) untuk mencegah conflict unique key
+    await db.siteUser.deleteMany({
+        where: {
+            siteId,
+            userId: user.id
+        }
+    });
+
+    // Buat relasi owner baru
+    await db.siteUser.create({
+        data: {
+            siteId,
+            userId: user.id,
+            role: "owner"
+        }
+    });
+
+    revalidateTag(`site-${siteId}`, "default");
+
+    return { success: true, message: "Pemilik berhasil dihubungkan ke situs" };
+}
+
