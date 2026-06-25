@@ -83,7 +83,7 @@ function PricingCard({ plan, currency, billingInterval }: { plan: any; currency:
             {/* Glowing Accent Shadow behind popular card removed based on user request */}
 
             {isPopular && (
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-sky-500 via-blue-500 to-indigo-650 text-white text-[9px] font-black uppercase tracking-[0.18em] px-4 py-1.5 rounded-full shadow-lg shadow-sky-500/20 z-20 border border-sky-400/30 flex items-center gap-1.5 whitespace-nowrap">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-sky-500 via-blue-500 to-indigo-600 text-white text-[9px] font-black uppercase tracking-[0.18em] px-4 py-1.5 rounded-full shadow-lg shadow-sky-500/20 z-20 border border-sky-400/30 flex items-center gap-1.5 whitespace-nowrap">
                     <Sparkles size={11} className="animate-spin-slow" /> Paling Populer
                 </div>
             )}
