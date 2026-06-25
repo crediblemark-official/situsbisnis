@@ -63,6 +63,9 @@
       },
     },
   },
+  "patchedDependencies": {
+    "@crediblemark/build@0.25.21": "patches/@crediblemark%2Fbuild@0.25.21.patch",
+  },
   "overrides": {
     "@eslint/plugin-kit": "^0.4.0",
     "@opentelemetry/core": "^2.8.0",

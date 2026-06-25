@@ -115,5 +115,8 @@
     "vite": "^6.4.3",
     "esbuild": "^0.25.0",
     "happy-dom": "^20.0.0"
+  },
+  "patchedDependencies": {
+    "@crediblemark/build@0.25.21": "patches/@crediblemark%2Fbuild@0.25.21.patch"
   }
 }
