@@ -10,6 +10,7 @@ import Link from "next/link";
 import { SiteClient } from "@/modules/site";
 import { IdentityClient } from "@/modules/auth";
 import { generateBridgeToken } from "@/lib/api/utils";
+import { db } from "@/lib/core/db";
 
 import { headers } from "next/headers";
 export const dynamic = "force-dynamic";
@@ -92,8 +93,27 @@ export default async function DashboardLayout({
         redirect("/dashboard/billing");
     }
 
+    // Ambil role efektif pengguna di situs ini
+    let userRole = "user";
+    if (siteId && session?.user?.id) {
+        const link = await db.siteUser.findUnique({
+            where: {
+                siteId_userId: {
+                    siteId,
+                    userId: session.user.id
+                }
+            },
+            select: { role: true }
+        });
+        userRole = link?.role || "user";
+    } else if (!siteId && session?.user?.role === "admin") {
+        userRole = "admin";
+    } else if (!siteId) {
+        userRole = "owner";
+    }
+
     return (
-        <DashboardShell initialSettings={settings} siteId={siteId}>
+        <DashboardShell initialSettings={settings} siteId={siteId} userRole={userRole}>
             {siteStatus === "grace_period" && pathname !== "/dashboard/billing" && (
                 <div className="bg-red-500/10 border-b border-red-500/20 px-[5px] py-2 flex items-center justify-between animate-in slide-in-from-top duration-500">
                     <div className="flex items-center gap-3">

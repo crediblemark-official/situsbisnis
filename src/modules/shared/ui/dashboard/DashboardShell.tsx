@@ -21,12 +21,14 @@ interface DashboardShellProps {
     children: React.ReactNode;
     initialSettings?: SiteSettings | null;
     siteId?: string | null;
+    userRole?: string;
 }
 
 export default function DashboardShell({
     children,
     initialSettings,
-    siteId
+    siteId,
+    userRole = "user"
 }: DashboardShellProps) {
     const { data: session } = useSession();
     const pathname = usePathname();
@@ -80,7 +82,7 @@ export default function DashboardShell({
             <nav className={`flex-1 p-1 overflow-y-auto overflow-x-hidden custom-scrollbar transition-all duration-300 ${isCollapsed ? "px-1.5 space-y-1" : "px-1 space-y-2"}`}>
                 {navSections.map((section, i) => {
                     const visibleItems = section.items.filter(item =>
-                        !item.roles || item.roles.includes((session?.user as any)?.role || "user")
+                        !item.roles || item.roles.includes(userRole)
                     );
 
                     if (visibleItems.length === 0) return null;
@@ -134,7 +136,18 @@ export default function DashboardShell({
                             <Menu size={18} />
                         </button>
                         <StoreSwitcher currentSiteId={siteId || null} currentSiteName={siteName} />
-                        <div className="hidden sm:block flex-1 max-w-[300px]">
+                        {siteId && (
+                            <span className={`ml-2 shrink-0 px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border ${
+                                userRole === "owner" 
+                                    ? "bg-primary/10 text-primary border-primary/20" 
+                                    : userRole === "editor"
+                                    ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
+                                    : "bg-blue-500/10 text-blue-500 border-blue-500/20"
+                            }`}>
+                                {userRole === "owner" ? "Pemilik" : userRole === "editor" ? "Editor" : "Staf"}
+                            </span>
+                        )}
+                        <div className="hidden sm:block flex-1 max-w-[300px] ml-2">
                             <GlobalSearch navSections={navSections} />
                         </div>
                     </div>
