@@ -97,8 +97,8 @@ export async function completeOnboardingAction(body: any) {
             throw err;
         }
 
-        // 2. Ambil jumlah site milik user
-        const { siteIds, count: userSitesCount } = await SiteClient.getUserSiteCount(session.user.id);
+        // 2. Ambil jumlah site milik user (owner)
+        const { siteIds, count: userSitesCount } = await SiteClient.getUserOwnedSiteCount(session.user.id);
 
         // 3. Validasi limit jumlah situs dari paket langganan
         const limitCheck = await SubscriptionClient.checkUserSitesLimit(siteIds, userSitesCount);

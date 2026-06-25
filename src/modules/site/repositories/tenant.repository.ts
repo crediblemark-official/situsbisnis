@@ -120,6 +120,16 @@ export async function findSiteUserLinksByUserId(userId: string) {
 }
 
 /**
+ * Mengambil site-site yang terhubung ke user berdasarkan userId dan role tertentu.
+ */
+export async function findSiteUserLinksByUserIdAndRole(userId: string, role: string) {
+    return db.siteUser.findMany({
+        where: { userId, role },
+        select: { siteId: true }
+    });
+}
+
+/**
  * Menghapus site beserta semua data yang terhubung (cascade manual untuk constraint RESTRICT).
  */
 export async function deleteSiteById(id: string) {

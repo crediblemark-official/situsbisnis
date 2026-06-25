@@ -216,7 +216,7 @@ export async function postOnboardingApi(req: Request) {
             throw err;
         }
 
-        const { siteIds, count } = await SiteClient.getUserSiteCount(session.user.id);
+        const { siteIds, count } = await SiteClient.getUserOwnedSiteCount(session.user.id);
         const limitCheck = await SubscriptionClient.checkUserSitesLimit(siteIds, count);
         if (!limitCheck.allowed) {
             return apiError(limitCheck.message || "Limit tercapai", 403);

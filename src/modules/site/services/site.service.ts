@@ -26,6 +26,20 @@ export async function getUserSiteCount(userId: string): Promise<{
 }
 
 /**
+ * Mengambil jumlah site yang dimiliki user secara pribadi (role owner).
+ */
+export async function getUserOwnedSiteCount(userId: string): Promise<{
+    siteIds: string[];
+    count: number;
+}> {
+    const links = await tenantRepo.findSiteUserLinksByUserIdAndRole(userId, "owner");
+    return {
+        siteIds: links.map(l => l.siteId),
+        count: links.length
+    };
+}
+
+/**
  * Menghapus site berdasarkan ID.
  * Melempar error jika site adalah situs admin platform atau tidak ditemukan.
  */

@@ -12,6 +12,7 @@ import {
 import {
     checkSubdomainAvailability,
     getUserSiteCount,
+    getUserOwnedSiteCount,
     deleteSite,
     getSiteDetail
 } from "./services/site.service";
@@ -54,6 +55,7 @@ export const SiteClient = {
 
     checkSubdomainAvailability,
     getUserSiteCount,
+    getUserOwnedSiteCount,
     deleteSite,
 
     createContactSubmission,
