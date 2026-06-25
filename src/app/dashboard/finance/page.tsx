@@ -45,7 +45,7 @@ export default async function FinanceDashboardPage() {
 
     // 2. Query all sites owned by this user along with their payment settings
     const siteLinks = await db.siteUser.findMany({
-        where: { userId },
+        where: { userId, role: "owner" },
         select: { siteId: true }
     });
     const userSiteIds = siteLinks.map(l => l.siteId);
