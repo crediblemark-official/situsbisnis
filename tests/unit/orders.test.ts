@@ -82,7 +82,7 @@ describe('Orders API POST Route', () => {
 
     // Database returns the true product price of $99.99
     vi.mocked(db.product.findMany).mockResolvedValue([
-      { id: 'prod-abc', price: 99.99, name: 'Cool Widget', siteId: 'site-123' }
+      { id: 'prod-abc', price: 99.99, name: 'Cool Widget', siteId: 'site-123', stock: 10 }
     ] as any);
 
     // Mock db.order.create
@@ -199,7 +199,7 @@ describe('Orders API POST Route', () => {
     } as any);
 
     vi.mocked(db.product.findMany).mockResolvedValue([
-      { id: 'prod-abc', price: 99.99, name: 'Cool Widget', siteId: 'site-123' }
+      { id: 'prod-abc', price: 99.99, name: 'Cool Widget', siteId: 'site-123', stock: 10 }
     ] as any);
 
     vi.mocked(db.order.create).mockResolvedValue({
@@ -279,7 +279,7 @@ describe('Orders API POST Route', () => {
     } as any);
 
     vi.mocked(db.product.findMany).mockResolvedValue([
-      { id: 'prod-abc', price: 99.99, name: 'Cool Widget', siteId: 'site-123' }
+      { id: 'prod-abc', price: 99.99, name: 'Cool Widget', siteId: 'site-123', stock: 10 }
     ] as any);
 
     const mockOrder = {
