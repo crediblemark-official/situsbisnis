@@ -16,6 +16,8 @@ import { CatalogClient } from "@/modules/catalog";
 import { OrderClient } from "@/modules/order";
 import { SiteClient } from "@/modules/site";
 import { SubscriptionClient } from "@/modules/subscription";
+import { redirect } from "next/navigation";
+import { db } from "@/lib/core/db";
 
 async function getStats(siteId: string | null) {
     if (!siteId) {
@@ -83,15 +85,18 @@ async function getStats(siteId: string | null) {
 import { LayoutDashboard } from "lucide-react";
 
 export default async function DashboardPage() {
+    const session = await getServerSession(authOptions);
+    if (!session) redirect("/login");
+
     const siteId = await getSiteId();
     const data = await getStats(siteId);
-    const session = await getServerSession(authOptions);
     const userName = session?.user?.name || "Chipster";
     
     // Fetch Subscription to get limits
     const subscription = siteId ? await SubscriptionClient.getActiveSubscription(siteId) : null;
     const plan = subscription?.plan as any;
 
+    const settings = await SiteClient.getSiteSettings(siteId || undefined);
     const paymentSettings = await getPaymentSettings(siteId || undefined);
     const currency = paymentSettings.currency || "USD";
     const totalRevenue = data.recentOrders.reduce((acc, o) => acc + Number(o.total), 0);
@@ -100,6 +105,25 @@ export default async function DashboardPage() {
         ? Math.max(0, Math.ceil((new Date(subscription.trialEndsAt).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)))
         : null;
     const progressPercent = trialDaysLeft !== null ? Math.min(100, Math.max(0, (trialDaysLeft / 14) * 100)) : 100;
+
+    // Ambil role efektif pengguna di situs ini
+    let userRole = "user";
+    if (siteId && session?.user?.id) {
+        const link = await db.siteUser.findUnique({
+            where: {
+                siteId_userId: {
+                    siteId,
+                    userId: session.user.id
+                }
+            },
+            select: { role: true }
+        });
+        userRole = link?.role || "user";
+    } else if (!siteId && session?.user?.role === "admin") {
+        userRole = "admin";
+    } else if (!siteId) {
+        userRole = "owner";
+    }
 
     return (
         <div className="w-full animate-in fade-in duration-700 pb-20 space-y-6 text-foreground">
@@ -136,27 +160,33 @@ export default async function DashboardPage() {
 
                             {/* Action Buttons */}
                             <div className="flex flex-wrap items-center gap-2 pt-2">
-                                <Link 
-                                    href="/dashboard/products/new"
-                                    className="flex items-center gap-1.5 px-4 py-2 bg-yellow-400 hover:bg-yellow-300 active:scale-[0.98] text-slate-900 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 shadow-md shadow-yellow-500/10 hover:shadow-lg hover:shadow-yellow-500/20"
-                                >
-                                    <Plus size={12} strokeWidth={3} />
-                                    <span>Tambah Produk</span>
-                                </Link>
-                                <Link 
-                                    href="/dashboard/posts/new"
-                                    className="flex items-center gap-1.5 px-4 py-2 bg-white/10 hover:bg-white/15 active:scale-[0.98] text-white border border-white/20 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300"
-                                >
-                                    <Plus size={12} strokeWidth={3} />
-                                    <span>Tambah Konten</span>
-                                </Link>
-                                <Link 
-                                    href="/dashboard/settings"
-                                    className="flex items-center gap-1.5 px-4 py-2 bg-white/10 hover:bg-white/15 active:scale-[0.98] text-white border border-white/20 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300"
-                                >
-                                    <Pencil size={11} strokeWidth={3} />
-                                    <span>Edit Profil</span>
-                                </Link>
+                                {(!siteId || settings?.enabledProducts) && (
+                                    <Link 
+                                        href="/dashboard/products/new"
+                                        className="flex items-center gap-1.5 px-4 py-2 bg-yellow-400 hover:bg-yellow-300 active:scale-[0.98] text-slate-900 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 shadow-md shadow-yellow-500/10 hover:shadow-lg hover:shadow-yellow-500/20"
+                                    >
+                                        <Plus size={12} strokeWidth={3} />
+                                        <span>Tambah Produk</span>
+                                    </Link>
+                                )}
+                                {(!siteId || settings?.enabledPosts) && ["admin", "owner", "editor"].includes(userRole) && (
+                                    <Link 
+                                        href="/dashboard/posts/new"
+                                        className="flex items-center gap-1.5 px-4 py-2 bg-white/10 hover:bg-white/15 active:scale-[0.98] text-white border border-white/20 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300"
+                                    >
+                                        <Plus size={12} strokeWidth={3} />
+                                        <span>Tambah Konten</span>
+                                    </Link>
+                                )}
+                                {["admin", "owner"].includes(userRole) && (
+                                    <Link 
+                                        href="/dashboard/settings"
+                                        className="flex items-center gap-1.5 px-4 py-2 bg-white/10 hover:bg-white/15 active:scale-[0.98] text-white border border-white/20 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300"
+                                    >
+                                        <Pencil size={11} strokeWidth={3} />
+                                        <span>Setelan Toko</span>
+                                    </Link>
+                                )}
                             </div>
                         </div>
 
@@ -253,14 +283,16 @@ export default async function DashboardPage() {
                         </div>
 
                         {/* Upgrade Button */}
-                        <div className="pt-4 relative z-10">
-                            <Link 
-                                href="/dashboard/billing"
-                                className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 bg-sky-500 hover:bg-sky-600 active:scale-[0.98] text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 shadow-md shadow-sky-500/10 hover:shadow-lg hover:shadow-sky-500/20"
-                            >
-                                <span>Kelola Berlangganan</span>
-                            </Link>
-                        </div>
+                        {["admin", "owner"].includes(userRole) && (
+                            <div className="pt-4 relative z-10">
+                                <Link 
+                                    href="/dashboard/billing"
+                                    className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 bg-sky-500 hover:bg-sky-600 active:scale-[0.98] text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 shadow-md shadow-sky-500/10 hover:shadow-lg hover:shadow-sky-500/20"
+                                >
+                                    <span>Kelola Berlangganan</span>
+                                </Link>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
