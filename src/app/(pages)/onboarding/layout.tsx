@@ -12,7 +12,7 @@ export default async function OnboardingLayout({
     if (!session) redirect("/login");
 
     const userSites = await db.siteUser.findMany({
-        where: { userId: session.user.id },
+        where: { userId: session.user.id, role: "owner" },
         select: { siteId: true }
     });
     const sitesCount = userSites.length;
