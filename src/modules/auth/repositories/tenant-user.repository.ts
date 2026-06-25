@@ -73,7 +73,9 @@ export async function upsertSiteUser(siteId: string, userId: string, role: strin
             userId,
             role
         },
-        update: {}
+        update: {
+            role
+        }
     });
 }
 

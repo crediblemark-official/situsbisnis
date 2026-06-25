@@ -112,11 +112,31 @@ export async function createUserByAdmin(siteId: string | undefined, data: any, s
     }
 
     if (user) {
-        if (formattedPhone && user.phone !== formattedPhone) {
-            await userRepo.updateUser(user.id, { phone: formattedPhone });
+        const updateData: any = {};
+        if (name && user.name !== name) {
+            updateData.name = name;
         }
+        if (role && user.role !== role) {
+            updateData.role = role;
+        }
+        if (password && password.trim() !== "") {
+            updateData.password = await bcrypt.hash(password, 10);
+        }
+        if (phone !== undefined) {
+            if (formattedPhone && user.phone !== formattedPhone) {
+                updateData.phone = formattedPhone;
+            } else if (phone === "") {
+                updateData.phone = null;
+            }
+        }
+
+        if (Object.keys(updateData).length > 0) {
+            await userRepo.updateUser(user.id, updateData);
+            user = { ...user, ...updateData };
+        }
+
         if (siteId) {
-            await tenantUserRepo.upsertSiteUser(siteId, user.id);
+            await tenantUserRepo.upsertSiteUser(siteId, user.id, role || "user");
         }
     } else {
         const rawPassword = password && password.trim() !== "" ? password : "change-me";
