@@ -4,6 +4,7 @@ export {
     deleteSiteAction,
     manageSiteAction,
     assignSiteOwnerAction,
-    checkUserEmailExistsAction
+    checkUserEmailExistsAction,
+    updateSiteSubdomainAction
 } from "./actions/infra.actions";
 

@@ -6,7 +6,7 @@ import {
     type BackupData
 } from "./services/backup-export.service";
 import { importBackupData } from "./services/backup-import.service";
-import { manageSiteAction, assignSiteOwner } from "./services/site-management.service";
+import { manageSiteAction, assignSiteOwner, updateSiteSubdomain } from "./services/site-management.service";
 import { getCache, setCache, deleteCache, getOrSetCache } from "./services/cache.service";
 
 export { DokployService } from "./services/dokploy.service";
@@ -18,6 +18,7 @@ export const InfrastructureClient = {
     importBackupData,
     manageSite: manageSiteAction,
     assignSiteOwner,
+    updateSiteSubdomain,
     getCache,
     setCache,
     deleteCache,

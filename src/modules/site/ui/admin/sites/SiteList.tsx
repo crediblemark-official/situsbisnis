@@ -12,14 +12,16 @@ import {
     CheckCircle2,
     Gift,
     CalendarPlus,
-    UserPlus
+    UserPlus,
+    Edit
 } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { AssignOwnerModal } from "@/components/ui/AssignOwnerModal";
 import Link from "next/link";
+import Portal from "@/components/ui/Portal";
 import { TableContainer, THead, TBody, TR, TH, TD } from "@/components/ui/Table";
-import { deleteSiteAction, manageSiteAction, assignSiteOwnerAction } from "@/modules/infrastructure/public-actions";
+import { deleteSiteAction, manageSiteAction, assignSiteOwnerAction, updateSiteSubdomainAction } from "@/modules/infrastructure/public-actions";
 
 
 export default function SiteList({ initialSites }: { initialSites: any[] }) {
@@ -33,6 +35,13 @@ export default function SiteList({ initialSites }: { initialSites: any[] }) {
     const [showAssignModal, setShowAssignModal] = useState(false);
     const [siteToAssign, setSiteToAssign] = useState<any | null>(null);
     const [assignLoading, setAssignLoading] = useState(false);
+
+    // Edit Subdomain state
+    const [showSubdomainModal, setShowSubdomainModal] = useState(false);
+    const [siteToEditSubdomain, setSiteToEditSubdomain] = useState<any | null>(null);
+    const [subdomainInput, setSubdomainInput] = useState("");
+    const [subdomainLoading, setSubdomainLoading] = useState(false);
+    const [subdomainError, setSubdomainError] = useState("");
 
     const filteredSites = useMemo(() => {
         return sites.filter(site =>
@@ -118,6 +127,24 @@ export default function SiteList({ initialSites }: { initialSites: any[] }) {
             throw err;
         } finally {
             setAssignLoading(false);
+        }
+    };
+
+    const handleUpdateSubdomain = async () => {
+        if (!siteToEditSubdomain) return;
+        setSubdomainLoading(true);
+        setSubdomainError("");
+        try {
+            const res = await updateSiteSubdomainAction(siteToEditSubdomain.id, subdomainInput);
+            if (res.success) {
+                window.location.reload();
+            } else {
+                setSubdomainError(res.error || "Gagal mengubah subdomain");
+            }
+        } catch (_err) {
+            setSubdomainError("Koneksi gagal");
+        } finally {
+            setSubdomainLoading(false);
         }
     };
 
@@ -238,6 +265,18 @@ export default function SiteList({ initialSites }: { initialSites: any[] }) {
                                             <>
                                                 <button
                                                     onClick={() => {
+                                                        setSiteToEditSubdomain(site);
+                                                        setSubdomainInput(site.subdomain);
+                                                        setSubdomainError("");
+                                                        setShowSubdomainModal(true);
+                                                    }}
+                                                    className="p-2 hover:bg-indigo-500/10 text-muted-foreground hover:text-indigo-500 rounded-xl transition-all"
+                                                    title="Ubah Subdomain"
+                                                >
+                                                    <Edit size={14} />
+                                                </button>
+                                                <button
+                                                    onClick={() => {
                                                         setSiteToAssign(site);
                                                         setShowAssignModal(true);
                                                     }}
@@ -329,7 +368,97 @@ export default function SiteList({ initialSites }: { initialSites: any[] }) {
                 message={siteToAssign ? `Masukkan email pemilik baru untuk situs "${siteToAssign.name}" (${siteToAssign.subdomain})` : ""}
                 loading={assignLoading}
             />
+
+            {showSubdomainModal && siteToEditSubdomain && (
+                <EditSubdomainModal
+                    isOpen={showSubdomainModal}
+                    onClose={() => {
+                        setShowSubdomainModal(false);
+                        setSiteToEditSubdomain(null);
+                    }}
+                    onConfirm={handleUpdateSubdomain}
+                    subdomain={subdomainInput}
+                    onChangeSubdomain={setSubdomainInput}
+                    title="Ubah Subdomain Situs"
+                    message={`Masukkan nama subdomain baru untuk situs "${siteToEditSubdomain.name}"`}
+                    error={subdomainError}
+                    loading={subdomainLoading}
+                />
+            )}
         </div>
+    );
+}
+
+interface EditSubdomainModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onConfirm: () => void;
+    subdomain: string;
+    onChangeSubdomain: (_val: string) => void;
+    title: string;
+    message: string;
+    error?: string;
+    loading?: boolean;
+}
+
+function EditSubdomainModal({
+    isOpen,
+    onClose,
+    onConfirm,
+    subdomain,
+    onChangeSubdomain,
+    title,
+    message,
+    error,
+    loading
+}: EditSubdomainModalProps) {
+    if (!isOpen) return null;
+    return (
+        <Portal>
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 overflow-y-auto bg-black/50 backdrop-blur-sm animate-in fade-in duration-300">
+                <div className="relative w-full max-w-md bg-card border border-border rounded-xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 p-6 space-y-4">
+                    <h3 className="text-sm font-black uppercase tracking-widest text-foreground">{title}</h3>
+                    <p className="text-xs text-muted-foreground">{message}</p>
+                    
+                    {error && (
+                        <p className="text-[10px] font-bold text-red-500 bg-red-500/10 border border-red-500/20 px-3 py-1.5 rounded-lg uppercase tracking-wide">
+                            {error}
+                        </p>
+                    )}
+
+                    <div className="space-y-1">
+                        <label className="text-[10px] font-black uppercase text-muted-foreground tracking-wider">Subdomain Baru</label>
+                        <input
+                            type="text"
+                            value={subdomain}
+                            onChange={(e) => onChangeSubdomain(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
+                            placeholder="subdomain-baru"
+                            className="w-full px-3 py-2 bg-muted/30 border border-border rounded-lg text-xs outline-none focus:border-primary font-mono text-foreground"
+                        />
+                    </div>
+
+                    <div className="flex justify-end gap-3 pt-2">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            disabled={loading}
+                            className="px-4 py-2 border border-border text-foreground hover:bg-muted rounded-lg text-[10px] font-black uppercase tracking-widest transition-all disabled:opacity-50"
+                        >
+                            Batal
+                        </button>
+                        <button
+                            type="button"
+                            onClick={onConfirm}
+                            disabled={loading || !subdomain.trim()}
+                            className="px-4 py-2 bg-primary text-primary-foreground hover:opacity-90 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all disabled:opacity-50 flex items-center gap-1.5"
+                        >
+                            {loading && <Loader2 size={12} className="animate-spin" />}
+                            Simpan
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </Portal>
     );
 }
 

@@ -124,4 +124,34 @@ export async function checkUserEmailExistsAction(email: string) {
     }
 }
 
+export async function updateSiteSubdomainAction(siteId: string, subdomain: string) {
+    try {
+        const { error, session } = await getApiContext(["admin"], { requireSite: false });
+        if (error || !session) return { success: false, error: error || "Unauthorized" };
+
+        if (!siteId || !subdomain) {
+            return { success: false, error: "Data tidak lengkap", status: 400 };
+        }
+
+        const normalizedSubdomain = subdomain.toLowerCase().trim().replace(/[^a-z0-9-]/g, "");
+        if (normalizedSubdomain.length === 0) {
+            return { success: false, error: "Format subdomain tidak valid", status: 400 };
+        }
+
+        await InfrastructureClient.updateSiteSubdomain(siteId, normalizedSubdomain);
+        return { success: true, message: "Subdomain berhasil diubah" };
+    } catch (serviceError: any) {
+        console.error("[UPDATE_SITE_SUBDOMAIN_ACTION] Error:", serviceError);
+        const msg = serviceError?.message || "";
+        if (msg === "SITE_NOT_FOUND") {
+            return { success: false, error: "Situs tidak ditemukan", status: 404 };
+        }
+        if (msg === "SUBDOMAIN_TAKEN") {
+            return { success: false, error: "Subdomain sudah digunakan oleh situs lain", status: 400 };
+        }
+        return { success: false, error: serviceError.message || "Gagal mengubah subdomain" };
+    }
+}
+
+
 

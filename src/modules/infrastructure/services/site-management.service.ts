@@ -98,3 +98,41 @@ export async function assignSiteOwner(siteId: string, email: string) {
     return { success: true, message: "Pemilik berhasil dihubungkan ke situs" };
 }
 
+export async function updateSiteSubdomain(siteId: string, subdomain: string) {
+    const { db } = await import("@/modules/shared/core/db");
+
+    // 1. Validasi site
+    const site = await db.site.findUnique({
+        where: { id: siteId }
+    });
+    if (!site) {
+        throw new Error("SITE_NOT_FOUND");
+    }
+
+    if (site.subdomain === subdomain) {
+        return { success: true, message: "Subdomain tidak berubah" };
+    }
+
+    // 2. Cek ketersediaan subdomain baru
+    const existing = await db.site.findUnique({
+        where: { subdomain }
+    });
+    if (existing) {
+        throw new Error("SUBDOMAIN_TAKEN");
+    }
+
+    // 3. Update subdomain di database
+    await db.site.update({
+        where: { id: siteId },
+        data: { subdomain }
+    });
+
+    // Invalidasi cache
+    revalidateTag(`site-${siteId}`, "default");
+    revalidateTag(`site-id-${site.subdomain}`, "default");
+    revalidateTag(`site-id-${subdomain}`, "default");
+
+    return { success: true, message: "Subdomain berhasil diubah" };
+}
+
+
