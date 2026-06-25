@@ -51,12 +51,13 @@ export default async function MySitesPage() {
         };
     }));
     
-    const siteIds = rawSites.map(s => s.id);
+    const ownedSites = sites.filter(s => s.userRole === "owner");
+    const ownedSiteIds = ownedSites.map(s => s.id);
     
     // Calculate global resource limit for this user
     // We look at the subscription with the highest limit
     const activeSubscriptions = await db.subscription.findMany({
-        where: { siteId: { in: siteIds }, status: "active" },
+        where: { siteId: { in: ownedSiteIds }, status: "active" },
         select: {
             addonSlots: true,
             plan: {
@@ -72,7 +73,7 @@ export default async function MySitesPage() {
         ? Math.max(...activeSubscriptions.map(s => (s.plan?.maxSites || 1) + (s.addonSlots || 0)))
         : 1; // Default for free/no subscription
 
-    const isLimitReached = maxSitesAllowed !== -1 && sites.length >= maxSitesAllowed;
+    const isLimitReached = maxSitesAllowed !== -1 && ownedSites.length >= maxSitesAllowed;
 
     if (sites.length === 0) {
         redirect("/onboarding");
@@ -109,11 +110,11 @@ export default async function MySitesPage() {
                 <div className="flex-1 h-1 bg-muted rounded-full overflow-hidden">
                     <div 
                         className={`h-full transition-all duration-1000 ${isLimitReached ? 'bg-amber-500' : 'bg-primary'}`}
-                        style={{ width: `${Math.min((sites.length / (maxSitesAllowed === -1 ? sites.length : maxSitesAllowed)) * 100, 100)}%` }}
+                        style={{ width: `${Math.min((ownedSites.length / (maxSitesAllowed === -1 ? (ownedSites.length || 1) : maxSitesAllowed)) * 100, 100)}%` }}
                     />
                 </div>
                 <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">
-                    Usage: {sites.length} / {maxSitesAllowed === -1 ? '∞' : maxSitesAllowed} Sites
+                    Usage: {ownedSites.length} / {maxSitesAllowed === -1 ? '∞' : maxSitesAllowed} Sites
                 </span>
             </div>
             <SiteList initialSites={sites} rootDomain={rootDomain} isLimitReached={isLimitReached} />
