@@ -2,6 +2,7 @@ import { db } from "@/modules/shared/core/db";
 import { z } from "zod";
 import { buildPagination, fetchWithCache, publishCrudEvent, checkResourceLimit } from "@/modules/shared/core/crud-base";
 import * as productRepo from "../repositories/product.repository";
+import { deleteMediaByUrl } from "@/modules/media/services/media.service";
 
 export const productSchema = z.object({
     name: z.string().min(1, "Product name is required"),
@@ -170,6 +171,16 @@ export async function deleteProductItem(id: string, siteId: string) {
     }
 
     await productRepo.deleteProduct(id);
+
+    if (existing.images && existing.images.length > 0) {
+        for (const imageUrl of existing.images) {
+            try {
+                await deleteMediaByUrl(siteId, imageUrl, existing.id);
+            } catch (err) {
+                console.error(`Failed to delete orphan image: ${imageUrl}`, err);
+            }
+        }
+    }
 
     await publishCrudEvent("crud.deleted", "product", siteId, existing);
 

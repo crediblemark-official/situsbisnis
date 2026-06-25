@@ -153,6 +153,28 @@ export async function deleteMedia(siteId: string, id: string) {
 }
 
 /**
+ * Menghapus media berdasarkan URL (jika tidak digunakan di tempat lain).
+ */
+export async function deleteMediaByUrl(siteId: string, url: string, excludeProductId?: string) {
+    if (!url) return { success: false };
+
+    const inUse = await mediaRepo.isMediaUrlInUse(url, siteId, excludeProductId);
+    if (inUse) {
+        return { success: false, reason: "IN_USE" };
+    }
+
+    const item = await mediaRepo.findMediaItemByUrlAndSite(url, siteId);
+    if (!item) {
+        return { success: false }; // Silent fail is fine if media doesn't exist
+    }
+
+    await deleteFromR2(item.url);
+    await mediaRepo.deleteMediaItem(item.id);
+
+    return { success: true };
+}
+
+/**
  * Mengambil daftar folder media berdasarkan siteId dan parentId.
  */
 export async function getMediaFolders(siteId: string, parentId: string | null) {

@@ -163,12 +163,14 @@ model Order {
 }
 
 model OrderItem {
-  id        String  @id @default(cuid())
-  orderId   String
-  productId String
-  quantity  Int               @default(1)
-  price     Decimal           @db.Decimal(15, 2)
-  order     Order             @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  id          String   @id @default(cuid())
+  orderId     String
+  productId   String
+  quantity    Int      @default(1)
+  price       Decimal  @db.Decimal(15, 2)
+  variantName String?
+  attributes  Json?
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   @@index([orderId])
   @@index([productId])

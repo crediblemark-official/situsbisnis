@@ -8,7 +8,7 @@ import { MidtransPaymentWrapper, getPaymentMethodCategory } from "@/modules/paym
  */
 export async function createOrder(
     siteId: string,
-    items: Array<{ productId: string; quantity: number }>,
+    items: Array<{ productId: string; quantity: number; variantName?: string; attributes?: Record<string, string> }>,
     customerDetails: {
         name?: string;
         email?: string;
@@ -48,6 +48,7 @@ export async function createOrder(
 
     let total = 0;
     const orderItemsData = [];
+    const stockUpdates: Array<{ productId: string; variantName?: string; quantity: number }> = [];
 
     for (const item of items) {
         const dbProduct = productMap.get(item.productId);
@@ -55,14 +56,50 @@ export async function createOrder(
             throw new Error(`Product not found or invalid: ${item.productId}`);
         }
         
-        const dbPrice = Number(dbProduct.price);
+        let dbPrice = Number(dbProduct.price);
+        let currentStock = dbProduct.stock || 0;
+        let isDigital = dbProduct.metaData?.some((m: any) => m.key === "_isDigital" && m.value === "true") || false;
+
+        if (item.variantName && dbProduct.variants) {
+            try {
+                const variants = typeof dbProduct.variants === 'string' 
+                    ? JSON.parse(dbProduct.variants) 
+                    : dbProduct.variants;
+                if (Array.isArray(variants)) {
+                    const variant = variants.find(v => v.name === item.variantName);
+                    if (variant && variant.price !== undefined && variant.price !== null) {
+                        dbPrice = Number(variant.price);
+                    }
+                    if (variant && variant.stock !== undefined && variant.stock !== null) {
+                        currentStock = Number(variant.stock);
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to parse variants", e);
+            }
+        }
+        
+        if (!isDigital && currentStock < item.quantity) {
+             throw new Error(`Stok tidak mencukupi untuk produk ${dbProduct.name} ${item.variantName ? '(' + item.variantName + ')' : ''}`);
+        }
+        
         total += dbPrice * item.quantity;
         
         orderItemsData.push({
             productId: item.productId,
             quantity: item.quantity,
-            price: dbPrice.toFixed(2)
+            price: dbPrice.toFixed(2),
+            variantName: item.variantName,
+            attributes: item.attributes ? JSON.parse(JSON.stringify(item.attributes)) : undefined
         });
+
+        if (!isDigital) {
+            stockUpdates.push({
+                productId: item.productId,
+                variantName: item.variantName,
+                quantity: item.quantity
+            });
+        }
     }
 
     const newOrder = await orderRepo.createOrder({
@@ -79,6 +116,35 @@ export async function createOrder(
             create: orderItemsData
         }
     });
+
+    // Jalankan stock reduction
+    try {
+        for (const update of stockUpdates) {
+            const product = productMap.get(update.productId);
+            if (!product) continue;
+
+            if (update.variantName && product.variants) {
+                const variants = typeof product.variants === 'string' ? JSON.parse(product.variants) : product.variants;
+                let variantUpdated = false;
+                if (Array.isArray(variants)) {
+                    for (const v of variants) {
+                        if (v.name === update.variantName) {
+                            v.stock = Math.max(0, (v.stock || 0) - update.quantity);
+                            variantUpdated = true;
+                            break;
+                        }
+                    }
+                }
+                if (variantUpdated) {
+                    await orderRepo.updateProductVariants(update.productId, variants);
+                }
+            } else {
+                 await orderRepo.decrementProductStock(update.productId, update.quantity);
+            }
+        }
+    } catch (stockError) {
+        console.error("[CreateOrder] Failed to reduce stock", stockError);
+    }
 
     const site = await orderRepo.findSiteById(siteId);
     const paymentSettings = await orderRepo.findPaymentSettings(siteId);

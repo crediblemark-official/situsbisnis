@@ -8,7 +8,9 @@ const orderSchema = z.object({
     items: z.array(z.object({
         productId: z.string(),
         quantity: z.number().min(1),
-        price: z.number()
+        price: z.number(),
+        variantName: z.string().optional(),
+        attributes: z.record(z.string(), z.string()).optional()
     })),
     name: z.string().optional(),
     email: z.string().email().optional(),

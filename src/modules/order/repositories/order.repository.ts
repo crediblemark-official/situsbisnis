@@ -109,6 +109,32 @@ export async function findProductsForSite(siteId: string, productIds: string[]) 
 }
 
 /**
+ * Mengurangi stok base product setelah diorder
+ */
+export async function decrementProductStock(productId: string, quantity: number) {
+    return db.product.update({
+        where: { id: productId },
+        data: {
+            stock: {
+                decrement: quantity
+            }
+        }
+    });
+}
+
+/**
+ * Update JSON variants produk (termasuk stok variant yang ada di dalam array JSON)
+ */
+export async function updateProductVariants(productId: string, variants: any) {
+    return db.product.update({
+        where: { id: productId },
+        data: {
+            variants
+        }
+    });
+}
+
+/**
  * Membuat entri pesanan baru.
  */
 export async function createOrder(data: {
@@ -126,6 +152,8 @@ export async function createOrder(data: {
             productId: string;
             quantity: number;
             price: string;
+            variantName?: string;
+            attributes?: any;
         }>
     }
 }) {
