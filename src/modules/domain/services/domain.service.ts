@@ -151,9 +151,19 @@ export async function verifyDomain(siteId: string, domain: string): Promise<Doma
 /**
  * Menghapus custom domain dari situs.
  */
-export async function removeDomain(siteId: string, domain: string) {
+export async function removeDomain(siteId: string, domain?: string | null) {
     try {
-        const domainLower = domain.toLowerCase().trim();
+        let domainToRemove = domain;
+        if (!domainToRemove || domainToRemove.trim() === "") {
+            const currentSite = await domainRepo.findSiteCustomDomainInfo(siteId);
+            domainToRemove = currentSite?.customDomain;
+        }
+
+        if (!domainToRemove) {
+            return { status: "success", message: "Tidak ada kustom domain aktif untuk dihapus." };
+        }
+
+        const domainLower = domainToRemove.toLowerCase().trim();
 
         // Hapus domain dari Dokploy
         await DokployService.deleteDomain(domainLower).catch(err => {
