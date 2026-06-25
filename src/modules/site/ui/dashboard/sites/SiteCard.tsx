@@ -61,7 +61,7 @@ export function SiteCard({ site, rootDomain, onOpenSettings }: SiteCardProps) {
                     </span>
                 </div>
 
-                <div className="grid grid-cols-3 gap-2 mt-1">
+                <div className={`grid ${site.userRole === "owner" ? "grid-cols-3" : "grid-cols-2"} gap-2 mt-1`}>
                     <a
                         href={editorUrl}
                         className="flex flex-col items-center justify-center p-2.5 rounded-md border border-border bg-muted/5 hover:bg-primary/5 hover:border-primary/20 transition-all group/item space-y-1"
@@ -80,16 +80,18 @@ export function SiteCard({ site, rootDomain, onOpenSettings }: SiteCardProps) {
                         </div>
                         <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest group-hover/item:text-primary transition-colors">Masuk</span>
                     </a>
-                    <button
-                        type="button"
-                        onClick={() => onOpenSettings(site)}
-                        className="flex flex-col items-center justify-center p-2.5 rounded-md border border-border bg-muted/5 hover:bg-primary/5 hover:border-primary/20 transition-all group/item space-y-1 outline-none"
-                    >
-                        <div className="w-8 h-8 rounded bg-background border border-border flex items-center justify-center group-hover/item:border-primary/30 transition-all">
-                            <Settings size={14} className="text-muted-foreground group-hover/item:text-primary transition-colors" />
-                        </div>
-                        <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest group-hover/item:text-primary transition-colors">Domain</span>
-                    </button>
+                    {site.userRole === "owner" && (
+                        <button
+                            type="button"
+                            onClick={() => onOpenSettings(site)}
+                            className="flex flex-col items-center justify-center p-2.5 rounded-md border border-border bg-muted/5 hover:bg-primary/5 hover:border-primary/20 transition-all group/item space-y-1 outline-none"
+                        >
+                            <div className="w-8 h-8 rounded bg-background border border-border flex items-center justify-center group-hover/item:border-primary/30 transition-all">
+                                <Settings size={14} className="text-muted-foreground group-hover/item:text-primary transition-colors" />
+                            </div>
+                            <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest group-hover/item:text-primary transition-colors">Domain</span>
+                        </button>
+                    )}
                 </div>
             </div>
         </div>

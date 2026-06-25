@@ -14,7 +14,7 @@ export default async function MySitesPage() {
 
     const siteLinks = await db.siteUser.findMany({
         where: { userId: (session.user as any).id },
-        select: { siteId: true }
+        select: { siteId: true, role: true }
     });
 
     const userSiteIds = siteLinks.map(l => l.siteId);
@@ -31,6 +31,7 @@ export default async function MySitesPage() {
     
     // Dapatkan data subscription untuk masing-masing siteId
     const sites = await Promise.all(rawSites.map(async (site) => {
+        const link = siteLinks.find(l => l.siteId === site.id);
         const sub = await db.subscription.findFirst({
             where: { siteId: site.id, status: "active" },
             select: {
@@ -45,6 +46,7 @@ export default async function MySitesPage() {
         });
         return {
             ...site,
+            userRole: link?.role || "user",
             subscriptions: sub ? [sub] : []
         };
     }));
