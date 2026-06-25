@@ -53,3 +53,5 @@ export const MediaClient = {
     updatePortfolioItem,
     deletePortfolioItem
 };
+
+export { deleteMediaByUrl } from "./services/media.service";

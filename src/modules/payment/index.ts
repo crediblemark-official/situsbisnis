@@ -28,3 +28,5 @@ export const PaymentClient = {
     upgradePlan,
     processMidtransWebhook
 };
+
+export { MidtransPaymentWrapper, getPaymentMethodCategory } from "./providers/midtrans";

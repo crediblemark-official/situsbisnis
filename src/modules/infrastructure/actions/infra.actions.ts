@@ -110,7 +110,7 @@ export async function checkUserEmailExistsAction(email: string) {
 
         if (!email) return { success: false, exists: false, error: "Email required" };
 
-        const { findUserByEmailLimited } = await import("@/modules/auth/repositories/user.repository");
+        const { findUserByEmailLimited } = await import("@/modules/auth");
         const user = await findUserByEmailLimited(email.trim().toLowerCase());
         
         return { 

@@ -2,7 +2,7 @@ import { db } from "@/modules/shared/core/db";
 import { z } from "zod";
 import { buildPagination, fetchWithCache, publishCrudEvent, checkResourceLimit } from "@/modules/shared/core/crud-base";
 import * as productRepo from "../repositories/product.repository";
-import { deleteMediaByUrl } from "@/modules/media/services/media.service";
+import { deleteMediaByUrl } from "@/modules/media";
 
 export const productSchema = z.object({
     name: z.string().min(1, "Product name is required"),

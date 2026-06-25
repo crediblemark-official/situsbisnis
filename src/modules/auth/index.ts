@@ -73,5 +73,7 @@ export const IdentityClient = {
     checkReferralCode
 };
 
+export { findUserByEmailLimited } from "./repositories/user.repository";
+
 
 

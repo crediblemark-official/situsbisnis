@@ -135,7 +135,7 @@ export async function updateSubscriptionByAdminApi(req: Request, { params }: { p
             const sub = await SubscriptionClient.findSiteById(id);
             const siteOwner = (sub as any)?.users?.[0];
             const userName = siteOwner?.name || "Pengguna";
-            const { sendFollowupEmail } = await import("@/modules/notification/services/email-templates.service");
+            const { sendFollowupEmail } = await import("@/modules/notification");
             const result = await sendFollowupEmail({ toEmail: email, userName, subject: "Pesan Penting Terkait Layanan Website Anda di SitusBisnis", message });
             if (!result.success) return apiError(result.error || "Failed to send email", 500);
             return apiResponse({ success: true, message: "Email sent", result: result.id });

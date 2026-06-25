@@ -1,6 +1,6 @@
 import * as orderRepo from "../repositories/order.repository";
 import { processOrderPaymentCallback } from "./order.service";
-import { MidtransPaymentWrapper } from "@/modules/payment/providers/midtrans";
+import { MidtransPaymentWrapper } from "@/modules/payment";
 
 /**
  * Mengecek status pembayaran pesanan (polling atau status check ke Midtrans).

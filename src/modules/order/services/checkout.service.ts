@@ -1,6 +1,6 @@
 import * as orderRepo from "../repositories/order.repository";
 import { SubscriptionClient } from "@/modules/subscription";
-import { MidtransPaymentWrapper, getPaymentMethodCategory } from "@/modules/payment/providers/midtrans";
+import { MidtransPaymentWrapper, getPaymentMethodCategory } from "@/modules/payment";
 
 
 /**
