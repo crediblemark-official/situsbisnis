@@ -13,13 +13,24 @@ export function validateCsrf(req: Request): { valid: boolean; reason?: string } 
 
   const origin = req.headers.get("origin");
   const referer = req.headers.get("referer");
+  const host = req.headers.get("host") || req.headers.get("x-forwarded-host");
+
+  const isAllowedHost = (url: string) => {
+    try {
+      const urlHost = new URL(url).host;
+      if (host && urlHost === host) return true;
+      return ALLOWED_ORIGINS.some((allowed) => url.startsWith(allowed));
+    } catch {
+      return ALLOWED_ORIGINS.some((allowed) => url.startsWith(allowed));
+    }
+  };
 
   if (origin) {
-    if (!ALLOWED_ORIGINS.some((allowed) => origin.startsWith(allowed))) {
+    if (!isAllowedHost(origin)) {
       return { valid: false, reason: "Invalid origin" };
     }
   } else if (referer) {
-    if (!ALLOWED_ORIGINS.some((allowed) => referer.startsWith(allowed))) {
+    if (!isAllowedHost(referer)) {
       return { valid: false, reason: "Invalid referer" };
     }
   } else if (process.env.NODE_ENV !== "development") {
