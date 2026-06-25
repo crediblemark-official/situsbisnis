@@ -88,7 +88,7 @@ export async function getUsers(sessionRole: string, isTenantContext: boolean, si
  * Membuat user baru oleh admin atau owner.
  */
 export async function createUserByAdmin(siteId: string | undefined, data: any, sessionRole: string) {
-    const { name, email, role, password } = data;
+    const { name, email, role, password, phone } = data;
 
     if (role === "admin" && sessionRole !== "admin") {
         throw new Error("Forbidden: Only platform admins can assign the admin role");
@@ -96,15 +96,35 @@ export async function createUserByAdmin(siteId: string | undefined, data: any, s
 
     let user = await userRepo.findUserByEmail(email);
 
+    let formattedPhone: string | null = null;
+    if (phone && phone.trim() !== "") {
+        formattedPhone = phone.replace(/[^0-9]/g, "");
+        if (formattedPhone.startsWith("0")) {
+            formattedPhone = "62" + formattedPhone.slice(1);
+        } else if (formattedPhone.startsWith("8")) {
+            formattedPhone = "62" + formattedPhone;
+        }
+        
+        const existingPhone = await userRepo.findUserByPhone(formattedPhone);
+        if (existingPhone && (!user || existingPhone.id !== user.id)) {
+            throw new Error("Nomor HP sudah terdaftar oleh pengguna lain");
+        }
+    }
+
     if (user) {
+        if (formattedPhone && user.phone !== formattedPhone) {
+            await userRepo.updateUser(user.id, { phone: formattedPhone });
+        }
         if (siteId) {
             await tenantUserRepo.upsertSiteUser(siteId, user.id);
         }
     } else {
-        const hashedPassword = await bcrypt.hash(password || "change-me", 10);
+        const rawPassword = password && password.trim() !== "" ? password : "change-me";
+        const hashedPassword = await bcrypt.hash(rawPassword, 10);
         user = await userRepo.createUser({
             name,
             email,
+            phone: formattedPhone,
             password: hashedPassword,
             role: role || "user",
             image: `https://ui-avatars.com/api/?name=${encodeURIComponent(name || email)}&background=random`
@@ -128,7 +148,7 @@ export async function updateUserByAdmin(
     sessionUserId: string,
     sessionRole: string
 ) {
-    const { role, name, email, password } = data;
+    const { role, name, email, password, phone } = data;
 
     const targetUser = await userRepo.findUserById(userId);
     if (!targetUser) throw new Error("User not found");
@@ -153,6 +173,25 @@ export async function updateUserByAdmin(
     if (email) updateData.email = email;
     if (password && password.trim() !== "") {
         updateData.password = await bcrypt.hash(password, 10);
+    }
+
+    if (phone !== undefined) {
+        if (phone && phone.trim() !== "") {
+            let formattedPhone = phone.replace(/[^0-9]/g, "");
+            if (formattedPhone.startsWith("0")) {
+                formattedPhone = "62" + formattedPhone.slice(1);
+            } else if (formattedPhone.startsWith("8")) {
+                formattedPhone = "62" + formattedPhone;
+            }
+
+            const existingPhone = await userRepo.findUserByPhone(formattedPhone);
+            if (existingPhone && existingPhone.id !== userId) {
+                throw new Error("Nomor HP sudah terdaftar oleh pengguna lain");
+            }
+            updateData.phone = formattedPhone;
+        } else {
+            updateData.phone = null;
+        }
     }
 
     await userRepo.updateUser(userId, updateData);

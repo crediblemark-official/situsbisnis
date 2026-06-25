@@ -235,6 +235,7 @@ const adminUserSchema = z.object({
     name: z.string().optional(),
     email: z.string().email("Invalid email address"),
     role: z.string().optional().default("user"),
+    phone: z.string().optional().nullable(),
     password: z.string().optional(),
     userId: z.string().optional(),
 });
