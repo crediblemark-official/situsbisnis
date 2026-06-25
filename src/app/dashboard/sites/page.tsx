@@ -29,9 +29,24 @@ export default async function MySitesPage() {
         }
     });
     
-    // Dapatkan data subscription untuk masing-masing siteId
+    // Dapatkan data subscription dan owner info untuk masing-masing siteId
     const sites = await Promise.all(rawSites.map(async (site) => {
         const link = siteLinks.find(l => l.siteId === site.id);
+        
+        // Cari nama owner dari site ini
+        const ownerLink = await db.siteUser.findFirst({
+            where: { siteId: site.id, role: "owner" },
+            select: { userId: true }
+        });
+        let ownerName = "-";
+        if (ownerLink) {
+            const ownerUser = await db.user.findUnique({
+                where: { id: ownerLink.userId },
+                select: { name: true }
+            });
+            ownerName = ownerUser?.name || "-";
+        }
+
         const sub = await db.subscription.findFirst({
             where: { siteId: site.id, status: "active" },
             select: {
@@ -47,6 +62,7 @@ export default async function MySitesPage() {
         return {
             ...site,
             userRole: link?.role || "user",
+            ownerName,
             subscriptions: sub ? [sub] : []
         };
     }));

@@ -61,6 +61,28 @@ export function SiteCard({ site, rootDomain, onOpenSettings }: SiteCardProps) {
                     </span>
                 </div>
 
+                {/* Info Pemilik dan Role */}
+                <div className="border-t border-border/40 pt-2.5 pb-1 space-y-1.5">
+                    <div className="flex justify-between items-center text-[10px]">
+                        <span className="text-muted-foreground font-semibold">Pemilik:</span>
+                        <span className="font-bold text-foreground truncate max-w-[150px]" title={site.ownerName || "-"}>
+                            {site.ownerName || "-"}
+                        </span>
+                    </div>
+                    <div className="flex justify-between items-center text-[10px]">
+                        <span className="text-muted-foreground font-semibold">Peran Anda:</span>
+                        <span className={`font-black uppercase tracking-widest text-[8px] px-1.5 py-0.5 rounded ${
+                            site.userRole === "owner" 
+                                ? "bg-primary/10 text-primary border border-primary/20" 
+                                : site.userRole === "editor"
+                                ? "bg-amber-500/10 text-amber-500 border border-amber-500/20"
+                                : "bg-blue-500/10 text-blue-500 border border-blue-500/20"
+                        }`}>
+                            {site.userRole}
+                        </span>
+                    </div>
+                </div>
+
                 <div className={`grid ${site.userRole === "owner" ? "grid-cols-3" : "grid-cols-2"} gap-2 mt-1`}>
                     <a
                         href={editorUrl}
