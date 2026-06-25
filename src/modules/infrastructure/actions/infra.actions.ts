@@ -103,4 +103,25 @@ export async function assignSiteOwnerAction(siteId: string, email: string) {
     }
 }
 
+export async function checkUserEmailExistsAction(email: string) {
+    try {
+        const { error, session } = await getApiContext(["admin"], { requireSite: false });
+        if (error || !session) return { success: false, exists: false, error: error || "Unauthorized" };
+
+        if (!email) return { success: false, exists: false, error: "Email required" };
+
+        const { findUserByEmailLimited } = await import("@/modules/auth/repositories/user.repository");
+        const user = await findUserByEmailLimited(email.trim().toLowerCase());
+        
+        return { 
+            success: true, 
+            exists: !!user, 
+            userName: user?.name || null 
+        };
+    } catch (err: any) {
+        console.error("[CHECK_USER_EMAIL_EXISTS_ACTION] Error:", err);
+        return { success: false, exists: false, error: err.message || "Failed to check email" };
+    }
+}
+
 

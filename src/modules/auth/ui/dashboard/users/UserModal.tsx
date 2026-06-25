@@ -55,10 +55,36 @@ export default function UserModal({ isOpen, onClose, onSuccess, initialData }: P
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
+
+        const trimmedName = name.trim();
+        const trimmedEmail = email.trim();
+        const trimmedPassword = password.trim();
+
+        if (!trimmedName) {
+            toast.error("Nama lengkap wajib diisi");
+            return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!trimmedEmail || !emailRegex.test(trimmedEmail)) {
+            toast.error("Format email tidak valid");
+            return;
+        }
+
+        if (!isEditing && !trimmedPassword) {
+            toast.error("Password wajib diisi untuk pengguna baru");
+            return;
+        }
+
+        if (trimmedPassword && trimmedPassword.length < 6) {
+            toast.error("Password minimal harus 6 karakter");
+            return;
+        }
+
         setLoading(true);
 
         try {
-            const body = { name, email, role, password };
+            const body = { name: trimmedName, email: trimmedEmail, role, password: trimmedPassword || undefined };
             const data = isEditing
                 ? await updateUserAction(initialData.id, body)
                 : await createUserAction(body);
@@ -84,100 +110,101 @@ export default function UserModal({ isOpen, onClose, onSuccess, initialData }: P
         <Portal>
             <div className="fixed inset-0 z-[100] flex justify-end bg-black/40 backdrop-blur-md animate-in fade-in duration-300">
                 <div className="w-full max-w-md h-screen bg-card border-l border-border shadow-2xl flex flex-col animate-in slide-in-from-right duration-500 ease-out relative">
-                {/* Header Area */}
-                <div className="relative px-6 py-4 border-b border-border">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-primary/60"></div>
-                    <div className="flex justify-between items-center">
-                        <div>
-                            <h3 className="text-2xl font-black text-foreground">
-                                {isEditing ? "Edit Pengguna" : "Tambah Pengguna"}
-                            </h3>
-                            <p className="text-[11px] text-primary font-bold mt-1">
-                                Kelola hak akses tim
-                            </p>
+                    {/* Header Area */}
+                    <div className="relative px-6 py-4 border-b border-border">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-primary/60"></div>
+                        <div className="flex justify-between items-center">
+                            <div>
+                                <h3 className="text-2xl font-black text-foreground">
+                                    {isEditing ? "Edit Pengguna" : "Tambah Pengguna"}
+                                </h3>
+                                <p className="text-[11px] text-primary font-bold mt-1">
+                                    Kelola hak akses tim
+                                </p>
+                            </div>
+                            <button 
+                                onClick={onClose} 
+                                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted/10 text-muted-foreground hover:text-foreground transition-all"
+                            >
+                                <X size={16} />
+                            </button>
                         </div>
-                        <button 
-                            onClick={onClose} 
-                            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted/10 text-muted-foreground hover:text-foreground transition-all"
-                        >
-                            <X size={16} />
-                        </button>
                     </div>
-                </div>
 
-                {/* Form Content */}
-                <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-6 py-2 space-y-4 custom-scrollbar">
-                    <div className="space-y-4">
-                        <FormInput 
-                            label="Nama Lengkap" 
-                            name="name" 
-                            required
-                            value={name} 
-                            onChange={(e) => setName(e.target.value)} 
-                            placeholder="Masukkan nama lengkap..." 
-                            icon={<User size={16} />}
-                        />
-                        <FormInput 
-                            label="Email" 
-                            name="email" 
-                            type="email"
-                            required
-                            value={email} 
-                            onChange={(e) => setEmail(e.target.value)} 
-                            placeholder="email@example.com" 
-                            icon={<Mail size={16} />}
-                        />
-                        <FormSelect 
-                            label="Hak Akses" 
-                            name="role" 
-                            value={role} 
-                            onChange={(e) => setRole(e.target.value)}
-                            options={[
-                                { label: "Staf", value: "user" },
-                                { label: "Editor", value: "editor" },
-                                { label: "Pemilik", value: "owner" }
-                            ]}
-                        />
-                        <div className="pt-2">
+                    {/* Form Content */}
+                    <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-6 py-2 space-y-4 custom-scrollbar">
+                        <div className="space-y-4">
                             <FormInput 
-                                label={isEditing ? "Ganti Password (Opsional)" : "Password"} 
-                                name="password" 
-                                type="password"
-                                value={password} 
-                                onChange={(e) => setPassword(e.target.value)} 
-                                placeholder={isEditing ? "Kosongkan jika tidak diubah" : "Masukkan password..."} 
-                                icon={<Shield size={16} />}
+                                label="Nama Lengkap" 
+                                name="name" 
+                                required
+                                value={name} 
+                                onChange={(e) => setName(e.target.value)} 
+                                placeholder="Masukkan nama lengkap..." 
+                                icon={<User size={16} />}
                             />
+                            <FormInput 
+                                label="Email" 
+                                name="email" 
+                                type="email"
+                                required
+                                value={email} 
+                                onChange={(e) => setEmail(e.target.value)} 
+                                placeholder="email@example.com" 
+                                icon={<Mail size={16} />}
+                            />
+                            <FormSelect 
+                                label="Hak Akses" 
+                                name="role" 
+                                value={role} 
+                                onChange={(e) => setRole(e.target.value)}
+                                options={[
+                                    { label: "Staf", value: "user" },
+                                    { label: "Editor", value: "editor" },
+                                    { label: "Pemilik", value: "owner" }
+                                ]}
+                            />
+                            <div className="pt-2">
+                                <FormInput 
+                                    label={isEditing ? "Ganti Password (Opsional)" : "Password"} 
+                                    name="password" 
+                                    type="password"
+                                    required={!isEditing}
+                                    value={password} 
+                                    onChange={(e) => setPassword(e.target.value)} 
+                                    placeholder={isEditing ? "Kosongkan jika tidak diubah" : "Masukkan password..."} 
+                                    icon={<Shield size={16} />}
+                                />
+                            </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
 
-                {/* Footer Area */}
-                <div className="px-6 py-4 border-t border-border bg-muted/5">
-                    <div className="flex gap-3">
-                        <Button
-                            variant="secondary"
-                            onClick={onClose}
-                            className="flex-1"
-                        >
-                            Batal
-                        </Button>
-                        <Button
-                            type="submit"
-                            loading={loading}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                handleSubmit(e as any);
-                            }}
-                            className="flex-[2]"
-                            icon={<Save size={14} />}
-                        >
-                            {isEditing ? "Simpan Perubahan" : "Tambah Pengguna"}
-                        </Button>
+                    {/* Footer Area */}
+                    <div className="px-6 py-4 border-t border-border bg-muted/5">
+                        <div className="flex gap-3">
+                            <Button
+                                variant="secondary"
+                                onClick={onClose}
+                                className="flex-1"
+                            >
+                                Batal
+                            </Button>
+                            <Button
+                                type="submit"
+                                loading={loading}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handleSubmit(e as any);
+                                }}
+                                className="flex-[2]"
+                                icon={<Save size={14} />}
+                            >
+                                {isEditing ? "Simpan Perubahan" : "Tambah Pengguna"}
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </Portal>
-);
+        </Portal>
+    );
 }

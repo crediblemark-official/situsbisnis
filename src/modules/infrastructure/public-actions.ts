@@ -3,6 +3,7 @@ export {
     importBackupDataAction,
     deleteSiteAction,
     manageSiteAction,
-    assignSiteOwnerAction
+    assignSiteOwnerAction,
+    checkUserEmailExistsAction
 } from "./actions/infra.actions";
 

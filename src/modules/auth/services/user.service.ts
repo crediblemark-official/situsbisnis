@@ -88,7 +88,7 @@ export async function getUsers(sessionRole: string, isTenantContext: boolean, si
  * Membuat user baru oleh admin atau owner.
  */
 export async function createUserByAdmin(siteId: string | undefined, data: any, sessionRole: string) {
-    const { name, email, role } = data;
+    const { name, email, role, password } = data;
 
     if (role === "admin" && sessionRole !== "admin") {
         throw new Error("Forbidden: Only platform admins can assign the admin role");
@@ -101,7 +101,7 @@ export async function createUserByAdmin(siteId: string | undefined, data: any, s
             await tenantUserRepo.upsertSiteUser(siteId, user.id);
         }
     } else {
-        const hashedPassword = await bcrypt.hash("change-me", 10);
+        const hashedPassword = await bcrypt.hash(password || "change-me", 10);
         user = await userRepo.createUser({
             name,
             email,
