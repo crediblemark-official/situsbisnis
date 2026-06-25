@@ -8,7 +8,7 @@ import { checkUserEmailExistsAction } from "@/modules/infrastructure/public-acti
 interface AssignOwnerModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onConfirm: (email: string) => Promise<void>;
+    onConfirm: (_email: string) => Promise<void>;
     title: string;
     message: string;
     confirmText?: string;
@@ -33,14 +33,21 @@ export function AssignOwnerModal({
     const [isValidating, setIsValidating] = useState(false);
     const [emailExists, setEmailExists] = useState<boolean | null>(null);
     const [registeredName, setRegisteredName] = useState<string | null>(null);
+    const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
 
-    useEffect(() => {
+    if (isOpen !== prevIsOpen) {
+        setPrevIsOpen(isOpen);
         if (isOpen) {
             setEmail("");
             setError("");
             setEmailExists(null);
             setRegisteredName(null);
             setIsValidating(false);
+        }
+    }
+
+    useEffect(() => {
+        if (isOpen) {
             previousFocusRef.current = document.activeElement as HTMLElement;
 
             const focusableElements = modalRef.current?.querySelectorAll(
@@ -101,14 +108,11 @@ export function AssignOwnerModal({
         const trimmedEmail = email.trim();
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!trimmedEmail || !emailRegex.test(trimmedEmail)) {
-            setEmailExists(null);
-            setRegisteredName(null);
-            setIsValidating(false);
-            return;
+            return; // State reset is handled in onChange
         }
 
-        setIsValidating(true);
         const timer = setTimeout(async () => {
+            setIsValidating(true);
             try {
                 const res = await checkUserEmailExistsAction(trimmedEmail);
                 if (res.success) {
@@ -182,15 +186,26 @@ export function AssignOwnerModal({
                         {/* Form Content */}
                         <div className="px-5 py-3 space-y-3">
                             <div className="space-y-1">
-                                <label className="text-[9px] font-black text-muted-foreground uppercase tracking-wider block">
+                                <label htmlFor="assignOwnerEmail" className="text-[9px] font-black text-muted-foreground uppercase tracking-wider block">
                                     Email Pemilik Baru
                                 </label>
                                 <input
+                                    id="assignOwnerEmail"
                                     type="email"
                                     required
                                     placeholder="Masukkan email terdaftar..."
                                     value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    onChange={(e) => {
+                                        const val = e.target.value;
+                                        setEmail(val);
+                                        const trimmed = val.trim();
+                                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                                        if (!trimmed || !emailRegex.test(trimmed)) {
+                                            setEmailExists(null);
+                                            setRegisteredName(null);
+                                            setIsValidating(false);
+                                        }
+                                    }}
                                     className="w-full bg-background border border-border rounded-lg px-3 py-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground/45 text-foreground"
                                 />
                                 <div className="min-h-[16px] pt-1">

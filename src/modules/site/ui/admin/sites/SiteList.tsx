@@ -427,8 +427,9 @@ function EditSubdomainModal({
                     )}
 
                     <div className="space-y-1">
-                        <label className="text-[10px] font-black uppercase text-muted-foreground tracking-wider">Subdomain Baru</label>
+                        <label htmlFor="editSubdomainInput" className="text-[10px] font-black uppercase text-muted-foreground tracking-wider">Subdomain Baru</label>
                         <input
+                            id="editSubdomainInput"
                             type="text"
                             value={subdomain}
                             onChange={(e) => onChangeSubdomain(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
