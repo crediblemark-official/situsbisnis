@@ -70,6 +70,12 @@ export async function executeProvisionSiteTransaction(userId: string, siteName: 
                 footerBackgroundColor: "#0369a1",
                 headerTextColor: "#ffffff",
                 footerCopyright: `© ${new Date().getFullYear()} ${siteName}. Built with ${platformName}.`,
+                enabledProducts: true,
+                enabledOrders: true,
+                enabledCustomers: true,
+                enabledPosts: true,
+                enabledInbox: true,
+                enabledGallery: true,
             }
         });
 
