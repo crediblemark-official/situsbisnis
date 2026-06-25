@@ -48,7 +48,7 @@ jobs:
           POSTGRES_PASSWORD: test
           POSTGRES_DB: test
         options: >-
-          --health-cmd pg_isready
+          --health-cmd "pg_isready -U test"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -106,7 +106,7 @@ jobs:
           POSTGRES_PASSWORD: test
           POSTGRES_DB: test
         options: >-
-          --health-cmd pg_isready
+          --health-cmd "pg_isready -U test"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -141,6 +141,8 @@ jobs:
         run: bun run test:e2e
         env:
           BASE_URL: http://localhost:3000
+          DATABASE_URL: postgresql://test:test@localhost:5432/test
+          DIRECT_URL: postgresql://test:test@localhost:5432/test
 
       - name: Upload Playwright Report
         if: always()
