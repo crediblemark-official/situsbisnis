@@ -55,3 +55,5 @@ venv/
 /tests/load/*.txt
 /tests/load/*.json
 
+/backups
+/playwright-report
