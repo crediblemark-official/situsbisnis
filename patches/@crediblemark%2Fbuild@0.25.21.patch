@@ -1,87 +1,93 @@
+diff --git a/node_modules/@crediblemark/build/.bun-tag-e4a50043d209b69d b/.bun-tag-e4a50043d209b69d
+new file mode 100644
+index 0000000000000000000000000000000000000000..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
 diff --git a/dist/chunk-TFAYWP2C.mjs b/dist/chunk-TFAYWP2C.mjs
-index 14cbe115d7d0ce00013d680dce074aa93836fb70..b62d5e53eab21e8df19d820a28e37e6411f27c01 100644
+index 14cbe115d7d0ce00013d680dce074aa93836fb70..9ebcec8f7d8a7d39cd045bd701f2b6fef70788b1 100644
 --- a/dist/chunk-TFAYWP2C.mjs
 +++ b/dist/chunk-TFAYWP2C.mjs
-@@ -1,5 +1,5 @@
+@@ -1,15 +1,5 @@
  // lib/dompurify.ts
 -import DOMPurify from "isomorphic-dompurify";
-+import DOMPurify from "./dompurify-mock.mjs";
- DOMPurify.addHook("afterSanitizeAttributes", function(node) {
-   if ("target" in node && node.getAttribute("target") === "_blank") {
-     const existingRel = node.getAttribute("rel") || "";
-diff --git a/node_modules/@crediblemark/build/dist/dompurify-mock.js b/dist/dompurify-mock.js
-new file mode 100644
-index 0000000000000000000000000000000000000000..be76e0aefccaa2ed829c2c74ee6a98fd1225d49c
---- /dev/null
-+++ b/dist/dompurify-mock.js
-@@ -0,0 +1,13 @@
-+
-+var xss = require('xss');
-+var DOMPurify = {
-+  sanitize: function(html) {
-+    if (typeof html !== 'string') return '';
-+    return xss.filterXSS(html);
-+  },
-+  addHook: function() {},
-+  clearHooks: function() {},
-+  removeHook: function() {}
-+};
-+module.exports = DOMPurify;
-+module.exports.default = DOMPurify;
-diff --git a/node_modules/@crediblemark/build/dist/dompurify-mock.mjs b/dist/dompurify-mock.mjs
-new file mode 100644
-index 0000000000000000000000000000000000000000..5799cb08989f5e21604b00cfd31372b24f99cdd3
---- /dev/null
-+++ b/dist/dompurify-mock.mjs
-@@ -0,0 +1,12 @@
-+
-+import xss from 'xss';
-+const DOMPurify = {
-+  sanitize: function(html) {
-+    if (typeof html !== 'string') return '';
-+    return xss(html);
-+  },
-+  addHook: function() {},
-+  clearHooks: function() {},
-+  removeHook: function() {}
-+};
-+export default DOMPurify;
+-DOMPurify.addHook("afterSanitizeAttributes", function(node) {
+-  if ("target" in node && node.getAttribute("target") === "_blank") {
+-    const existingRel = node.getAttribute("rel") || "";
+-    const rels = new Set(existingRel.split(" ").filter(Boolean));
+-    rels.add("noopener");
+-    rels.add("noreferrer");
+-    node.setAttribute("rel", Array.from(rels).join(" "));
+-  }
+-});
+-var dompurify_default = DOMPurify;
++import xss from 'xss'; var dompurify_default = { sanitize: function(h) { if (typeof h !== 'string') return ''; return (xss.filterXSS ? xss.filterXSS(h) : xss(h)); } };
+ 
+ export {
+   dompurify_default
 diff --git a/dist/index.js b/dist/index.js
-index abf5cacc15fdc7132700424954f1c0a29822958c..c9b02007f76f2f1c63c7440b2add4b487bcb4a61 100644
+index abf5cacc15fdc7132700424954f1c0a29822958c..3b7a3224c73c148943f2b12a8a89b9b763920098 100644
 --- a/dist/index.js
 +++ b/dist/index.js
-@@ -5300,7 +5300,7 @@ var init_dompurify = __esm({
+@@ -5300,17 +5300,7 @@ var init_dompurify = __esm({
    "lib/dompurify.ts"() {
      "use strict";
      init_react_import();
 -    import_isomorphic_dompurify = __toESM(require("isomorphic-dompurify"));
-+    import_isomorphic_dompurify = __toESM(require("./dompurify-mock.js"));
-     import_isomorphic_dompurify.default.addHook("afterSanitizeAttributes", function(node) {
-       if ("target" in node && node.getAttribute("target") === "_blank") {
-         const existingRel = node.getAttribute("rel") || "";
+-    import_isomorphic_dompurify.default.addHook("afterSanitizeAttributes", function(node) {
+-      if ("target" in node && node.getAttribute("target") === "_blank") {
+-        const existingRel = node.getAttribute("rel") || "";
+-        const rels = new Set(existingRel.split(" ").filter(Boolean));
+-        rels.add("noopener");
+-        rels.add("noreferrer");
+-        node.setAttribute("rel", Array.from(rels).join(" "));
+-      }
+-    });
+-    dompurify_default = import_isomorphic_dompurify.default;
++    var xss = require('xss'); dompurify_default = { sanitize: function(h) { if (typeof h !== 'string') return ''; return (xss.filterXSS ? xss.filterXSS(h) : xss(h)); } };
+   }
+ });
+ 
 diff --git a/dist/no-external.js b/dist/no-external.js
-index b396edd29fa70c70df206f43d3a8d6ca147db034..2bc709d24ad451da046391ef3bb310c0a439e2d4 100644
+index b396edd29fa70c70df206f43d3a8d6ca147db034..2be00f326a140aab8bd786e81643d728ebacec50 100644
 --- a/dist/no-external.js
 +++ b/dist/no-external.js
-@@ -5300,7 +5300,7 @@ var init_dompurify = __esm({
+@@ -5300,17 +5300,7 @@ var init_dompurify = __esm({
    "lib/dompurify.ts"() {
      "use strict";
      init_react_import();
 -    import_isomorphic_dompurify = __toESM(require("isomorphic-dompurify"));
-+    import_isomorphic_dompurify = __toESM(require("./dompurify-mock.js"));
-     import_isomorphic_dompurify.default.addHook("afterSanitizeAttributes", function(node) {
-       if ("target" in node && node.getAttribute("target") === "_blank") {
-         const existingRel = node.getAttribute("rel") || "";
+-    import_isomorphic_dompurify.default.addHook("afterSanitizeAttributes", function(node) {
+-      if ("target" in node && node.getAttribute("target") === "_blank") {
+-        const existingRel = node.getAttribute("rel") || "";
+-        const rels = new Set(existingRel.split(" ").filter(Boolean));
+-        rels.add("noopener");
+-        rels.add("noreferrer");
+-        node.setAttribute("rel", Array.from(rels).join(" "));
+-      }
+-    });
+-    dompurify_default = import_isomorphic_dompurify.default;
++    var xss = require('xss'); dompurify_default = { sanitize: function(h) { if (typeof h !== 'string') return ''; return (xss.filterXSS ? xss.filterXSS(h) : xss(h)); } };
+   }
+ });
+ 
 diff --git a/dist/rsc.js b/dist/rsc.js
-index 204ed9d685c5c601e4213d9a8bbc013178def4e4..fbe0b83ce04abbe97725039968d91e49e0382cda 100644
+index 204ed9d685c5c601e4213d9a8bbc013178def4e4..a137c441663bb74e2b2626e3cb7a40326a82f33d 100644
 --- a/dist/rsc.js
 +++ b/dist/rsc.js
-@@ -247,7 +247,7 @@ var init_dompurify = __esm({
+@@ -247,17 +247,7 @@ var init_dompurify = __esm({
    "lib/dompurify.ts"() {
      "use strict";
      init_react_import();
 -    import_isomorphic_dompurify = __toESM(require("isomorphic-dompurify"));
-+    import_isomorphic_dompurify = __toESM(require("./dompurify-mock.js"));
-     import_isomorphic_dompurify.default.addHook("afterSanitizeAttributes", function(node) {
-       if ("target" in node && node.getAttribute("target") === "_blank") {
-         const existingRel = node.getAttribute("rel") || "";
+-    import_isomorphic_dompurify.default.addHook("afterSanitizeAttributes", function(node) {
+-      if ("target" in node && node.getAttribute("target") === "_blank") {
+-        const existingRel = node.getAttribute("rel") || "";
+-        const rels = new Set(existingRel.split(" ").filter(Boolean));
+-        rels.add("noopener");
+-        rels.add("noreferrer");
+-        node.setAttribute("rel", Array.from(rels).join(" "));
+-      }
+-    });
+-    dompurify_default = import_isomorphic_dompurify.default;
++    var xss = require('xss'); dompurify_default = { sanitize: function(h) { if (typeof h !== 'string') return ''; return (xss.filterXSS ? xss.filterXSS(h) : xss(h)); } };
+   }
+ });
+ 
