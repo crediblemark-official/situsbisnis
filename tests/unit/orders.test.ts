@@ -179,7 +179,7 @@ describe('Orders API POST Route', () => {
     // Mock valid payment settings so that system checkout would trigger the gateway
     vi.mocked(db.paymentSettings.findUnique).mockResolvedValue({
       gatewayMerchantId: 'merchant-123',
-      gatewayApiKey: 'api-key-123',
+      gatewayApiKey: 'mock-gateway-key-xyz',
       gatewaySandbox: true
     } as any);
 
@@ -243,7 +243,7 @@ describe('Orders API POST Route', () => {
     vi.mocked(db.paymentSettings.findUnique).mockResolvedValue({
       siteId: 'site-123',
       gatewayMerchantId: 'merchant-123',
-      gatewayApiKey: 'api-key-123',
+      gatewayApiKey: 'mock-gateway-key-xyz',
       gatewaySandbox: true,
       bankName: 'BCA',
       accountNumber: '123456789',
@@ -254,7 +254,7 @@ describe('Orders API POST Route', () => {
     const mockPaymentSettings = {
       siteId: 'site-123',
       gatewayMerchantId: 'merchant-123',
-      gatewayApiKey: 'api-key-123',
+      gatewayApiKey: 'mock-gateway-key-xyz',
       gatewaySandbox: true,
       bankName: 'BCA',
       accountNumber: '123456789',

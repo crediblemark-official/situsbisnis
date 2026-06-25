@@ -60,7 +60,7 @@ describe('lib/services/email.ts', () => {
     it('should send email using configured sender name and address if API key exists', async () => {
       vi.mocked(db.platformSettings.findUnique).mockResolvedValue({
         id: 'global',
-        resendApiKey: 're_valid_api_key_123',
+        resendApiKey: 'mock-resend-key-123',
         emailSenderName: 'Custom Brand',
         emailSenderAddress: 'hello@brand.com',
       } as any);
@@ -77,7 +77,7 @@ describe('lib/services/email.ts', () => {
       });
 
       expect(result).toEqual({ success: true, id: 'email_msg_id' });
-      expect(Resend).toHaveBeenCalledWith('re_valid_api_key_123');
+      expect(Resend).toHaveBeenCalledWith('mock-resend-key-123');
       expect(mockSend).toHaveBeenCalledWith({
         from: 'Custom Brand <hello@brand.com>',
         to: 'tenant@example.com',
@@ -90,7 +90,7 @@ describe('lib/services/email.ts', () => {
     it('should fall back to defaults if sender address/name is not configured in database', async () => {
       vi.mocked(db.platformSettings.findUnique).mockResolvedValue({
         id: 'global',
-        resendApiKey: 're_valid_api_key_123',
+        resendApiKey: 'mock-resend-key-123',
         emailSenderName: null,
         emailSenderAddress: null,
       } as any);
@@ -119,7 +119,7 @@ describe('lib/services/email.ts', () => {
     it('should return error response if Resend API returns an error', async () => {
       vi.mocked(db.platformSettings.findUnique).mockResolvedValue({
         id: 'global',
-        resendApiKey: 're_valid_api_key_123',
+        resendApiKey: 'mock-resend-key-123',
       } as any);
 
       mockSend.mockResolvedValue({
@@ -139,7 +139,7 @@ describe('lib/services/email.ts', () => {
     it('should catch exceptions and return error details', async () => {
       vi.mocked(db.platformSettings.findUnique).mockResolvedValue({
         id: 'global',
-        resendApiKey: 're_valid_api_key_123',
+        resendApiKey: 'mock-resend-key-123',
       } as any);
 
       mockSend.mockRejectedValue(new Error('Network Failure'));
@@ -158,7 +158,7 @@ describe('lib/services/email.ts', () => {
     beforeEach(() => {
       vi.mocked(db.platformSettings.findUnique).mockResolvedValue({
         id: 'global',
-        resendApiKey: 're_valid_api_key_123',
+        resendApiKey: 'mock-resend-key-123',
       } as any);
       mockSend.mockResolvedValue({ data: { id: 'msg_id' }, error: null });
     });

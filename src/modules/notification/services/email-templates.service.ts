@@ -186,7 +186,10 @@ export async function sendFollowupEmail({
   let formattedMessage = escapeHtml(message);
 
   // Convert raw URLs to clickable HTML links (if they start with http:// or https://)
-  formattedMessage = formattedMessage.replace(/(https?:\/\/[^\s*_<]+)/g, '<a href="$1" style="color: #0ea5e9; text-decoration: underline;">$1</a>');
+  formattedMessage = formattedMessage.replace(/(https?:\/\/[^\s*_<]+)/g, (url) => {
+    const safeUrl = url.split(/&quot;|&lt;|&gt;|&#x27;/)[0];
+    return `<a href="${safeUrl}" style="color: #0ea5e9; text-decoration: underline;">${url}</a>`;
+  });
 
   // Convert WhatsApp markdown (*bold*, _italic_, ~strike~) to HTML
   formattedMessage = formattedMessage

@@ -99,7 +99,11 @@ export async function processOrderWebhook(body: Record<string, any>) {
         throw new Error("Missing parameters");
     }
 
-    const actualOrderId = order_id.match(/^([^-]+)/)?.[1];
+    if (typeof order_id !== "string") {
+        throw new Error("Invalid order_id type");
+    }
+
+    const actualOrderId = order_id.split("-")[0];
     if (!actualOrderId) {
         throw new Error("Invalid order_id format");
     }
