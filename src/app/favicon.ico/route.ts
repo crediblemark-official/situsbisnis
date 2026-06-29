@@ -6,14 +6,33 @@ export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
     const settings = await getSiteSettings();
-
     if (settings.faviconUrl) {
         try {
-            // faviconUrl may be a relative path (e.g. /api/media/proxy?url=...)
-            // so we resolve it against the request origin to get an absolute URL
-            const faviconAbsoluteUrl = settings.faviconUrl.startsWith("http")
-                ? settings.faviconUrl
-                : new URL(settings.faviconUrl, new URL(request.url).origin).toString();
+            let faviconAbsoluteUrl = settings.faviconUrl;
+
+            if (!faviconAbsoluteUrl.startsWith("http")) {
+                // Jika URL menggunakan media proxy, ekstrak URL target aslinya agar di-fetch langsung ke upstream
+                if (faviconAbsoluteUrl.startsWith("/api/media/proxy")) {
+                    try {
+                        const urlObj = new URL(faviconAbsoluteUrl, "http://localhost");
+                        const targetUrl = urlObj.searchParams.get("url");
+                        if (targetUrl && targetUrl.startsWith("http")) {
+                            faviconAbsoluteUrl = targetUrl;
+                        }
+                    } catch (e) {
+                        console.error("[Favicon Route] Gagal mengurai URL media proxy:", e);
+                    }
+                }
+            }
+
+            // Jika masih berupa path relatif, gunakan Host/Forwarded header tepercaya untuk resolusi origin (menghindari 0.0.0.0)
+            if (!faviconAbsoluteUrl.startsWith("http")) {
+                const host = request.headers.get("x-forwarded-host") || request.headers.get("host") || "localhost:3000";
+                const proto = request.headers.get("x-forwarded-proto") || "http";
+                const origin = `${proto}://${host}`;
+                faviconAbsoluteUrl = new URL(faviconAbsoluteUrl, origin).toString();
+            }
+
             const res = await fetch(faviconAbsoluteUrl);
             if (res.ok) {
                 const blob = await res.blob();
