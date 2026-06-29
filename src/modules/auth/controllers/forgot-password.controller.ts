@@ -1,6 +1,6 @@
 import { apiResponse, apiError } from "@/lib/api/utils";
 import { db } from "@/lib/core/db";
-import { sendEmail } from "@/modules/notification/services/email.service";
+import { sendEmail } from "@/modules/notification";
 import { z } from "zod";
 import crypto from "crypto";
 import bcrypt from "bcryptjs";

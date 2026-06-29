@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { forgotPasswordApi, resetPasswordApi } from '@/modules/auth/controllers/forgot-password.controller';
 import { db } from '@/lib/core/db';
-import { sendEmail } from '@/modules/notification/services/email.service';
+import { sendEmail } from '@/modules/notification';
 import bcrypt from 'bcryptjs';
 
 vi.mock('@/lib/core/db', () => ({
@@ -19,7 +19,7 @@ vi.mock('@/lib/core/db', () => ({
   },
 }));
 
-vi.mock('@/modules/notification/services/email.service', () => ({
+vi.mock('@/modules/notification', () => ({
   sendEmail: vi.fn().mockResolvedValue({ success: true }),
 }));
 
