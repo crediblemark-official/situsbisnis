@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Lock, Loader2, ArrowLeft, CheckCircle2, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePlatformSettings } from "@/hooks/use-platform-settings";
 
 function ResetPasswordForm() {
-    const router = useRouter();
+
     const { settings } = usePlatformSettings();
     const siteName = settings?.siteName || "SitusBisnis";
     
