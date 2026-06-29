@@ -97,7 +97,12 @@ export default function LoginPage() {
                         </div>
 
                         <div className="space-y-1.5">
-                            <label htmlFor="login-password" className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Password</label>
+                            <div className="flex justify-between items-center ml-1">
+                                <label htmlFor="login-password" className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">Password</label>
+                                <Link href="/forgot-password" className="text-[10px] font-bold text-primary hover:underline uppercase tracking-widest">
+                                    Lupa Password?
+                                </Link>
+                            </div>
                             <div className="relative group">
                                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={18} />
                                 <input

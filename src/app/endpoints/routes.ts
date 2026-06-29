@@ -10,6 +10,7 @@ import { getOpenApiSpecApi } from "@/modules/shared/controllers/openapi-api.cont
 import { getSettingsApi, getPaymentSettingsApi, getAnalyticsApi, getHealthApi, postContactApi, getContactApi, postOnboardingApi, validateSettingApi, getAdminSettingsApi, getAdminSiteApi, searchApi } from "@/modules/site/controllers/site-api.controller";
 
 import { registerApi } from "@/modules/auth/controllers/register.controller";
+import { forgotPasswordApi, resetPasswordApi } from "@/modules/auth/controllers/forgot-password.controller";
 import { updateProfileApi, getUsersApi, createUserApi, getUserSitesApi, updateUserSiteApi, verifyUserSiteApi, updateUserApi, deleteUserApi, checkAffiliateApi, withdrawAffiliateApi } from "@/modules/auth/controllers/user-api.controller";
 import { postGetApi, postPostApi, postGetDetailApi, postPatchApi, postPutApi, postDeleteApi } from "@/modules/post/controllers/post.controller";
 import { testimonialGetApi, testimonialPostApi, testimonialGetDetailApi, testimonialPatchApi, testimonialPutApi, testimonialDeleteApi } from "@/modules/post/controllers/testimonial.controller";
@@ -41,6 +42,8 @@ type EndpointRoute = {
 const endpoints: EndpointRoute[] = [
     // ===== AUTH =====
     { method: "POST", path: "auth/register", handler: registerApi },
+    { method: "POST", path: "auth/forgot-password", handler: forgotPasswordApi },
+    { method: "POST", path: "auth/reset-password", handler: resetPasswordApi },
 
     // ===== USER / PROFILE =====
     { method: "PUT", path: "profile", handler: updateProfileApi },
