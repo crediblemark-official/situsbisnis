@@ -44,7 +44,7 @@ function ResetPasswordForm() {
         }
 
         try {
-            const res = await fetch("/api/auth/reset-password", {
+            const res = await fetch("/api/password/reset", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

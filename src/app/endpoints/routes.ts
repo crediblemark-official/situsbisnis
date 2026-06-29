@@ -42,8 +42,8 @@ type EndpointRoute = {
 const endpoints: EndpointRoute[] = [
     // ===== AUTH =====
     { method: "POST", path: "auth/register", handler: registerApi },
-    { method: "POST", path: "auth/forgot-password", handler: forgotPasswordApi },
-    { method: "POST", path: "auth/reset-password", handler: resetPasswordApi },
+    { method: "POST", path: "password/forgot", handler: forgotPasswordApi },
+    { method: "POST", path: "password/reset", handler: resetPasswordApi },
 
     // ===== USER / PROFILE =====
     { method: "PUT", path: "profile", handler: updateProfileApi },
