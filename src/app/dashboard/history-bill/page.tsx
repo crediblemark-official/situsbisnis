@@ -123,7 +123,7 @@ export default async function HistoryBillPage() {
         }
     });
 
-    const paymentMethods = (adminSite as any)?.paymentSettings || [];
+    const paymentMethods = adminSite?.paymentSettings ? [adminSite.paymentSettings] : [];
     const platform = await getPlatformSettings();
     const whatsappNumber = platform.whatsappNumber || "6281234567890";
 

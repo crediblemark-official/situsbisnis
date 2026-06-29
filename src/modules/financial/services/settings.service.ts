@@ -133,7 +133,7 @@ export async function getSubscriptionContext(siteId: string) {
         }
     }
 
-    const paymentMethods = (adminSite as any)?.paymentSettings || [];
+    const paymentMethods = adminSite?.paymentSettings ? [adminSite.paymentSettings] : [];
     const whatsappNumber = adminSite?.siteSettings?.whatsappNumber || "6281234567890";
 
     return {
