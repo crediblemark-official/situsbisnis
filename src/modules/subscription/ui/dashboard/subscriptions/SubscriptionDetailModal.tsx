@@ -76,9 +76,13 @@ export function SubscriptionDetailModal({ selectedSub, rootDomain, onClose, onUp
     if (!selectedSub) return null;
 
     const billingAmount = (() => {
-        let total = Number(selectedSub.plan?.price) || 0;
-        if (selectedSub.addonSlots > 0 && selectedSub.plan?.addonSiteBilling === "recurring") {
-            const addonPrice = selectedSub.plan.features?.addonSitePrice || 0;
+        const activePlan = isEditing 
+            ? (plans.find(p => p.id === selectedPlanId) || selectedSub.plan)
+            : selectedSub.plan;
+
+        let total = Number(activePlan?.price) || 0;
+        if (selectedSub.addonSlots > 0 && activePlan?.addonSiteBilling === "recurring") {
+            const addonPrice = activePlan.features?.addonSitePrice || 0;
             total += (selectedSub.addonSlots * addonPrice);
         }
         return total.toLocaleString();
@@ -177,17 +181,21 @@ export function SubscriptionDetailModal({ selectedSub, rootDomain, onClose, onUp
                             <div className="flex justify-between text-xs">
                                 <span className="text-muted-foreground">Slot Situs</span>
                                 <span className="font-bold text-primary">
-                                    {selectedSub.plan?.maxSites || 0} 
+                                    {selectedSub.plan?.maxSites === -1 ? "Tanpa Batas" : (selectedSub.plan?.maxSites || 0)} 
                                     {selectedSub.addonSlots > 0 && ` + ${selectedSub.addonSlots} Tambahan`}
                                 </span>
                             </div>
                             <div className="flex justify-between text-xs">
                                 <span className="text-muted-foreground">Maksimal Artikel</span>
-                                <span className="font-bold">{selectedSub.plan?.maxPosts}</span>
+                                <span className="font-bold">
+                                    {selectedSub.plan?.maxPosts === -1 ? "Tanpa Batas" : (selectedSub.plan?.maxPosts || 0)}
+                                </span>
                             </div>
                             <div className="flex justify-between text-xs">
                                 <span className="text-muted-foreground">Maksimal Produk</span>
-                                <span className="font-bold">{selectedSub.plan?.maxProducts}</span>
+                                <span className="font-bold">
+                                    {selectedSub.plan?.maxProducts === -1 ? "Tanpa Batas" : (selectedSub.plan?.maxProducts || 0)}
+                                </span>
                             </div>
                         </div>
                     )}
