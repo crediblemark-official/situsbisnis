@@ -31,10 +31,10 @@ export function SubscriptionDetailModal({ selectedSub, rootDomain, onClose, onUp
     }, []);
 
     useEffect(() => {
-        if (selectedSub && selectedSub.planId !== selectedPlanId) {
-            Promise.resolve().then(() => setSelectedPlanId(selectedSub.planId));
+        if (selectedSub) {
+            setSelectedPlanId(selectedSub.planId || "");
         }
-    }, [selectedSub, selectedPlanId]);
+    }, [selectedSub?.id, selectedSub?.planId]);
 
     useEffect(() => {
         if (isEditing && plans.length === 0) {
